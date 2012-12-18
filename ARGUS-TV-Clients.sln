@@ -1,0 +1,142 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal", "ArgusTV.UI.MediaPortal\ArgusTV.UI.MediaPortal.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal12", "ArgusTV.UI.MediaPortal12\ArgusTV.UI.MediaPortal12.csproj", "{6526A789-1DE2-4A8B-894B-4582A617C4E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortal", "MediaPortal", "{C9BC5650-2133-4500-A090-EAE3C6EC38EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E6169EBE-F786-4BDE-99BD-74FF1E87D549}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReferencedAssemblies", "ReferencedAssemblies", "{94EDBCC7-7377-4494-B04A-9EC2B4139756}"
+	ProjectSection(SolutionItems) = preProject
+		ReferencedAssemblies\ArgusTV.DataContracts.dll = ReferencedAssemblies\ArgusTV.DataContracts.dll
+		ReferencedAssemblies\ArgusTV.DataContracts.xml = ReferencedAssemblies\ArgusTV.DataContracts.xml
+		ReferencedAssemblies\ArgusTV.ServiceAgents.dll = ReferencedAssemblies\ArgusTV.ServiceAgents.dll
+		ReferencedAssemblies\ArgusTV.ServiceAgents.xml = ReferencedAssemblies\ArgusTV.ServiceAgents.xml
+		ReferencedAssemblies\ArgusTV.ServiceContracts.dll = ReferencedAssemblies\ArgusTV.ServiceContracts.dll
+		ReferencedAssemblies\ArgusTV.ServiceContracts.xml = ReferencedAssemblies\ArgusTV.ServiceContracts.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_NET35", "_NET35", "{94EDBCC7-7377-4494-B04A-9EC2B413976A}"
+	ProjectSection(SolutionItems) = preProject
+		ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll = ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll
+		ReferencedAssemblies\_NET35\ArgusTV.DataContracts.xml = ReferencedAssemblies\_NET35\ArgusTV.DataContracts.xml
+		ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll = ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll
+		ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.xml = ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.xml
+		ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll = ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll
+		ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.xml = ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies", "MediaPortalAssemblies", "{EA0E77C0-9623-4542-BDFE-B0DF5CAB6CF7}"
+	ProjectSection(SolutionItems) = preProject
+		ReferencedAssemblies\MediaPortalAssemblies\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies\Common.Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Core.dll = ReferencedAssemblies\MediaPortalAssemblies\Core.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies\Databases.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies\Dialogs.dll
+		ReferencedAssemblies\MediaPortalAssemblies\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies\DirectShowLib.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies\Gentle.Common.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies\Gentle.Framework.dll
+		ReferencedAssemblies\MediaPortalAssemblies\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies\PluginBase.dll
+		ReferencedAssemblies\MediaPortalAssemblies\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies\SetupControls.dll
+		ReferencedAssemblies\MediaPortalAssemblies\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies\TvBusinessLayer.dll
+		ReferencedAssemblies\MediaPortalAssemblies\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies\TvControl.dll
+		ReferencedAssemblies\MediaPortalAssemblies\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies\TVDatabase.dll
+		ReferencedAssemblies\MediaPortalAssemblies\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies\TvLibrary.Interfaces.dll
+		ReferencedAssemblies\MediaPortalAssemblies\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies\Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies\WindowPlugins.dll = ReferencedAssemblies\MediaPortalAssemblies\WindowPlugins.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies12", "MediaPortalAssemblies12", "{2BCD51B5-9D55-4BFC-BE8B-4F0A69D47060}"
+	ProjectSection(SolutionItems) = preProject
+		ReferencedAssemblies\MediaPortalAssemblies12\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies12\Common.Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Core.dll = ReferencedAssemblies\MediaPortalAssemblies12\Core.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies12\Databases.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies12\Dialogs.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies12\DirectShowLib.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Common.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Framework.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies12\PluginBase.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies12\SetupControls.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvBusinessLayer.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvControl.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies12\TVDatabase.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvLibrary.Interfaces.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies12\Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies12\WindowPlugins.dll = ReferencedAssemblies\MediaPortalAssemblies12\WindowPlugins.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_NET35", "_NET35", "{0F187D8B-50EA-4E47-9E33-67F288251F30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.Process", "ArgusTV.UI.Process\ArgusTV.UI.Process.csproj", "{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.Client.Common", "ArgusTV.Client.Common\ArgusTV.Client.Common.csproj", "{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.Process.NET35", "_NET35\ArgusTV.UI.Process\ArgusTV.UI.Process.NET35.csproj", "{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.Client.Common.NET35", "_NET35\ArgusTV.Client.Common\ArgusTV.Client.Common.NET35.csproj", "{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FDA1079E-BE0F-447D-91F8-89DE10A34A11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Test|Any CPU = Test|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}.Test|Any CPU.Build.0 = Test|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0}.Test|Any CPU.Build.0 = Release|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}.Test|Any CPU.Build.0 = Test|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}.Test|Any CPU.Build.0 = Test|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}.Test|Any CPU.Build.0 = Test|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}.Test|Any CPU.Build.0 = Test|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6526A789-1DE2-4A8B-894B-4582A617C4E0} = {C9BC5650-2133-4500-A090-EAE3C6EC38EB}
+		{1526A789-1DE2-4A8B-AA4B-5382A617C4F8} = {C9BC5650-2133-4500-A090-EAE3C6EC38EB}
+		{94EDBCC7-7377-4494-B04A-9EC2B4139756} = {E6169EBE-F786-4BDE-99BD-74FF1E87D549}
+		{EA0E77C0-9623-4542-BDFE-B0DF5CAB6CF7} = {94EDBCC7-7377-4494-B04A-9EC2B4139756}
+		{2BCD51B5-9D55-4BFC-BE8B-4F0A69D47060} = {94EDBCC7-7377-4494-B04A-9EC2B4139756}
+		{94EDBCC7-7377-4494-B04A-9EC2B413976A} = {94EDBCC7-7377-4494-B04A-9EC2B4139756}
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4} = {0F187D8B-50EA-4E47-9E33-67F288251F30}
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2} = {0F187D8B-50EA-4E47-9E33-67F288251F30}
+		{0F187D8B-50EA-4E47-9E33-67F288251F30} = {FDA1079E-BE0F-447D-91F8-89DE10A34A11}
+		{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3} = {FDA1079E-BE0F-447D-91F8-89DE10A34A11}
+		{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD} = {FDA1079E-BE0F-447D-91F8-89DE10A34A11}
+	EndGlobalSection
+EndGlobal

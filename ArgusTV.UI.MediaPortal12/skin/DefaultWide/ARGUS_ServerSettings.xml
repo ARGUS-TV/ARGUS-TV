@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>49855</id>
+  <defaultcontrol>8</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>Background.png</texture>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+    
+    <import>ARGUS_common.window.xml</import>
+    <import>common.time.xml</import>
+
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>680</posX>
+      <posY>150</posY>
+      <width>500</width>
+      <height>400</height>
+      <texture mask="picturethumbmask.png">blue.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+    </control>
+
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>100</posX>
+      <posY>150</posY>
+      <width>500</width>
+      <height>400</height>
+      <texture mask="picturethumbmask.png">blue.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+    </control>
+
+    <control>
+      <description>pre record</description>
+      <type>spinbutton</type>
+      <id>8</id>
+      <posX>120</posX>
+      <posY>180</posY>
+      <width>440</width>
+      <showrange>no</showrange>
+      <reverse>yes</reverse>
+      <height>45</height>
+      <textXOff>10</textXOff>
+      <textYOff>5</textYOff>
+      <spinXOff>10</spinXOff>
+      <spinYOff>10</spinYOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <font>font13</font>
+      <spinalign>right</spinalign>
+      <spinvalign>bottom</spinvalign>
+      <spinWidth>16</spinWidth>
+      <spinHeight>16</spinHeight>
+      <spinColor>ffffffff</spinColor>
+      <disabledcolor>60ffffff</disabledcolor>
+      <textureUp>page_up_nofocus.png</textureUp>
+      <textureDown>page_down_nofocus.png</textureDown>
+      <textureUpFocus>page_up_focus.png</textureUpFocus>
+      <textureDownFocus>page_down_focus.png</textureDownFocus>
+    </control>
+
+    <control>
+      <description>wol timeout</description>
+      <type>spinbutton</type>
+      <id>9</id>
+      <posX>120</posX>
+      <posY>230</posY>
+      <width>440</width>
+      <showrange>no</showrange>
+      <reverse>yes</reverse>
+      <height>45</height>
+      <textXOff>10</textXOff>
+      <textYOff>5</textYOff>
+      <spinXOff>10</spinXOff>
+      <spinYOff>10</spinYOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <font>font13</font>
+      <spinalign>right</spinalign>
+      <spinvalign>bottom</spinvalign>
+      <spinWidth>16</spinWidth>
+      <spinHeight>16</spinHeight>
+      <spinColor>ffffffff</spinColor>
+      <disabledcolor>60ffffff</disabledcolor>
+      <textureUp>page_up_nofocus.png</textureUp>
+      <textureDown>page_down_nofocus.png</textureDown>
+      <textureUpFocus>page_up_focus.png</textureUpFocus>
+      <textureDownFocus>page_down_focus.png</textureDownFocus>
+    </control>
+
+    <control>
+      <description>keep until label</description>
+      <type>label</type>
+      <posX>130</posX>
+      <posY>280</posY>
+      <font>font13</font>
+      <label>1042</label>
+    </control>
+    
+    <control>
+      <description>keep until mode</description>
+      <type>button</type>
+      <id>6</id>
+      <posX>120</posX>
+      <posY>280</posY>
+      <width>440</width>
+      <textalign>right</textalign>
+      <onup>9</onup>
+      <ondown>7</ondown>
+    </control>
+
+    <control>
+      <description>keep until value label</description>
+      <type>label</type>
+      <id>20</id>
+      <posX>130</posX>
+      <posY>330</posY>
+      <font>font13</font>
+    </control>
+
+    <control>
+      <description>keep until value</description>
+      <type>button</type>
+      <id>7</id>
+      <posX>120</posX>
+      <posY>330</posY>
+      <width>440</width>
+      <textalign>right</textalign>
+      <onup>6</onup>
+      <ondown>5</ondown>
+    </control>
+
+    <control>
+      <description>guide source label</description>
+      <type>label</type>
+      <id>19</id>
+      <posX>130</posX>
+      <posY>430</posY>
+      <font>font13</font>
+    </control>
+    
+    <control>
+      <description>guide source</description>
+      <type>button</type>
+      <id>5</id>
+      <onup>7</onup>
+      <ondown>4</ondown>
+      <onright>2</onright>
+      <posX>120</posX>
+      <posY>430</posY>
+      <width>440</width>
+      <textalign>right</textalign>
+    </control>
+
+    <control>
+      <description>Delete all guide data</description>
+      <type>button</type>
+      <id>4</id>
+      <posX>190</posX>
+      <posY>480</posY>
+      <width>300</width>
+      <onup>5</onup>
+      <ondown>4</ondown>
+      <onright>3</onright>
+      <onleft>4</onleft>
+      <textalign>center</textalign>
+    </control>
+
+    <control>
+      <description>free disk space</description>
+      <type>spinbutton</type>
+      <id>17</id>
+      <posX>710</posX>
+      <posY>180</posY>
+      <width>440</width>
+      <ondown>18</ondown>
+      <onleft>8</onleft>
+      <showrange>no</showrange>
+      <reverse>yes</reverse>
+      <height>45</height>
+      <textXOff>10</textXOff>
+      <textYOff>5</textYOff>
+      <spinXOff>10</spinXOff>
+      <spinYOff>10</spinYOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <font>font13</font>
+      <spinalign>right</spinalign>
+      <spinvalign>bottom</spinvalign>
+      <spinWidth>16</spinWidth>
+      <spinHeight>16</spinHeight>
+      <spinColor>ffffffff</spinColor>
+      <disabledcolor>60ffffff</disabledcolor>
+      <textureUp>page_up_nofocus.png</textureUp>
+      <textureDown>page_down_nofocus.png</textureDown>
+      <textureUpFocus>page_up_focus.png</textureUpFocus>
+      <textureDownFocus>page_down_focus.png</textureDownFocus>
+    </control>
+
+    <control>
+      <description>min free disk space</description>
+      <type>spinbutton</type>
+      <id>18</id>
+      <posX>710</posX>
+      <posY>230</posY>
+      <width>440</width>
+      <onup>17</onup>
+      <ondown>11</ondown>
+      <onleft>9</onleft>
+      <showrange>no</showrange>
+      <reverse>yes</reverse>
+      <height>45</height>
+      <textXOff>10</textXOff>
+      <textYOff>5</textYOff>
+      <spinXOff>10</spinXOff>
+      <spinYOff>10</spinYOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <font>font13</font>
+      <spinalign>right</spinalign>
+      <spinvalign>bottom</spinvalign>
+      <spinWidth>16</spinWidth>
+      <spinHeight>16</spinHeight>
+      <spinColor>ffffffff</spinColor>
+      <disabledcolor>60ffffff</disabledcolor>
+      <textureUp>page_up_nofocus.png</textureUp>
+      <textureDown>page_down_nofocus.png</textureDown>
+      <textureUpFocus>page_up_focus.png</textureUpFocus>
+      <textureDownFocus>page_down_focus.png</textureDownFocus>
+    </control>
+    
+    <control>
+      <description>thumbs</description>
+      <type>checkbutton</type>
+      <id>11</id>
+      <posX>710</posX>
+      <posY>280</posY>
+      <onup>18</onup>
+      <ondown>12</ondown>
+      <onleft>6</onleft>
+      <width>440</width>
+      <height>45</height>
+      <textureCheckmark>check-box.png</textureCheckmark>
+      <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+      <markWidth>32</markWidth>
+      <markHeight>32</markHeight>
+      <markXOff>20</markXOff>
+      <markalign>right</markalign>
+      <markvalign>middle</markvalign>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <textalign>left</textalign>
+      <textvalign>middle</textvalign>
+      <textXOff>10</textXOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+    </control>
+
+    <control>
+      <description>metadata</description>
+      <type>checkbutton</type>
+      <id>12</id>
+      <posX>710</posX>
+      <posY>330</posY>
+      <onup>11</onup>
+      <ondown>2</ondown>
+      <onleft>6</onleft>
+      <width>440</width>
+      <height>45</height>
+      <textureCheckmark>check-box.png</textureCheckmark>
+      <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+      <markWidth>32</markWidth>
+      <markHeight>32</markHeight>
+      <markXOff>20</markXOff>
+      <markalign>right</markalign>
+      <markvalign>middle</markvalign>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <textalign>left</textalign>
+      <textvalign>middle</textvalign>
+      <textXOff>10</textXOff>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+    </control>
+
+    <control>
+      <description>show logs</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>780</posX>
+      <posY>430</posY>
+      <width>300</width>
+      <onup>12</onup>
+      <ondown>3</ondown>
+      <onleft>5</onleft>
+      <textalign>center</textalign>
+    </control>
+    
+    <control>
+      <description>restore</description>
+      <type>button</type>
+      <id>3</id>
+      <posX>780</posX>
+      <posY>480</posY>
+      <width>300</width>
+      <onup>2</onup>
+      <ondown>3</ondown>
+      <onleft>4</onleft>
+      <textalign>center</textalign>
+    </control>
+
+    <control>
+      <description>info</description>
+      <id>21</id>
+      <type>fadelabel</type>
+      <posX>120</posX>
+      <posY>650</posY>
+      <align>left</align>
+      <width>1030</width>
+      <textcolor>FFB2D4F5</textcolor>
+      <font>font12</font>
+    </control>
+
+  </controls>
+</window>

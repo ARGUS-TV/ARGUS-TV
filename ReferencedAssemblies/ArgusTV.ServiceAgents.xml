@@ -1,0 +1,1506 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ArgusTV.ServiceAgents</name>
+    </assembly>
+    <members>
+        <member name="T:ArgusTV.ServiceAgents.ConfigurationServiceAgent">
+            <summary>
+            Configuration settings service.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ServiceAgentBase`1">
+            <summary>
+            INTERNAL USE ONLY.
+            </summary>
+            <typeparam name="T">The service interface.</typeparam>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceAgentBase`1.#ctor(System.String)">
+            <summary>
+            INTERNAL USE ONLY.
+            </summary>
+            <param name="serviceName">INTERNAL USE ONLY.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceAgentBase`1.#ctor(System.String,System.String,System.String)">
+            <summary>
+            INTERNAL USE ONLY.
+            </summary>
+            <param name="serviceUrl">INTERNAL USE ONLY.</param>
+            <param name="userName">INTERNAL USE ONLY.</param>
+            <param name="password">INTERNAL USE ONLY.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceAgentBase`1.HandleServiceException(System.Exception,System.Boolean@)">
+            <summary>
+            INTERNAL USE ONLY.
+            </summary>
+            <param name="ex">INTERNAL USE ONLY.</param>
+            <param name="retry">INTERNAL USE ONLY.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceAgentBase`1.Dispose">
+            <summary>
+            Disposes the service agent.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceAgentBase`1.Finalize">
+            <summary>
+            ServiceAgentBase destructor.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServiceAgentBase`1.Proxy">
+            <summary>
+            INTERNAL USE ONLY.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.GetIntValue(System.String,System.String,System.Boolean)">
+            <summary>
+            Get integer setting.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The integer setting value, or null if no setting was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.GetStringValue(System.String,System.String,System.Boolean)">
+            <summary>
+            Get string setting.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The string setting value, or null if no setting was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.GetBooleanValue(System.String,System.String,System.Boolean)">
+            <summary>
+            Get boolean setting.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The boolean setting value, or null if no setting was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetIntValue(System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Set integer setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetIntDefaultValue(System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Set default integer setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetStringValue(System.String,System.String,System.String)">
+            <summary>
+            Set string setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetStringDefaultValue(System.String,System.String,System.String)">
+            <summary>
+            Set default string setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetBooleanValue(System.String,System.String,System.Nullable{System.Boolean})">
+            <summary>
+            Set boolean setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ConfigurationServiceAgent.SetBooleanDefaultValue(System.String,System.String,System.Nullable{System.Boolean})">
+            <summary>
+            Set default boolean setting value.
+            </summary>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.CoreServiceAgent">
+            <summary>
+            ICoreService interface.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.Ping(System.Int32)">
+            <summary>
+            Ping ARGUS TV server and test the API version.
+            </summary>
+            <param name="requestedApiVersion">The API version the client needs, pass in Constants.CurrentApiVersion.</param>
+            <returns>0 if client and server are compatible, -1 if the client is too old and +1 if the client is newer than the server.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.GetMacAddresses">
+            <summary>
+            Get the server's MAC address(es).  These can be stored on the client after a successful
+            connect and later used to re-connect with wake-on-lan.
+            </summary>
+            <returns>An array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.IsNewerVersionAvailable(ArgusTV.DataContracts.NewVersionInfo@)">
+            <summary>
+            Check to see if there is a newer version of ARGUS TV available online.
+            </summary>
+            <param name="versionInfo">Information about the newer version, or null.</param>
+            <returns>True if there is a newer version available, false if the current installation is up-to-date.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.EnsureEventListener(ArgusTV.DataContracts.EventGroup,System.String,System.Int32)">
+            <summary>
+            Method used by a listener service to subscribe to a group of ARGUS TV events.
+            </summary>
+            <param name="eventGroups">The event group(s) to subscribe to. (can be or'd )</param>
+            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
+            <param name="apiVersion">The API version of the listener service.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.RemoveEventListener(System.String)">
+            <summary>
+            Method used by a listener service to remove it's subscription from the ARGUS TV events.
+            </summary>
+            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.SubscribeServiceEvents(ArgusTV.DataContracts.EventGroup)">
+            <summary>
+            Subscribe your client to a group of ARGUS TV events using a polling mechanism.
+            </summary>
+            <param name="eventGroups">The event group(s) to subscribe to (flags can be OR'd).</param>
+            <returns>A unique client ID for your client.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.UnsubscribeServiceEvents(System.Guid)">
+            <summary>
+            Unsubscribe your client from all ARGUS TV events.
+            </summary>
+            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.GetServiceEvents(System.Guid)">
+            <summary>
+            Get all queued ARGUS TV events for your client. Call this every X seconds to get informed at a regular interval about what happened.
+            </summary>
+            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
+            <returns>Zero or more service events, or null in case your subscription has expired.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.CoreServiceAgent.KeepServerAlive">
+            <summary>
+            Tell the server we'd like to keep it alive for a little longer.  A client
+            should call this method every two minutes or so to keep the server from
+            entering standby (if it is configured to do so).
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ServiceTransport">
+            <summary>
+            The service transport binding to use.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServiceTransport.NetTcp">
+            <summary>
+            The fastest, for local networks.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServiceTransport.Http">
+            <summary>
+            Slower, but suitable for local and remote access (not secure).
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServiceTransport.BinaryHttps">
+            <summary>
+            Custom binary https transport, secure and suitable for remote access.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.WakeOnLanSettings">
+            <summary>
+            Settings to handle wake-on-lan.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.WakeOnLanSettings.DefaultTimeoutSeconds">
+            <summary>
+            The default wake-on-lan timeout.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.WakeOnLanSettings.#ctor">
+            <summary>
+            Default settings constructor.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.WakeOnLanSettings.Enabled">
+            <summary>
+            Is wake-on-lan enabled to wake up the server if needed?  Will only have effect if the
+            server's MAC address(es) are set.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.WakeOnLanSettings.MacAddresses">
+            <summary>
+            The MAC address(es) of the server, separated by a ; character. This property will always
+            be set after calling ServiceChannelFactories.Initialize(). Store this on the client to
+            support wake-on-lan for future connections to the server.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.WakeOnLanSettings.IPAddress">
+            <summary>
+            The IP address of the server. This property will always be set after calling
+            ServiceChannelFactories.Initialize(). Store this on the client to support wake-on-lan
+            for future connections to the server.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.WakeOnLanSettings.TimeoutSeconds">
+            <summary>
+            The maximum time in seconds to wait for the server to wake up, if wake-on-lan is turned on.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent">
+            <summary>
+            Proxy to the recorder tuner callback service on the ARGUS TV Scheduler service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.#ctor(System.String,System.Int32)">
+            <summary>
+            Constructs a channel to the recorder callback service on the ARGUS TV Scheduler service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.RegisterRecorderTuner(System.Guid,System.String,System.String)">
+            <summary>
+            Method used by a recorder to actually activate itself, to register
+            with ARGUS TV and be included in the list of active recorders.
+            </summary>
+            <param name="recorderTunerId">The ID of the recorder (passed in through Initialize()).</param>
+            <param name="name">The name of the recorder.</param>
+            <param name="version">The version number of the recorder.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.AddNewRecording(ArgusTV.DataContracts.UpcomingProgram,System.DateTime,System.String)">
+            <summary>
+            Add a new recording.  A recording must be added the moment it starts recording.
+            </summary>
+            <param name="recordingProgram">The program that has started recording.</param>
+            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The ID of the new recording.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.GetRecordingByFileName(System.String)">
+            <summary>
+            Get the recording associated with the given filename.
+            </summary>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The recording, or null if none is found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.EndRecording(System.String,System.DateTime,System.Boolean,System.Boolean)">
+            <summary>
+            End a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
+            <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.DeleteRecording(System.String,System.Boolean)">
+            <summary>
+            Delete a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.StartRecordingFailed(ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.UpcomingProgram,System.String)">
+            <summary>
+            Report a failure to start recording.
+            </summary>
+            <param name="channelAllocation">The card and channel that failed.</param>
+            <param name="recordingProgram">The program that has failed to started recording.</param>
+            <param name="reason">Error message containing the reason of the failure, e.g. "No signal".</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.GetGuideProgramById(System.Guid)">
+            <summary>
+            Get a guide programs by its ID.
+            </summary>
+            <param name="guideProgramId">The ID of the guide program.</param>
+            <returns>The requested guide program, or null if it wasn't found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.LogMessage(System.Guid,ArgusTV.DataContracts.LogSeverity,System.String)">
+            <summary>
+            Log a message in the main ARGUS TV log.
+            </summary>
+            <param name="recorderTunerId">The unique ID of the recorder.</param>
+            <param name="logSeverity">The severity of the message.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.RecorderCallbackServiceAgent.LiveStreamAborted(ArgusTV.DataContracts.LiveStream,ArgusTV.DataContracts.LiveStreamAbortReason,ArgusTV.DataContracts.UpcomingProgram)">
+            <summary>
+            Called by the recorder to report that an active live-stream was aborted.
+            </summary>
+            <param name="abortedStream">The live stream that was aborted.</param>
+            <param name="reason">The reason for the abort.</param>
+            <param name="program">The upcoming program responsible for the abort, or null.</param>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ControlServiceAgent">
+            <summary>
+            Service to control/query all aspects of recording and tuning.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetAllPluginServices(System.Boolean)">
+            <summary>
+            Get all configured plugin services.
+            </summary>
+            <param name="activeOnly">Set to true to only receive active plugins.</param>
+            <returns>An array containing zero or more plugin services.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.SavePluginService(ArgusTV.DataContracts.PluginService)">
+            <summary>
+            Save a new or modified plugin service.  A new plugin service is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="pluginService">The plugin service to save.</param>
+            <returns>The saved plugin service.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.DeletePluginService(System.Guid)">
+            <summary>
+            Delete a plugin service.
+            </summary>
+            <param name="pluginServiceId">The ID of the plugin service to delete.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.PingPluginService(ArgusTV.DataContracts.PluginService)">
+            <summary>
+            Ask ARGUS TV to test the connection to a recorder by pinging it.
+            </summary>
+            <param name="pluginService">The plugin service to ping.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.RefreshRecorderTuners(System.Boolean)">
+            <summary>
+            INTERNAL USE ONLY. Refresh the connection to all recorders.
+            </summary>
+            <param name="forceFullRefresh">Force a full refresh.</param>
+            <returns>True if the refresh was successful, false if there were errors.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.AreRecordingSharesAccessible(ArgusTV.DataContracts.PluginService)">
+            <summary>
+            Check if the ARGUS TV service has the needed access rights on the recording shares of the given pluginService.
+            </summary>
+            <param name="pluginService">The pluginService.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingDisksInfo">
+            <summary>
+            Get information (free disk space) from all recording disks.
+            </summary>
+            <returns>A RecordingDisksInfo entity with all disk(s) information.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingShares">
+            <summary>
+            Get all the recording shares configured for the current recorder(s).
+            </summary>
+            <returns>A list containing zero or more recording shares.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetAllRecordingGroups(ArgusTV.DataContracts.ChannelType,ArgusTV.DataContracts.RecordingGroupMode)">
+            <summary>
+            Get all recording groups based on the recording group-mode.
+            </summary>
+            <param name="channelType">The channel-type of the recordings.</param>
+            <param name="recordingGroupMode">The recording group-mode.</param>
+            <returns>An array of zero or more recording schedule-groups.</returns>        
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingsForSchedule(System.Guid,System.Boolean)">
+            <summary>
+            Get all recordings for the given original schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+            <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+            <returns>An array of zero or more recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingsForProgramTitle(ArgusTV.DataContracts.ChannelType,System.String,System.Boolean)">
+            <summary>
+            Get all recordings for the given program title.
+            </summary>
+            <param name="channelType">The channel-type of the recordings.</param>
+            <param name="programTitle">The program title.</param>
+            <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+            <returns>An array of zero or more recordings.</returns>  
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingsForCategory(ArgusTV.DataContracts.ChannelType,System.String,System.Boolean)">
+            <summary>
+            Get all recordings for the given program category.
+            </summary>
+            <param name="channelType">The channel-type of the recordings.</param>
+            <param name="category">The program category.</param>
+            <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+            <returns>An array of zero or more recordings.</returns>  
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingsOnChannel(System.Guid,System.Boolean)">
+            <summary>
+            Get all recordings on the given channel.
+            </summary>
+            <param name="channelId">The ID of the channel.</param>
+            <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+            <returns>An array of zero or more recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingsForOneDay(ArgusTV.DataContracts.ChannelType,System.DateTime,System.Boolean)">
+            <summary>
+            Get all recordings on the given day.
+            </summary>
+            <param name="channelType">The channel-type of the recordings.</param>
+            <param name="recordingDay">The day of the recording.</param>
+            <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+            <returns>An array of zero or more recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.AddNewRecording(ArgusTV.DataContracts.UpcomingProgram,System.DateTime,System.String)">
+            <summary>
+            Add a new recording.  A recording must be added the moment it starts recording.
+            </summary>
+            <param name="recordingProgram">The program that has started recording.</param>
+            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The ID of the new recording.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingByFileName(System.String)">
+            <summary>
+            Get the recording associated with the given filename.
+            </summary>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The recording, or null if none is found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingById(System.Guid)">
+            <summary>
+            Get the recording by its unique ID.
+            </summary>
+            <param name="recordingId">The ID of the recording.</param>
+            <returns>The recording, or null if none is found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.EndRecording(System.String,System.DateTime,System.Boolean,System.Boolean)">
+            <summary>
+            End a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
+            <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingLastWatchedPosition(System.String)">
+            <summary>
+            Get the position (in seconds) to where the recording was last watched.  Or null if it was never watched.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <returns>The position in seconds or null.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.SetRecordingLastWatchedPosition(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Set the position (in seconds) to where the recording was last watched, or null to reset the state to never-watched.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="lastWatchedPositionSeconds">The position in seconds or null.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.SetRecordingFullyWatchedCount(System.String,System.Int32)">
+            <summary>
+            Set the number of times a recording was fully watched.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="fullyWatchedCount">The number of times the recording was fully watched.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.SetRecordingLastWatched(System.String)">
+            <summary>
+            Mark a recording as last watched now (can be used by playback engines that don't support the last-watched position).
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.SetRecordingKeepUntil(System.String,ArgusTV.DataContracts.KeepUntilMode,System.Nullable{System.Int32})">
+            <summary>
+            Set the keep mode and value of an existing recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="keepUntilMode">The keep until mode to use for this recording.</param>
+            <param name="keepUntilValue">The keep until value to use for this recording, or null if the mode doesn't require a value.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.DeleteRecording(System.String,System.Boolean)">
+            <summary>
+            Delete a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetPreviouslyRecordedHistory(System.Guid)">
+            <summary>
+            Get the history of programs that have been recorded by this schedule. This list is the one used
+            to make the NewEpisodesOnly and NewTitlesOnly rules work.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+            <returns>An array containing zero or more recorded programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.AddToPreviouslyRecordedHistory(ArgusTV.DataContracts.UpcomingProgram)">
+            <summary>
+            Add an upcoming program to the list of previously recorded programs of its schedule. This list is the one used
+            to make the NewEpisodesOnly and NewTitlesOnly rules work.
+            </summary>
+            <param name="upcomingProgram">The upcoming program to add to the history.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.RemoveFromPreviouslyRecordedHistory(ArgusTV.DataContracts.UpcomingProgram)">
+            <summary>
+            Remove an upcoming program from the list of previously recorded programs of its schedule. This list is the one used
+            to make the NewEpisodesOnly and NewTitlesOnly rules work.
+            </summary>
+            <param name="upcomingProgram">The upcoming program to remove from the history.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.ImportPreviouslyRecordedHistory(System.Guid,ArgusTV.DataContracts.ScheduleRecordedProgram[])">
+            <summary>
+            Import a history of programs that have been recorded by this schedule. This list is the one used
+            to make the NewEpisodesOnly and NewTitlesOnly rules work.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+            <param name="history">An array containing zero or more recorded programs.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.DeleteFromPreviouslyRecordedHistory(System.Int32)">
+            <summary>
+            Delete a recorded program from the previously recorded history of its schedule.
+            </summary>
+            <param name="scheduleRecordedProgramId">The ID of the recorded program.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.ClearPreviouslyRecordedHistory(System.Guid)">
+            <summary>
+            Delete the previously recorded history of a schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetAllUpcomingRecordings(ArgusTV.DataContracts.UpcomingRecordingsFilter,System.Boolean)">
+            <summary>
+            Get all upcoming recordings.
+            </summary>
+            <param name="filter">Set filter to retrieve recordings and/or cancelled recordings.</param>
+            <param name="includeActive">Set to true to include upcoming recordings that are currently being recorded.</param>
+            <returns>An array with zero or more upcoming recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetNextUpcomingRecording(System.Boolean)">
+            <summary>
+            Get the first upcoming recording that's not cancelled or unallocated.
+            </summary>
+            <param name="includeActive">Set to true to include upcoming recordings that are currently being recorded.</param>
+            <returns>Null or an upcoming (or active) recording.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetUpcomingRecordings(System.Guid,System.Boolean)">
+            <summary>
+            Get upcoming recordings for a specific schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+            <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
+            <returns>An array with zero or more upcoming recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetActiveRecordings">
+            <summary>
+            Get the currently active recordings.
+            </summary>
+            <returns>An array with zero or more active recordings.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.IsRecordingPendingOrActive(ArgusTV.DataContracts.UpcomingRecording)">
+            <summary>
+            Check if a recording has started or is pending.
+            </summary>
+            <param name="upcomingRecording">The recording to check.</param>
+            <returns>True if the recording has started (or is pending), false if it has not.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.AbortActiveRecording(ArgusTV.DataContracts.ActiveRecording)">
+            <summary>
+            Abort an active recording.
+            </summary>
+            <param name="activeRecording">The active recording to abort.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.ImportRecording(ArgusTV.DataContracts.Recording)">
+            <summary>
+            Import a new recording into the system. A new RecordingId will be auto-generated,
+            so this can be left Guid.Empty. If ScheduleId and ChannelId are not known, you may
+            generate your own (new unique) Guid and pass that in.
+            </summary>
+            <param name="recording">The recording to import.</param>
+            <returns>True if the recording was imported succesfully, false if the recording filename was already imported.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.ChangeRecordingFile(System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Change the recording filename for an existing recording. Can be used after moving or transcoding a file.
+            </summary>
+            <param name="recordingFileName">The full path of the current recording file (UNC).</param>
+            <param name="newRecordingFileName">The full path of the new recording file to use (UNC).</param>
+            <param name="newRecordingStartTime">The new recording start-time (in case of trimming), or null to keep the existing time.</param>
+            <param name="newRecordingStopTime">The new recording stop-time (in case of trimming), or null to keep the existing time.</param>
+            <returns>True if the recording was found and modified succesfully, false otherwise.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.RunProcessingCommandOnRecording(System.Guid,System.Guid,System.DateTime)">
+            <summary>
+            Schedule a processing command to run on a recording.
+            </summary>
+            <param name="recordingId">The unique ID of the recording.</param>
+            <param name="processingCommandId">The unique ID of the processing command.</param>
+            <param name="runAtTime">The time and date at which to run the command.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetRecordingThumbnail(System.Guid,System.Int32,System.Int32,System.Nullable{System.Int32},System.DateTime)">
+            <summary>
+            Get a resized recording thumbnail, if newer than the provided timestamp. The aspect ratio of the
+            original thumbnail is preserved so the returned image will be potentially either smaller than
+            the requested size, or centered on a background.  If both width and height are set to 0, the full
+            size thumbnail will be returned.
+            </summary>
+            <param name="recordingId"></param>
+            <param name="width">The requested width, 0 to get the width according to the aspect.</param>
+            <param name="height">The requested height, 0 to get the height according to the aspect.</param>
+            <param name="argbBackground">The optional RGB color of the background, null to return the scaled image as is.</param>
+            <param name="modifiedAfterTime">Only return a thumbnail if it is newer than the given timestamp.</param>
+            <returns>A byte array containing the bytes of a JPG of the resized thumbnail, an empty array if no newer thumbnail was found or null if no thumbnail was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.StartRecordingStream(System.String)">
+            <summary>
+            Start RTSP streaming of the given recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <returns>The RTSP url of the recording stream.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.StopRecordingStream(System.String)">
+            <summary>
+            Stop RTSP streaming of the given recording.
+            </summary>
+            <param name="rtspUrl">The RTSP url of the recording stream.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.TuneLiveStream(ArgusTV.DataContracts.Channel,ArgusTV.DataContracts.LiveStream@)">
+            <summary>
+            Tune to a channel, and get a live RTSP stream to that channel.
+            </summary>
+            <param name="channel">The channel to tune to.</param>
+            <param name="liveStream">Reference to a live stream (RTSP) that is either existing or null for a new one.</param>
+            <returns>A LiveStreamResult value to indicate success or failure.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.StopLiveStream(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Stop the live stream.
+            </summary>
+            <param name="liveStream">The live stream (RTSP) of the stream to stop.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetLiveStreams">
+            <summary>
+            Get all live streams.
+            </summary>
+            <returns>An array of zero or more live streams.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.KeepLiveStreamAlive(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder we are still showing this stream and to keep it alive. Call this every 30 seconds or so.
+            </summary>
+            <param name="liveStream">The live stream (RTSP) that is stil in use.</param>
+            <returns>True if the live stream is still running, false otherwise.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetLiveStreamTuningDetails(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder for the give live stream's tuning details (if possible).
+            </summary>
+            <param name="liveStream">The active live stream.</param>
+            <returns>The service tuning details, or null if none are available.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetLiveStreamByRtspUrl(System.String)">
+            <summary>
+            Get the live stream for a given RTSP url.
+            </summary>
+            <param name="rtspUrl">The RTSP url for which to find the live stream.</param>
+            <returns>The corresponding live stream.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetChannelsLiveState(ArgusTV.DataContracts.Channel[],ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Get the live tuning state of one or more channels.
+            </summary>
+            <param name="channels">The channels to get the current state from.</param>
+            <param name="liveStream">The live stream you want to be ignored (since it's yours), or null.</param>
+            <returns>Null, or an array with the respective live state for each of the given channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.HasTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder whether the given live stream has teletext.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <returns>True if teletext is present.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.StartGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder to start grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.StopGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder to stop grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.IsGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder whether it is grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <returns>True if the recorder is grabbing teletext.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetTeletextPage(ArgusTV.DataContracts.LiveStream,System.Int32,System.Int32)">
+            <summary>
+            Request a teletext page/subpage from the recorder for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <param name="pageNumber">The teletext page number</param>
+            <param name="subPageNumber">The teletext subpage number</param>
+            <returns>The requested teletext page, or null if the page was not ready yet.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ControlServiceAgent.GetTeletextPageImage(ArgusTV.DataContracts.LiveStream,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean)">
+            <summary>
+            Request a teletext page/subpage from the recorder for the given live stream, as an image. Note that the page
+            may contain transparent parts even if 'useTransparentBackground' is set to false (e.g. subtitle or newsflash page).
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <param name="pageNumber">The teletext page number</param>
+            <param name="subPageNumber">The teletext subpage number</param>
+            <param name="imageWidth">The width of the teletext image</param>
+            <param name="imageHeight">The height of the teletext image</param>
+            <param name="useTransparentBackground">Use a transparent background instead of black.</param>
+            <param name="showHidden">Show the hidden teletext information.</param>
+            <returns>The requested teletext page in form of an image, or null if the page was not ready yet.</returns>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.LogServiceAgent">
+            <summary>
+            High-level logging service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.LogMessage(System.String,ArgusTV.DataContracts.LogSeverity,System.String)">
+            <summary>
+            Log a message.
+            </summary>
+            <param name="module">The name of the module that is logging the message.</param>
+            <param name="logSeverity">The severity of the message.</param>
+            <param name="message">The message text.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.GetLogEntriesByModule(System.String,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries for a certain module.
+            </summary>
+            <param name="module">The name of the module.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns>An array containing zero or more log message.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.GetLogEntriesBySeverity(ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries of a given severity.
+            </summary>
+            <param name="severity">The severity of the messages.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns>An array containing zero or more log message.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.GetLogEntriesByModuleAndSeverity(System.String,ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries for a certain module and with a given severity.
+            </summary>
+            <param name="module">The name of the module.</param>
+            <param name="severity">The severity of the messages.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.GetAllModules">
+            <summary>
+            Get all available modules currently in the log.
+            </summary>
+            <returns>An array containing zero or more module names.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.LogServiceAgent.SendTestMail">
+            <summary>
+            Send a test-mail using the current SMTP settings.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ServerSettings">
+            <summary>
+            Settings to locate the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServerSettings.DefaultTcpPort">
+            <summary>
+            The default TPC port.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServerSettings.DefaultHttpsPort">
+            <summary>
+            The default HTTPS port.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServerSettings.DefaultHttpPort">
+            <summary>
+            The default HTTP port.
+            </summary>
+        </member>
+        <member name="F:ArgusTV.ServiceAgents.ServerSettings.DefaultBinaryHttpsPort">
+            <summary>
+            The default binary HTTPS port.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServerSettings.#ctor">
+            <summary>
+            Default settings constructor.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServerSettings.Clone">
+            <summary>
+            Clone the server settings.
+            </summary>
+            <returns>A new server settings instance.</returns>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.Transport">
+            <summary>
+            The service transport protocol to use.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.ServerName">
+            <summary>
+            The server IP or name where the ARGUS TV services are located.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.Port">
+            <summary>
+            The port of the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.UserName">
+            <summary>
+            The user name to use for HTTPS access to the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.Password">
+            <summary>
+            The password to use for HTTPS access to the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.WakeOnLan">
+            <summary>
+            The wake-on-lan settings.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServerSettings.ServiceUrlPrefix">
+            <summary>
+            Returns the URL prefix of the location of the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ServiceChannelFactories">
+            <summary>
+            All factories for the service channels to the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ServiceChannelFactories.Initialize(ArgusTV.ServiceAgents.ServerSettings,System.Boolean)">
+            <summary>
+            Initialize the factories for the given server settings.
+            </summary>
+            <param name="serverSettings">Where to locate the ARGUS TV services.</param>
+            <param name="throwError">If set to true an exception may be thrown, if false any errors will be swallowed.</param>
+            <returns>If throwError was false, a boolean indicating success or failure.</returns>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServiceChannelFactories.Instance">
+            <summary>
+            The factories singleton.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServiceChannelFactories.IsInitialized">
+            <summary>
+            Will be true if the channel factories have been succesfully initialized.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.ServiceAgents.ServiceChannelFactories.ServerSettings">
+            <summary>
+            The current settings used to locate the ARGUS TV services.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.GuideServiceAgent">
+            <summary>
+            Service to control/query all aspects of TV guide data.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.AddChannel(System.String,System.String,ArgusTV.DataContracts.ChannelType)">
+            <summary>
+            Add a new guide channel.
+            </summary>
+            <param name="xmltvId">The XMLTV ID of the new channel.</param>
+            <param name="name">The name of the channel.</param>
+            <param name="channelType">The channel type of the channel to add.</param>
+            <returns>The ID of the new channel.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.DeleteChannel(System.Guid)">
+            <summary>
+            Delete a guide channel.  Any channels that are linked to this guide channel will have their
+            link broken.  All guide programs in the channel will also be deleted.
+            </summary>
+            <param name="guideChannelId">The ID of the guide channel to delete.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.SaveChannel(ArgusTV.DataContracts.GuideChannel)">
+            <summary>
+            Save a modified or new guide channel.  A new guide channel is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="channel">The guide channel to save.</param>
+            <returns>The saved guide channel.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.EnsureChannel(System.String,System.String,ArgusTV.DataContracts.ChannelType)">
+            <summary>
+            Ensure a guide channel exists.
+            </summary>
+            <param name="xmltvId">The XMLTV ID of the new channel.</param>
+            <param name="name">The name of the channel.</param>
+            <param name="channelType">The channel type of the channel to ensure.</param>
+            <returns>The ID of the guide channel.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetAllChannels(ArgusTV.DataContracts.ChannelType)">
+            <summary>
+            Get all guide channels.
+            </summary>
+            <param name="channelType">The channel type of the channels to retrieve.</param>
+            <returns>An array containing zero or more guide channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetChannelByXmlTvId(System.String)">
+            <summary>
+            Get a guide channel by its XMLTV ID.
+            </summary>
+            <param name="xmlTvId">The XMLTV ID.</param>
+            <returns>The guide channel, or null if not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetChannelByName(System.String)">
+            <summary>
+            Get a guide channel by its name.
+            </summary>
+            <param name="name">The name of the channel.</param>
+            <returns>The guide channel, or null if not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.ImportProgram(ArgusTV.DataContracts.GuideProgram,ArgusTV.DataContracts.GuideSource)">
+            <summary>
+            Import a new program into the guide.
+            </summary>
+            <param name="guideProgram">The program to import.</param>
+            <param name="source">The source of the program.</param>
+            <returns>The ID of the imported program.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.ImportPrograms(ArgusTV.DataContracts.GuideProgram[],ArgusTV.DataContracts.GuideSource)">
+            <summary>
+            Import several new progams into the guide.
+            </summary>
+            <param name="guidePrograms">An array containing all programs to import.</param>
+            <param name="source">The source of the programs.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetProgramById(System.Guid)">
+            <summary>
+            Get a guide programs by its ID.
+            </summary>
+            <param name="guideProgramId">The ID of the guide program.</param>
+            <returns>The requested guide program, or null if it wasn't found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetChannelsProgramsBetween(System.Guid[],System.DateTime,System.DateTime)">
+            <summary>
+            Get all guide programs on the given channels, between the given lower and upper time.
+            </summary>
+            <param name="guideChannelIds">An array containing all guide channel IDs.</param>
+            <param name="lowerTime">Return programs that end after this time.</param>
+            <param name="upperTime">Return programs that start before this time.</param>
+            <returns>An array containing zero or more guide programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetChannelProgramsBetween(System.Guid,System.DateTime,System.DateTime)">
+            <summary>
+            Get all guide programs on the given channel, between the given lower and upper time.
+            </summary>
+            <param name="guideChannelId">The guide channel ID.</param>
+            <param name="lowerTime">Return programs that end after this time.</param>
+            <param name="upperTime">Return programs that start before this time.</param>
+            <returns>An array containing zero or more guide programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.GetAllCategories">
+            <summary>
+            Get all available categories currently in the guide.
+            </summary>
+            <returns>An array containing zero or more categories.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.DeleteOldPrograms">
+            <summary>
+            Delete old guide programs (everything before yesterday).
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.DeleteAllPrograms">
+            <summary>
+            Delete all guide programs.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.StartGuideImport">
+            <summary>
+            Notify ARGUS TV that a guide import has started. Call this before doing one or more ImportPrograms() calls.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.GuideServiceAgent.EndGuideImport">
+            <summary>
+            Notify ARGUS TV that the guide import has ended.  The NewGuideData event will be sent to all listeners.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.ArgusTVNotFoundException">
+            <summary>
+            Thrown when the ARGUS TV Scheduler service was not found.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor(System.String)">
+            <summary>
+            Constructs an exception instance with an error message.
+            </summary>
+            <param name="message">The error message.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor(System.String,System.Object[])">
+            <summary>
+            Constructs an exception instance with an error message.
+            </summary>
+            <param name="message">The error message format string.</param>
+            <param name="args">The arguments for the format string.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor(System.Exception,System.String)">
+            <summary>
+            Constructs an exception instance with an error message.
+            </summary>
+            <param name="innerException">The original exception.</param>
+            <param name="message">The error message format string.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor(System.Exception,System.String,System.Object[])">
+            <summary>
+            Constructs an exception instance with an error message.
+            </summary>
+            <param name="innerException">The original exception.</param>
+            <param name="message">The error message format string.</param>
+            <param name="args">The arguments for the format string.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.ArgusTVNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes an exception instance with serialized data.
+            </summary>
+            <param name="info">The System.Runtime.Serialization.SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The System.Runtime.Serialization.StreamingContext that contains contextual information about the source or destination.</param>
+        </member>
+        <member name="T:ArgusTV.ServiceAgents.SchedulerServiceAgent">
+            <summary>
+            Service to control/query all aspects of schedules.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.#ctor">
+            <summary>
+            Constructs a channel to the service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllChannelGroups(ArgusTV.DataContracts.ChannelType,System.Boolean)">
+            <summary>
+            Get all channel groups.
+            </summary>
+            <param name="channelType">The channel type of the channels in the group.</param>
+            <param name="visibleOnly">Set to true to only receive groups that are marked visible.</param>
+            <returns>An array containing zero or more channel groups.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllChannels(ArgusTV.DataContracts.ChannelType,System.Boolean)">
+            <summary>
+            Get all channels.
+            </summary>
+            <param name="channelType">The channel type of the channels to retrieve.</param>
+            <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
+            <returns>An array containing zero or more channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelById(System.Guid)">
+            <summary>
+            Get a channel by its ID.
+            </summary>
+            <param name="channelId">The ID of the channel.</param>
+            <returns>The channel, or null if not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelByDisplayName(ArgusTV.DataContracts.ChannelType,System.String)">
+            <summary>
+            Get a channel by its name.
+            </summary>
+            <param name="channelType">The channel type of the channel to retrieve.</param>
+            <param name="displayName">The name of the channel.</param>
+            <returns>The channel, or null if not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelByLogicalChannelNumber(ArgusTV.DataContracts.ChannelType,System.Int32)">
+            <summary>
+            Get a channel by its LCN.
+            </summary>
+            <param name="channelType">The channel type of the channel to retrieve.</param>
+            <param name="logicalChannelNumber">The logical channel number of the channel.</param>
+            <returns>The channel, or null if not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelsInGroup(System.Guid,System.Boolean)">
+            <summary>
+            Get all channels in a given group.
+            </summary>
+            <param name="channelGroupId">The ID of the channel group.</param>
+            <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
+            <returns>An array containing zero or more channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelsForGuideChannel(System.Guid)">
+            <summary>
+            Get all channels that are attached to a guide channel.
+            </summary>
+            <param name="guideChannelId">The ID of the guide channel.</param>
+            <returns>An array containing zero or more channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.EnsureChannel(ArgusTV.DataContracts.ChannelType,System.String,System.String)">
+            <summary>
+            Make sure a channel exist and if it doesn't, add it and automatically link it to the
+            guide channel with the same displayname (if found).
+            </summary>
+            <param name="channelType">The type of the channel.</param>
+            <param name="displayName">The display name of the channel.</param>
+            <param name="channelGroupName">Null, or a group name to place a newly created channel in.</param>
+            <returns>The guid of the existing or new channel.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.EnsureDefaultChannel(System.Guid,ArgusTV.DataContracts.ChannelType,System.String,System.String)">
+            <summary>
+            Make sure the default channel for the given guide channel exists.  So we get a
+            default one-to-one mapping.
+            </summary>
+            <param name="guideChannelId">The ID of the guide channel.</param>
+            <param name="channelType">The type of the channel.</param>
+            <param name="displayName">The display name of the guide channel.</param>
+            <param name="channelGroupName">Null, or a group name to place a newly created channel in.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.AttachChannelToGuide(System.Guid,System.Guid)">
+            <summary>
+            Attach a channel to a guide channel.
+            </summary>
+            <param name="channelId">The ID of the channel.</param>
+            <param name="guideChannelId">The ID of the guide channel.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteChannelGroup(System.Guid,System.Boolean,System.Boolean)">
+            <summary>
+            Delete a channel group.
+            </summary>
+            <param name="channelGroupId">The ID of the group to delete.</param>
+            <param name="deleteOrphanedChannels">Also delete channels in the group that are not in any other group.</param>
+            <param name="deleteOrphanedGuideChannels">Also delete the guide channels that are not used by any other channels.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteChannel(System.Guid,System.Boolean)">
+            <summary>
+            Delete a channel.
+            </summary>
+            <param name="channelId">The ID of the channel to delete.</param>
+            <param name="deleteOrphanedGuideChannel">Also delete the guide channel if it is not used by any other channel.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveChannel(ArgusTV.DataContracts.Channel)">
+            <summary>
+            Save a modified or new channel.  A new channel is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="channel">The channel to save.</param>
+            <returns>The saved channel.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveChannels(ArgusTV.DataContracts.Channel[])">
+            <summary>
+            Save several modified or new channels.  New channels are recognized by a Guid.Empty ID.
+            </summary>
+            <param name="channels">An array of channels to save.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveChannelGroup(ArgusTV.DataContracts.ChannelGroup)">
+            <summary>
+            Save a modified or new channel group.  A new channel group is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="channelGroup">The channel group to save.</param>
+            <returns>The saved channel group.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelGroupMembers(System.Guid)">
+            <summary>
+            Get channels members of a group.  The order of the channels in the array is the sequence.
+            </summary>
+            <param name="channelGroupId">The ID of the parent channel group.</param>
+            <returns>An array of channels that are in the group.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SetChannelGroupMembers(System.Guid,System.Guid[])">
+            <summary>
+            Set channels members of a group.  The order of the channels in the array is saved as the sequence.
+            </summary>
+            <param name="channelGroupId">The ID of the parent channel group.</param>
+            <param name="channelIds">An array of channels that are in the group.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelGroupsForChannel(System.Guid,System.Boolean)">
+            <summary>
+            Get all the groups a channel belongs to.
+            </summary>
+            <param name="channelId">The ID of the channel.</param>
+            <param name="visibleOnly">Set to true to only receive groups that are marked visible.</param>
+            <returns>An array containing the zero or more groups the given channel belongs to.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetChannelLogo(System.Guid,System.Int32,System.Int32,System.Boolean,System.DateTime)">
+            <summary>
+            Get a resized channel logo, if newer than the provided timestamp. The aspect ratio of the
+            original image is preserved so the returned image is potentially either smaller than
+            the requested size, or centered on a transparent background.
+            </summary>
+            <param name="channelId">The ID of the channel.</param>
+            <param name="width">The requested width.</param>
+            <param name="height">The requested height.</param>
+            <param name="useTransparentBackground">Use a transparent background when preserving the aspect ratio.</param>
+            <param name="modifiedAfterTime">Only return a logo if it is newer than the given timestamp.</param>
+            <returns>A byte array containing the bytes of a (transparent) PNG of the resized logo, an empty array if no newer logo was found or null if no logo was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.CreateNewSchedule(ArgusTV.DataContracts.ChannelType,ArgusTV.DataContracts.ScheduleType)">
+            <summary>
+            Create a new schedule. All default processing commands will be added to the new schedule.
+            </summary>
+            <param name="channelType">The channel-type of this schedule.</param>
+            <param name="type">The type of the schedule.</param>
+            <returns>A new schedule without rules (note that you still need to call SaveSchedule() to save it).</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.AddSchedule(ArgusTV.DataContracts.ChannelType,System.String,ArgusTV.DataContracts.ScheduleType,ArgusTV.DataContracts.SchedulePriority,ArgusTV.DataContracts.ScheduleRules,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Add a new schedule.
+            </summary>
+            <param name="channelType">The channel-type of this schedule.</param>
+            <param name="name">The name of the schedule.</param>
+            <param name="type">The type of the schedule.</param>
+            <param name="priority">The schedule priority.</param>
+            <param name="rules">All the rules of the schedule.</param>
+            <param name="preRecordSeconds">Number of seconds to pre-record, or null for the default.</param>
+            <param name="postRecordSeconds">Number of seconds to post-record, or null for the default.</param>
+            <returns>The saved schedule.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllSchedules(ArgusTV.DataContracts.ChannelType,ArgusTV.DataContracts.ScheduleType,System.Boolean)">
+            <summary>
+            Get all schedule for the given type.
+            </summary>
+            <param name="channelType">The channel-type of the schedules.</param>
+            <param name="type">The type of the schedules.</param>
+            <param name="deleteObsoleteSchedules">Automatically delete obsolete schedules before returning the list.</param>
+            <returns>An array with zero or more schedules.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetScheduleById(System.Guid)">
+            <summary>
+            Get a schedule by its ID.
+            </summary>
+            <param name="scheduleId">The ID of the schedule.</param>
+            <returns>The requested schedule, or null if it is not found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveSchedule(ArgusTV.DataContracts.Schedule)">
+            <summary>
+            Save a new or modified schedule.  A new schedule is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="schedule">The schedule to save.</param>
+            <returns>The saved schedule.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteSchedule(System.Guid)">
+            <summary>
+            Delete a schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule to delete.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteSchedules(System.Guid[])">
+            <summary>
+            Delete schedules.
+            </summary>
+            <param name="scheduleIds">The IDs of the schedules to delete.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveScheduleSummary(ArgusTV.DataContracts.ScheduleSummary)">
+            <summary>
+            Save a modified schedule summary.
+            </summary>
+            <param name="scheduleSummary">The schedule summary to save.</param>
+            <returns>The saved schedule.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetNextUpcomingProgram(ArgusTV.DataContracts.ScheduleType)">
+            <summary>
+            Get the first upcoming program for the given type.
+            </summary>
+            <param name="type">The schedule type.</param>
+            <returns>An upcoming program.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllUpcomingPrograms(ArgusTV.DataContracts.ScheduleType,System.Boolean)">
+            <summary>
+            Get all upcoming programs for the given type.
+            </summary>
+            <param name="type">The schedule type.</param>
+            <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
+            <returns>An array with zero or more upcoming programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllUpcomingProgramsUntil(ArgusTV.DataContracts.ScheduleType,System.DateTime,System.Boolean)">
+            <summary>
+            Get all upcoming programs for the given type, with a start-time before the given date and time.
+            </summary>
+            <param name="type">The schedule type.</param>
+            <param name="untilDateTime">Only return programs with a start-time before this time.</param>
+            <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
+            <returns>An array with zero or more upcoming programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetUpcomingGuidePrograms(ArgusTV.DataContracts.ScheduleType,System.Boolean)">
+            <summary>
+            Get all upcoming guide programs for the given type.
+            </summary>
+            <param name="type">The schedule type.</param>
+            <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
+            <returns>An array with zero or more upcoming guide programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetUpcomingPrograms(ArgusTV.DataContracts.Schedule,System.Boolean)">
+            <summary>
+            Get all upcoming programs for the given schedule.
+            </summary>
+            <param name="schedule">The schedule.</param>
+            <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
+            <returns>An array with zero or more upcoming programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.CancelUpcomingProgram(System.Guid,System.Nullable{System.Guid},System.Guid,System.DateTime)">
+            <summary>
+            Cancel the specified program for the given schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule</param>
+            <param name="guideProgramId">The ID of the guide program to cancel.</param>
+            <param name="channelId">The ID of the channel of the program.</param>
+            <param name="startTime">The start-time of the program to cancel.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.UncancelUpcomingProgram(System.Guid,System.Nullable{System.Guid},System.Guid,System.DateTime)">
+            <summary>
+            Un-cancel the specified program for the given schedule.
+            </summary>
+            <param name="scheduleId">The ID of the schedule</param>
+            <param name="guideProgramId">The ID of the guide program to cancel.</param>
+            <param name="channelId">The ID of the channel of the program.</param>
+            <param name="startTime">The start-time of the program to cancel.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SetUpcomingProgramPriority(System.Guid,System.DateTime,System.Nullable{ArgusTV.DataContracts.UpcomingProgramPriority})">
+            <summary>
+            Set a priority for a specific upcoming program.
+            </summary>
+            <param name="upcomingProgramId">The ID of the upcoming program.</param>
+            <param name="startTime">The upcoming program's start time.</param>
+            <param name="priority">The priority to use, or null to use the schedule's priority again.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SetUpcomingProgramPreRecord(System.Guid,System.DateTime,System.Nullable{System.Int32})">
+            <summary>
+            Set the pre-record time for a specific upcoming program.
+            </summary>
+            <param name="upcomingProgramId">The ID of the upcoming program.</param>
+            <param name="startTime">The upcoming program's start time.</param>
+            <param name="preRecordSeconds">The number of pre-record seconds to use, or null to use the schedule's pre-record setting again.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SetUpcomingProgramPostRecord(System.Guid,System.DateTime,System.Nullable{System.Int32})">
+            <summary>
+            Set the post-record time for a specific upcoming program.
+            </summary>
+            <param name="upcomingProgramId">The ID of the upcoming program.</param>
+            <param name="startTime">The upcoming program's start time.</param>
+            <param name="postRecordSeconds">The number of post-record seconds to use, or null to use the schedule's post-record setting again.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetTitlesByPartialTitle(System.Nullable{ArgusTV.DataContracts.ChannelType},System.String,System.Boolean)">
+            <summary>
+            Get all program titles that start with, or have a word that starts with the given text.
+            </summary>
+            <param name="channelType">If not null, only search programs of this type.</param>
+            <param name="partialTitle">The text to search for.</param>
+            <param name="includeProgramsInPast">Set to true if you want to include programs that have already ended.</param>
+            <returns>An array containing zero or more program titles, ordered alphabetically.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SearchGuideByPartialTitle(System.Nullable{ArgusTV.DataContracts.ChannelType},System.String,System.Boolean)">
+            <summary>
+            Search guide for programs whose title starts with, or has a word that starts with the given text.
+            </summary>
+            <param name="channelType">If not null, only search programs of this type.</param>
+            <param name="partialTitle">The text to search for.</param>
+            <param name="includeProgramsInPast">Set to true if you want to include programs that have already ended.</param>
+            <returns>An array containing zero or more channel programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SearchGuideByTitle(System.Nullable{ArgusTV.DataContracts.ChannelType},System.String,System.Boolean)">
+            <summary>
+            Search guide for programs whose title equals the given text.
+            </summary>
+            <param name="channelType">If not null, only search programs of this type.</param>
+            <param name="title">The exact title to search for.</param>
+            <param name="includeProgramsInPast">Set to true if you want to include programs that have already ended.</param>
+            <returns>An array containing zero or more channel programs.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetCurrentAndNextForChannel(System.Guid,System.Boolean,ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Get the current and next program on the given channel.
+            </summary>
+            <param name="channelId">The channel ID.</param>
+            <param name="includeLiveState">Set to true to receive the live state of all channels.</param>
+            <param name="liveStream">If you are including the live state, the live stream you want to be ignored (since it's yours), or null.</param>
+            <returns>A CurrentAndNextProgram item.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetCurrentAndNextForChannels(System.Guid[],System.Boolean,System.Boolean,ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Get the current and next program on the given channels.
+            </summary>
+            <param name="channelIds">The channel IDs.</param>
+            <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
+            <param name="includeLiveState">Set to true to receive the live state of all channels.</param>
+            <param name="liveStream">If you are including the live state, the live stream you want to be ignored (since it's yours), or null.</param>
+            <returns>An array containing zero or more CurrentAndNextProgram items.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetCurrentAndNextForGroup(System.Guid,System.Boolean,System.Boolean,ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Get the current and next program on all the channels in the given group.
+            </summary>
+            <param name="channelGroupId">The ID of the channel group.</param>
+            <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
+            <param name="includeLiveState">Set to true to receive the live state of all channels.</param>
+            <param name="liveStream">If you are including the live state, the live stream you want to be ignored (since it's yours), or null.</param>
+            <returns>An array containing zero or more CurrentAndNextProgram items.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllProcessingCommands">
+            <summary>
+            Get all processing commands.
+            </summary>
+            <returns>An array containing zero or more processing commands.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveProcessingCommand(ArgusTV.DataContracts.ProcessingCommand)">
+            <summary>
+            Save a modified or new processing command.  A new processing command is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="processingCommand">The processing command to save.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteProcessingCommand(System.Guid)">
+            <summary>
+            Delete a processing command.
+            </summary>
+            <param name="processingCommandId">The ID of the processing command to delete.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.GetAllRecordingFileFormats">
+            <summary>
+            Get all recording formats.
+            </summary>
+            <returns>An array containing zero or more recording formats.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.SaveRecordingFileFormat(ArgusTV.DataContracts.RecordingFileFormat)">
+            <summary>
+            Save a modified or new recording format.  A new recording format is recognized by a Guid.Empty ID.
+            </summary>
+            <param name="recordingFileFormat">The recording format to save.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.DeleteRecordingFileFormat(System.Guid)">
+            <summary>
+            Delete a recording format.
+            </summary>
+            <param name="recordingFileFormatId">The ID of the recording format to delete.</param>
+        </member>
+    </members>
+</doc>
