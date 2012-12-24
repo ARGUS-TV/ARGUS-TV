@@ -17,12 +17,38 @@
     </control>
     <import>ARGUS_common.window.xml</import>
     <import>common.time.xml</import>
+
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>95</posY>
+      <width>1280</width>
+      <label>752</label>
+      <font>font16</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>string.equals(#selecteditem,)</visible>
+    </control>
+
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    
     <control>
       <type>group</type>
       <description>group element</description>
       <id>24</id>
       <posX>71</posX>
-      <posY>121</posY>
+      <posY>170</posY>
       <layout>StackLayout</layout>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -104,81 +130,95 @@
           <left>0</left>
         </padding>
       </mpe>
+      
       <control>
         <description>search results listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
-        <posY>115</posY>
-        <height>500</height>
         <onleft>2</onleft>
         <onright>2</onright>
-        <textXOff>88</textXOff>
-        <textYOff>2</textYOff>
-        <textXOff2>743</textXOff2>
-        <textYOff2>36</textYOff2>
-        <textXOff3>177</textXOff3>
-        <textYOff3>36</textYOff3>
-        <IconXOff>21</IconXOff>
-        <PinIconXOff>110</PinIconXOff>
-        <PinIconYOff>15</PinIconYOff>
-        <spinPosX>1031</spinPosX>
-        <itemWidth>74</itemWidth>
-        <itemHeight>52</itemHeight>
-        <!--       <textureFocus>recording_background_focus.png</textureFocus>
-      <textureNoFocus>recording_background_nofocus.png</textureNoFocus> -->
-        <spaceBetweenItems>8</spaceBetweenItems>
-        <textureHeight>62</textureHeight>
-        <!--       <textureWidth>138</textureWidth> -->
-        <keepaspectratio>no</keepaspectratio>
-        <font2>font10</font2>
-        <font3>font10</font3>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="250">WindowClose</animation>
+        <width>760</width>
+        <posX>420</posX>
+        <textXOff2>675</textXOff2>
+        <PinIconXOff>700</PinIconXOff>
+        <height>300</height>
       </control>
+
       <control>
+        <description>Seperator</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>80</posX>
+        <posY>425</posY>
+        <width>1140</width>
+        <height>1</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>60ffffff</colordiffuse>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>80</posX>
+        <posY>440</posY>
+        <width>60</width>
+        <height>60</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <centered>yes</centered>
+        <zoom>no</zoom>
+        <texture>#TV.Search.thumb</texture>
+      </control>
+
+      <control>
+        <description>channel</description>
+        <id>0</id>
         <type>fadelabel</type>
-        <description>Current program title</description>
-        <id>13</id>
-        <posX>1422</posX>
-        <posY>750</posY>
-        <label>#TV.Search.Title</label>
-        <disabledcolor>ff808080</disabledcolor>
-        <textcolor>00b2d4f5</textcolor>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Current program time</description>
-        <id>14</id>
-        <posX>462</posX>
-        <posY>575</posY>
-        <align>right</align>
-        <label>#TV.Search.Time</label>
-        <textcolor>ffb2d4f5</textcolor>
-        <visible>false</visible>
-      </control>
-      <control>
-        <type>textboxscrollup</type>
-        <description>Description1</description>
-        <id>15</id>
-        <posX>471</posX>
-        <posY>535</posY>
-        <width>741</width>
-        <height>125</height>
-        <colordiffuse>ffffffff</colordiffuse>
+        <posX>160</posX>
+        <posY>440</posY>
+        <width>1060</width>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>#TV.Search.Channel  |  #TV.Search.Time  |  #TV.Search.Genre</label>
         <font>font12</font>
-        <label>#TV.Search.Description</label>
-        <textcolor>ffb2d4f5</textcolor>
       </control>
-      <!--          <control>
-				<type>label</type>
-				<description>genre</description>
-				<id>17</id>
-				<posX>966</posX>
-				<posY>613</posY>
-				<label>#TV.Search.Genre</label>
-				<align>right</align>
-				<textcolor>ffb2d4f5</textcolor>
-         </control> -->
+
+      <control>
+        <description>Program Title</description>
+        <id>14</id>
+        <type>fadelabel</type>
+        <posX>160</posX>
+        <posY>465</posY>
+        <width>1060</width>
+        <label>#TV.Search.Title</label>
+        <align>left</align>
+        <font>font14</font>
+        <textcolor>ivory</textcolor>
+      </control>
+
+      <control>
+        <description>Current program Genre</description>
+        <type>fadelabel</type>
+        <id>13</id>
+        <posX>2552</posX>
+        <posY>566</posY>
+        <width>680</width>
+        <label>#TV.Search.Genre</label>
+        <font>font10</font>
+        <textcolor>ff6FAFE1</textcolor>
+        <visible>!string.equals(#TV.Search.Genre,-)</visible>
+      </control>
+
+      <control>
+        <description>Description1</description>
+        <type>textboxscrollup</type>
+        <id>15</id>
+        <posX>160</posX>
+        <posY>505</posY>
+        <width>1060</width>
+        <height>105</height>
+        <label>#TV.Search.Description</label>
+        <font>font11</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      
     </control>
   </controls>
 </window>

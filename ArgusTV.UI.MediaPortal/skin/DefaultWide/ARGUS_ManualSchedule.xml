@@ -241,7 +241,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>11</onleft>
       <onup>16</onup>
       <ondown>11</ondown>
@@ -258,7 +257,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>3</onleft>
       <onup>17</onup>
       <ondown>11</ondown>
@@ -275,7 +273,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>4</onleft>
       <onup>18</onup>
       <ondown>11</ondown>
@@ -292,7 +289,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>5</onleft>
       <onup></onup>
       <ondown>11</ondown>
@@ -309,7 +305,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>6</onleft>
       <onup></onup>
       <ondown>11</ondown>
@@ -326,7 +321,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>7</onleft>
       <onup></onup>
       <ondown>11</ondown>
@@ -343,7 +337,6 @@
       <font>font12</font>
       <textcolor>White</textcolor>
       <colordiffuse>White</colordiffuse>
-      <!--<disabledcolor>#60ffffff</disabledcolor>-->
       <onleft>8</onleft>
       <onup></onup>
       <ondown>11</ondown>
@@ -354,36 +347,14 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>26</id>
-      <posY>470</posY>
+      <posY>471</posY>
       <width>760</width>
+      <posX>480</posX>
+      <textXOff2>675</textXOff2>
+      <PinIconXOff>700</PinIconXOff>
       <height>260</height>
-      <textXOff>88</textXOff>
-      <textYOff>2</textYOff>
-      <textXOff2>743</textXOff2>
-      <textYOff2>36</textYOff2>
-      <textXOff3>177</textXOff3>
-      <textYOff3>36</textYOff3>
-      <IconXOff>21</IconXOff>
-      <PinIconXOff>110</PinIconXOff>
-      <PinIconYOff>15</PinIconYOff>
-      <spinPosY>675</spinPosY>
-      <spinPosX>1031</spinPosX>
-      <itemWidth>74</itemWidth>
-      <itemHeight>52</itemHeight>
-      <!--       <textureFocus>recording_background_focus.png</textureFocus>
-      <textureNoFocus>recording_background_nofocus.png</textureNoFocus> -->
-      <spaceBetweenItems>8</spaceBetweenItems>
-      <textureHeight>62</textureHeight>
-      <!--       <textureWidth>138</textureWidth> -->
-      <keepaspectratio>no</keepaspectratio>
-      <font2>font10</font2>
-      <font3>font10</font3>
       <onleft>11</onleft>
       <onright>11</onright>
-      <onup></onup>
-      <ondown></ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
     <control>
@@ -436,8 +407,6 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>
