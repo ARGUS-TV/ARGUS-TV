@@ -88,12 +88,14 @@
 			<description>guide source</description>
 			<type>button</type>
 			<id>5</id>
+			<ondown>4</ondown>
 		</control>
 
 		<control Style="SettingsButtonMedium">
 			<description>Delete all guide data</description>
 			<type>button</type>
 			<id>4</id>
+			<onup>5</onup>
 		</control>
 		
 		<control>
@@ -126,7 +128,6 @@
 			<description>show logs</description>
 			<type>button</type>
 			<id>2</id>
-			<onup>12</onup>
 			<ondown>3</ondown>
 		</control>
 		
@@ -134,8 +135,7 @@
 			<description>restore</description>
 			<type>button</type>
 			<id>3</id>
-			<onup>2</onup>
-			<ondown>3</ondown>
+			<ondown>8</ondown>
 		</control>
 	</control>
 	
@@ -161,20 +161,21 @@
 		<spinvalign>bottom</spinvalign>
 		<spinWidth>16</spinWidth>
 		<spinHeight>16</spinHeight>
-		<spinXOff>10</spinXOff>
-		<spinYOff>10</spinYOff>
+		<spinXOff>20</spinXOff>
+		<spinYOff>15</spinYOff>
 		<spinColor>FFFFFFFF</spinColor>
 		<spintype>text</spintype>
 		<animation effect="fade" time="150">WindowOpen</animation>
 		<animation effect="fade" time="150">WindowClose</animation>
+		<onup>3</onup>
 	</control>
 
 	<control Style="SettingsButtonMedium">
-		<description>wol timeout</description>
+		<description>post record</description>
 		<type>spinbutton</type>
 		<id>9</id>
 		<posX>655</posX>
-		<posY>391</posY>
+		<posY>387</posY>
 		<showrange>no</showrange>
 		<reverse>yes</reverse>
 		<spinalign>right</spinalign>
@@ -191,8 +192,8 @@
 		<spinvalign>bottom</spinvalign>
 		<spinWidth>16</spinWidth>
 		<spinHeight>16</spinHeight>
-		<spinXOff>10</spinXOff>
-		<spinYOff>10</spinYOff>
+		<spinXOff>20</spinXOff>
+		<spinYOff>15</spinYOff>
 		<spinColor>FFFFFFFF</spinColor>
 		<spintype>text</spintype>
 		<animation effect="fade" time="150">WindowOpen</animation>
@@ -203,8 +204,8 @@
 		<description>free disk space</description>
 		<type>spinbutton</type>
 		<id>17</id>
-		<posX>1223</posX>
-		<posY>391</posY>
+		<posX>1213</posX>
+		<posY>387</posY>
 		<showrange>no</showrange>
 		<reverse>yes</reverse>
 		<spinalign>right</spinalign>
@@ -221,8 +222,8 @@
 		<spinvalign>bottom</spinvalign>
 		<spinWidth>16</spinWidth>
 		<spinHeight>16</spinHeight>
-		<spinXOff>10</spinXOff>
-		<spinYOff>10</spinYOff>
+		<spinXOff>20</spinXOff>
+		<spinYOff>15</spinYOff>
 		<spinColor>FFFFFFFF</spinColor>
 		<spintype>text</spintype>
 		<animation effect="fade" time="150">WindowOpen</animation>
@@ -233,8 +234,8 @@
 		<description>min free disk space</description>
 		<type>spinbutton</type>
 		<id>18</id>
-		<posX>1223</posX>
-		<posY>461</posY>
+		<posX>1213</posX>
+		<posY>452</posY>
 		<showrange>no</showrange>
 		<reverse>yes</reverse>
 		<spinalign>right</spinalign>
@@ -251,8 +252,8 @@
 		<spinvalign>bottom</spinvalign>
 		<spinWidth>16</spinWidth>
 		<spinHeight>16</spinHeight>
-		<spinXOff>10</spinXOff>
-		<spinYOff>10</spinYOff>
+		<spinXOff>20</spinXOff>
+		<spinYOff>15</spinYOff>
 		<spinColor>FFFFFFFF</spinColor>
 		<spintype>text</spintype>
 		<animation effect="fade" time="150">WindowOpen</animation>
