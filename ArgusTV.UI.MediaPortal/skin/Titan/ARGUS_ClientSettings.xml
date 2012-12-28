@@ -157,7 +157,7 @@
 		<type>spinbutton</type>
 		<id>15</id>
 		<posX>655</posX>
-		<posY>667</posY>
+		<posY>646</posY>
 		<showrange>no</showrange>
 		<reverse>yes</reverse>
 		<spinalign>right</spinalign>
@@ -174,8 +174,8 @@
 		<spinvalign>bottom</spinvalign>
 		<spinWidth>16</spinWidth>
 		<spinHeight>16</spinHeight>
-		<spinXOff>10</spinXOff>
-		<spinYOff>10</spinYOff>
+		<spinXOff>20</spinXOff>
+		<spinYOff>15</spinYOff>
 		<spinColor>FFFFFFFF</spinColor>
 		<spintype>text</spintype>
 		<animation effect="fade" time="150">WindowOpen</animation>

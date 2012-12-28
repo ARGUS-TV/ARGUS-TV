@@ -84,8 +84,8 @@
 		<dimColor>ffffffff</dimColor>
 		<posX>99</posX>
 		<posY>219</posY>
-		<layout>GridLayout(2, 0, 5, 7, 1)</layout>	
-		
+		<layout>GridLayout(2, 0, 5, 7, 1)</layout>
+
 		<control>
 			<type>button</type>
 			<description>Search</description>
@@ -99,83 +99,83 @@
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 		</control>
 
-    <control>
-      <type>button</type>
-      <id>6</id>
-      <!--<onleft>2</onleft>
-      <onright>10</onright>
-      <onup>2</onup>
-      <ondown>7</ondown>-->
-      <label>search method:</label>
-      <textcolor>FF000000</textcolor>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    </control>
+		<control>
+			<type>button</type>
+			<id>6</id>
+			<!--<onleft>2</onleft>
+			<onright>10</onright>
+			<onup>2</onup>
+			<ondown>7</ondown>-->
+			<label>search method:</label>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
 
-    <control>
-      <type>sortbutton</type>
-      <id>4</id>
-      <label>620</label>
-      <!--<onleft>2</onleft>
-      <onright>2</onright>
-      <onup>3</onup>
-      <ondown>2</ondown>-->
-      <textcolor>FF000000</textcolor>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <offsetSortButtonX>260</offsetSortButtonX>
-    </control>
+		<control>
+			<type>sortbutton</type>
+			<id>4</id>
+			<label>620</label>
+			<!--<onleft>2</onleft>
+			<onright>2</onright>
+			<onup>3</onup>
+			<ondown>2</ondown>-->
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<offsetSortButtonX>260</offsetSortButtonX>
+		</control>
 
-    <control>
-      <type>button</type>
-      <id>7</id>
-      <!--<onleft>2</onleft>
-      <onright>10</onright>
-      <onup>6</onup>
-      <ondown>8</ondown>-->
-      <label>602</label>
-      <textcolor>FF000000</textcolor>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    </control>
-    
-    <control>
-      <type>button</type>
-      <id>8</id>
-      <!--<onleft>2</onleft>
-      <onright>10</onright>
-      <onup>7</onup>
-      <ondown>3</ondown>-->
-      <label>174</label>
-      <textcolor>FF000000</textcolor>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    </control>
-    
-    <control>
-      <type>button</type>
-      <id>3</id>
-      <label>192</label>
-      <!--<onleft>2</onleft>
-      <onright>2</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>-->
-      <textcolor>FF000000</textcolor>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    </control>
+		<control>
+			<type>button</type>
+			<id>7</id>
+			<!--<onleft>2</onleft>
+			<onright>10</onright>
+			<onup>6</onup>
+			<ondown>8</ondown>-->
+			<label>602</label>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
+		
+		<control>
+			<type>button</type>
+			<id>8</id>
+			<!--<onleft>2</onleft>
+			<onright>10</onright>
+			<onup>7</onup>
+			<ondown>3</ondown>-->
+			<label>174</label>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
+		
+		<control>
+			<type>button</type>
+			<id>3</id>
+			<label>192</label>
+			<!--<onleft>2</onleft>
+			<onright>2</onright>
+			<onup>2</onup>
+			<ondown>4</ondown>-->
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
 
 	</control>
 		
-	<!--            :: Listview Lines ::            -->
+	<!--						:: Listview Lines ::						-->
 
-  <control>
-  	<description>List Lines</description>
-    <type>image</type>
-    <id>1</id>
-  	<posX>1018</posX>
-  	<posY>273</posY>
-    <width>811</width>
-    <height>618</height>
-    <texture>list_lines_tv.png</texture>
-  	<animation effect="fade" time="250">WindowOpen</animation>
-  	<animation effect="fade" time="250">WindowClose</animation>
-  </control>
+	<control>
+		<description>List Lines</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>1018</posX>
+		<posY>273</posY>
+		<width>811</width>
+		<height>618</height>
+		<texture>list_lines_tv.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 
 	<control>
 		<description>listcontrol</description>
@@ -185,47 +185,46 @@
 		<posY>219</posY>
 		<height>800</height>
 		<width>943</width>
-    <onleft>2</onleft>
-    <onright>2</onright>
-    <onup>2</onup>
-    <ondown>2</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
 		<scrollOffset>1</scrollOffset>
 		<PinIconHeight>45</PinIconHeight>
 		<PinIconWidth>75</PinIconWidth>
-		<PinIconXOff>35</PinIconXOff>
+		<PinIconXOff>44</PinIconXOff>
 		<PinIconYOff>5</PinIconYOff>
 		<itemWidth>40</itemWidth>
 		<itemHeight>30</itemHeight>
 		<textureFocus>listcontrol_item_selected_tv.png</textureFocus>
 		<textureNoFocus>-</textureNoFocus>
-		<IconXOff>-2000</IconXOff>
+		<IconXOff>20</IconXOff>
 		<IconYOff>13</IconYOff>				
 		<textXOff>50</textXOff>
-    <textXOff2>914</textXOff2>
+		<textXOff2>914</textXOff2>
+		<textXOff3>-9000</textXOff3>
 		<keepaspectratio>no</keepaspectratio>
 		<spinCanFocus>no</spinCanFocus>
 		<dimColor>ffffffff</dimColor>
-    <spinPosX>1832</spinPosX>
-    <spinPosY>950</spinPosY>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>			
+		<spinPosX>1832</spinPosX>
+		<spinPosY>950</spinPosY>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>			
 	</control>
 		
 	<control>
 		<description>Current program title</description>
 		<type>fadelabel</type>
 		<id>13</id>
-	  <posX>312</posX>
-	  <posY>457</posY>
-    <width>595</width>
+		<posX>312</posX>
+		<posY>457</posY>
+		<width>595</width>
 		<font>fontB16</font>
-	  <shadowAngle>120</shadowAngle>
-	  <shadowDistance>2</shadowDistance>
-	  <shadowColor>FF000000</shadowColor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 		<label>#TV.Search.Title</label>
-    <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+		<visible>control.hasfocus(10) | control.hasfocus(11)</visible>
 	</control>
 	
 	<control>
@@ -248,15 +247,15 @@
 		<posX>-2000</posX>
 		<posY>514</posY>
 		<width>595</width>
-	  <font>TitanLight14</font>
-	  <textcolor>FF00b7ff</textcolor>
-	  <shadowAngle>120</shadowAngle>
-	  <shadowDistance>2</shadowDistance>
-	  <shadowColor>FF000000</shadowColor>
-	  <animation effect="fade" time="250">WindowOpen</animation>
+		<font>TitanLight14</font>
+		<textcolor>FF00b7ff</textcolor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
+		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 		<label>#TV.Search.Time</label>
-    <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+		<visible>control.hasfocus(10) | control.hasfocus(11)</visible>
 	</control>
 	
 	<control>
@@ -266,15 +265,15 @@
 		<posX>312</posX>
 		<posY>514</posY>
 		<width>595</width>
-	  <font>TitanLight14</font>
-	  <textcolor>FF00b7ff</textcolor>
-	  <shadowAngle>120</shadowAngle>
-	  <shadowDistance>2</shadowDistance>
-	  <shadowColor>FF000000</shadowColor>
-	  <animation effect="fade" time="250">WindowOpen</animation>
+		<font>TitanLight14</font>
+		<textcolor>FF00b7ff</textcolor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
+		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 		<label>#TV.Search.Channel / #TV.Search.Time</label>
-    <visible>Control.HasThumb(60) + control.hastext(14) + control.hastext(16)</visible>
+		<visible>Control.HasThumb(60) + control.hastext(14) + control.hastext(16)</visible>
 	</control>
 	
 	<control>
@@ -285,25 +284,25 @@
 		<posY>580</posY>
 		<width>780</width>
 		<height>375</height>
-    <lineSpacing>0.92</lineSpacing>
+		<lineSpacing>0.92</lineSpacing>
 		<label>#TV.Search.Description</label>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-    <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+		<visible>control.hasfocus(10) | control.hasfocus(11)</visible>
 	</control>
 
 	<control>
 		<description>genre</description>
 		<type>label</type>
 		<id>17</id>
-		<posX>-2000</posX>
-		<posY>520</posY>
+		<posX>100</posX>
+		<posY>920</posY>
 		<label>#TV.Search.Genre</label>
-		<align>right</align>
-		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>TitanLight12</font>
+		<textcolor>FF00b7ff</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
+		<visible>control.hasfocus(10) | control.hasfocus(11)</visible>
 	</control>
 
 	<control>
