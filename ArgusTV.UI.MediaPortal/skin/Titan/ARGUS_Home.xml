@@ -252,11 +252,24 @@
 		<posX>96</posX>
 		<posY>694</posY>
 		<width>790</width>
-		<height>295</height>
+		<height>290</height>
 		<font>TitanLight12</font>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>
 		<lineSpacing>0.85</lineSpacing>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>genre</description>
+		<type>label</type>
+		<id>17</id>
+		<posX>100</posX>
+		<posY>940</posY>
+		<label>#TV.View.genre</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>

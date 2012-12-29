@@ -78,7 +78,7 @@
 		<posY>34</posY>
 		<width>61</width>
 		<height>57</height>
-		<texture>icon_tv.png</texture>
+		<texture>icon_radio.png</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
@@ -230,6 +230,19 @@
 		<height>405</height>
     <lineSpacing>0.85</lineSpacing>
 		<label>#Radio.Upcoming.Description</label>
+	</control>
+	
+	<control>
+		<description>genre</description>
+		<type>label</type>
+		<id>17</id>
+		<posX>100</posX>
+		<posY>940</posY>
+		<label>#Radio.Upcoming.Genre</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
 	<control>
