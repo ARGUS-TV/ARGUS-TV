@@ -233,6 +233,19 @@
 	</control>
 	
 	<control>
+		<description>genre</description>
+		<type>label</type>
+		<id>17</id>
+		<posX>100</posX>
+		<posY>940</posY>
+		<label>#TV.Upcoming.Genre</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
 		<id>0</id>
 		<type>image</type>
 		<posX>96</posX>

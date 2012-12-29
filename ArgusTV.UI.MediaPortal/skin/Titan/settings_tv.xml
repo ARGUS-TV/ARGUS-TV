@@ -29,7 +29,7 @@
 		<posX>655</posX>
 		<posY>321</posY>
 		<dimColor>ffffffff</dimColor>
-		<layout>GridLayout(2, 6, 7, 7, 1)</layout>
+		<layout>GridLayout(2, 0, 7, 7, 1)</layout>
 	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>
 		
@@ -87,6 +87,8 @@
 				<type>button</type>
 				<id>28</id>
 				<label>6004</label>
+	      <onleft>#defaultcontrol.onleft</onleft>
+				<ondown>30</ondown>
 			</control>
 	
 		  <!--<control Style="SettingsButtonMedium">
@@ -95,7 +97,6 @@
 				<id>31</id>
 				<label>6007</label>
 				<hyperlink>701</hyperlink>
-				<ondown>30</ondown>
 	      <onleft>#defaultcontrol.onleft</onleft>
 			</control>-->
 	
@@ -104,6 +105,7 @@
 				<type>button</type>
 				<id>30</id>
 				<label>6006</label>
+				<onup>28</onup>
 			</control>
 	
 		  <!--<control Style="SettingsCheckButtonMedium">
@@ -111,10 +113,9 @@
 				<type>checkbutton</type>
 				<id>40</id>		
 				<label>1246</label>
-				<onup>30</onup>
 				<selected>#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))</selected>
 				<onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforbuttons'))</onclick>
-			</control>
+			</control>-->
 		  
 		  <control Style="SettingsCheckButtonMedium">
 				<description>Use guide colors for genre</description>
@@ -141,8 +142,7 @@
 				<label>1249</label>			
 				<selected>#(skin.hassetting('#skin.tvguide.showgenrekey'))</selected>
 				<onclick>#(skin.togglesetting('#skin.tvguide.showgenrekey'))</onclick>
-				<ondown>44</ondown>
-			</control>-->
+			</control>
       
 		  <control Style="SettingsButtonMedium">
         <description>ChannelManager</description>
@@ -151,8 +151,6 @@
         <label>ARGUS #TV.Settings.ChannelManagerName</label>
         <hyperlink>49856</hyperlink>
         <visible>plugin.isenabled(ARGUS TV)</visible>
-				<ondown>45</ondown>
-        <onup>30</onup>
       </control>
 			
 		  <control Style="SettingsButtonMedium">
@@ -162,7 +160,6 @@
         <label>#TV.Settings.ArgusClientSettingsName</label>
         <hyperlink>49857</hyperlink>
         <visible>plugin.isenabled(ARGUS TV)</visible>
-				<ondown>46</ondown>
       </control>
 			
 		  <control Style="SettingsButtonMedium">

@@ -35,7 +35,7 @@
     <posY>34</posY>
     <width>61</width>
     <height>57</height>
-    <texture>icon_tv.png</texture>
+    <texture>icon_radio.png</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
   </control>
@@ -164,23 +164,7 @@
 	-->
 	</control>
 	
-	<control>
-		<description>video window</description>
-		<type>videowindow</type>
-		<id>99</id>
-		<posX>968</posX>
-		<posY>238</posY>
-		<width>850</width>
-		<height>480</height>
-		<onleft>3</onleft>
-		<onright>8</onright>
-    <onup>99</onup>
-    <ondown>99</ondown>
-		<action>18</action>
-		<textureFocus>tv_green_border.png</textureFocus>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+
 
 	<control>
 		<description>thumb bg</description>
@@ -214,7 +198,7 @@
 		<id>1</id>
 		<posX>312</posX>
 		<posY>629</posY>
-		<width>850</width>
+		<width>600</width>
 		<label>#Radio.View.start - #Radio.View.stop #Radio.View.channel #Radio.Guide.Genre</label>
 		<font>TitanLight14</font>
 		<textcolor>FF00b7ff</textcolor>
@@ -249,11 +233,24 @@
 		<posX>96</posX>
 		<posY>694</posY>
 		<width>790</width>
-		<height>295</height>
+		<height>290</height>
 		<font>TitanLight12</font>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#Radio.View.description</label>
 		<lineSpacing>0.85</lineSpacing>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>genre</description>
+		<type>label</type>
+		<id>17</id>
+		<posX>100</posX>
+		<posY>940</posY>
+		<label>#Radio.View.genre</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
@@ -356,5 +353,6 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
+<import>common.overlay.xml</import>
 </controls>
 </window>
