@@ -8,126 +8,140 @@
 
 	<import>common.window.recordings.xml</import>
 	
-    <control>
-      <id>0</id>
-      <type>image</type>
-      <posX>66</posX>
-      <posY>34</posY>
-      <width>61</width>
-      <height>57</height>
-      <texture>icon_tv.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>66</posX>
+		<posY>34</posY>
+		<width>61</width>
+		<height>57</height>
+		<texture>icon_radio.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 
 	<import>common.time.xml</import>
 
 	
-		<!-- List -->
+	<!-- List -->
 		
-		<control>
-			<id>0</id>
-			<type>image</type>
-			<posX>99</posX>
-			<posY>226</posY>
-			<width>335</width>
-			<height>190</height>
-			<texture>defaultTVBig.png</texture>
-			<visible>facadeview.list+[!control.hasthumb(500)|string.equals(#selectedthumb,defaultFolderBig.png)]+!string.equals(#selecteditem,..)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>99</posX>
+		<posY>226</posY>
+		<width>335</width>
+		<height>190</height>
+		<texture>defaultTVBig.png</texture>
+		<visible>facadeview.list+[!control.hasthumb(500)|string.equals(#selectedthumb,defaultFolderBig.png)]+!string.equals(#selecteditem,..)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 		
-		<control>
-			<description>screenshots</description>
-			<id>500</id>
-			<type>image</type>
-			<posX>99</posX>
-			<posY>226</posY>
-			<width>335</width>
-			<height>190</height>
-			<texture>#selectedthumb</texture>
-			<visible>facadeview.list+!string.equals(#selectedthumb,defaultFolderBig.png)+!string.equals(#selecteditem,..)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-			
-		<control>
-			<id>0</id>
-			<type>image</type>
-			<posX>96</posX>
-			<posY>442</posY>
-			<width>187</width>
-			<height>119</height>
-			<texture>tv_logo_bg.png</texture>
-			<visible>facadeview.list+!string.equals(#selecteditem,..)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
+	<control>
+		<description>screenshots</description>
+		<id>500</id>
+		<type>image</type>
+		<posX>99</posX>
+		<posY>226</posY>
+		<width>335</width>
+		<height>190</height>
+		<texture>#selectedthumb</texture>
+		<visible>facadeview.list+!string.equals(#selectedthumb,defaultFolderBig.png)+!string.equals(#selecteditem,..)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 		
-		<control>
-			<id>0</id>
-			<type>image</type>
-			<posX>145</posX>
-			<posY>457</posY>
-			<width>90</width>
-			<height>90</height>
-			<texture>#Radio.RecordedTV.thumb</texture>
-			<visible>facadeview.list</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-    <control>
-    	<description>Current program title</description>
-    	<type>fadelabel</type>
-    	<id>1</id>
-    	<posX>312</posX>
-      <posY>457</posY>
-    	<width>570</width>
-    	<label>#Radio.RecordedTV.Channel</label>
-    	<font>fontB16</font>
-    	<textcolor>ffffff</textcolor>
-      <shadowAngle>120</shadowAngle>
-      <shadowDistance>2</shadowDistance>
-      <shadowColor>FF000000</shadowColor>
-      <visible>facadeview.list</visible>
-    	<animation effect="fade" time="250">WindowOpen</animation>
-    	<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		<control>
-			<type>fadelabel</type>
-			<description>Current program time</description>
-			<id>0</id>
-			<posX>312</posX>
-			<posY>514</posY>
-			<width>800</width>
-    	<font>TitanLight14</font>
-    	<textcolor>FF00b7ff</textcolor>
-      <shadowAngle>120</shadowAngle>
-      <shadowDistance>2</shadowDistance>
-      <shadowColor>FF000000</shadowColor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-			<label>#Radio.RecordedTV.Time</label>
-			<visible>facadeview.list</visible>
-		</control>
-		
-		<control>
-			<type>textboxscrollup</type>
-			<description>Description1</description>
-			<id>0</id>
-			<posX>99</posX>
-			<posY>580</posY>
-			<width>780</width>
-			<height>405</height>
-      <lineSpacing>0.85</lineSpacing>
-			<label>#Radio.RecordedTV.Description</label>
-			<visible>facadeview.list</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-		
-	<!--            :: THUMBVIEW ::            -->
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>96</posX>
+		<posY>442</posY>
+		<width>187</width>
+		<height>119</height>
+		<texture>tv_logo_bg.png</texture>
+		<visible>facadeview.list+!string.equals(#selecteditem,..)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>145</posX>
+		<posY>457</posY>
+		<width>90</width>
+		<height>90</height>
+		<texture>#Radio.RecordedTV.thumb</texture>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>Current program title</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>312</posX>
+		<posY>457</posY>
+		<width>570</width>
+		<label>#Radio.RecordedTV.Channel</label>
+		<font>fontB16</font>
+		<textcolor>ffffff</textcolor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<type>fadelabel</type>
+		<description>Current program time</description>
+		<id>0</id>
+		<posX>312</posX>
+		<posY>514</posY>
+		<width>800</width>
+		<font>TitanLight14</font>
+		<textcolor>FF00b7ff</textcolor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<label>#Radio.RecordedTV.Time</label>
+		<visible>facadeview.list</visible>
+	</control>
+	
+	<control>
+		<type>textboxscrollup</type>
+		<description>Description1</description>
+		<id>0</id>
+		<posX>99</posX>
+		<posY>580</posY>
+		<width>780</width>
+		<height>405</height>
+		<lineSpacing>0.85</lineSpacing>
+		<label>#Radio.RecordedTV.Description</label>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>genre</description>
+		<type>label</type>
+		<id>17</id>
+		<posX>100</posX>
+		<posY>940</posY>
+		<label>#Radio.RecordedTV.Genre</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<!--						:: THUMBVIEW ::						-->
 	
 	<control>
 		<description>Movie Title value</description>
@@ -138,13 +152,13 @@
 		<width>700</width>
 		<label>#selecteditem - #Radio.RecordedTV.Channel</label>
 		<font>fontB16</font>
-    <textcolor>FF00b7ff</textcolor>
-    <shadowAngle>120</shadowAngle>
-    <shadowDistance>2</shadowDistance>
-    <shadowColor>FF000000</shadowColor>
+		<textcolor>FF00b7ff</textcolor>
+		<shadowAngle>120</shadowAngle>
+		<shadowDistance>2</shadowDistance>
+		<shadowColor>FF000000</shadowColor>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 		
 	<control Style="InfoLabel">
@@ -169,8 +183,8 @@
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
-    
+	</control>
+		
 	<control Style="InfoLabel">
 		<description>Date/Time Label</description>
 		<type>label</type>
@@ -181,7 +195,7 @@
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
+	</control>
 	
 	<control Style="InfoValueWide">
 		<description>Date/Time Value</description>
@@ -193,7 +207,7 @@
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
+	</control>
 	
 	<control Style="InfoLabel">
 		<description>Genre Label</description>
@@ -205,7 +219,7 @@
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
+	</control>
 	
 	<control Style="InfoValueWide">
 		<description>Genre Value</description>
@@ -217,12 +231,11 @@
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
-    
-		
+	</control>
+	
 	<control Style="textBox">
-	  <type>textboxscrollup</type>
-	  <description>Description1</description>
+		<type>textboxscrollup</type>
+		<description>Description1</description>
 		<id>0</id>
 		<posX>1040</posX>
 		<posY>584</posY>
@@ -231,105 +244,100 @@
 		<lineSpacing>0.92</lineSpacing>
 		<label>#Radio.RecordedTV.Description</label>
 		<visible>facadeview.smallicons|facadeview.largeicons</visible>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 		
 		
-		
-
-		
 
 	<!-- WATCHED PROGRESS -->
-		<control>
-			<description>Watched</description>
-			<type>label</type>
-			<id></id>
-			<posX>575</posX>
-			<posY>305</posY>
-			<width>680</width>
-			<label>Watched #Radio.RecordedTV.PercentageWatched %</label>
-			<font>TitanLight12</font>
-			<textcolor>FFB2D4F5</textcolor>
-			<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-		<control>
-			<description>Progress background</description>
-			<type>image</type>
-			<posX>532</posX>
-			<posY>342</posY>
-			<width>275</width>
-			<height>18</height>
-			<texture>osd_progress_bg.png</texture>
-			<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-		<control>
-			<description>Watched progress</description>
-			<type>progress</type>
-			<posX>520</posX>
-			<posY>345</posY>
-			<width>300</width>
-			<height>15</height>
-			<label>#Radio.RecordedTV.PercentageWatched</label>
-			<texturebg></texturebg>
-			<lefttexture>osd_progress_left.png</lefttexture>
-			<midtexture>osd_progress_mid.png</midtexture>
-			<righttexture>osd_progress_right.png</righttexture>
-			<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
+	<control>
+		<description>Watched</description>
+		<type>label</type>
+		<id></id>
+		<posX>460</posX>
+		<posY>305</posY>
+		<width>680</width>
+		<label>Watched #Radio.RecordedTV.PercentageWatched %</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>Progress background</description>
+		<type>image</type>
+		<posX>460</posX>
+		<posY>340</posY>
+		<width>275</width>
+		<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+		<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>Watched progress</description>
+		<type>progress</type>
+		<posX>450</posX>
+		<posY>343</posY>
+		<width>300</width>
+		<height>15</height>
+		<label>#Radio.RecordedTV.PercentageWatched</label>
+		<texturebg></texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>facadeview.list + string.equals(#Radio.RecordedTV.PercentageWatched)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 
 	<!-- DISK USAGE -->
-		<control>
-			<description>Disk used - Label</description>
-			<type>label</type>
-			<id/>
-			<posX>275</posX>
-			<posY>940</posY>
-			<width>680</width>
-			<label>HDD:</label>
-			<font>TitanLight12</font>
-			<textcolor>6aa5cb</textcolor>
-			<label>HDD #Radio.RecordedTV.Diskinfo.PercentageUsed %</label>
-			<visible>facadeview.list</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-
-		<control>
-			<description>Progress background</description>
-			<type>image</type>
-			<posX>432</posX>
-			<posY>947</posY>
-			<width>275</width>
-			<height>18</height>
-			<texture>osd_progress_bg.png</texture>
-			<visible>facadeview.list</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
-
-		<control>
-			<description>hdd progress</description>
-			<type>progress</type>
-			<posX>420</posX>
-			<posY>950</posY>
-			<width>300</width>
-			<height>15</height>
-			<label>#Radio.RecordedTV.Diskinfo.PercentageUsed</label>
-			<texturebg></texturebg>
-			<lefttexture>osd_progress_left.png</lefttexture>
-			<midtexture>osd_progress_mid.png</midtexture>
-			<righttexture>osd_progress_right.png</righttexture>
-			<visible>facadeview.list</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-		</control>
+	<control>
+		<description>Disk used - Label</description>
+		<type>label</type>
+		<id/>
+		<posX>460</posX>
+		<posY>225</posY>
+		<width>680</width>
+		<label>HDD:</label>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<label>HDD #Radio.RecordedTV.Diskinfo.PercentageUsed %</label>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>Progress background</description>
+		<type>image</type>
+		<posX>460</posX>
+		<posY>260</posY>
+		<width>275</width>
+		<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>hdd progress</description>
+		<type>progress</type>
+		<posX>450</posX>
+		<posY>263</posY>
+		<width>300</width>
+		<height>15</height>
+		<label>#Radio.RecordedTV.Diskinfo.PercentageUsed</label>
+		<texturebg></texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>facadeview.list</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 	
 	<import>ARGUS_RecordedRadio2.hiddenmenu.xml</import>
 	<import>common.facade.recordings.xml</import>
