@@ -245,8 +245,6 @@
     <Content Include="skin\Default\Media\ARGUS_SuggestionCancelled.png" />
     <Content Include="skin\Default\Media\ARGUS_SuggestionSeries.png" />
     <Content Include="skin\Default\Media\ARGUS_SuggestionSeriesCancelled.png" />
-    <Content Include="skin\Titan\ARGUS_Active.hiddenmenu.xml" />
-    <Content Include="skin\Titan\ARGUS_Active.xml" />
     <Content Include="skin\Titan\ARGUS_ChannelManagment.xml" />
     <Content Include="skin\Titan\ARGUS_ClientSettings.xml" />
     <Content Include="skin\Titan\ARGUS_Home.xml" />
