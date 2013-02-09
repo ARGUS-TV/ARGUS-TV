@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.PostProcessing;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
@@ -34,18 +34,16 @@ using ArgusTV.ServiceAgents;
 
 namespace ArgusTV.UI.MediaPortal
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// 
     public class TvOsd : GUIInternalWindow
     {
         private enum Controls
         {
             OSD_VIDEOPROGRESS = 1,
+
             OSD_TIMEINFO = 100,
             Panel1 = 101,
             Panel2 = 150,
+
             OSD_PAUSE = 209,
             OSD_SKIPBWD = 210,
             OSD_REWIND = 211,
@@ -53,66 +51,103 @@ namespace ArgusTV.UI.MediaPortal
             OSD_PLAY = 213,
             OSD_FFWD = 214,
             OSD_SKIPFWD = 215,
+
             OSD_MUTE = 216,
+            // OSD_SYNC =217 - not used
             OSD_SUBTITLES = 218,
             OSD_BOOKMARKS = 219,
             OSD_VIDEO = 220,
             OSD_AUDIO = 221,
+
             OSD_SUBMENU_BG_VOL = 300,
-            OSD_SUBMENU_BG_SUBTITLES = 302,
-            OSD_SUBMENU_BG_BOOKMARKS = 303,
-            OSD_SUBMENU_BG_VIDEO = 304,
-            OSD_SUBMENU_BG_AUDIO = 305,
-            OSD_SUBMENU_NIB = 350,
             OSD_VOLUMESLIDER = 400,
+            OSD_VOLUMESLIDER_LABEL = 450,
+
+            // OSD_SUBMENU_BG_SYNC 301 - not used
+
+            OSD_SUBMENU_BG_SUBTITLES = 302,
+            OSD_SUBTITLE_DELAY = 800,
+            OSD_SUBTITLE_DELAY_LABEL = 850,
+            OSD_SUBTITLE_ONOFF = 801,
+            OSD_SUBTITLE_LIST = 802,
+
+            OSD_SUBMENU_BG_BOOKMARKS = 303,
+
+            OSD_SUBMENU_BG_VIDEO = 304,
+            OSD_BRIGHTNESS = 704,
+            OSD_BRIGHTNESSLABEL = 752,
+            OSD_CONTRAST = 705,
+            OSD_CONTRASTLABEL = 753,
+            OSD_GAMMA = 706,
+            OSD_GAMMALABEL = 754,
+            OSD_SHARPNESS = 716,
+            OSD_SHARPNESSLABEL = 755,
+            OSD_SATURATION = 717,
+            OSD_SATURATIONLABEL = 756,
+            OSD_NONINTERLEAVED = 701,
+            OSD_NOCACHE = 702,
+            OSD_ADJFRAMERATE = 703,
+            OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF = 707,
+            OSD_VIDEO_POSTPROC_RESIZE_ONOFF = 708,
+            OSD_VIDEO_POSTPROC_CROP_ONOFF = 709,
+            OSD_VIDEO_POSTPROC_CROP_VERTICAL = 711,
+            OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL = 710,
+            OSD_VIDEO_POSTPROC_CROP_HORIZONTAL = 713,
+            OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL = 712,
+            OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF = 714,
+
+            OSD_SUBMENU_NIB = 350,
             OSD_AVDELAY = 500,
             OSD_AVDELAY_LABEL = 550,
+
+            OSD_SUBMENU_BG_AUDIO = 305,
+            OSD_AUDIOSTREAM_LIST = 501,
+            OSD_AUDIOVOLUMESLIDER = 511,
+            OSD_AUDIOVOLUMESLIDER_LABEL = 512,
             OSD_CREATEBOOKMARK = 600,
             OSD_BOOKMARKS_LIST = 601,
             OSD_CLEARBOOKMARKS = 602,
             OSD_BOOKMARKS_LIST_LABEL = 650,
             OSD_VIDEOPOS = 700,
-            OSD_SHARPNESS = 701,
-            OSD_SATURATIONLABEL = 702,
-            OSD_SATURATION = 703,
-            OSD_BRIGHTNESS = 704,
-            OSD_CONTRAST = 705,
-            OSD_GAMMA = 706,
-            OSD_SHARPNESSLABEL = 710,
-            OSD_VIDEOPOS_LABEL = 750,
-            OSD_BRIGHTNESSLABEL = 752,
-            OSD_CONTRASTLABEL = 753,
-            OSD_GAMMALABEL = 754,
-            OSD_SUBTITLE_DELAY = 800,
-            OSD_SUBTITLE_ONOFF = 801,
-            OSD_SUBTITLE_LIST = 802,
-            OSD_SUBTITLE_DELAY_LABEL = 850,
+            OSD_VIDEOPOS_LABEL = 750
         } ;
 
-        [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
-        [SkinControl(31)] protected GUIButtonControl btnChannelUp = null;
-        [SkinControl(32)] protected GUIButtonControl btnChannelDown = null;
-        [SkinControl(33)] protected GUIButtonControl btnPreviousProgram = null;
-        [SkinControl(34)] protected GUIButtonControl btnNextProgram = null;
-        [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
-        [SkinControl(36)] protected GUITextControl tbOnTvNow = null;
-        [SkinControl(37)] protected GUITextControl tbOnTvNext = null;
-        [SkinControl(38)] protected GUITextScrollUpControl tbProgramDescription = null;
-        [SkinControl(39)] protected GUIImage imgRecIcon = null;
-        [SkinControl(100)] protected GUILabelControl lblCurrentTime = null;
-        [SkinControl(501)] protected GUIListControl lstAudioStreamList = null;
+        [SkinControl(10)]
+        protected GUIImage imgTvChannelLogo = null;
+        [SkinControl(31)]
+        protected GUIButtonControl btnChannelUp = null;
+        [SkinControl(32)]
+        protected GUIButtonControl btnChannelDown = null;
+        [SkinControl(33)]
+        protected GUIButtonControl btnPreviousProgram = null;
+        [SkinControl(34)]
+        protected GUIButtonControl btnNextProgram = null;
+        [SkinControl(35)]
+        protected GUILabelControl lblCurrentChannel = null;
+        [SkinControl(36)]
+        protected GUITextControl tbOnTvNow = null;
+        [SkinControl(37)]
+        protected GUITextControl tbOnTvNext = null;
+        [SkinControl(38)]
+        protected GUITextScrollUpControl tbProgramDescription = null;
+        [SkinControl(39)]
+        protected GUIImage imgRecIcon = null;
+        [SkinControl(100)]
+        protected GUILabelControl lblCurrentTime = null;
 
         private bool isSubMenuVisible = false;
         private int m_iActiveMenu = 0;
         private int m_iActiveMenuButtonID = 0;
+        private int m_subtitleDelay = 0;
+        private int m_delayInterval = 0;
+        private int m_audioDelay = 0;
+        private int m_delayIntervalAudio = 0;
         private bool m_bNeedRefresh = false;
         private DateTime m_dateTime = DateTime.Now;
         private DateTime _RecIconLastCheck = DateTime.Now;
         private GuideProgram previousProgram = null;
         private bool _immediateSeekIsRelative = true;
         private int _immediateSeekValue = 10;
-        private int m_subtitleDelay = 0;
-        private int m_delayInterval = 0;
 
         public TvOsd()
         {
@@ -131,7 +166,7 @@ namespace ArgusTV.UI.MediaPortal
                 _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
                 _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
             }
-            bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOSD.xml");
+            bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOSD.xml"));
             return bResult;
         }
 
@@ -148,7 +183,7 @@ namespace ArgusTV.UI.MediaPortal
         public override void Render(float timePassed)
         {
             UpdateProgressBar();
-            SetVideoProgress(); // get the percentage of playback complete so far
+            //SetVideoProgress();
             Get_TimeInfo(); // show the time elapsed/total playing time
             SetRecorderStatus(); // BAV: fixing bug 1429: OSD is not updated with recording status 
             base.Render(timePassed); // render our controls to the screen
@@ -173,6 +208,7 @@ namespace ArgusTV.UI.MediaPortal
             OnMessage(msg);
         }
 
+
         public override void OnAction(Action action)
         {
             switch (action.wID)
@@ -181,28 +217,37 @@ namespace ArgusTV.UI.MediaPortal
                 case Action.ActionType.ACTION_STEP_BACK:
                     action.wID = Action.ActionType.ACTION_MOVE_LEFT;
                     break;
+
                 case Action.ActionType.ACTION_STEP_FORWARD:
                     action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
                     break;
+
                 case Action.ActionType.ACTION_BIG_STEP_BACK:
                     action.wID = Action.ActionType.ACTION_MOVE_DOWN;
                     break;
+
                 case Action.ActionType.ACTION_BIG_STEP_FORWARD:
                     action.wID = Action.ActionType.ACTION_MOVE_UP;
                     break;
+
                 case Action.ActionType.ACTION_OSD_SHOW_LEFT:
                     break;
+
                 case Action.ActionType.ACTION_OSD_SHOW_RIGHT:
                     break;
+
                 case Action.ActionType.ACTION_OSD_SHOW_UP:
                     break;
+
                 case Action.ActionType.ACTION_OSD_SHOW_DOWN:
                     break;
+
                 case Action.ActionType.ACTION_OSD_SHOW_SELECT:
                     break;
 
                 case Action.ActionType.ACTION_OSD_HIDESUBMENU:
                     break;
+
                 case Action.ActionType.ACTION_CONTEXT_MENU:
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
                 case Action.ActionType.ACTION_SHOW_OSD:
@@ -239,7 +284,6 @@ namespace ArgusTV.UI.MediaPortal
                         return;
                     }
 
-
                 case Action.ActionType.ACTION_PLAY:
                 case Action.ActionType.ACTION_MUSIC_PLAY:
                     {
@@ -247,18 +291,30 @@ namespace ArgusTV.UI.MediaPortal
                         ToggleButton((int)Controls.OSD_REWIND, false); // pop all the relevant
                         ToggleButton((int)Controls.OSD_FFWD, false); // buttons back to
                         ToggleButton((int)Controls.OSD_PLAY, false); // their up state
-                        ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
                         GUIWindowManager.IsPauseOsdVisible = false;
                         return;
                     }
-
 
                 case Action.ActionType.ACTION_STOP:
                     {
                         if (g_Player.IsTimeShifting)
                         {
                             Log.Debug("TvOSD: user request to stop");
-                            g_Player.Stop();
+                            GUIDialogPlayStop dlgPlayStop =
+                              (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+                            if (dlgPlayStop != null)
+                            {
+                                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+                                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+                                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+                                dlgPlayStop.SetDefaultToStop(false);
+                                dlgPlayStop.DoModal(GetID);
+                                if (dlgPlayStop.IsStopConfirmed)
+                                {
+                                    Log.Debug("TvOSD: stop confirmed");
+                                    g_Player.Stop();
+                                }
+                            }
                         }
                         if (g_Player.IsTVRecording)
                         {
@@ -268,7 +324,6 @@ namespace ArgusTV.UI.MediaPortal
                         GUIWindowManager.IsPauseOsdVisible = false;
                         return;
                     }
-
 
                 case Action.ActionType.ACTION_FORWARD:
                     {
@@ -281,7 +336,6 @@ namespace ArgusTV.UI.MediaPortal
                         return;
                     }
 
-
                 case Action.ActionType.ACTION_REWIND:
                     {
                         // push a message through to this window to handle the remote control button
@@ -292,7 +346,6 @@ namespace ArgusTV.UI.MediaPortal
                         GUIWindowManager.IsPauseOsdVisible = false;
                         return;
                     }
-
 
                 case Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS:
                     {
@@ -326,8 +379,10 @@ namespace ArgusTV.UI.MediaPortal
                         return;
                     }
             }
-            if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED && action.m_key != null &&
-                  (char)action.m_key.KeyChar >= '0' && (char)action.m_key.KeyChar <= '9'))
+
+            if (/*((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9)) ||*/
+                (action.wID == Action.ActionType.ACTION_KEY_PRESSED && action.m_key != null &&
+                (char)action.m_key.KeyChar >= '0' && (char)action.m_key.KeyChar <= '9'))
             {
                 TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)Window.WINDOW_TVFULLSCREEN);
                 if (TVWindow != null)
@@ -344,16 +399,25 @@ namespace ArgusTV.UI.MediaPortal
             {
                 case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT: // fired when OSD is hidden
                     {
+                        //if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(true);
+                        // following line should stay. Problems with OSD not
+                        // appearing are already fixed elsewhere
+                        //for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; i++)
+                        //{
+                        //  HideControl(GetID, i);
+                        //}
                         Dispose();
-                        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
+                        GUIPropertyManager.SetProperty("#currentmodule", GUIWindowManager.GetWindow(message.Param1).GetModuleName());
                         return true;
                     }
 
+
                 case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT: // fired when OSD is shown
                     {
-                        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+                        GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
                         previousProgram = null;
                         AllocResources();
+                        // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
                         ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
                         isSubMenuVisible = false;
                         m_iActiveMenuButtonID = 0;
@@ -364,13 +428,25 @@ namespace ArgusTV.UI.MediaPortal
                         FocusControl(GetID, (int)Controls.OSD_PLAY, 0); // set focus to play button by default when window is shown
                         ShowPrograms();
                         QueueAnimation(AnimationType.WindowOpen);
-                        for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
+                        for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; i++)
                         {
                             ShowControl(GetID, i);
+                        }
+                        if (g_Player.Paused)
+                        {
+                            ToggleButton((int)Controls.OSD_PLAY, true);
+                            // make sure play button is down (so it shows the pause symbol)
+                        }
+                        else
+                        {
+                            ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
                         }
                         m_delayInterval = global::MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
                         if (m_delayInterval > 0)
                             m_subtitleDelay = global::MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
+                        m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
+                        if (m_delayIntervalAudio > 0)
+                            m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
                         return true;
                     }
 
@@ -467,6 +543,7 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (iControl == (int)Controls.OSD_PLAY)
                         {
+                            //TODO
                             int iSpeed = g_Player.Speed;
                             if (iSpeed != 1) // we're in ffwd or rewind mode
                             {
@@ -477,7 +554,7 @@ namespace ArgusTV.UI.MediaPortal
                             }
                             else
                             {
-                                g_Player.Pause(); //Pause/Un-Pause playback
+                                g_Player.Pause(); // Pause/Un-Pause playback
                                 if (g_Player.Paused)
                                 {
                                     ToggleButton((int)Controls.OSD_PLAY, true);
@@ -498,8 +575,11 @@ namespace ArgusTV.UI.MediaPortal
                                 FocusControl(GetID, m_iActiveMenuButtonID, 0); // set focus to last menu button
                                 ToggleSubMenu(0, m_iActiveMenu); // hide the currently active sub-menu
                             }
+                            //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
                             Log.Debug("TVOSD:stop");
+                            //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
                         }
+
                         if (iControl == (int)Controls.OSD_REWIND)
                         {
                             if (g_Player.Paused)
@@ -575,7 +655,14 @@ namespace ArgusTV.UI.MediaPortal
                             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_VOL); // hide or show the sub-menu
                             if (isSubMenuVisible) // is sub menu on?
                             {
+                                int iValue = g_Player.Volume;
+                                GUISliderControl pSlider = GetControl((int)Controls.OSD_VOLUMESLIDER) as GUISliderControl;
+                                if (null != pSlider)
+                                {
+                                    pSlider.Percentage = iValue; // Update our volume slider accordingly ...
+                                }
                                 ShowControl(GetID, (int)Controls.OSD_VOLUMESLIDER); // show the volume control
+                                ShowControl(GetID, (int)Controls.OSD_VOLUMESLIDER_LABEL);
                                 FocusControl(GetID, (int)Controls.OSD_VOLUMESLIDER, 0); // set focus to it
                             }
                             else // sub menu is off
@@ -610,18 +697,7 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (iControl == (int)Controls.OSD_BOOKMARKS)
                         {
-                            ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_BOOKMARKS); // hide or show the sub-menu
-                            if (isSubMenuVisible)
-                            {
-                                // show the controls on this sub menu
-                                ShowControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
-                                ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
-                                ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST_LABEL);
-                                ShowControl(GetID, (int)Controls.OSD_CLEARBOOKMARKS);
-
-                                FocusControl(GetID, (int)Controls.OSD_CREATEBOOKMARK, 0);
-                                // set focus to the first control in our group
-                            }
+                            //not used
                         }
 
                         if (iControl == (int)Controls.OSD_VIDEO)
@@ -633,15 +709,40 @@ namespace ArgusTV.UI.MediaPortal
                                 float fPercent = (float)(100 * (g_Player.CurrentPosition / g_Player.Duration));
                                 SetSliderValue(0.0f, 100.0f, (float)fPercent, (int)Controls.OSD_VIDEOPOS);
 
+                                bool hasPostProc = g_Player.HasPostprocessing;
+                                if (hasPostProc)
+                                {
+                                    IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+                                    SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                                    SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                                    SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                                    SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                                    UpdatePostProcessing();
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                                }
+
+                                //SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
+                                //SetCheckmarkValue(g_stSettings.m_bNoCache, Controls.OSD_NOCACHE);
+                                //SetCheckmarkValue(g_stSettings.m_bFrameRateConversions, Controls.OSD_ADJFRAMERATE);
 
                                 UpdateGammaContrastBrightness();
                                 // show the controls on this sub menu
                                 ShowControl(GetID, (int)Controls.OSD_VIDEOPOS);
+                                ShowControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
+                                ShowControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
+                                ShowControl(GetID, (int)Controls.OSD_NOCACHE);
+                                ShowControl(GetID, (int)Controls.OSD_ADJFRAMERATE);
                                 ShowControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
                                 ShowControl(GetID, (int)Controls.OSD_SATURATION);
                                 ShowControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
                                 ShowControl(GetID, (int)Controls.OSD_SHARPNESS);
-                                ShowControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
                                 ShowControl(GetID, (int)Controls.OSD_BRIGHTNESS);
                                 ShowControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
                                 ShowControl(GetID, (int)Controls.OSD_CONTRAST);
@@ -657,15 +758,45 @@ namespace ArgusTV.UI.MediaPortal
                             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_AUDIO); // hide or show the sub-menu
                             if (isSubMenuVisible) // is sub menu on?
                             {
+                                int iValue = g_Player.Volume;
+                                GUISliderControl pSlider = GetControl((int)Controls.OSD_AUDIOVOLUMESLIDER) as GUISliderControl;
+                                if (null != pSlider)
+                                {
+                                    pSlider.Percentage = iValue; // Update our volume slider accordingly ...
+                                }
+
+                                // set the controls values
+                                GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_AVDELAY);
+                                pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+                                pControl.SetRange(-20, 20);
+                                SetSliderValue(-20, 20, m_audioDelay, (int)Controls.OSD_AVDELAY);
+
+                                bool hasPostProc = g_Player.HasPostprocessing;
+                                if (hasPostProc)
+                                {
+                                    GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", "true");
+                                    pControl.FloatInterval = 1;
+                                }
+                                else
+                                {
+                                    GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", "false");
+                                    pControl.FloatValue = 0;
+                                    m_audioDelay = 0;
+                                    pControl.FloatInterval = 0;
+                                }
+
                                 // show the controls on this sub menu
                                 ShowControl(GetID, (int)Controls.OSD_AVDELAY);
                                 ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
-                                lstAudioStreamList.Visible = true;
+                                ShowControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
+                                ShowControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER);
+                                ShowControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER_LABEL);
 
                                 FocusControl(GetID, (int)Controls.OSD_AVDELAY, 0); // set focus to the first control in our group
                                 PopulateAudioStreams(); // populate the list control with audio streams for this video
                             }
                         }
+
                         return true;
                     }
             }
@@ -687,56 +818,36 @@ namespace ArgusTV.UI.MediaPortal
             SetSliderValue(0.0f, 100.0f, (float)fSharpness, (int)Controls.OSD_SHARPNESS);
         }
 
+        private void UpdatePostProcessing()
+        {
+            IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+            SetSliderValue(0.0f, 100.0f, (float)engine.CropVertical, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+            SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+        }
+
         private void SetVideoProgress()
         {
             if (g_Player.Playing)
             {
+                //  double fPercentage=g_Player.CurrentPosition / g_Player.Duration;
+                //      GUIProgressControl pControl = (GUIProgressControl)GetControl((int)Controls.OSD_VIDEOPROGRESS);
+                //    if (null!=pControl) pControl.Percentage=(int)(100*fPercentage);			// Update our progress bar accordingly ...
+
+                //float fPercent = (float)(100 * (g_Player.CurrentPosition / g_Player.Duration));
+                //SetSliderValue(0.0f, 100.0f, (float)fPercent, (int)Controls.OSD_VIDEOPOS); // Update our progress slider accordingly ...
+
                 int iValue = g_Player.Volume;
                 GUISliderControl pSlider = GetControl((int)Controls.OSD_VOLUMESLIDER) as GUISliderControl;
                 if (null != pSlider)
                 {
-                    pSlider.Percentage = iValue; // Update our progress bar accordingly ...
+                    pSlider.Percentage = iValue; // Update our volume slider accordingly ...
                 }
-            }
-        }
-
-        private void Get_TimeInfo()
-        {
-            string strTime = "";
-            if (!g_Player.IsTVRecording)
-            {
-                string strChannel = GetChannelName();
-                strTime = strChannel;
-                GuideProgram prog = PluginMain.GetCurrentProgram(ChannelType.Television);
-                if (prog != null)
+                pSlider = GetControl((int)Controls.OSD_AUDIOVOLUMESLIDER) as GUISliderControl;
+                if (null != pSlider)
                 {
-                    strTime = String.Format("{0}-{1}",
-                                            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                            prog.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                    pSlider.Percentage = iValue; // Update our volume slider accordingly ...
                 }
             }
-            else
-            {
-                long currentPosition = (long)(g_Player.CurrentPosition);
-                int hh = (int)(currentPosition / 3600) % 100;
-                int mm = (int)((currentPosition / 60) % 60);
-                int ss = (int)((currentPosition / 1) % 60);
-                DateTime startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
-
-                long duration = (long)(g_Player.Duration);
-                hh = (int)(duration / 3600) % 100;
-                mm = (int)((duration / 60) % 60);
-                ss = (int)((duration / 1) % 60);
-                DateTime endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
-
-                strTime = String.Format("{0}-{1}",
-                                        startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                        endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            }
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Controls.OSD_TIMEINFO, 0,
-                                            0, null);
-            msg.Label = strTime;
-            OnMessage(msg); // ask our label to update it's caption
         }
 
         private void ToggleButton(int iButtonID, bool bSelected)
@@ -808,24 +919,45 @@ namespace ArgusTV.UI.MediaPortal
             {
                 m_bNeedRefresh = true;
             }
+
+            GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", " ");
+
             // Set all sub menu controls to hidden
             HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
+            HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER_LABEL);
             HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
             HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-            lstAudioStreamList.Visible = false;
+            HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
+            HideControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER);
+            HideControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER_LABEL);
 
             HideControl(GetID, (int)Controls.OSD_AVDELAY);
+            HideControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
+
+            HideControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
+            HideControl(GetID, (int)Controls.OSD_NOCACHE);
+            HideControl(GetID, (int)Controls.OSD_ADJFRAMERATE);
+
             HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
             HideControl(GetID, (int)Controls.OSD_SHARPNESS);
+
             HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
             HideControl(GetID, (int)Controls.OSD_SATURATION);
-            HideControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
 
             HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
             HideControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
 
             HideControl(GetID, (int)Controls.OSD_GAMMA);
             HideControl(GetID, (int)Controls.OSD_GAMMALABEL);
+
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
 
             HideControl(GetID, (int)Controls.OSD_CONTRAST);
             HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
@@ -844,6 +976,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 ToggleButton((int)Controls.OSD_MUTE, false);
             }
+            //if (iButtonID != (int)Controls.OSD_SYNC) ToggleButton((int)Controls.OSD_SYNC, false); - not used
             if (iButtonID != (int)Controls.OSD_SUBTITLES)
             {
                 ToggleButton((int)Controls.OSD_SUBTITLES, false);
@@ -861,17 +994,38 @@ namespace ArgusTV.UI.MediaPortal
                 ToggleButton((int)Controls.OSD_AUDIO, false);
             }
 
+            if (m_iActiveMenu > 1 && m_iActiveMenu != iBackID)
+                GUIControl.HideControl(GetID, m_iActiveMenu);
+
             m_iActiveMenu = iBackID;
             m_iActiveMenuButtonID = iButtonID;
+        }
+
+        private float GetSliderValue(int iControlID)
+        {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+
+            if (null != pControl)
+            {
+                switch (pControl.SpinType)
+                {
+                    case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+                        return pControl.FloatValue;
+
+                    case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+                        return pControl.IntValue;
+
+                    default:
+                        return pControl.Percentage;
+                }
+            }
+
+            return 0.0f;
         }
 
         private void SetSliderValue(float fMin, float fMax, float fValue, int iControlID)
         {
             GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-            if (pControl == null)
-            {
-                return;
-            }
 
             if (null != pControl)
             {
@@ -915,6 +1069,7 @@ namespace ArgusTV.UI.MediaPortal
             switch (iControlID)
             {
                 case (int)Controls.OSD_VOLUMESLIDER:
+                case (int)Controls.OSD_AUDIOVOLUMESLIDER:
                     {
                         GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
                         if (null != pControl)
@@ -931,72 +1086,86 @@ namespace ArgusTV.UI.MediaPortal
 
                 case (int)Controls.OSD_VIDEOPOS:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            g_Player.SeekAsolutePercentage(pControl.Percentage);
-                        }
+                        g_Player.SeekAsolutePercentage((int)GetSliderValue(iControlID));
                     }
                     break;
 
                 case (int)Controls.OSD_SATURATION:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            GUIGraphicsContext.Saturation = pControl.Percentage;
-                            UpdateGammaContrastBrightness();
-                        }
+                        GUIGraphicsContext.Saturation = (int)GetSliderValue(iControlID);
+                        UpdateGammaContrastBrightness();
                     }
                     break;
 
                 case (int)Controls.OSD_SHARPNESS:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            GUIGraphicsContext.Sharpness = pControl.Percentage;
-                            UpdateGammaContrastBrightness();
-                        }
+                        GUIGraphicsContext.Sharpness = (int)GetSliderValue(iControlID);
+                        UpdateGammaContrastBrightness();
                     }
                     break;
 
                 case (int)Controls.OSD_BRIGHTNESS:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            GUIGraphicsContext.Brightness = pControl.Percentage;
-                            UpdateGammaContrastBrightness();
-                        }
+                        GUIGraphicsContext.Brightness = (int)GetSliderValue(iControlID);
+                        UpdateGammaContrastBrightness();
                     }
                     break;
 
                 case (int)Controls.OSD_CONTRAST:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            GUIGraphicsContext.Contrast = pControl.Percentage;
-                            UpdateGammaContrastBrightness();
-                        }
+                        GUIGraphicsContext.Contrast = (int)GetSliderValue(iControlID);
+                        UpdateGammaContrastBrightness();
                     }
                     break;
 
                 case (int)Controls.OSD_GAMMA:
                     {
-                        GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
-                        if (null != pControl)
-                        {
-                            // Set mplayer's seek position to the percentage requested by the user
-                            GUIGraphicsContext.Gamma = pControl.Percentage;
-                            UpdateGammaContrastBrightness();
-                        }
+                        GUIGraphicsContext.Gamma = (int)GetSliderValue(iControlID);
+                        UpdateGammaContrastBrightness();
+                    }
+                    break;
+
+                /* not used
+                case (int)Controls.OSD_AUDIOSTREAM_LIST:
+                  {
+
+                  }
+                  break;
+
+                case (int)Controls.OSD_CREATEBOOKMARK:
+                  {
+
+                  }
+                  break;
+
+                case (int)Controls.OSD_BOOKMARKS_LIST:
+                  {
+
+                  }
+                  break;
+
+                case (int)Controls.OSD_CLEARBOOKMARKS:
+                  {
+
+                  }
+                  break;
+                */
+
+                case (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF:
+                    {
+                        PostProcessingEngine.GetInstance().EnablePostProcess = !PostProcessingEngine.GetInstance().EnablePostProcess;
+                    }
+                    break;
+
+                case (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF:
+                    {
+                        PostProcessingEngine.GetInstance().EnableResize = !PostProcessingEngine.GetInstance().EnableResize;
+                    }
+                    break;
+
+                case (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF:
+                    {
+                        PostProcessingEngine.GetInstance().EnableDeinterlace = !PostProcessingEngine.GetInstance().EnableDeinterlace;
                     }
                     break;
 
@@ -1049,11 +1218,53 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 global::MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
                             }
-                            else
+                            else if (pControl.FloatValue > m_subtitleDelay)
                             {
                                 global::MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
                             }
                             m_subtitleDelay = (int)pControl.FloatValue;
+                        }
+                    }
+                    break;
+
+                case (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL:
+                    {
+                        GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+                        if (null != pControl)
+                        {
+                            PostProcessingEngine.GetInstance().CropVertical = pControl.Percentage;
+                            UpdatePostProcessing();
+                        }
+                    }
+                    break;
+
+                case (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL:
+                    {
+                        GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+                        if (null != pControl)
+                        {
+                            PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
+                            UpdatePostProcessing();
+                        }
+                    }
+                    break;
+
+                case (int)Controls.OSD_AVDELAY:
+                    {
+                        GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+                        IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+
+                        if (null != pControl && g_Player.HasPostprocessing)
+                        {
+                            if (pControl.FloatValue < m_audioDelay)
+                            {
+                                PostProcessingEngine.GetInstance().AudioDelayMinus();
+                            }
+                            else if (pControl.FloatValue > m_audioDelay)
+                            {
+                                PostProcessingEngine.GetInstance().AudioDelayPlus();
+                            }
+                            m_audioDelay = (int)pControl.FloatValue;
                         }
                     }
                     break;
@@ -1062,14 +1273,59 @@ namespace ArgusTV.UI.MediaPortal
 
         private void PopulateAudioStreams()
         {
+            // tell the list control not to show the page x/y spin control
+            GUIListControl pControl = (GUIListControl)GetControl((int)Controls.OSD_AUDIOSTREAM_LIST);
+            if (null != pControl)
+            {
+                pControl.SetPageControlVisible(false);
+            }
+
+            // empty the list ready for population
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID, 0,
+                                            (int)Controls.OSD_AUDIOSTREAM_LIST, 0, 0, null);
+            OnMessage(msg);
+
             string strLabel = GUILocalizeStrings.Get(460); // "Audio Stream"
             string strActiveLabel = GUILocalizeStrings.Get(461); // "[active]"
 
-            // tell the list control not to show the page x/y spin control
-            lstAudioStreamList.SetPageControlVisible(false);
+            // Add DVB audio streams
+            /*
+            ArrayList audioPidList = RemoteControl.Instance.GetAudioLanguageList();
+            if (audioPidList != null && audioPidList.Count > 0)
+            {
+              DVBSections.AudioLanguage al;
+              DVBSections sections = new DVBSections();
+              int ActiveIndex = 0;
+              for (int i = 0; i < audioPidList.Count; i++)
+              {
+                al = (DVBSections.AudioLanguage)audioPidList[i];
+                string strItem;
+                string strLang = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
 
-            // empty the list ready for population
-            lstAudioStreamList.Clear();
+                if (RemoteControl.Instance.GetAudioLanguage() == al.AudioPid)
+                {
+                  // formats to 'Audio Stream X [active]'
+                  strItem = String.Format(strLang + "  " + strActiveLabel);	// this audio stream is active, show as such
+                  ActiveIndex = i;
+                }
+                else
+                {
+                  // formats to 'Audio Stream X'
+                  strItem = String.Format(strLang);
+                }
+
+                // create a list item object to add to the list
+                GUIListItem pItem = new GUIListItem();
+                pItem.Label = strItem;
+                pItem.ItemId = al.AudioPid;
+
+                // add it ...
+                lstAudioStreamList.Add(pItem);
+              }
+
+              // set the current active audio stream as the selected item in the list control
+              lstAudioStreamList.SelectedListItemIndex = ActiveIndex;
+            }*/
         }
 
         private void PopulateSubTitles()
@@ -1209,6 +1465,8 @@ namespace ArgusTV.UI.MediaPortal
 
         private void Reset()
         {
+            GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", " ");
+
             // Set all sub menu controls to hidden
             HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_AUDIO);
             HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_VIDEO);
@@ -1216,18 +1474,25 @@ namespace ArgusTV.UI.MediaPortal
             HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_SUBTITLES);
             HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_VOL);
 
-
             HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
+            HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER_LABEL);
             HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
             HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-            lstAudioStreamList.Visible = false;
-
+            HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
             HideControl(GetID, (int)Controls.OSD_AVDELAY);
-            HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
-            HideControl(GetID, (int)Controls.OSD_SATURATION);
-            HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
-            HideControl(GetID, (int)Controls.OSD_SHARPNESS);
             HideControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
+            HideControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER);
+            HideControl(GetID, (int)Controls.OSD_AUDIOVOLUMESLIDER_LABEL);
+
+            HideControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
+            HideControl(GetID, (int)Controls.OSD_NOCACHE);
+            HideControl(GetID, (int)Controls.OSD_ADJFRAMERATE);
+
+            HideControl(GetID, (int)Controls.OSD_SATURATION);
+            HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
+
+            HideControl(GetID, (int)Controls.OSD_SHARPNESS);
+            HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
 
             HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
             HideControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
@@ -1247,6 +1512,15 @@ namespace ArgusTV.UI.MediaPortal
             HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
             HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
 
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+            HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+
             ToggleButton((int)Controls.OSD_MUTE, false);
             ToggleButton((int)Controls.OSD_SUBTITLES, false);
             ToggleButton((int)Controls.OSD_BOOKMARKS, false);
@@ -1261,6 +1535,8 @@ namespace ArgusTV.UI.MediaPortal
             ToggleButton((int)Controls.OSD_STOP, false); // buttons back to
             ToggleButton((int)Controls.OSD_SKIPFWD, false); // their up state
             ToggleButton((int)Controls.OSD_MUTE, false); // their up state
+
+            //ShowControl(GetID, (int)Controls.OSD_VIDEOPROGRESS);
         }
 
         public override bool NeedRefresh()
@@ -1271,6 +1547,45 @@ namespace ArgusTV.UI.MediaPortal
                 return true;
             }
             return false;
+        }
+
+        private void Get_TimeInfo()
+        {
+            string strTime = "";
+            if (!g_Player.IsTVRecording)
+            {
+                string strChannel = GetChannelName();
+                strTime = strChannel;
+                GuideProgram prog = PluginMain.GetCurrentProgram(ChannelType.Television);
+                if (prog != null)
+                {
+                    strTime = String.Format("{0}-{1}",
+                                            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                            prog.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                }
+            }
+            else
+            {
+                long currentPosition = (long)(g_Player.CurrentPosition);
+                int hh = (int)(currentPosition / 3600) % 100;
+                int mm = (int)((currentPosition / 60) % 60);
+                int ss = (int)((currentPosition / 1) % 60);
+                DateTime startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
+
+                long duration = (long)(g_Player.Duration);
+                hh = (int)(duration / 3600) % 100;
+                mm = (int)((duration / 60) % 60);
+                ss = (int)((duration / 1) % 60);
+                DateTime endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
+
+                strTime = String.Format("{0}-{1}",
+                                        startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            }
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Controls.OSD_TIMEINFO, 0,
+                                            0, null);
+            msg.Label = strTime;
+            OnMessage(msg); // ask our label to update it's caption
         }
 
         private void OnPreviousChannel()
@@ -1293,6 +1608,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 return;
             }
+
             PluginMain.Navigator.ZapToNextChannel(false);
 
             ShowPrograms();
@@ -1406,6 +1722,7 @@ namespace ArgusTV.UI.MediaPortal
             }
 
             GuideProgram prog = PluginMain.GetCurrentProgram(ChannelType.Television);
+            //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
 
             if (prog != null && !g_Player.IsTVRecording)
             {
@@ -1430,7 +1747,7 @@ namespace ArgusTV.UI.MediaPortal
                 }
                 if (tbProgramDescription != null)
                 {
-                    tbProgramDescription.Label = prog.CreateCombinedDescription(false);
+                    tbProgramDescription.Label = prog.Description;
                 }
 
                 // next program
@@ -1452,8 +1769,9 @@ namespace ArgusTV.UI.MediaPortal
                 Recording rec = null;
                 string description = "";
                 string title = "";
-                string startTime = ""; 
-                string endTime = "";
+                string startTime = ""; // DateTime.MinValue;
+                string endTime = ""; //  DateTime.MaxValue;
+                //string remaining = "";
 
                 rec = TvRecorded.GetPlayingRecording();
                 if (rec != null
@@ -1471,7 +1789,6 @@ namespace ArgusTV.UI.MediaPortal
                         {
                             strLogo = Utility.GetLogoImage(_channelId, channelName, tvSchedulerAgent);
                         }
-
                         if (string.IsNullOrEmpty(strLogo))
                         {
                             strLogo = "defaultVideoBig.png";
@@ -1484,12 +1801,12 @@ namespace ArgusTV.UI.MediaPortal
 
                     long duration = (long)(g_Player.Duration);
                     endTime = Utils.SecondsToHMSString((int)duration);
-                  
+
+                    //remaining = "0";                    
                     if (tbOnTvNow != null)
                     {
                         tbOnTvNow.Label = title;
                     }
-
                     GUIPropertyManager.SetProperty("#TV.View.compositetitle", title);
                     GUIPropertyManager.SetProperty("#TV.View.start", startTime);
                     GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
@@ -1520,6 +1837,8 @@ namespace ArgusTV.UI.MediaPortal
                     lblCurrentTime.Label = String.Empty;
                 }
             }
+
+
             UpdateProgressBar();
         }
 
@@ -1536,6 +1855,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (ts.TotalSeconds > 15 || forced)
                 {
                     bool isRecording = false;
+
                     ActiveRecording activeRecording;
                     if (PluginMain.IsChannelRecording(GetChannelId(), out activeRecording))
                     {
@@ -1600,7 +1920,6 @@ namespace ArgusTV.UI.MediaPortal
                     ShowPrograms();
                     updateProperties = true;
                 }
-
                 if (updateProperties)
                 {
                     GUIPropertyManager.SetProperty("#TV.View.channel", GetChannelName());
@@ -1617,6 +1936,7 @@ namespace ArgusTV.UI.MediaPortal
                     GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumberDisplay);
                 }
             }
+
             else
             {
                 Recording rec = null;
@@ -1637,6 +1957,11 @@ namespace ArgusTV.UI.MediaPortal
                     channelDisplayName = rec.ChannelDisplayName + " " + Utility.GetLocalizedText(TextId.RecordedSuffix);
 
                     double fPercent;
+                    if (rec == null)
+                    {
+                        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+                        return;
+                    }
 
                     fPercent = ((double)currentPosition) / ((double)duration);
                     fPercent *= 100.0d;
@@ -1649,14 +1974,10 @@ namespace ArgusTV.UI.MediaPortal
                     GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
                     GUIPropertyManager.SetProperty("#TV.View.genre", rec.Category);
                     GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
-                    GUIPropertyManager.SetProperty("#TV.View.compositetitle", rec.CreateProgramTitle());
-                    GUIPropertyManager.SetProperty("#TV.View.description", rec.CreateCombinedDescription(false));
+                    GUIPropertyManager.SetProperty("#TV.View.compositetitle", rec.CreateCombinedDescription(false));
+                    GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
                     GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.SubTitle);
                     GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumberDisplay);
-                }
-                else
-                {
-                    GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
                 }
             }
         }
