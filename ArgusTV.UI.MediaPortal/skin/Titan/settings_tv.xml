@@ -87,8 +87,8 @@
 				<type>button</type>
 				<id>28</id>
 				<label>6004</label>
-	      <onleft>#defaultcontrol.onleft</onleft>
 				<ondown>30</ondown>
+	      <onleft>#defaultcontrol.onleft</onleft>
 			</control>
 	
 		  <!--<control Style="SettingsButtonMedium">
@@ -97,25 +97,28 @@
 				<id>31</id>
 				<label>6007</label>
 				<hyperlink>701</hyperlink>
+				<ondown>30</ondown>
 	      <onleft>#defaultcontrol.onleft</onleft>
 			</control>-->
-	
+
 		  <control Style="SettingsButtonMedium">
 				<description>Automatically turn TV on</description>
 				<type>button</type>
 				<id>30</id>
 				<label>6006</label>
+				<ondown>40</ondown>
 				<onup>28</onup>
 			</control>
 	
-		  <!--<control Style="SettingsCheckButtonMedium">
+		  <control Style="SettingsCheckButtonMedium">
 				<description>Use button colors for TVGuide</description>
 				<type>checkbutton</type>
 				<id>40</id>		
 				<label>1246</label>
+				<onup>30</onup>
 				<selected>#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))</selected>
 				<onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforbuttons'))</onclick>
-			</control>-->
+			</control>
 		  
 		  <control Style="SettingsCheckButtonMedium">
 				<description>Use guide colors for genre</description>
@@ -142,6 +145,7 @@
 				<label>1249</label>			
 				<selected>#(skin.hassetting('#skin.tvguide.showgenrekey'))</selected>
 				<onclick>#(skin.togglesetting('#skin.tvguide.showgenrekey'))</onclick>
+				<ondown>44</ondown>
 			</control>
       
 		  <control Style="SettingsButtonMedium">
@@ -151,6 +155,7 @@
         <label>ARGUS #TV.Settings.ChannelManagerName</label>
         <hyperlink>49856</hyperlink>
         <visible>plugin.isenabled(ARGUS TV)</visible>
+				<ondown>45</ondown>	
       </control>
 			
 		  <control Style="SettingsButtonMedium">
@@ -160,6 +165,7 @@
         <label>#TV.Settings.ArgusClientSettingsName</label>
         <hyperlink>49857</hyperlink>
         <visible>plugin.isenabled(ARGUS TV)</visible>
+				<ondown>46</ondown>
       </control>
 			
 		  <control Style="SettingsButtonMedium">

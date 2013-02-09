@@ -71,10 +71,14 @@ namespace ArgusTV.UI.MediaPortal
             get { return (int)GUIWindow.Window.WINDOW_TELETEXT; }
         }
 
+        public static int RecordedTvInfo
+        {
+            get { return (int)GUIWindow.Window.WINDOW_RECORDEDTV; }
+        }
+
         public const int UpcomingTvPrograms = 49848;
         public const int UpcomingRadioPrograms = 49847;
         public const int ActiveRecordings = 49849;
-        public const int RecordedTvInfo = 49846;
         public const int TvGuideSearch = 49850;
         public const int RadioGuideSearch = 49851;
         public const int RecordedRadio = 49852;
