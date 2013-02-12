@@ -380,19 +380,60 @@ namespace ArgusTV.UI.MediaPortal
 
         private static bool ShowFullScreenWindowTVHandler()
         {
+            SetRecordingChaptersAndJumpPoints();
             if ((g_Player.IsTV && PluginMain.Navigator.IsLiveStreamOn) || g_Player.IsTVRecording)
             {
                 // watching TV
-                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+                if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
                 {
                     return true;
                 }
                 Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
                 GUIGraphicsContext.IsFullScreenVideo = true;
                 return true;
             }
             return g_Player.ShowFullScreenWindowTVDefault();
+        }
+
+        internal static void SetRecordingChaptersAndJumpPoints()
+        {
+            //push chapter and jumppoint information into the gui property manager
+            if (g_Player.IsTVRecording && g_Player.HasChapters)
+            {
+                double[] chapters = g_Player.Chapters;
+                double[] jumppoints = g_Player.JumpPoints;
+
+                string strChapters = string.Empty;
+                string strJumpPoints = string.Empty;
+
+                double duration = g_Player.Duration;
+                if (chapters != null)
+                {
+                    foreach (double chapter in chapters)
+                    {
+                        double chapterPercent = chapter / duration * 100.0d;
+                        strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+                    }
+                }
+                if (jumppoints != null)
+                {
+                    foreach (double jump in jumppoints)
+                    {
+                        double jumpPercent = jump / duration * 100.0d;
+                        strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
+                    }
+                }
+                GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
+                GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumpPoints);
+                Log.Debug("TVHome.ShowFullScreenWindowTVHandler - setting chapters: " + strChapters);
+                Log.Debug("TVHome.ShowFUllScreenWindowTVHandler - setting jumppoints: " + strJumpPoints);
+            }
+            else
+            {
+                GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+                GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
+            }
         }
 
         protected override void OnWindowLoaded()

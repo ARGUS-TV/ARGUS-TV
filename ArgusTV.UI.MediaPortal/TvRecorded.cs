@@ -88,6 +88,7 @@ namespace ArgusTV.UI.MediaPortal
         ///<returns></returns>        
         private static bool ShowFullScreenWindowTVHandler()
         {
+            TvHome.SetRecordingChaptersAndJumpPoints();
             if (g_Player.IsTVRecording)
             {
                 // watching TV
