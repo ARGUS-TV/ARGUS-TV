@@ -4,6 +4,16 @@
         <name>ArgusTV.ServiceContracts</name>
     </assembly>
     <members>
+        <member name="T:ArgusTV.ServiceContracts.Events.IGuideEventsListener">
+            <summary>
+            ARGUS TV Event service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.Events.IGuideEventsListener.NewGuideData">
+            <summary>
+            Method called by ARGUS TV by a NewGuideData event.
+            </summary>
+        </member>
         <member name="T:ArgusTV.ServiceContracts.Events.IRecordingEventsListener">
             <summary>
             ARGUS TV Event service.
@@ -77,16 +87,6 @@
             Called when a schedule is changed.
             </summary>
             <param name="scheduleId">The ID of the schedule that has changed.</param>
-        </member>
-        <member name="T:ArgusTV.ServiceContracts.Events.IGuideEventsListener">
-            <summary>
-            ARGUS TV Event service.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.Events.IGuideEventsListener.NewGuideData">
-            <summary>
-            Method called by ARGUS TV by a NewGuideData event.
-            </summary>
         </member>
         <member name="T:ArgusTV.ServiceContracts.Events.ISystemEventsListener">
             <summary>
@@ -173,308 +173,85 @@
         <member name="M:ArgusTV.ServiceContracts.GZipEncoder.GZipMessageEncodingBindingElementImporter.#ctor">
             <exclude/>
         </member>
-        <member name="T:ArgusTV.ServiceContracts.ICoreService">
+        <member name="T:ArgusTV.ServiceContracts.IConfigurationService">
             <summary>
-            ICoreService interface.
+            Configuration settings service.
             </summary>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.Ping(System.Int32)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetIntValue(System.String,System.String,System.Boolean)">
             <summary>
-            Ping ARGUS TV server and test the API version.
+            Get integer setting.
             </summary>
-            <param name="requestedApiVersion">The API version the client needs, pass in Constants.CurrentApiVersion.</param>
-            <returns>0 if client and server are compatible, -1 if the client is too old and +1 if the client is newer than the server.</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The integer setting value, or null if no setting was found.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.GetMacAddresses">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetStringValue(System.String,System.String,System.Boolean)">
             <summary>
-            Get the server's MAC address(es).  These can be stored on the client after a successful
-            connect and later used to re-connect with wake-on-lan.
+            Get string setting.
             </summary>
-            <returns>An array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The string setting value, or null if no setting was found.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.IsNewerVersionAvailable(ArgusTV.DataContracts.NewVersionInfo@)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetBooleanValue(System.String,System.String,System.Boolean)">
             <summary>
-            Check to see if there is a newer version of ARGUS TV available online.
+            Get boolean setting.
             </summary>
-            <param name="versionInfo">Information about the newer version, or null.</param>
-            <returns>True if there is a newer version available, false if the current installation is up-to-date.</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
+            <returns>The boolean setting value, or null if no setting was found.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.EnsureEventListener(ArgusTV.DataContracts.EventGroup,System.String,System.Int32)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetIntValue(System.String,System.String,System.Nullable{System.Int32})">
             <summary>
-            Method used by a listener service to subscribe to a group of ARGUS TV events.
+            Set integer setting value.
             </summary>
-            <param name="eventGroups">The event group(s) to subscribe to. (can be or'd )</param>
-            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
-            <param name="apiVersion">The API version of the listener service.</param>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.RemoveEventListener(System.String)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetIntDefaultValue(System.String,System.String,System.Nullable{System.Int32})">
             <summary>
-            Method used by a listener service to remove it's subscription from the ARGUS TV events.
+            Set default integer setting value.
             </summary>
-            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.SubscribeServiceEvents(ArgusTV.DataContracts.EventGroup)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetStringValue(System.String,System.String,System.String)">
             <summary>
-            Subscribe your client to a group of ARGUS TV events using a polling mechanism.
+            Set string setting value.
             </summary>
-            <param name="eventGroups">The event group(s) to subscribe to (flags can be OR'd).</param>
-            <returns>A unique client ID for your client.</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.UnsubscribeServiceEvents(System.Guid)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetStringDefaultValue(System.String,System.String,System.String)">
             <summary>
-            Unsubscribe your client from all ARGUS TV events.
+            Set default string setting value.
             </summary>
-            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.GetServiceEvents(System.Guid)">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetBooleanValue(System.String,System.String,System.Nullable{System.Boolean})">
             <summary>
-            Get all queued ARGUS TV events for your client. Call this every X seconds to get informed at a regular interval about what happened.
+            Set boolean setting value.
             </summary>
-            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
-            <returns>Zero or more service events, or null in case your subscription has expired.</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="value">The new value of the setting.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.ICoreService.KeepServerAlive">
+        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetBooleanDefaultValue(System.String,System.String,System.Nullable{System.Boolean})">
             <summary>
-            Tell the server we'd like to keep it alive for a little longer.  A client
-            should call this method every two minutes or so to keep the server from
-            entering standby (if it is configured to do so).
+            Set default boolean setting value.
             </summary>
-        </member>
-        <member name="T:ArgusTV.ServiceContracts.IRecorderTunerCallbackService">
-            <summary>
-            Callback interface for recorders.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.RegisterRecorderTuner(System.Guid,System.String,System.String)">
-            <summary>
-            Method used by a recorder to actually activate itself, to register
-            with ARGUS TV and be included in the list of active recorders.
-            </summary>
-            <param name="recorderTunerId">The ID of the recorder (passed in through Initialize()).</param>
-            <param name="name">The name of the recorder.</param>
-            <param name="version">The version number of the recorder.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.AddNewRecording(ArgusTV.DataContracts.UpcomingProgram,System.DateTime,System.String)">
-            <summary>
-            Add a new recording.  A recording must be added the moment it starts recording.
-            </summary>
-            <param name="recordingProgram">The program that has started recording.</param>
-            <param name="recordingStartTime">The actual recording start-time.</param>
-            <param name="recordingFileName">The full path of the recording file.</param>
-            <returns>The ID of the new recording.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.GetRecordingByFileName(System.String)">
-            <summary>
-            Get the recording associated with the given filename.
-            </summary>
-            <param name="recordingFileName">The full path of the recording file.</param>
-            <returns>The recording, or null if none is found.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.EndRecording(System.String,System.DateTime,System.Boolean,System.Boolean)">
-            <summary>
-            End a recording.
-            </summary>
-            <param name="recordingFileName">The filename of the recording.</param>
-            <param name="recordingStopTime">The actual stop-time of the recording.</param>
-            <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
-            <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.DeleteRecording(System.String,System.Boolean)">
-            <summary>
-            Delete a recording.
-            </summary>
-            <param name="recordingFileName">The filename of the recording.</param>
-            <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.StartRecordingFailed(ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.UpcomingProgram,System.String)">
-            <summary>
-            Report a failure to start recording.
-            </summary>
-            <param name="channelAllocation">The card and channel that failed.</param>
-            <param name="recordingProgram">The program that has failed to started recording.</param>
-            <param name="reason">Error message containing the reason of the failure, e.g. "No signal".</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.GetGuideProgramById(System.Guid)">
-            <summary>
-            Get a guide programs by its ID.
-            </summary>
-            <param name="guideProgramId">The ID of the guide program.</param>
-            <returns>The requested guide program, or null if it wasn't found.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.LogMessage(System.Guid,ArgusTV.DataContracts.LogSeverity,System.String)">
-            <summary>
-            Log a message in the main ARGUS TV log.
-            </summary>
-            <param name="recorderTunerId">The unique ID of the recorder.</param>
-            <param name="logSeverity">The severity of the message.</param>
-            <param name="message">The message to log.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.LiveStreamAborted(ArgusTV.DataContracts.LiveStream,ArgusTV.DataContracts.LiveStreamAbortReason,ArgusTV.DataContracts.UpcomingProgram)">
-            <summary>
-            Called by the recorder to report that an active live-stream was aborted.
-            </summary>
-            <param name="abortedStream">The live stream that was aborted.</param>
-            <param name="reason">The reason for the abort.</param>
-            <param name="program">The upcoming program responsible for the abort, or null.</param>
-        </member>
-        <member name="T:ArgusTV.ServiceContracts.IRecorderTunerService">
-            <summary>
-            Interface implemented by all recorders that hook into ARGUS TV.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.Ping">
-            <summary>
-            Ping RecorderTuner service.
-            </summary>
-            <returns>The version of the API on the recorder, to be compared to Constants.RecorderApiVersion.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.Initialize(System.Guid,System.String,System.Int32)">
-            <summary>
-            Ask the recorder to initialize by registering itself over the RecorderTunerCallback
-            service's RegisterRecorderTuner() method.
-            </summary>
-            <param name="recorderTunerId">The unique ID of this recorder.</param>
-            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
-            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.AllocateCard(ArgusTV.DataContracts.Channel,ArgusTV.DataContracts.CardChannelAllocation[],System.Boolean)">
-            <summary>
-            Ask the recorder to allocate a (virtual) card for a channel.  The previously allocated
-            cards are also passed in, so the implementation must take into account that these cards
-            are no longer available when this call is made.  Note that the implementation must *not*
-            worry about cards being actually free at the moment the call is made!  This is purely a
-            theoretical calculation that is used by ARGUS TV to manage its upcoming recordings.
-            </summary>
-            <param name="channel">The channel to allocate.</param>
-            <param name="alreadyAllocated">All previously allocated channels/cards.</param>
-            <param name="useReversePriority">Use reverse cards priority to avoid conflicts with live streaming.</param>
-            <returns>The unique card ID of the card that can record this channel, or null if no free card was found.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StartRecording(System.String,System.Int32,ArgusTV.DataContracts.CardChannelAllocation,System.DateTime,System.DateTime,ArgusTV.DataContracts.UpcomingProgram,System.String)">
-            <summary>
-            Tell the recorder to actually start a recording on the given card.  The implementation
-            must call AddNewRecording() on the RecorderTunerCallback service when the recording actually
-            starts.  If the recording can't start for some reason, StartRecordingFailed() must be called.
-            In case the recording ends (prematurely or on time) EndRecording() must be called.  IMPORTANT:
-            If the suggested relative path and filename was used the recorder should
-            return 'false' to EndRecording()'s 'okToMoveFile'!
-            </summary>
-            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
-            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
-            <param name="channelAllocation">The card allocation for the channel.</param>
-            <param name="startTime">The actual time to start the recording.</param>
-            <param name="stopTime">The actual time to stop the recording.</param>
-            <param name="recordingProgram">The program to record.</param>
-            <param name="suggestedBaseFileName">The suggested relative path and filename (without extension) of the recording file.</param>
-            <returns>A boolean indicating the recording was initiated succesfully.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.ValidateAndUpdateRecording(ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.UpcomingProgram,System.DateTime)">
-            <summary>
-            Validate a recording is still running, and update its actual stop time.
-            </summary>
-            <param name="channelAllocation">The card allocation for the channel.</param>
-            <param name="recordingProgram">The program being recorded.</param>
-            <param name="stopTime">The up-to-date stop time.</param>
-            <returns>True if the recording was still running (and its stop time was succesfully updated), false if there was a problem or the recording is not running.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.AbortRecording(System.String,System.Int32,ArgusTV.DataContracts.UpcomingProgram)">
-            <summary>
-            Tell the recorder to abort the recording of a program.  The implementation must call
-            EndRecording() on the RecorderTunerCallback service.
-            </summary>
-            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
-            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
-            <param name="recordingProgram">The program that is being recorded.</param>
-            <returns>True if the recording was found and aborted.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetRecordingShares">
-            <summary>
-            Retrieves the recording shares of the recorder.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetTimeshiftShares">
-            <summary>
-            Retrieves the timeshift shares of the recorder.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.TuneLiveStream(ArgusTV.DataContracts.Channel,ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.LiveStream@)">
-            <summary>
-            Tune to a channel, and get a live stream to that channel.
-            </summary>
-            <param name="channel">The channel to tune to.</param>
-            <param name="upcomingRecordingAllocation">The allocation if the next upcoming recording, or null if there isn't one.</param>
-            <param name="liveStream">Reference to a live stream that is either existing or null for a new one.</param>
-            <returns>A LiveStreamResult value to indicate success or failure.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StopLiveStream(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Stop the live stream (if it is found and belongs to the recorder).
-            </summary>
-            <param name="liveStream">The live stream to stop.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetLiveStreams">
-            <summary>
-            Get all live streams.
-            </summary>
-            <returns>An array containing zero or more live streams.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.KeepLiveStreamAlive(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Tell the recorder we are still showing this stream and to keep it alive. Call this every 30 seconds or so.
-            </summary>
-            <param name="liveStream">The live stream that is stil in use.</param>
-            <returns>True if the live stream is still running, false otherwise.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetChannelsLiveState(ArgusTV.DataContracts.Channel[],ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Get the live tuning state of a number of channels.
-            </summary>
-            <param name="channels">The channels to get the live state from.</param>
-            <param name="liveStream">The live stream you want to be ignored (since it's yours), or null.</param>
-            <returns>An array with all the live states for the given channels.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetLiveStreamTuningDetails(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Ask the recorder for the give live stream's tuning details (if possible).
-            </summary>
-            <param name="liveStream">The active live stream.</param>
-            <returns>The service tuning details, or null if none are available.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.HasTeletext(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Ask the recorder whether the given liveStream has teletext.
-            </summary>
-            <param name="liveStream">The live stream.</param>
-            <returns>True if teletext is present.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StartGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Tell the recorder to start grabbing teletext for the given live stream.
-            </summary>
-            <param name="liveStream">The live stream.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StopGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Tell the recorder to stop grabbing teletext for the given live stream.
-            </summary>
-            <param name="liveStream">The live stream.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.IsGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
-            <summary>
-            Ask the recorder whether it is grabbing teletext for the given live stream.
-            </summary>
-            <param name="liveStream">The live stream.</param>
-            <returns>True if the recorder is grabbing teletext.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetTeletextPageBytes(ArgusTV.DataContracts.LiveStream,System.Int32,System.Int32,System.Int32@)">
-            <summary>
-            Request a teletext page/subpage from the recorder for the given live stream.
-            </summary>
-            <param name="liveStream">The live stream.</param>
-            <param name="pageNumber">The teletext page number.</param>
-            <param name="subPageNumber">The teletext subpage number.</param>
-            <param name="subPageCount">The total number of subpages of this page.</param>
-            <returns>The requested page content, or null if the page was not ready yet.</returns>
+            <param name="module">The module of the setting.</param>
+            <param name="key">The setting's unique key within the module.</param>
+            <param name="defaultValue">The default value of the setting.</param>
         </member>
         <member name="T:ArgusTV.ServiceContracts.IControlService">
             <summary>
@@ -894,142 +671,71 @@
             <param name="showHidden">Show the hidden teletext information.</param>
             <returns>The requested teletext page in form of an image, or null if the page was not ready yet.</returns>
         </member>
-        <member name="T:ArgusTV.ServiceContracts.IConfigurationService">
+        <member name="T:ArgusTV.ServiceContracts.ICoreService">
             <summary>
-            Configuration settings service.
+            ICoreService interface.
             </summary>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetIntValue(System.String,System.String,System.Boolean)">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.Ping(System.Int32)">
             <summary>
-            Get integer setting.
+            Ping ARGUS TV server and test the API version.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
-            <returns>The integer setting value, or null if no setting was found.</returns>
+            <param name="requestedApiVersion">The API version the client needs, pass in Constants.CurrentApiVersion.</param>
+            <returns>0 if client and server are compatible, -1 if the client is too old and +1 if the client is newer than the server.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetStringValue(System.String,System.String,System.Boolean)">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.GetMacAddresses">
             <summary>
-            Get string setting.
+            Get the server's MAC address(es).  These can be stored on the client after a successful
+            connect and later used to re-connect with wake-on-lan.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
-            <returns>The string setting value, or null if no setting was found.</returns>
+            <returns>An array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.GetBooleanValue(System.String,System.String,System.Boolean)">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.IsNewerVersionAvailable(ArgusTV.DataContracts.NewVersionInfo@)">
             <summary>
-            Get boolean setting.
+            Check to see if there is a newer version of ARGUS TV available online.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="useDefault">Set to true to return the default value if the setting is not set.</param>
-            <returns>The boolean setting value, or null if no setting was found.</returns>
+            <param name="versionInfo">Information about the newer version, or null.</param>
+            <returns>True if there is a newer version available, false if the current installation is up-to-date.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetIntValue(System.String,System.String,System.Nullable{System.Int32})">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.EnsureEventListener(ArgusTV.DataContracts.EventGroup,System.String,System.Int32)">
             <summary>
-            Set integer setting value.
+            Method used by a listener service to subscribe to a group of ARGUS TV events.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="value">The new value of the setting.</param>
+            <param name="eventGroups">The event group(s) to subscribe to. (can be or'd )</param>
+            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
+            <param name="apiVersion">The API version of the listener service.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetIntDefaultValue(System.String,System.String,System.Nullable{System.Int32})">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.RemoveEventListener(System.String)">
             <summary>
-            Set default integer setting value.
+            Method used by a listener service to remove it's subscription from the ARGUS TV events.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="defaultValue">The default value of the setting.</param>
+            <param name="serviceBaseUrl">The base URL of the event listener WCF service.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetStringValue(System.String,System.String,System.String)">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.SubscribeServiceEvents(ArgusTV.DataContracts.EventGroup)">
             <summary>
-            Set string setting value.
+            Subscribe your client to a group of ARGUS TV events using a polling mechanism.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="value">The new value of the setting.</param>
+            <param name="eventGroups">The event group(s) to subscribe to (flags can be OR'd).</param>
+            <returns>A unique client ID for your client.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetStringDefaultValue(System.String,System.String,System.String)">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.UnsubscribeServiceEvents(System.Guid)">
             <summary>
-            Set default string setting value.
+            Unsubscribe your client from all ARGUS TV events.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="defaultValue">The default value of the setting.</param>
+            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetBooleanValue(System.String,System.String,System.Nullable{System.Boolean})">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.GetServiceEvents(System.Guid)">
             <summary>
-            Set boolean setting value.
+            Get all queued ARGUS TV events for your client. Call this every X seconds to get informed at a regular interval about what happened.
             </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="value">The new value of the setting.</param>
+            <param name="uniqueClientId">The unique ID (GUID) to identify your client.</param>
+            <returns>Zero or more service events, or null in case your subscription has expired.</returns>
         </member>
-        <member name="M:ArgusTV.ServiceContracts.IConfigurationService.SetBooleanDefaultValue(System.String,System.String,System.Nullable{System.Boolean})">
+        <member name="M:ArgusTV.ServiceContracts.ICoreService.KeepServerAlive">
             <summary>
-            Set default boolean setting value.
-            </summary>
-            <param name="module">The module of the setting.</param>
-            <param name="key">The setting's unique key within the module.</param>
-            <param name="defaultValue">The default value of the setting.</param>
-        </member>
-        <member name="T:ArgusTV.ServiceContracts.ILogService">
-            <summary>
-            High-level logging service.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.LogMessage(System.String,ArgusTV.DataContracts.LogSeverity,System.String)">
-            <summary>
-            Log a message.
-            </summary>
-            <param name="module">The name of the module that is logging the message.</param>
-            <param name="logSeverity">The severity of the message.</param>
-            <param name="message">The message text.</param>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesByModule(System.String,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
-            <summary>
-            Get all log entries for a certain module.
-            </summary>
-            <param name="module">The name of the module.</param>
-            <param name="lowerDate">Return messages logged after this date.</param>
-            <param name="upperDate">Return messages logged before this date.</param>
-            <param name="maxEntries">The maximum number of messages to return.</param>
-            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
-            <returns>An array containing zero or more log message.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesBySeverity(ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
-            <summary>
-            Get all log entries of a given severity.
-            </summary>
-            <param name="severity">The severity of the messages.</param>
-            <param name="lowerDate">Return messages logged after this date.</param>
-            <param name="upperDate">Return messages logged before this date.</param>
-            <param name="maxEntries">The maximum number of messages to return.</param>
-            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
-            <returns>An array containing zero or more log message.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesByModuleAndSeverity(System.String,ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
-            <summary>
-            Get all log entries for a certain module and with a given severity.
-            </summary>
-            <param name="module">The name of the module.</param>
-            <param name="severity">The severity of the messages.</param>
-            <param name="lowerDate">Return messages logged after this date.</param>
-            <param name="upperDate">Return messages logged before this date.</param>
-            <param name="maxEntries">The maximum number of messages to return.</param>
-            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.GetAllModules">
-            <summary>
-            Get all available modules currently in the log.
-            </summary>
-            <returns>An array containing zero or more module names.</returns>
-        </member>
-        <member name="M:ArgusTV.ServiceContracts.ILogService.SendTestMail">
-            <summary>
-            Send a test-mail using the current SMTP settings.
+            Tell the server we'd like to keep it alive for a little longer.  A client
+            should call this method every two minutes or so to keep the server from
+            entering standby (if it is configured to do so).
             </summary>
         </member>
         <member name="T:ArgusTV.ServiceContracts.IGuideService">
@@ -1155,6 +861,300 @@
             <summary>
             Notify ARGUS TV that the guide import has ended.  The NewGuideData event will be sent to all listeners.
             </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceContracts.ILogService">
+            <summary>
+            High-level logging service.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.LogMessage(System.String,ArgusTV.DataContracts.LogSeverity,System.String)">
+            <summary>
+            Log a message.
+            </summary>
+            <param name="module">The name of the module that is logging the message.</param>
+            <param name="logSeverity">The severity of the message.</param>
+            <param name="message">The message text.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesByModule(System.String,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries for a certain module.
+            </summary>
+            <param name="module">The name of the module.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns>An array containing zero or more log message.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesBySeverity(ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries of a given severity.
+            </summary>
+            <param name="severity">The severity of the messages.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns>An array containing zero or more log message.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.GetLogEntriesByModuleAndSeverity(System.String,ArgusTV.DataContracts.LogSeverity,System.DateTime,System.DateTime,System.Int32,System.Boolean@)">
+            <summary>
+            Get all log entries for a certain module and with a given severity.
+            </summary>
+            <param name="module">The name of the module.</param>
+            <param name="severity">The severity of the messages.</param>
+            <param name="lowerDate">Return messages logged after this date.</param>
+            <param name="upperDate">Return messages logged before this date.</param>
+            <param name="maxEntries">The maximum number of messages to return.</param>
+            <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.GetAllModules">
+            <summary>
+            Get all available modules currently in the log.
+            </summary>
+            <returns>An array containing zero or more module names.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.ILogService.SendTestMail">
+            <summary>
+            Send a test-mail using the current SMTP settings.
+            </summary>
+        </member>
+        <member name="T:ArgusTV.ServiceContracts.IRecorderTunerCallbackService">
+            <summary>
+            Callback interface for recorders.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.RegisterRecorderTuner(System.Guid,System.String,System.String)">
+            <summary>
+            Method used by a recorder to actually activate itself, to register
+            with ARGUS TV and be included in the list of active recorders.
+            </summary>
+            <param name="recorderTunerId">The ID of the recorder (passed in through Initialize()).</param>
+            <param name="name">The name of the recorder.</param>
+            <param name="version">The version number of the recorder.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.AddNewRecording(ArgusTV.DataContracts.UpcomingProgram,System.DateTime,System.String)">
+            <summary>
+            Add a new recording.  A recording must be added the moment it starts recording.
+            </summary>
+            <param name="recordingProgram">The program that has started recording.</param>
+            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The ID of the new recording.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.GetRecordingByFileName(System.String)">
+            <summary>
+            Get the recording associated with the given filename.
+            </summary>
+            <param name="recordingFileName">The full path of the recording file.</param>
+            <returns>The recording, or null if none is found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.EndRecording(System.String,System.DateTime,System.Boolean,System.Boolean)">
+            <summary>
+            End a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
+            <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.DeleteRecording(System.String,System.Boolean)">
+            <summary>
+            Delete a recording.
+            </summary>
+            <param name="recordingFileName">The filename of the recording.</param>
+            <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.StartRecordingFailed(ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.UpcomingProgram,System.String)">
+            <summary>
+            Report a failure to start recording.
+            </summary>
+            <param name="channelAllocation">The card and channel that failed.</param>
+            <param name="recordingProgram">The program that has failed to started recording.</param>
+            <param name="reason">Error message containing the reason of the failure, e.g. "No signal".</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.GetGuideProgramById(System.Guid)">
+            <summary>
+            Get a guide programs by its ID.
+            </summary>
+            <param name="guideProgramId">The ID of the guide program.</param>
+            <returns>The requested guide program, or null if it wasn't found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.LogMessage(System.Guid,ArgusTV.DataContracts.LogSeverity,System.String)">
+            <summary>
+            Log a message in the main ARGUS TV log.
+            </summary>
+            <param name="recorderTunerId">The unique ID of the recorder.</param>
+            <param name="logSeverity">The severity of the message.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerCallbackService.LiveStreamAborted(ArgusTV.DataContracts.LiveStream,ArgusTV.DataContracts.LiveStreamAbortReason,ArgusTV.DataContracts.UpcomingProgram)">
+            <summary>
+            Called by the recorder to report that an active live-stream was aborted.
+            </summary>
+            <param name="abortedStream">The live stream that was aborted.</param>
+            <param name="reason">The reason for the abort.</param>
+            <param name="program">The upcoming program responsible for the abort, or null.</param>
+        </member>
+        <member name="T:ArgusTV.ServiceContracts.IRecorderTunerService">
+            <summary>
+            Interface implemented by all recorders that hook into ARGUS TV.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.Ping">
+            <summary>
+            Ping RecorderTuner service.
+            </summary>
+            <returns>The version of the API on the recorder, to be compared to Constants.RecorderApiVersion.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.Initialize(System.Guid,System.String,System.Int32)">
+            <summary>
+            Ask the recorder to initialize by registering itself over the RecorderTunerCallback
+            service's RegisterRecorderTuner() method.
+            </summary>
+            <param name="recorderTunerId">The unique ID of this recorder.</param>
+            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
+            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.AllocateCard(ArgusTV.DataContracts.Channel,ArgusTV.DataContracts.CardChannelAllocation[],System.Boolean)">
+            <summary>
+            Ask the recorder to allocate a (virtual) card for a channel.  The previously allocated
+            cards are also passed in, so the implementation must take into account that these cards
+            are no longer available when this call is made.  Note that the implementation must *not*
+            worry about cards being actually free at the moment the call is made!  This is purely a
+            theoretical calculation that is used by ARGUS TV to manage its upcoming recordings.
+            </summary>
+            <param name="channel">The channel to allocate.</param>
+            <param name="alreadyAllocated">All previously allocated channels/cards.</param>
+            <param name="useReversePriority">Use reverse cards priority to avoid conflicts with live streaming.</param>
+            <returns>The unique card ID of the card that can record this channel, or null if no free card was found.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StartRecording(System.String,System.Int32,ArgusTV.DataContracts.CardChannelAllocation,System.DateTime,System.DateTime,ArgusTV.DataContracts.UpcomingProgram,System.String)">
+            <summary>
+            Tell the recorder to actually start a recording on the given card.  The implementation
+            must call AddNewRecording() on the RecorderTunerCallback service when the recording actually
+            starts.  If the recording can't start for some reason, StartRecordingFailed() must be called.
+            In case the recording ends (prematurely or on time) EndRecording() must be called.  IMPORTANT:
+            If the suggested relative path and filename was used the recorder should
+            return 'false' to EndRecording()'s 'okToMoveFile'!
+            </summary>
+            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
+            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
+            <param name="channelAllocation">The card allocation for the channel.</param>
+            <param name="startTime">The actual time to start the recording.</param>
+            <param name="stopTime">The actual time to stop the recording.</param>
+            <param name="recordingProgram">The program to record.</param>
+            <param name="suggestedBaseFileName">The suggested relative path and filename (without extension) of the recording file.</param>
+            <returns>A boolean indicating the recording was initiated succesfully.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.ValidateAndUpdateRecording(ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.UpcomingProgram,System.DateTime)">
+            <summary>
+            Validate a recording is still running, and update its actual stop time.
+            </summary>
+            <param name="channelAllocation">The card allocation for the channel.</param>
+            <param name="recordingProgram">The program being recorded.</param>
+            <param name="stopTime">The up-to-date stop time.</param>
+            <returns>True if the recording was still running (and its stop time was succesfully updated), false if there was a problem or the recording is not running.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.AbortRecording(System.String,System.Int32,ArgusTV.DataContracts.UpcomingProgram)">
+            <summary>
+            Tell the recorder to abort the recording of a program.  The implementation must call
+            EndRecording() on the RecorderTunerCallback service.
+            </summary>
+            <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
+            <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
+            <param name="recordingProgram">The program that is being recorded.</param>
+            <returns>True if the recording was found and aborted.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetRecordingShares">
+            <summary>
+            Retrieves the recording shares of the recorder.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetTimeshiftShares">
+            <summary>
+            Retrieves the timeshift shares of the recorder.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.TuneLiveStream(ArgusTV.DataContracts.Channel,ArgusTV.DataContracts.CardChannelAllocation,ArgusTV.DataContracts.LiveStream@)">
+            <summary>
+            Tune to a channel, and get a live stream to that channel.
+            </summary>
+            <param name="channel">The channel to tune to.</param>
+            <param name="upcomingRecordingAllocation">The allocation if the next upcoming recording, or null if there isn't one.</param>
+            <param name="liveStream">Reference to a live stream that is either existing or null for a new one.</param>
+            <returns>A LiveStreamResult value to indicate success or failure.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StopLiveStream(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Stop the live stream (if it is found and belongs to the recorder).
+            </summary>
+            <param name="liveStream">The live stream to stop.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetLiveStreams">
+            <summary>
+            Get all live streams.
+            </summary>
+            <returns>An array containing zero or more live streams.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.KeepLiveStreamAlive(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder we are still showing this stream and to keep it alive. Call this every 30 seconds or so.
+            </summary>
+            <param name="liveStream">The live stream that is stil in use.</param>
+            <returns>True if the live stream is still running, false otherwise.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetChannelsLiveState(ArgusTV.DataContracts.Channel[],ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Get the live tuning state of a number of channels.
+            </summary>
+            <param name="channels">The channels to get the live state from.</param>
+            <param name="liveStream">The live stream you want to be ignored (since it's yours), or null.</param>
+            <returns>An array with all the live states for the given channels.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetLiveStreamTuningDetails(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder for the give live stream's tuning details (if possible).
+            </summary>
+            <param name="liveStream">The active live stream.</param>
+            <returns>The service tuning details, or null if none are available.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.HasTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder whether the given liveStream has teletext.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <returns>True if teletext is present.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StartGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder to start grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.StopGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Tell the recorder to stop grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.IsGrabbingTeletext(ArgusTV.DataContracts.LiveStream)">
+            <summary>
+            Ask the recorder whether it is grabbing teletext for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <returns>True if the recorder is grabbing teletext.</returns>
+        </member>
+        <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.GetTeletextPageBytes(ArgusTV.DataContracts.LiveStream,System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Request a teletext page/subpage from the recorder for the given live stream.
+            </summary>
+            <param name="liveStream">The live stream.</param>
+            <param name="pageNumber">The teletext page number.</param>
+            <param name="subPageNumber">The teletext subpage number.</param>
+            <param name="subPageCount">The total number of subpages of this page.</param>
+            <returns>The requested page content, or null if the page was not ready yet.</returns>
         </member>
         <member name="T:ArgusTV.ServiceContracts.ISchedulerService">
             <summary>

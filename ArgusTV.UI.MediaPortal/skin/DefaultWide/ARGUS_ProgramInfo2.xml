@@ -72,10 +72,10 @@
         <onright>10</onright>
       </control>
       <control>
-        <description>Only new episodes</description>
+        <description>Record episodes once</description>
         <type>togglebutton</type>
         <id>5</id>
-        <label>Only new episodes</label>
+        <label>Record episodes once</label>
         <onup>4</onup>
         <ondown>8</ondown>
         <onright>10</onright>
