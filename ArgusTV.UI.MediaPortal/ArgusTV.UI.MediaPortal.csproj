@@ -272,6 +272,7 @@
     <Content Include="skin\Titan\Media\ARGUS_AlertCancelled.png" />
     <Content Include="skin\Titan\Media\ARGUS_AlertSeries.png" />
     <Content Include="skin\Titan\Media\ARGUS_AlertSeriesCancelled.png" />
+    <Content Include="skin\Titan\Media\ARGUS_icon.png" />
     <Content Include="skin\Titan\Media\ARGUS_Recording.png" />
     <Content Include="skin\Titan\Media\ARGUS_RecordingCancelled.png" />
     <Content Include="skin\Titan\Media\ARGUS_RecordingCancelledHistory.png" />
@@ -286,6 +287,7 @@
     <Content Include="skin\Titan\Media\ARGUS_SuggestionCancelled.png" />
     <Content Include="skin\Titan\Media\ARGUS_SuggestionSeries.png" />
     <Content Include="skin\Titan\Media\ARGUS_SuggestionSeriesCancelled.png" />
+    <Content Include="skin\Titan\Media\ARGUS_text.png" />
     <Content Include="skin\Titan\settings_tv.xml" />
   </ItemGroup>
   <ItemGroup>
