@@ -194,6 +194,7 @@
     <Content Include="skin\DefaultWide\ARGUS_TvGuideSearch2.xml" />
     <Content Include="skin\DefaultWide\ARGUS_UpcomingRadio.xml" />
     <Content Include="skin\DefaultWide\ARGUS_UpcomingTv.xml" />
+    <Content Include="skin\DefaultWide\BasicHome.xml" />
     <Content Include="skin\DefaultWide\Media\ARGUS_Alert.png" />
     <Content Include="skin\DefaultWide\Media\ARGUS_AlertCancelled.png" />
     <Content Include="skin\DefaultWide\Media\ARGUS_AlertSeries.png" />
