@@ -687,6 +687,8 @@ namespace ArgusTV.UI.MediaPortal
             GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Record.percent1", "0");
             GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Record.percent2", "0");
             GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Record.percent3", "0");
+            GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Record.chapters", string.Empty);
+            GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Record.jumppoints", string.Empty);
         }
 
         /// <summary>
