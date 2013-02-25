@@ -263,29 +263,6 @@ namespace ArgusTV.Common
             return path.TrimEnd('.', ' ');
         }
 
-        public static Guid NewSequentialGuid()
-        {
-            GUIDDATA guiddata;
-            if ((UuidCreateSequential(out guiddata) & 0x80000000) != 0) // FAILED(hr)
-            {
-                throw new InvalidOperationException();
-            }
-
-            SwapBytes(guiddata.Data, 0, 3);
-            SwapBytes(guiddata.Data, 1, 2);
-            SwapBytes(guiddata.Data, 4, 5);
-            SwapBytes(guiddata.Data, 6, 7);
-
-            return new Guid(guiddata.Data);
-        }
-
-        private static void SwapBytes(byte[] bytes, int index1, int index2)
-        {
-            byte b = bytes[index1];
-            bytes[index1] = bytes[index2];
-            bytes[index2] = b;
-        }
-
         public static string[] ParseCommandArguments(string commandLine)
         {
             List<string> arguments = new List<string>();
@@ -356,17 +333,48 @@ namespace ArgusTV.Common
             return arguments.ToArray();
         }
 
-        #region API
+        #region Sequential GUIDs
 
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        private struct GUIDDATA
+        private static readonly int[] _sqlOrderMap = new[] { 3, 2, 1, 0, 5, 4, 7, 6, 9, 8, 15, 14, 13, 12, 11, 10 };
+
+        private enum RpcUuidCodes : int
         {
-            [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] Data;
+            RPC_S_OK = 0,
+            RPC_S_UUID_LOCAL_ONLY = 1824,
+            RPC_S_UUID_NO_ADDRESS = 1739
         }
 
         [System.Runtime.InteropServices.DllImport("rpcrt4.dll")]
-        private static extern int UuidCreateSequential(out GUIDDATA Uuid);
+        private static extern int UuidCreateSequential(out Guid guid);
+
+        public static Guid NewSequentialGuid(bool sqlServerSortOrder = true)
+        {
+            Guid sequentialguid;
+
+            RpcUuidCodes result = (RpcUuidCodes)UuidCreateSequential(out sequentialguid);
+            if (result != RpcUuidCodes.RPC_S_OK
+                && result == RpcUuidCodes.RPC_S_UUID_NO_ADDRESS)
+            {
+                return Guid.NewGuid();
+            }
+
+            return sqlServerSortOrder ? SetSequentialGuidSortOrder(sequentialguid) : sequentialguid;
+        }
+
+        private static Guid SetSequentialGuidSortOrder(Guid guid)
+        {
+            byte[] bytes = guid.ToByteArray();
+            var copyBytes = new byte[16];
+
+            bytes.CopyTo(copyBytes, 0);
+
+            for (int mapIndex = 0; mapIndex < 10; mapIndex++)
+            {
+                bytes[mapIndex] = copyBytes[_sqlOrderMap[mapIndex]];
+            }
+
+            return new Guid(bytes);
+        }
 
         #endregion
 
