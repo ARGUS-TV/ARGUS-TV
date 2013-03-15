@@ -996,9 +996,9 @@ namespace ArgusTV.UI.MediaPortal
                           {
                               item1.Label = rec.CreateProgramTitle();
                               TimeSpan ts = TimeSpan.Zero;
-                              if (rec.RecordingStopTime.HasValue)
+                              if (rec.RecordingStopTimeUtc.HasValue)
                               {
-                                  ts = rec.RecordingStopTime.Value - rec.RecordingStartTime;
+                                  ts = rec.RecordingStopTimeUtc.Value - rec.RecordingStartTimeUtc;
                               }
                               string strTime = string.Format("{0} {1} ({2})",
                                 Utility.GetShortDayDateString(rec.RecordingStartTime),
@@ -1294,9 +1294,9 @@ namespace ArgusTV.UI.MediaPortal
                 GUIPropertyManager.SetProperty(guiPropertyPrefix + ".RecordedTV.Time", strTime);
                 GUIPropertyManager.SetProperty(guiPropertyPrefix + ".RecordedTV.Description", recording.CreateCombinedDescription(true));
 
-                if (rec.LastWatchedPosition.HasValue && rec.RecordingStopTime.HasValue)
+                if (rec.LastWatchedPosition.HasValue && rec.RecordingStopTimeUtc.HasValue)
                 {
-                    double percentage = (rec.LastWatchedPosition.Value / (rec.RecordingStopTime.Value - rec.RecordingStartTime).TotalSeconds) * 100;
+                    double percentage = (rec.LastWatchedPosition.Value / (rec.RecordingStopTimeUtc.Value - rec.RecordingStartTimeUtc).TotalSeconds) * 100;
                     if (percentage > 100) percentage = 100;
                     if (percentage < 0) percentage = 0;
                     GUIPropertyManager.SetProperty(guiPropertyPrefix + ".RecordedTV.PercentageWatched", Math.Round(percentage).ToString());
@@ -1477,7 +1477,7 @@ namespace ArgusTV.UI.MediaPortal
                                 || _cleanUpMethod == cleanupMethod.AllInvalid)
                             {
                                 if (!recording.IsFileOnDisk ||
-                                    (recording.RecordingStopTime.HasValue && (recording.RecordingStartTime.AddSeconds(15) > recording.RecordingStopTime)))
+                                    (recording.RecordingStopTimeUtc.HasValue && (recording.RecordingStartTimeUtc.AddSeconds(15) > recording.RecordingStopTimeUtc)))
                                 {
                                     Log.Debug("RecordedBase: remove invalid recording: {0}", recording.RecordingFileName);
                                     ControlAgent.DeleteRecording(recording.RecordingFileName, true);
