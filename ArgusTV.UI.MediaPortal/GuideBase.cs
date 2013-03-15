@@ -1792,6 +1792,8 @@ namespace ArgusTV.UI.MediaPortal
                         {
                             StartTime = _viewingTime,
                             StopTime = _viewingTime,
+                            StartTimeUtc = _viewingTime.ToUniversalTime(),
+                            StopTimeUtc = _viewingTime.ToUniversalTime(),
                             Title = String.Empty,
                             Category = String.Empty
                         };
@@ -1805,6 +1807,8 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 StartTime = program.StopTime,
                                 StopTime = program.StopTime,
+                                StartTimeUtc = program.StartTimeUtc,
+                                StopTimeUtc = program.StopTimeUtc,
                                 Title = String.Empty,
                                 Category = String.Empty
                             };
@@ -1815,6 +1819,8 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 StartTime = _viewingTime,
                                 StopTime = _viewingTime,
+                                StartTimeUtc = _viewingTime.ToUniversalTime(),
+                                StopTimeUtc = _viewingTime.ToUniversalTime(),
                                 Title = String.Empty,
                                 Category = String.Empty
                             };
