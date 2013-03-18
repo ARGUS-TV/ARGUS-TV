@@ -259,7 +259,7 @@
             Add a new recording.  A recording must be added the moment it starts recording.
             </summary>
             <param name="recordingProgram">The program that has started recording.</param>
-            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingStartTimeUtc">The actual recording start-time (UTC).</param>
             <param name="recordingFileName">The full path of the recording file.</param>
             <returns>The ID of the new recording.</returns>
         </member>
@@ -275,7 +275,7 @@
             End a recording.
             </summary>
             <param name="recordingFileName">The filename of the recording.</param>
-            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="recordingStopTimeUtc">The actual stop-time of the recording (UTC).</param>
             <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
             <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
         </member>
@@ -362,8 +362,8 @@
             <param name="serverHostName">The hostname of the machine running the ARGUS TV services.</param>
             <param name="tcpPort">The TCP port of the ARGUS TV services.</param>
             <param name="channelAllocation">The card allocation for the channel.</param>
-            <param name="startTime">The actual time to start the recording.</param>
-            <param name="stopTime">The actual time to stop the recording.</param>
+            <param name="startTimeUtc">The actual time to start the recording (UTC).</param>
+            <param name="stopTimeUtc">The actual time to stop the recording (UTC).</param>
             <param name="recordingProgram">The program to record.</param>
             <param name="suggestedBaseFileName">The suggested relative path and filename (without extension) of the recording file.</param>
             <returns>A boolean indicating the recording was initiated succesfully.</returns>
@@ -374,7 +374,7 @@
             </summary>
             <param name="channelAllocation">The card allocation for the channel.</param>
             <param name="recordingProgram">The program being recorded.</param>
-            <param name="stopTime">The up-to-date stop time.</param>
+            <param name="stopTimeUtc">The up-to-date stop time (UTC).</param>
             <returns>True if the recording was still running (and its stop time was succesfully updated), false if there was a problem or the recording is not running.</returns>
         </member>
         <member name="M:ArgusTV.ServiceContracts.IRecorderTunerService.AbortRecording(System.String,System.Int32,ArgusTV.DataContracts.UpcomingProgram)">
@@ -589,7 +589,7 @@
             Add a new recording.  A recording must be added the moment it starts recording.
             </summary>
             <param name="recordingProgram">The program that has started recording.</param>
-            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingStartTimeUtc">The actual recording start-time (UTC).</param>
             <param name="recordingFileName">The full path of the recording file.</param>
             <returns>The ID of the new recording.</returns>
         </member>
@@ -612,7 +612,7 @@
             End a recording.
             </summary>
             <param name="recordingFileName">The filename of the recording.</param>
-            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="recordingStopTimeUtc">The actual stop-time of the recording (UTC).</param>
             <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
             <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
         </member>

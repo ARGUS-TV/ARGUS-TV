@@ -53,9 +53,26 @@
             Program and may contain a different time.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.ActiveRecording.ActualStartTimeUtc">
+            <summary>
+            The actual start time of the recording (UTC).  This overrules ActualStartTime in the
+            Program and may contain a different time.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ActiveRecording.ActualStopTimeUtc">
+            <summary>
+            The actual stop time of the recording (UTC).  This overrules ActualStopTime in the
+            Program and may contain a different time.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.ActiveRecording.RecordingId">
             <summary>
             The ID of the recording.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ActiveRecording.RecordingIntId">
+            <summary>
+            The integer ID of the recording.
             </summary>
         </member>
         <member name="T:ArgusTV.DataContracts.ArgusTVException">
@@ -230,6 +247,11 @@
             The unique channel ID.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.Channel.Id">
+            <summary>
+            The unique integer ID of the channel.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.Channel.GuideChannelId">
             <summary>
             The ID of the guide channel that holds the guide data for this channel.
@@ -392,6 +414,11 @@
         <member name="P:ArgusTV.DataContracts.ChannelGroup.ChannelGroupId">
             <summary>
             The unique ID of the channel group.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ChannelGroup.Id">
+            <summary>
+            The unique integer ID of the channel group.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ChannelGroup.ChannelType">
@@ -574,6 +601,11 @@
         <member name="P:ArgusTV.DataContracts.ChannelProgram.GuideProgramId">
             <summary>
             The unique ID of the guide program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ChannelProgram.GuideProgramIntId">
+            <summary>
+            The unique integer ID of the guide program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ChannelProgram.Title">
@@ -1182,6 +1214,11 @@
             The unique ID of the guide program.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgram.Id">
+            <summary>
+            The unique integer ID of the guide program.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.GuideChannelId">
             <summary>
             The ID of the channel this program belongs to.
@@ -1197,9 +1234,19 @@
             The program's start time.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgram.StartTimeUtc">
+            <summary>
+            The program's start time (UTC).
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.StopTime">
             <summary>
             The program's stop time.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgram.StopTimeUtc">
+            <summary>
+            The program's stop time (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.PreviouslyAiredTime">
@@ -1429,6 +1476,11 @@
             The unique ID of the guide program.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgramSummary.Id">
+            <summary>
+            The unique integer ID of the guide program.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.GuideProgramSummary.GuideChannelId">
             <summary>
             The ID of the channel this program belongs to.
@@ -1447,6 +1499,16 @@
         <member name="P:ArgusTV.DataContracts.GuideProgramSummary.StopTime">
             <summary>
             The program's stop time.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgramSummary.StartTimeUtc">
+            <summary>
+            The program's start time (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgramSummary.StopTimeUtc">
+            <summary>
+            The program's stop time (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgramSummary.SubTitle">
@@ -1592,7 +1654,7 @@
             </summary>
             <param name="channel">The channel being streamed.</param>
             <param name="rtspUrl">The rtsp URL to the stream.</param>
-            <param name="streamStartedTime">The date and time the stream was first started.</param>
+            <param name="streamStartedTimeUtc">The date and time the stream was first started.</param>
         </member>
         <member name="P:ArgusTV.DataContracts.LiveStream.Channel">
             <summary>
@@ -1624,9 +1686,9 @@
             The date and time the stream was first started.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.LiveStream.StreamLastAliveTime">
+        <member name="P:ArgusTV.DataContracts.LiveStream.StreamLastAliveTimeUtc">
             <summary>
-            The date and time the stream was last sent a keep-alive signal.
+            The date and time the stream was last sent a keep-alive signal (UTC).
             </summary>
         </member>
         <member name="T:ArgusTV.DataContracts.LiveStreamAbortReason">
@@ -2055,6 +2117,11 @@
             The unique ID of the recording.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.Recording.Id">
+            <summary>
+            The unique integer ID of the recording.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.Recording.ScheduleId">
             <summary>
             The original schedule ID (may no longer exist).
@@ -2130,6 +2197,16 @@
             The actual stop time of the recording.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.Recording.RecordingStartTimeUtc">
+            <summary>
+            The actual start time of the recording (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.Recording.RecordingStopTimeUtc">
+            <summary>
+            The actual stop time of the recording (UTC).
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.Recording.RecordingFileName">
             <summary>
             The filename of the recording.
@@ -2148,6 +2225,16 @@
         <member name="P:ArgusTV.DataContracts.Recording.ProgramStopTime">
             <summary>
             The stop time of the recorded program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.Recording.ProgramStartTimeUtc">
+            <summary>
+            The start time of the recorded program (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.Recording.ProgramStopTimeUtc">
+            <summary>
+            The stop time of the recorded program (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.Recording.Title">
@@ -2678,6 +2765,11 @@
             The unique ID of the recording.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.RecordingSummary.Id">
+            <summary>
+            The unique integer ID of the recording.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.RecordingSummary.ScheduleId">
             <summary>
             The original schedule ID (may no longer exist).
@@ -2753,6 +2845,16 @@
             The actual stop time of the recording.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.RecordingSummary.RecordingStartTimeUtc">
+            <summary>
+            The actual start time of the recording (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.RecordingSummary.RecordingStopTimeUtc">
+            <summary>
+            The actual stop time of the recording (UTC).
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.RecordingSummary.RecordingFileName">
             <summary>
             The filename of the recording.
@@ -2766,6 +2868,16 @@
         <member name="P:ArgusTV.DataContracts.RecordingSummary.ProgramStartTime">
             <summary>
             The start time of the recorded program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.RecordingSummary.ProgramStopTimeUtc">
+            <summary>
+            The stop time of the recorded program (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.RecordingSummary.ProgramStartTimeUtc">
+            <summary>
+            The start time of the recorded program (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.RecordingSummary.ProgramStopTime">
@@ -2923,6 +3035,11 @@
         <member name="P:ArgusTV.DataContracts.Schedule.ScheduleId">
             <summary>
             The unique ID of the schedule.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.Schedule.Id">
+            <summary>
+            The unique integer ID of the schedule.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.Schedule.Name">
@@ -3487,6 +3604,11 @@
         <member name="P:ArgusTV.DataContracts.ScheduleSummary.ScheduleId">
             <summary>
             The unique ID of the schedule.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ScheduleSummary.Id">
+            <summary>
+            The unique integer ID of the schedule.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ScheduleSummary.Name">
@@ -4241,9 +4363,19 @@
             The channel ID of the upcoming program.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.ChannelIntId">
+            <summary>
+            The channel integer ID of the upcoming program.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.ScheduleId">
             <summary>
             The schedule ID of the upcoming program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.ScheduleIntId">
+            <summary>
+            The schedule integer ID of the upcoming program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.Priority">
@@ -4269,6 +4401,11 @@
         <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.GuideProgramId">
             <summary>
             The guide program ID of the upcoming program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingGuideProgram.GuideProgramIntId">
+            <summary>
+            The guide program integer ID of the upcoming program.
             </summary>
         </member>
         <member name="T:ArgusTV.DataContracts.UpcomingProgram">
@@ -4297,6 +4434,15 @@
             <param name="channelId">The unique ID of the channel this program is scheduled on.</param>
             <returns>The unique upcoming program ID.</returns>
         </member>
+        <member name="M:ArgusTV.DataContracts.UpcomingProgram.GetUniqueUpcomingProgramIntId(System.Int32,System.Int32)">
+            <summary>
+            Create a unique upcoming program integer ID for an upcoming program that records an
+            actual guide program.
+            </summary>
+            <param name="guideProgramIntId">The unique integer ID of the guide program.</param>
+            <param name="channelIntId">The unique integer ID of the channel this program is scheduled on.</param>
+            <returns>The unique upcoming program integer ID.</returns>
+        </member>
         <member name="M:ArgusTV.DataContracts.UpcomingProgram.GetUniqueUpcomingProgramId(System.Guid,System.DateTime)">
             <summary>
             Create a unique upcoming program ID for an upcoming program that records a manual
@@ -4306,9 +4452,23 @@
             <param name="startTime">The start time of the upcoming program.</param>
             <returns>The unique upcoming program ID.</returns>
         </member>
+        <member name="M:ArgusTV.DataContracts.UpcomingProgram.GetUniqueUpcomingProgramIntId(System.Int32,System.DateTime)">
+            <summary>
+            Create a unique upcoming program integer ID for an upcoming program that records a
+            manual schedule.
+            </summary>
+            <param name="scheduleId">The unique integer ID of the manual schedule.</param>
+            <param name="startTime">The start time of the upcoming program.</param>
+            <returns>The unique upcoming program ID.</returns>
+        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.UpcomingProgramId">
             <summary>
             The unique ID of the upcoming program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.Id">
+            <summary>
+            The unique integer ID of the upcoming program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.Channel">
@@ -4319,6 +4479,11 @@
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.ScheduleId">
             <summary>
             The ID of the schedule this upcoming program belongs to.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.ScheduleIntId">
+            <summary>
+            The integer ID of the schedule this upcoming program belongs to.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.Priority">
@@ -4356,6 +4521,11 @@
             Null if this is a manual recording or the ID of the guide program of this upcoming program.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.GuideProgramIntId">
+            <summary>
+            Null if this is a manual recording or the integer ID of the guide program of this upcoming program.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.Title">
             <summary>
             The title of the upcoming program.
@@ -4369,6 +4539,16 @@
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.StopTime">
             <summary>
             The stop time of the upcoming program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.StartTimeUtc">
+            <summary>
+            The start time of the upcoming program (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.StopTimeUtc">
+            <summary>
+            The stop time of the upcoming program (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.SubTitle">
@@ -4440,6 +4620,16 @@
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.ActualStopTime">
             <summary>
             The actual stop time of the upcoming program (includes post-padding).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.ActualStartTimeUtc">
+            <summary>
+            The actual start time (UTC) of the upcoming program (includes pre-padding).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingProgram.ActualStopTimeUtc">
+            <summary>
+            The actual stop time (UTC) of the upcoming program (includes post-padding).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.ActualDuration">
@@ -4534,6 +4724,18 @@
             Program and may contain a different time.
             </summary>
         </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingRecording.ActualStartTimeUtc">
+            <summary>
+            The actual start time of the recording (UTC).  This overrules ActualStartTime in the
+            Program and may contain a different time.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingRecording.ActualStopTimeUtc">
+            <summary>
+            The actual stop time of the recording (UTC).  This overrules ActualStopTime in the
+            Program and may contain a different time.
+            </summary>
+        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingRecording.Title">
             <summary>
             The program's title.
@@ -4547,6 +4749,16 @@
         <member name="P:ArgusTV.DataContracts.UpcomingRecording.StopTime">
             <summary>
             The program's stop time.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingRecording.StartTimeUtc">
+            <summary>
+            The program's start time (UTC).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.UpcomingRecording.StopTimeUtc">
+            <summary>
+            The program's stop time (UTC).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.UpcomingRecording.SubTitle">

@@ -287,7 +287,7 @@
             Add a new recording.  A recording must be added the moment it starts recording.
             </summary>
             <param name="recordingProgram">The program that has started recording.</param>
-            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingStartTimeUtc">The actual recording start-time (UTC).</param>
             <param name="recordingFileName">The full path of the recording file.</param>
             <returns>The ID of the new recording.</returns>
         </member>
@@ -303,7 +303,7 @@
             End a recording.
             </summary>
             <param name="recordingFileName">The filename of the recording.</param>
-            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="recordingStopTimeUtc">The actual stop-time of the recording (UTC).</param>
             <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
             <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
         </member>
@@ -463,7 +463,7 @@
             Add a new recording.  A recording must be added the moment it starts recording.
             </summary>
             <param name="recordingProgram">The program that has started recording.</param>
-            <param name="recordingStartTime">The actual recording start-time.</param>
+            <param name="recordingStartTimeUtc">The actual recording start-time (UTC).</param>
             <param name="recordingFileName">The full path of the recording file.</param>
             <returns>The ID of the new recording.</returns>
         </member>
@@ -486,7 +486,7 @@
             End a recording.
             </summary>
             <param name="recordingFileName">The filename of the recording.</param>
-            <param name="recordingStopTime">The actual stop-time of the recording.</param>
+            <param name="recordingStopTimeUtc">The actual stop-time of the recording (UTC).</param>
             <param name="isPartialRecording">Set to true if this is only a partial recording, if the recording was stopped prematurely.</param>
             <param name="okToMoveFile">Set to true if the recorder has no need of the filename anymore, so ARGUS TV can rename or move the file.</param>
         </member>
