@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal", "ArgusTV.UI.MediaPortal\ArgusTV.UI.MediaPortal.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
 EndProject
@@ -87,6 +86,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.Messenger", "ArgusT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.Common", "ArgusTV.Common\ArgusTV.Common.csproj", "{D0FD6FEC-F7B8-406A-9B87-16FF3F5472BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.Batch.ProcessCommand", "ArgusTV.Batch.ProcessCommand\ArgusTV.Batch.ProcessCommand.csproj", "{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +155,12 @@ Global
 		{D0FD6FEC-F7B8-406A-9B87-16FF3F5472BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D0FD6FEC-F7B8-406A-9B87-16FF3F5472BE}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{D0FD6FEC-F7B8-406A-9B87-16FF3F5472BE}.Test|Any CPU.Build.0 = Test|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{147909FF-20FF-4DE0-BFD7-61F2D0FCA244}.Test|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
