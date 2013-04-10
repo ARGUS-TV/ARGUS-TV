@@ -1,5 +1,5 @@
-ï»¿/*
- *	Copyright (C) 2007-2012 ARGUS TV
+/*
+ *	Copyright (C) 2007-2013 ARGUS TV
  *	http://www.argus-tv.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ namespace ArgusTV.Batch.ProcessCommand
 
         #region Sample Commandargs
         // Help
-        // MyVideo \\tcf\recordings\Man bijt hond\Man bijt hond_Ã©Ã©n_2008-09-24_23-47.ts
+        // MyVideo \\tcf\recordings\Man bijt hond\Man bijt hond_één_2008-09-24_23-47.ts
         // Log arg1 arg2 arg3
         #endregion
         static void Main(string[] args)

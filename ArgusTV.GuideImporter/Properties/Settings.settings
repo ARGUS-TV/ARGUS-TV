@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ArgusTV.GuideImporter.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ArgusTVServerName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="ArgusTVPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">49942</Value>
+    </Setting>
+    <Setting Name="LogLevel" Type="System.Diagnostics.SourceLevels" Scope="Application">
+      <Value Profile="(Default)">Verbose</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -11,7 +11,7 @@ using MediaPortal.Common.Utils;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ARGUS TV")]
 [assembly: AssemblyProduct("ArgusTV.UI.MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © 2007-2012 ARGUS TV")]
+[assembly: AssemblyCopyright("Copyright © 2007-2013 ARGUS TV")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
