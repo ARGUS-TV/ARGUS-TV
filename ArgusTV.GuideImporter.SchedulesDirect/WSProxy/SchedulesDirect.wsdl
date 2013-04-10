@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<wsdl:definitions xmlns:tms="urn:TMSWebServices" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:TMSWebServices" name="xtvdWebService">
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:TMSWebServices">
+      <xsd:include schemaLocation="D:\Steph\Workspace\SD\TestApplication\WS\tmsxtvd.xsd" />
+      <xsd:complexType name="xtvdResponse">
+        <xsd:sequence>
+          <xsd:element name="messages">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en">A collection of messages that may be sent back by the server to the client. Messages are usually used by the server to notify the user of changes to their subscription caused by automatic changes in station's that are part of their subscription. For instance, messages are passed back if a lineup selected by the user is no-longer valid, if all the stations selected by the user has been removed as they are no longer valid ...</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="message" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:annotation>
+                    <xsd:documentation xml:lang="en">An individual message that is passed back by the server.</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element ref="tms:xtvd" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="downloadTimes">
+        <xsd:sequence>
+          <xsd:element name="blockedDownloadTime" type="tms:dateTime" minOccurs="0">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en">The time (in UTC) until which download requests will be blocked by the webservice.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="suggestedDownloadTime" type="tms:dateTime">
+            <xsd:annotation>
+              <xsd:documentation xml:lang="en">The time (in UTC) at which the webservice recommends that the client attempt another download request.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="downloadResponse">
+    <wsdl:part name="xtvdResponse" type="tms:xtvdResponse" />
+  </wsdl:message>
+  <wsdl:message name="downloadRequest">
+    <wsdl:part name="startTime" type="xsd:string" />
+    <wsdl:part name="endTime" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="acknowledgeResponse">
+    <wsdl:part name="downloadTimes" type="tms:downloadTimes" />
+  </wsdl:message>
+  <wsdl:message name="voidMessage">
+    <documentation xml:lang="en">A general success message to indicate a successful transaction. In general failures will result in SOAP Faults.</documentation>
+  </wsdl:message>
+  <wsdl:message name="webserviceFault" />
+  <wsdl:portType name="xtvdPortType">
+    <wsdl:operation name="download">
+      <wsdl:input message="tms:downloadRequest" />
+      <wsdl:output message="tms:downloadResponse" />
+      <wsdl:fault name="webserviceFault" message="tms:webserviceFault" />
+    </wsdl:operation>
+    <wsdl:operation name="acknowledge">
+      <wsdl:input message="tms:voidMessage" />
+      <wsdl:output message="tms:acknowledgeResponse" />
+      <wsdl:fault name="FaultName" message="tms:webserviceFault" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="xtvdBinding" type="tms:xtvdPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="download">
+      <soap:operation soapAction="urn:TMSWebServices:xtvdWebService#download" style="rpc" />
+      <wsdl:input>
+        <soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices" />
+      </wsdl:output>
+      <wsdl:fault name="webserviceFault">
+        <soap:fault name="webserviceFault" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="acknowledge">
+      <soap:operation soapAction="urn:#acknowledge" style="rpc" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="urn:TMSWebServices" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="urn:TMSWebServices" />
+      </wsdl:output>
+      <wsdl:fault name="wsdl:FaultName" />
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="xtvdWebService">
+    <wsdl:port name="xtvdWebServicePort" binding="tms:xtvdBinding">
+      <soap:address location="http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

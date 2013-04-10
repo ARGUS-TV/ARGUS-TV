@@ -1,6 +1,6 @@
-#region Copyright (C) 2007-2012 ARGUS TV
+#region Copyright (C) 2007-2013 ARGUS TV
 /*
- *	Copyright (C) 2007-2012 ARGUS TV
+ *	Copyright (C) 2007-2013 ARGUS TV
  *	http://www.argus-tv.com
  *
  *  This Program is free software; you can redistribute it and/or modify
