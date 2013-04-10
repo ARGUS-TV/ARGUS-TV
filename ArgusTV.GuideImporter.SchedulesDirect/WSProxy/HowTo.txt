@@ -1,0 +1,28 @@
+﻿How to generate WS proxy for SchedulesDirect WS
+
+1) Get a local copy of the wsdl/schema
+
+Download the wsdl and the two xml schema files used (follow the URLs in the "includes" in the wsdl and the first xsd)
+
+Wsdl   : http://docs.tms.tribune.com/tech/tmsdatadirect/schedulesdirect/tvDataDelivery.wsdl
+Service: http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService
+
+Edit the wsdl and first xsd so they include the xml schema from local files, not urls
+
+2. Edit the wdsl:
+
+a. remove the 'xmlns="http://schemas.xmlsoap.org/wsdl/"' 
+b. Edit all the soap:body elements and change use="encoded" to use="literal"
+c. Cut the namespace attribute from the soap:fault name="webserviceFault" element
+d. Paste that namespace attribute into the input and output elements nested under operation name="acknowledge"
+e. Remove the attempted namespace prefix tms: from the name in soap:fault name="tms:webserviceFault"
+(f. Remove the xml:lang="en" attribute from the wsdl:documentation element)
+g. Change the type for the startTime and endTime elements of the downloadRequest message from tms:dateTime to xsd:string (see below)
+h. Add style="rpc" attribute to the soap action for acknowledge.
+
+3. Generate the proxy
+
+a. Start a VS command prompt
+b. Navigate to the project directory and run the wsdl.exe tool : 
+
+wsdl /namespace:SchedulesDirect /out:D:\steph\Workspace\SD\TestApplication SchedulesDirect.wsdl /proxyusername:U95639 /proxypassword:surfen /username:ronlemire61 /password:direct
