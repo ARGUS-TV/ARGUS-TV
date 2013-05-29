@@ -175,7 +175,7 @@ namespace ArgusTV.Common
             LimitLength(ref scheduleName, 80);
             LimitLength(ref subTitle, 80);
 
-            format = MakeValidPath(format).Replace(":", String.Empty).Replace(".", String.Empty).TrimStart('\\').TrimStart('/');
+            format = MakeValidPath(format).Replace(":", String.Empty).TrimStart('\\').TrimStart('/').TrimEnd('\\').TrimEnd('/');
             StringBuilder result = new StringBuilder(format);
             ReplaceFormatVariable(result, "%%CHANNEL%%", channelDisplayName);
             ReplaceFormatVariable(result, "%%TVCHANNEL%%", channelDisplayName); // For backwards compatibility.
@@ -198,7 +198,7 @@ namespace ArgusTV.Common
             ReplaceFormatVariable(result, "%%HOURS12%%", startTime.ToString("hhtt", CultureInfo.InvariantCulture));
             ReplaceFormatVariable(result, "%%MINUTES%%", startTime.ToString("mm", CultureInfo.InvariantCulture));
             ReplaceFormatVariable(result, "%%CATEGORY%%", String.IsNullOrEmpty(category) ? "#" : category);
-            return result.ToString();
+            return result.ToString().Replace(".\\", "\\").Replace("./", "/");
         }
 
         private static void LimitLength(ref string text, int maxLength)
