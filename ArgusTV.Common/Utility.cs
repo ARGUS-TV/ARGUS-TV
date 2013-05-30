@@ -151,13 +151,13 @@ namespace ArgusTV.Common
         public static string BuildRecordingBaseFilePath(string format, UpcomingRecording upcomingRecording, string scheduleName, int? episodeNumber, int? seriesNumber)
         {
             UpcomingProgram upcoming = upcomingRecording.Program;
-            return BuildRecordingBaseFilePath(format, upcoming.Channel.DisplayName, scheduleName, upcoming.Title, upcoming.CreateProgramTitle(),
+            return BuildRecordingBaseFilePath(format, upcoming.Channel.DisplayName, upcoming.Channel.ChannelType, scheduleName, upcoming.Title, upcoming.CreateProgramTitle(),
                 upcoming.SubTitle, upcoming.EpisodeNumberDisplay, episodeNumber, seriesNumber, upcoming.StartTime, upcoming.Category);
         }
 
         public static string BuildRecordingBaseFilePath(string format, string sourceDirectory, Recording recording)
         {
-            string result = Path.Combine(sourceDirectory, BuildRecordingBaseFilePath(format, recording.ChannelDisplayName,
+            string result = Path.Combine(sourceDirectory, BuildRecordingBaseFilePath(format, recording.ChannelDisplayName, recording.ChannelType,
                 recording.ScheduleName, recording.Title, recording.CreateProgramTitle(), recording.SubTitle, recording.EpisodeNumberDisplay,
                 recording.EpisodeNumber, recording.SeriesNumber, recording.ProgramStartTime, recording.Category));
             if (result.Length > _maxPath - 1)
@@ -167,7 +167,7 @@ namespace ArgusTV.Common
             return result;
         }
 
-        public static string BuildRecordingBaseFilePath(string format, string channelDisplayName, string scheduleName,
+        public static string BuildRecordingBaseFilePath(string format, string channelDisplayName, ChannelType channelType, string scheduleName,
             string title, string programTitle, string subTitle, string episodeNumberDisplay, int? episodeNumber, int? seriesNumber, DateTime startTime, string category)
         {
             LimitLength(ref title, 80);
@@ -178,6 +178,7 @@ namespace ArgusTV.Common
             format = MakeValidPath(format).Replace(":", String.Empty).TrimStart('\\').TrimStart('/').TrimEnd('\\').TrimEnd('/');
             StringBuilder result = new StringBuilder(format);
             ReplaceFormatVariable(result, "%%CHANNEL%%", channelDisplayName);
+            ReplaceFormatVariable(result, "%%CHANNELTYPE%%", channelType.ToString());
             ReplaceFormatVariable(result, "%%TVCHANNEL%%", channelDisplayName); // For backwards compatibility.
             ReplaceFormatVariable(result, "%%SCHEDULE%%", scheduleName);
             ReplaceFormatVariable(result, "%%TITLE%%", title);
