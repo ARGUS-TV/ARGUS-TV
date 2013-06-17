@@ -88,24 +88,21 @@
 	<control>
 		<type>group</type>
 		<description>group element</description>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-		<dimColor>ffffffff</dimColor>
 		<posX>99</posX>
 		<posY>219</posY>
 		<layout>GridLayout(2, 0, 5, 7, 1)</layout>
+ 		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>		
 		
 		<control>
 			<type>sortbutton</type>
 			<id>9</id>
 			<label>620</label>
-			<offsetSortButtonX>340</offsetSortButtonX>
-			<font>TitanLight12</font>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<textXOff>32</textXOff>
 			<onup>11</onup>
 			<onleft>2</onleft>
+			<font>TitanLight12</font>			
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
 		</control>
 
 		<control>
@@ -113,11 +110,19 @@
 			<type>button</type>
 			<id>11</id>
 			<label>617</label>
-			<font>TitanLight12</font>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<ondown>9</ondown>
 			<onleft>12</onleft>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
+		</control>
+
+		<control>
+			<description></description>
+			<type>button</type>
+			<id>1</id>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 		</control>
 		
 		<control>
@@ -125,28 +130,34 @@
 			<type>button</type>
 			<id>2</id>
 			<label>Type:</label>		
-			<font>TitanLight12</font>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<textXOff>32</textXOff>
-			<textYOff>12</textYOff>
 			<onup>12</onup>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
 		</control>
 		
 		<control>
-			<type>togglebutton</type>
-			<description>group by schedule</description>
+			<description>group by schedule</description>		
+			<type>checkbutton</type>
 			<id>12</id>
 			<label>group by schedule</label>
+			<textalign>left</textalign>
 			<font>TitanLight12</font>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 			<ondown>2</ondown>
 		</control>
 
-	</control>	
+		<control>
+			<description></description>
+			<type>button</type>
+			<id>1</id>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
+		
+	</control>		
 	
-	<!--            :: Listview Lines ::            -->
 
   <control>
   	<description>List Lines</description>
@@ -227,7 +238,7 @@
 		<posX>99</posX>
 		<posY>580</posY>
 		<width>780</width>
-		<height>405</height>
+		<height>377</height>
     <lineSpacing>0.85</lineSpacing>
 		<label>#Radio.Upcoming.Description</label>
 	</control>
@@ -236,13 +247,8 @@
 		<description>genre</description>
 		<type>label</type>
 		<id>17</id>
-		<posX>100</posX>
+		<posX>2500</posX>
 		<posY>940</posY>
-		<label>#Radio.Upcoming.Genre</label>
-		<font>TitanLight12</font>
-		<textcolor>6aa5cb</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
 	<control>
@@ -269,22 +275,8 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-	
-	<!--	<control>
-			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
-			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
-			<type>label</type>
-			<description>Current program time</description>
-			<id>14</id>
-			<posX>270</posX>
-			<posY>528</posY>
-			<textcolor>6aa5cb</textcolor>
-			<font>AvalonLight14</font>
-			<label>#Radio.Upcoming.Time</label>
-			<visible>true</visible>
-		</control>-->
 
-	
 <import>common.overlay.xml</import>
+
 </controls>
 </window>

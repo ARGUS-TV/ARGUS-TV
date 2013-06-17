@@ -79,90 +79,76 @@
 	<control>
 		<type>group</type>
 		<description>group element</description>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-		<dimColor>ffffffff</dimColor>
 		<posX>99</posX>
 		<posY>219</posY>
 		<layout>GridLayout(2, 0, 5, 7, 1)</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>		
 
 		<control>
 			<type>button</type>
 			<description>Search</description>
 			<id>2</id>
 			<label>137</label>			
-			<!--<onleft>3</onleft>
-			<onright>10</onright>
-			<onup>4</onup>
-			<ondown>3</ondown>-->
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 
 		<control>
 			<type>button</type>
 			<id>6</id>
-			<!--<onleft>2</onleft>
-			<onright>10</onright>
-			<onup>2</onup>
-			<ondown>7</ondown>-->
 			<label>search method:</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 
 		<control>
 			<type>sortbutton</type>
 			<id>4</id>
 			<label>620</label>
-			<!--<onleft>2</onleft>
-			<onright>2</onright>
-			<onup>3</onup>
-			<ondown>2</ondown>-->
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<offsetSortButtonX>260</offsetSortButtonX>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>					
 		</control>
 
 		<control>
 			<type>button</type>
 			<id>7</id>
-			<!--<onleft>2</onleft>
-			<onright>10</onright>
-			<onup>6</onup>
-			<ondown>8</ondown>-->
 			<label>602</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 		
 		<control>
 			<type>button</type>
 			<id>8</id>
-			<!--<onleft>2</onleft>
-			<onright>10</onright>
-			<onup>7</onup>
-			<ondown>3</ondown>-->
 			<label>174</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 		
 		<control>
 			<type>button</type>
 			<id>3</id>
 			<label>192</label>
-			<!--<onleft>2</onleft>
-			<onright>2</onright>
-			<onup>2</onup>
-			<ondown>4</ondown>-->
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 
 	</control>
-		
-	<!--						:: Listview Lines ::						-->
+	
 
 	<control>
 		<description>List Lines</description>
@@ -329,7 +315,6 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>	
-
 
 </controls>
 </window>
