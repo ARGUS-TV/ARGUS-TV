@@ -72,7 +72,7 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControlAttribute(3)] protected GUIButtonControl _searchGuideButton;
         [SkinControlAttribute(4)] protected GUIButtonControl _recordingsButton;
         [SkinControlAttribute(5)] protected GUIButtonControl _channelButton;
-        [SkinControlAttribute(6)] protected GUIToggleButtonControl _tvOnOffButton;
+        [SkinControlAttribute(6)] protected GUICheckButton _tvOnOffButton;
         [SkinControlAttribute(7)] protected GUIButtonControl _upcomingProgramsButton;
         [SkinControlAttribute(8)] protected GUIButtonControl _activeRecordingsButton;
         [SkinControlAttribute(9)] protected GUIButtonControl _teletextButton = null;

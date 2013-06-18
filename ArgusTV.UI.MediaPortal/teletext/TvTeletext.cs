@@ -43,7 +43,7 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControl(504)]
         protected GUIButtonControl btnPage300 = null;
         [SkinControl(505)]
-        protected GUIToggleButtonControl btnHidden = null;
+        protected GUICheckButton btnHidden = null;
         [SkinControl(506)]
         protected GUISelectButtonControl btnSubPage = null;
         [SkinControl(507)]

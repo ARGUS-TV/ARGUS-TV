@@ -58,7 +58,7 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControl(2)] protected GUIButtonControl _recordButton;
         [SkinControl(3)] protected GUIButtonControl _priorityButton;
         [SkinControl(4)] protected GUIButtonControl _keepButton;
-        [SkinControl(5)] protected GUIToggleButtonControl _onlyNewEpisodesToggleButton;
+        [SkinControl(5)] protected GUICheckButton _onlyNewEpisodesToggleButton;
         [SkinControl(11)] protected GUILabelControl _upcomingEpisodesLabel;
         [SkinControl(10)] protected GUIListControl _upcomingEpsiodesList;
         [SkinControl(8)] protected GUIButtonControl _preRecordButton;

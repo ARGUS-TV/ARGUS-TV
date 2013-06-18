@@ -5,6 +5,7 @@
 <allowoverlay>no</allowoverlay>
 <define>#header.label:897</define>
 <controls>
+
 	<import>common.time.settings.xml</import>
 	<import>settings.menu.xml</import>
 	<import>common.settings.xml</import>

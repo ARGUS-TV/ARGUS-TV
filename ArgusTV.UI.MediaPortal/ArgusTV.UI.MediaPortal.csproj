@@ -289,7 +289,6 @@
     <Content Include="skin\Titan\Media\ARGUS_SuggestionSeries.png" />
     <Content Include="skin\Titan\Media\ARGUS_SuggestionSeriesCancelled.png" />
     <Content Include="skin\Titan\Media\ARGUS_text.png" />
-    <Content Include="skin\Titan\settings_tv.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostBuild.cmd" />

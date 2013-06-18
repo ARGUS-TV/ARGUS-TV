@@ -32,26 +32,15 @@
     <id>0</id>
     <type>image</type>
     <posX>66</posX>
-    <posY>30</posY>
-    <width>57</width>
-    <height>67</height>
+    <posY>32</posY>
+    <width>55</width>
+    <height>66</height>
     <texture>ARGUS_icon.png</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
   </control>
-  <control>
-    <id>0</id>
-    <type>image</type>
-    <posX>66</posX>
-    <posY>110</posY>
-    <width>303</width>
-    <height>24</height>
-    <texture>ARGUS_text.png</texture>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
-  </control>
 
-  <import>common.time.xml</import>
+	<import>common.time.xml</import>
 	
 	<control>
 		<description>group element</description>
@@ -63,18 +52,51 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	
 		<control>
-			<description>Upcoming Programs</description>
-			<type>button</type>
-			<id>7</id>
-			<label>603</label>
+			<description>TV On/Off button</description>
+			<type>checkbutton</type>
+			<id>6</id>
+			<label>707</label>
 			<textalign>left</textalign>
 			<font>TitanLight12</font>
     	<textcolor>FF000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onleft>6</onleft>
-			<onup>9</onup>
+      <onup>7</onup>
+      <ondown>2</ondown>
+      <onleft>99</onleft>
+      <onright>3</onright>	
 		</control>
-		
+
+		<control>
+			<description>TVGuide</description>
+			<type>button</type>
+			<id>2</id>
+			<label>600</label>
+			<hyperlink>600</hyperlink>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <onup>6</onup>
+      <ondown>5</ondown>
+      <onleft>99</onleft>
+      <onright>4</onright>
+		</control>
+
+		<control>
+			<description>Channel button</description>
+			<type>button</type>
+			<id>5</id>
+			<label>602</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <onup>2</onup>
+      <ondown>8</ondown>
+      <onleft>99</onleft>
+      <onright>7</onright>
+		</control>
+
 		<control>
 			<description>Active Recordings</description>
 			<type>button</type>
@@ -84,7 +106,17 @@
 			<font>TitanLight12</font>
     	<textcolor>FF000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onleft>2</onleft>
+      <onup>5</onup>
+      <ondown>3</ondown>
+      <onleft>99</onleft>
+      <onright>99</onright>
+		</control>
+
+		<control>
+			<description></description>
+			<type>button</type>
+			<id>1</id>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 		</control>
 		
 		<control>
@@ -96,60 +128,12 @@
 			<font>TitanLight12</font>
     	<textcolor>FF000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onleft>5</onleft>
+      <onup>8</onup>
+      <ondown>4</ondown>
+      <onleft>6</onleft>
+      <onright>99</onright>
 		</control>
-		
- 		<control>
-			<description>Teletext</description>
-			<type>button</type>
-			<id>9</id>
-			<label>1441</label>
-			<textalign>left</textalign>
-			<font>TitanLight12</font>
-    	<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<ondown>7</ondown>
-			<onleft>4</onleft>
-		</control>
-		
-		<control>
-			<description>TV On/Off button</description>
-			<type>togglebutton</type>
-			<id>6</id>
-			<label>707</label>
-      <textureFocus>button_tv_on_focus.png</textureFocus>
-      <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-      <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-      <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
-			<onright>99</onright>
-			<onup>4</onup>
-		</control>
-		
-		<control>
-			<description>TVGuide</description>
-			<type>button</type>
-			<id>2</id>
-			<label>600</label>
-			<hyperlink>600</hyperlink>
-			<textalign>left</textalign>
-			<font>TitanLight12</font>
-    	<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onright>99</onright>
-		</control>
-	
-		<control>
-			<description>Channel button</description>
-			<type>button</type>
-			<id>5</id>
-			<label>602</label>
-			<textalign>left</textalign>
-			<font>TitanLight12</font>
-    	<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onright>99</onright>
-		</control>
-		
+
 		<control>
 			<description>Recordings</description>
 			<type>button</type>
@@ -160,22 +144,49 @@
 			<font>TitanLight12</font>
     	<textcolor>FF000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
-			<onright>99</onright>
-			<ondown>6</ondown>
+      <onup>3</onup>
+      <ondown>7</ondown>
+      <onleft>2</onleft>
+      <onright>99</onright>
 		</control>
 		
-<!--
-	<control>
-			<description>TuningDetails</description>
+		<control>
+			<description>Upcoming Programs</description>
 			<type>button</type>
-			<id>14</id>
-			<label>200041</label>
-			<onup>13</onup>
-			<ondown>2</ondown>
-			<onright>99</onright>
+			<id>7</id>
+			<label>603</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <onup>4</onup>
+      <ondown>9</ondown>
+      <onleft>5</onleft>
+      <onright>99</onright>
 		</control>
 
-	-->
+ 		<control>
+			<description>Teletext</description>
+			<type>button</type>
+			<id>9</id>
+			<label>1441</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <onup>7</onup>
+      <ondown>6</ondown>
+      <onleft>8</onleft>
+      <onright>99</onright>
+		</control>
+
+		<control>
+			<description></description>
+			<type>button</type>
+			<id>1</id>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
+		
 	</control>
 	
 	<control>
@@ -186,8 +197,8 @@
 		<posY>238</posY>
 		<width>850</width>
 		<height>480</height>
-		<onleft>3</onleft>
-		<onright>8</onright>
+		<onleft>6</onleft>
+		<onright>6</onright>
     <onup>99</onup>
     <ondown>99</ondown>
 		<action>18</action>
@@ -229,7 +240,7 @@
 		<posX>312</posX>
 		<posY>629</posY>
 		<width>600</width>
-		<label>#TV.View.start - #TV.View.stop #TV.View.channel #TV.Guide.Genre</label>
+		<label>#TV.View.start - #TV.View.stop #TV.View.channel</label>
 		<font>TitanLight14</font>
 		<textcolor>FF00b7ff</textcolor>
     <shadowAngle>120</shadowAngle>
@@ -263,7 +274,7 @@
 		<posX>96</posX>
 		<posY>694</posY>
 		<width>790</width>
-		<height>290</height>
+		<height>252</height>
 		<font>TitanLight12</font>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>
@@ -272,7 +283,7 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
-	<control>
+<!-- 	<control>
 		<description>genre</description>
 		<type>label</type>
 		<id>17</id>
@@ -280,10 +291,10 @@
 		<posY>940</posY>
 		<label>#TV.View.genre</label>
 		<font>TitanLight12</font>
-		<textcolor>6aa5cb</textcolor>
+		<textcolor>FF00b7ff</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+	</control> -->
 
 	<control>
 		<description>Progress background</description>
@@ -339,38 +350,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-    
-<!--
-	<control>
-		<description>program title 1</description>
-		<type>fadelabel</type>
-		<id>0</id>
-		<posX>20</posX>
-		<posY>100</posY>
-		<width>622</width>
-		<label>#TV.Recording1.Title</label>
-		<font>font13</font>
-		<align>left</align>
-		<textcolor>FFB2D4F5</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
 
-	<control>
-		<description>program title 1</description>
-		<type>fadelabel</type>
-		<id>0</id>
-		<posX>20</posX>
-		<posY>200</posY>
-		<width>622</width>
-		<label>#TV.Recording2.Title</label>
-		<font>font13</font>
-		<align>left</align>
-		<textcolor>FFB2D4F5</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
--->
 	<control>
 		<description>record pin</description>
 		<type>image</type>

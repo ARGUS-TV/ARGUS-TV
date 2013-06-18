@@ -40,13 +40,13 @@ namespace ArgusTV.UI.MediaPortal
 {
     public class ManualSchedule: GUIWindow
     {
-        [SkinControlAttribute(3)] protected GUIToggleButtonControl _mondayButton;
-        [SkinControlAttribute(4)] protected GUIToggleButtonControl _tuesdayButton;
-        [SkinControlAttribute(5)] protected GUIToggleButtonControl _wednesdayButton;
-        [SkinControlAttribute(6)] protected GUIToggleButtonControl _thursdayButton;
-        [SkinControlAttribute(7)] protected GUIToggleButtonControl _fridayButton;
-        [SkinControlAttribute(8)] protected GUIToggleButtonControl _saturdayButton;
-        [SkinControlAttribute(9)] protected GUIToggleButtonControl _sundayButton;
+        [SkinControlAttribute(3)] protected GUICheckButton _mondayButton;
+        [SkinControlAttribute(4)] protected GUICheckButton _tuesdayButton;
+        [SkinControlAttribute(5)] protected GUICheckButton _wednesdayButton;
+        [SkinControlAttribute(6)] protected GUICheckButton _thursdayButton;
+        [SkinControlAttribute(7)] protected GUICheckButton _fridayButton;
+        [SkinControlAttribute(8)] protected GUICheckButton _saturdayButton;
+        [SkinControlAttribute(9)] protected GUICheckButton _sundayButton;
         [SkinControlAttribute(10)] protected GUIButtonControl _PriorityButton;
         [SkinControlAttribute(11)] protected GUIButtonControl _RecordButton;
         [SkinControlAttribute(12)] protected GUISpinControl _spinGroup; 

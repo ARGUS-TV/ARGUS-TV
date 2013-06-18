@@ -42,29 +42,18 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
+	
   <control>
     <id>0</id>
     <type>image</type>
     <posX>66</posX>
-    <posY>30</posY>
-    <width>57</width>
-    <height>67</height>
+    <posY>32</posY>
+    <width>55</width>
+    <height>66</height>
     <texture>ARGUS_icon.png</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
-  </control>
-  <control>
-    <id>0</id>
-    <type>image</type>
-    <posX>66</posX>
-    <posY>110</posY>
-    <width>303</width>
-    <height>24</height>
-    <texture>ARGUS_text.png</texture>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
-  </control>
+  </control>	
 
   <import>common.time.xml</import>
 	
@@ -80,23 +69,26 @@
 
 		<control>
 			<description>Record episodes once</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>5</id>
 			<label>Record episodes once</label>				
-			<colordiffuse>ffffffff</colordiffuse>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<onup>4</onup>
 			<onleft>2</onleft>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 		
 		<control>
 			<description>Reminder</description>
 			<type>button</type>
 			<id>6</id>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 			<onleft>8</onleft>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 		</control>
 
 		<control>
@@ -106,9 +98,11 @@
 			<posX>72</posX>
 			<posY>292</posY>
 			<label>991</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<onleft>9</onleft>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 
 		<control>
@@ -116,21 +110,25 @@
 			<type>button</type>
 			<id>4</id>
 			<label>1042</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 			<ondown>5</ondown>
 			<onleft>9</onleft>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 
 		<control>
 			<description>Record</description>
 			<type>button</type>
 			<id>2</id>
-			<textureFocus>tv_record_button_focus.png</textureFocus>
-			<textureNoFocus>tv_record_button_nofocus.png</textureNoFocus>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<onup>9</onup>
+		  <textureFocus>tv_record_button_focus.png</textureFocus>
+	    <textureNoFocus>tv_record_button_nofocus.png</textureNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 		</control>
 
 		<control>
@@ -138,8 +136,10 @@
 			<type>button</type>
 			<id>8</id>
 			<label>1444</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 		</control>
 
 		<control>
@@ -147,9 +147,11 @@
 			<type>button</type>
 			<id>9</id>
 			<label>1445</label>
-			<textcolor>FF000000</textcolor>
-			<textcolorNoFocus>ffffffff</textcolorNoFocus>	
 			<ondown>2</ondown>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
 		</control>
 	</control>
 	
@@ -203,7 +205,7 @@
 		<posX>99</posX>
 		<posY>680</posY>
 		<width>780</width>
-		<height>305</height>
+		<height>282</height>
 		<lineSpacing>0.85</lineSpacing>
 		<label>#TV.RecordedTV.Description</label>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -271,7 +273,6 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
-
 	<control>
 		<description>genre</description>
 		<type>label</type>
@@ -304,5 +305,6 @@
 	</control>
 	
 <import>common.overlay.xml</import>
+
 </controls>
 </window>

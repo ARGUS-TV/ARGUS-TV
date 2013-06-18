@@ -81,7 +81,7 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControl(9)] protected GUISortButtonControl _sortByButton;
         [SkinControl(10)] protected GUIListControl _viewsList;
         [SkinControl(11)] protected GUIButtonControl _newProgramButton;
-        [SkinControl(12)] protected GUIToggleButtonControl _groupBySchedButton;
+        [SkinControl(12)] protected GUICheckButton _groupBySchedButton;
 
         #endregion
 
