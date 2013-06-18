@@ -36,4 +36,4 @@ using MediaPortal.Common.Utils;
 [assembly: AssemblyFileVersion(ArgusTV.DataContracts.Constants.AssemblyVersion)]
 
 // MediaPortal version
-[assembly: CompatibleVersion("1.2.200.0")]
+[assembly: CompatibleVersion("1.4.0.0")]

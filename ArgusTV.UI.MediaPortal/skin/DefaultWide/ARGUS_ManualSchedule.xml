@@ -232,7 +232,7 @@
 
     <control>
       <description>monday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>3</id>
       <posX>480</posX>
       <posY>361</posY>
@@ -248,7 +248,7 @@
     </control>
     <control>
       <description>tuesday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>4</id>
       <posX>583</posX>
       <posY>361</posY>
@@ -264,7 +264,7 @@
     </control>
     <control>
       <description>wednesday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>5</id>
       <posX>686</posX>
       <posY>361</posY>
@@ -280,7 +280,7 @@
     </control>
     <control>
       <description>thursday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>6</id>
       <posX>789</posX>
       <posY>361</posY>
@@ -296,7 +296,7 @@
     </control>
     <control>
       <description>friday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>7</id>
       <posX>892</posX>
       <posY>361</posY>
@@ -312,7 +312,7 @@
     </control>
     <control>
       <description>saturday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>8</id>
       <posX>995</posX>
       <posY>361</posY>
@@ -328,7 +328,7 @@
     </control>
     <control>
       <description>sunday</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>9</id>
       <posX>1098</posX>
       <posY>361</posY>

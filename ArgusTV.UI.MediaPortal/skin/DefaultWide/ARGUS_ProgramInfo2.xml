@@ -73,7 +73,7 @@
       </control>
       <control>
         <description>Record episodes once</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>5</id>
         <label>Record episodes once</label>
         <onup>4</onup>

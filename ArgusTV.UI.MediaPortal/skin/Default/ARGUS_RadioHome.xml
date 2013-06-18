@@ -63,7 +63,7 @@
         </control>
         <control>
           <description>TV On/Off button</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>6</id>
           <width>170</width>
           <font>font13</font>

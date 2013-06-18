@@ -93,7 +93,7 @@
           <label>Type:</label>
         </control>
         <control>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <description>group by schedule</description>
           <id>12</id>
           <onleft>2</onleft>
