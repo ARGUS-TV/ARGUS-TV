@@ -36,6 +36,9 @@ namespace ArgusTV.WinForms.Controls
     public class EpgChannelsGridControl : Control
     {
         private GuideModel _model;
+        private readonly float _widthFactor;
+        private readonly float _heightFactor;
+        private readonly int _height;
 
         private List<ChannelCell> _channelCells = new List<ChannelCell>();
 
@@ -45,13 +48,18 @@ namespace ArgusTV.WinForms.Controls
 
         public EpgChannelsGridControl()
         {
-            this.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
-            this.Name = "EpgChannelsGridControl";
-            this.Size = new Size(100, 71);
-
-            this.SetStyle(ControlStyles.Selectable, false);
-            this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
-            this.UpdateStyles();
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                _widthFactor = graphics.DpiX / 96;
+                _heightFactor = graphics.DpiY / 96;
+                _height = (int)(71 * _heightFactor);
+                base.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
+                this.Name = "EpgChannelsGridControl";
+                this.Size = new Size((int)(100 * _widthFactor), _height);
+                this.SetStyle(ControlStyles.Selectable, false);
+                this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
+                this.UpdateStyles();
+            }
 
             _disposables.Add(_channelFont = new Font("Tahoma", 11F, FontStyle.Bold));
             _disposables.Add(_channelBrush = new SolidBrush(Color.FromArgb(0x22, 0x22, 0x22)));
@@ -99,12 +107,14 @@ namespace ArgusTV.WinForms.Controls
             if (_model.ProgramsByChannel.ContainsKey(channel.ChannelId))
             {
                 bool isTop = (top == 0);
-                cellHeight = isTop ? 71 : 70;
+                cellHeight = isTop ? _height : (_height - 1);
 
-                ChannelCell cell = new ChannelCell();
-                cell.Channel = channel;
-                cell.IsTop = isTop;
-                cell.Rectangle = new Rectangle(0, top, 100, cellHeight);
+                ChannelCell cell = new ChannelCell()
+                {
+                    Channel = channel,
+                    IsTop = isTop,
+                    Rectangle = new Rectangle(0, top, (int) (100 * _widthFactor), cellHeight)
+                };
                 _channelCells.Add(cell);
             }
 
@@ -117,7 +127,7 @@ namespace ArgusTV.WinForms.Controls
 
             using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
             {
-                foreach (ChannelCell cell in _channelCells)
+                foreach (var cell in _channelCells)
                 {
                     Rectangle visibleRectangle = new Rectangle(cell.Rectangle.Location, cell.Rectangle.Size);
                     visibleRectangle.Intersect(e.ClipRectangle);
@@ -141,7 +151,7 @@ namespace ArgusTV.WinForms.Controls
                         Image logoImage = null;
                         try
                         {
-                            logoImage = ChannelLogosCache.GetLogoImage(tvSchedulerAgent, cell.Channel, 64, 64);
+                            logoImage = ChannelLogosCache.GetLogoImage(tvSchedulerAgent, cell.Channel, (int)(64 * _widthFactor), (int)(64 * _heightFactor));
                         }
                         catch
                         {
@@ -155,8 +165,9 @@ namespace ArgusTV.WinForms.Controls
                         }
                         else
                         {
-                            e.Graphics.DrawImageUnscaled(logoImage, innerRectangle.Left + (int)Math.Round((innerRectangle.Width - logoImage.Width) / 2F),
-                                innerRectangle.Top + (int)Math.Round((innerRectangle.Height - logoImage.Height) / 2F));
+                            e.Graphics.DrawImage(logoImage, innerRectangle.Left + (int)Math.Round((innerRectangle.Width - logoImage.Width) / 2F),
+                                innerRectangle.Top + (int)Math.Round((innerRectangle.Height - logoImage.Height) / 2F),
+                                logoImage.Width, logoImage.Height);
                         }
                     }
                 }

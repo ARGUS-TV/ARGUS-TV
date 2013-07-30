@@ -38,6 +38,11 @@ namespace ArgusTV.UI.Notifier
         public SettingsForm()
         {
             InitializeComponent();
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                this.Width = (int)(600 * graphics.DpiX / 96);
+                this.Height = (int)(346 * graphics.DpiY / 96);
+            }
         }
 
         private void SettingsForm_Load(object sender, EventArgs e)

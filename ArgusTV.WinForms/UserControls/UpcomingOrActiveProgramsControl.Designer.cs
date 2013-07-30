@@ -33,7 +33,6 @@ namespace ArgusTV.WinForms.UserControls
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this._programsDataGridView = new System.Windows.Forms.DataGridView();
-            this._upcomingProgramsListBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this._iconColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this._channelColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this._dateTimeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -46,6 +45,7 @@ namespace ArgusTV.WinForms.UserControls
             this._isPremiereDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this._schedulePriorityColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this._scheduleNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this._upcomingProgramsListBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this._programsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upcomingProgramsListBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -63,7 +63,7 @@ namespace ArgusTV.WinForms.UserControls
             this._programsDataGridView.AutoGenerateColumns = false;
             this._programsDataGridView.BackgroundColor = System.Drawing.Color.White;
             this._programsDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            this._programsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this._programsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this._programsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this._iconColumn,
             this._channelColumn,
@@ -81,6 +81,7 @@ namespace ArgusTV.WinForms.UserControls
             this._programsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._programsDataGridView.GridColor = System.Drawing.Color.White;
             this._programsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this._programsDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._programsDataGridView.MultiSelect = false;
             this._programsDataGridView.Name = "_programsDataGridView";
             this._programsDataGridView.ReadOnly = true;
@@ -91,17 +92,13 @@ namespace ArgusTV.WinForms.UserControls
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
             this._programsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this._programsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this._programsDataGridView.Size = new System.Drawing.Size(817, 392);
+            this._programsDataGridView.Size = new System.Drawing.Size(1226, 603);
             this._programsDataGridView.StandardTab = true;
             this._programsDataGridView.TabIndex = 0;
             this._programsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._programsDataGridView_CellContentClick);
             this._programsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this._programsDataGridView_CellFormatting);
             this._programsDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this._programsDataGridView_DataBindingComplete);
             this._programsDataGridView.DoubleClick += new System.EventHandler(this._programsDataGridView_DoubleClick);
-            // 
-            // _upcomingProgramsListBindingSource
-            // 
-            this._upcomingProgramsListBindingSource.DataSource = typeof(ArgusTV.UI.Process.UpcomingOrActiveProgramsList);
             // 
             // _iconColumn
             // 
@@ -210,13 +207,18 @@ namespace ArgusTV.WinForms.UserControls
             this._scheduleNameColumn.ReadOnly = true;
             this._scheduleNameColumn.Width = 150;
             // 
+            // _upcomingProgramsListBindingSource
+            // 
+            this._upcomingProgramsListBindingSource.DataSource = typeof(ArgusTV.UI.Process.UpcomingOrActiveProgramsList);
+            // 
             // UpcomingOrActiveProgramsControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._programsDataGridView);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "UpcomingOrActiveProgramsControl";
-            this.Size = new System.Drawing.Size(817, 392);
+            this.Size = new System.Drawing.Size(1226, 603);
             ((System.ComponentModel.ISupportInitialize)(this._programsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._upcomingProgramsListBindingSource)).EndInit();
             this.ResumeLayout(false);

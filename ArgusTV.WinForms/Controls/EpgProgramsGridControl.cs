@@ -35,6 +35,9 @@ namespace ArgusTV.WinForms.Controls
     public class EpgProgramsGridControl : Control
     {
         private GuideModel _model;
+        private readonly float _widthFactor;
+        private readonly float _heightFactor;
+        private readonly int _height;
 
         private List<GuideProgramCell> _guideProgramCells = new List<GuideProgramCell>();
         private GuideProgramCell _highlightedCell;
@@ -69,13 +72,21 @@ namespace ArgusTV.WinForms.Controls
 
         public EpgProgramsGridControl()
         {
-            this.BackColor = System.Drawing.Color.White;
-            this.Name = "EpgGridControl";
-            this.Size = new System.Drawing.Size(5760, 71);
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                _widthFactor = (graphics.DpiX / 96);
+                _heightFactor = (graphics.DpiY / 96);
+                _height = (int)(71 * _heightFactor);
+                base.BackColor = System.Drawing.Color.White;
+                this.Name = "EpgGridControl";
+                this.Size = new System.Drawing.Size((int)(5760 * _widthFactor), _height);
 
-            this.SetStyle(ControlStyles.Selectable, false);
-            this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
-            this.UpdateStyles();
+                this.SetStyle(ControlStyles.Selectable, false);
+                this.SetStyle(
+                    ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.ResizeRedraw, true);
+                this.UpdateStyles();
+            }
 
             _disposables.Add(_timeFont = new Font("Tahoma", 7F, FontStyle.Bold));
             _disposables.Add(_titleFont = new Font("Tahoma", 9F, FontStyle.Bold));
@@ -149,7 +160,7 @@ namespace ArgusTV.WinForms.Controls
             {
                 top = CreateEpgChannelCells(channel, top);
             }
-            this.Width = 5760;
+            this.Width = (int)(5760 * _widthFactor);
             this.Height = top;
 
             this.Refresh();
@@ -166,7 +177,7 @@ namespace ArgusTV.WinForms.Controls
             if (_model.ProgramsByChannel.ContainsKey(channel.ChannelId))
             {
                 bool isTop = (top == 0);
-                cellHeight = isTop ? 71 : 70;
+                cellHeight = isTop ? _height : (_height - 1);
 
                 foreach (GuideProgramSummary guideProgram in _model.ProgramsByChannel[channel.ChannelId].Programs)
                 {
@@ -180,7 +191,7 @@ namespace ArgusTV.WinForms.Controls
                     cell.StopTime = cell.ClipRight ? endDate : guideProgram.StopTime;
 
                     TimeSpan leftSpan = cell.StartTime - startDate;
-                    int left = (int)leftSpan.TotalMinutes * 4;
+                    int left = (int)(leftSpan.TotalMinutes * 4 * _widthFactor);
 
                     if (left > previousRight)
                     {
@@ -189,7 +200,7 @@ namespace ArgusTV.WinForms.Controls
                         _guideProgramCells.Add(emptyCell);
                     }
 
-                    cell.Rectangle = new Rectangle(left, top, (int)cell.Duration.TotalMinutes * 4, cellHeight);
+                    cell.Rectangle = new Rectangle(left, top, (int)(cell.Duration.TotalMinutes * 4 * _widthFactor), cellHeight);
                     _guideProgramCells.Add(cell);
 
                     previousRight = cell.Rectangle.Right;
@@ -446,7 +457,9 @@ namespace ArgusTV.WinForms.Controls
                 {
                     cell.ToolTips.Add(new CellToolTip(iconRectangle, toolTip));
                 }
-                e.Graphics.DrawIcon(icon, iconRectangle.X, iconRectangle.Y);
+
+                int height = (int)(icon.Height * _heightFactor);
+                e.Graphics.DrawIcon(icon, iconRectangle.X, iconRectangle.Y + (int)Math.Floor((height - icon.Height) / 2.0));
                 titleLeft += icon.Width;
                 return true;
             }
