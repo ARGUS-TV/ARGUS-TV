@@ -36,6 +36,7 @@ namespace ArgusTV.WinForms
         public SelectProfileForm()
         {
             InitializeComponent();
+            WinFormsUtility.ResizeDataGridViewColumnsForCurrentDpi(_profilesDataGridView);
         }
 
         private ConnectionProfile _selectedProfile;
@@ -143,7 +144,8 @@ namespace ArgusTV.WinForms
         private void _profilesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             IList<ConnectionProfile> list = (IList<ConnectionProfile>)_profilesBindingSource.DataSource;
-            if (e.ColumnIndex >= _editProfileColumn.Index)
+            if (e.ColumnIndex == _editProfileColumn.Index
+                || e.ColumnIndex == _removeProfileColumn.Index)
             {
                 if (e.RowIndex < list.Count - 1)
                 {
