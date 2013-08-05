@@ -26,9 +26,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Globalization;
 
-using ArgusTV.DataContracts;
-using ArgusTV.UI.Process.Guide;
-
 namespace ArgusTV.WinForms.Controls
 {
     public class EpgTimeGridControl : Control
@@ -45,7 +42,7 @@ namespace ArgusTV.WinForms.Controls
 
         public EpgTimeGridControl()
         {
-            this.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
+            base.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
             this.Name = "EpgTimeGridControl";
             this.Size = new Size(5760, 15);
 
@@ -112,11 +109,12 @@ namespace ArgusTV.WinForms.Controls
 
             TimeSpan time = TimeSpan.FromHours(EpgControl.EpgHoursOffset);
             int left = 0;
-            int step = 15;
-            int cellWidth = step * 4;
-            for(int count = 0; count < (24 * 60) / step; count++)
+            const int step = 15;
+            for (int count = 0; count < (24 * 60) / step; count++)
             {
-                Rectangle visibleRectangle = new Rectangle(left - 1, 0, cellWidth + 1, this.Height);
+                TimeSpan nextTime = time.Add(TimeSpan.FromMinutes(step));
+                int nextLeft = EpgTimeControl.GetTimeCursorPosition(nextTime, 0);
+                Rectangle visibleRectangle = new Rectangle(left - 1, 0, nextLeft - left + 1, this.Height);
                 visibleRectangle.Intersect(e.ClipRectangle);
 
                 Region cellRegion = new Region(visibleRectangle);
@@ -129,8 +127,8 @@ namespace ArgusTV.WinForms.Controls
                     e.Graphics.DrawString(timeText, _timeFont, _timeBrush, lineLeft + 1, 2);
                 }
 
-                left += cellWidth;
-                time = time.Add(TimeSpan.FromMinutes(step));
+                left = nextLeft;
+                time = nextTime;
             }
 
             if (this.CursorAtTime.HasValue)

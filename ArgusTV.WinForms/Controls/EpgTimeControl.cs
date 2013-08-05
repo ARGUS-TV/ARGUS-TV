@@ -32,11 +32,20 @@ namespace ArgusTV.WinForms.Controls
 {
     public class EpgTimeControl : ScrollableControl
     {
-        private EpgTimeGridControl _epgTimeGridControl = new EpgTimeGridControl();
+        private readonly EpgTimeGridControl _epgTimeGridControl = new EpgTimeGridControl();
+        private static readonly float _widthFactor;
+
+        static EpgTimeControl()
+        {
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                _widthFactor = (graphics.DpiX / 96);
+            }
+        }
 
         public EpgTimeControl()
         {
-            this.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
+            base.BackColor = Color.FromArgb(0xf5, 0xf5, 0xf5);
             this.Controls.Add(_epgTimeGridControl);
         }
 
@@ -62,7 +71,7 @@ namespace ArgusTV.WinForms.Controls
             {
                 cursorAtTime = cursorAtTime.Subtract(TimeSpan.FromHours(EpgControl.EpgHoursOffset));
             }
-            return Math.Max(0, (int)cursorAtTime.TotalMinutes * 4 + offset);
+            return Math.Max(0, (int)(cursorAtTime.TotalMinutes * 4 * _widthFactor) + offset);
         }
 
         internal static string GetTimeString(TimeSpan timeSpan)

@@ -35,11 +35,14 @@ namespace ArgusTV.WinForms
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._profilesDataGridView = new System.Windows.Forms.DataGridView();
-            this._profilesBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this._connectionsLabel = new System.Windows.Forms.Label();
             this._nameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this._editProfileColumn = new System.Windows.Forms.DataGridViewLinkColumn();
             this._removeProfileColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+            this._profilesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this._connectionsLabel = new System.Windows.Forms.Label();
+            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.serverSettingsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.savePasswordDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this._profilesDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._profilesBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -47,9 +50,10 @@ namespace ArgusTV.WinForms
             // _okButton
             // 
             this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._okButton.Location = new System.Drawing.Point(148, 187);
+            this._okButton.Location = new System.Drawing.Point(222, 288);
+            this._okButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
+            this._okButton.Size = new System.Drawing.Size(112, 35);
             this._okButton.TabIndex = 100;
             this._okButton.Text = "Connect";
             this._okButton.UseVisualStyleBackColor = true;
@@ -59,9 +63,10 @@ namespace ArgusTV.WinForms
             // 
             this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancelButton.Location = new System.Drawing.Point(229, 187);
+            this._cancelButton.Location = new System.Drawing.Point(344, 288);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
+            this._cancelButton.Size = new System.Drawing.Size(112, 35);
             this._cancelButton.TabIndex = 101;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
@@ -82,14 +87,18 @@ namespace ArgusTV.WinForms
             this._profilesDataGridView.AutoGenerateColumns = false;
             this._profilesDataGridView.BackgroundColor = System.Drawing.Color.White;
             this._profilesDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            this._profilesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this._profilesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this._profilesDataGridView.ColumnHeadersVisible = false;
             this._profilesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this._nameColumn,
             this._editProfileColumn,
-            this._removeProfileColumn});
+            this._removeProfileColumn,
+            this.nameDataGridViewTextBoxColumn,
+            this.serverSettingsDataGridViewTextBoxColumn,
+            this.savePasswordDataGridViewCheckBoxColumn});
             this._profilesDataGridView.DataSource = this._profilesBindingSource;
-            this._profilesDataGridView.Location = new System.Drawing.Point(12, 25);
+            this._profilesDataGridView.Location = new System.Drawing.Point(18, 38);
+            this._profilesDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._profilesDataGridView.MultiSelect = false;
             this._profilesDataGridView.Name = "_profilesDataGridView";
             this._profilesDataGridView.ReadOnly = true;
@@ -100,7 +109,7 @@ namespace ArgusTV.WinForms
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             this._profilesDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this._profilesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this._profilesDataGridView.Size = new System.Drawing.Size(292, 156);
+            this._profilesDataGridView.Size = new System.Drawing.Size(438, 240);
             this._profilesDataGridView.StandardTab = true;
             this._profilesDataGridView.TabIndex = 1;
             this._profilesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._profilesDataGridView_CellContentClick);
@@ -108,19 +117,6 @@ namespace ArgusTV.WinForms
             this._profilesDataGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this._profilesDataGridView_CellPainting);
             this._profilesDataGridView.DoubleClick += new System.EventHandler(this._profilesDataGridView_DoubleClick);
             this._profilesDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this._profilesDataGridView_KeyDown);
-            // 
-            // _profilesBindingSource
-            // 
-            this._profilesBindingSource.DataSource = typeof(System.Collections.Generic.IList<ArgusTV.Client.Common.ConnectionProfile>);
-            // 
-            // _connectionsLabel
-            // 
-            this._connectionsLabel.AutoSize = true;
-            this._connectionsLabel.Location = new System.Drawing.Point(12, 9);
-            this._connectionsLabel.Name = "_connectionsLabel";
-            this._connectionsLabel.Size = new System.Drawing.Size(69, 13);
-            this._connectionsLabel.TabIndex = 0;
-            this._connectionsLabel.Text = "Connections:";
             // 
             // _nameColumn
             // 
@@ -158,19 +154,55 @@ namespace ArgusTV.WinForms
             this._removeProfileColumn.TrackVisitedState = false;
             this._removeProfileColumn.Width = 22;
             // 
+            // _profilesBindingSource
+            // 
+            this._profilesBindingSource.DataSource = typeof(System.Collections.Generic.IList<ArgusTV.Client.Common.ConnectionProfile>);
+            // 
+            // _connectionsLabel
+            // 
+            this._connectionsLabel.AutoSize = true;
+            this._connectionsLabel.Location = new System.Drawing.Point(18, 14);
+            this._connectionsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._connectionsLabel.Name = "_connectionsLabel";
+            this._connectionsLabel.Size = new System.Drawing.Size(102, 20);
+            this._connectionsLabel.TabIndex = 0;
+            this._connectionsLabel.Text = "Connections:";
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            this.nameDataGridViewTextBoxColumn.HeaderText = "Name";
+            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // serverSettingsDataGridViewTextBoxColumn
+            // 
+            this.serverSettingsDataGridViewTextBoxColumn.DataPropertyName = "ServerSettings";
+            this.serverSettingsDataGridViewTextBoxColumn.HeaderText = "ServerSettings";
+            this.serverSettingsDataGridViewTextBoxColumn.Name = "serverSettingsDataGridViewTextBoxColumn";
+            this.serverSettingsDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // savePasswordDataGridViewCheckBoxColumn
+            // 
+            this.savePasswordDataGridViewCheckBoxColumn.DataPropertyName = "SavePassword";
+            this.savePasswordDataGridViewCheckBoxColumn.HeaderText = "SavePassword";
+            this.savePasswordDataGridViewCheckBoxColumn.Name = "savePasswordDataGridViewCheckBoxColumn";
+            this.savePasswordDataGridViewCheckBoxColumn.ReadOnly = true;
+            // 
             // SelectProfileForm
             // 
             this.AcceptButton = this._okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
-            this.ClientSize = new System.Drawing.Size(316, 220);
+            this.ClientSize = new System.Drawing.Size(474, 338);
             this.Controls.Add(this._connectionsLabel);
             this.Controls.Add(this._profilesDataGridView);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SelectProfileForm";
@@ -194,5 +226,8 @@ namespace ArgusTV.WinForms
         private System.Windows.Forms.DataGridViewTextBoxColumn _nameColumn;
         private System.Windows.Forms.DataGridViewLinkColumn _editProfileColumn;
         private System.Windows.Forms.DataGridViewLinkColumn _removeProfileColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn serverSettingsDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn savePasswordDataGridViewCheckBoxColumn;
     }
 }

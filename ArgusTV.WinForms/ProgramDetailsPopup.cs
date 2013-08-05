@@ -77,7 +77,8 @@ namespace ArgusTV.WinForms
             using (Graphics g = this.CreateGraphics())
             {
                 SizeF size = g.MeasureString(_descriptionLabel.Text, _descriptionLabel.Font, _descriptionLabel.Width);
-                this.Height = (int)Math.Max(100.0, 75 + Math.Round(size.Height) + 10);
+                double heightFactor = g.DpiY / 96;
+                this.Height = (int)Math.Max(100.0 * heightFactor, 75 + Math.Round(size.Height * heightFactor) + 10);
             }
         }
 
