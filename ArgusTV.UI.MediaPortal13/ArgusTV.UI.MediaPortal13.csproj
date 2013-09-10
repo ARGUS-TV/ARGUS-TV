@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}</ProjectGuid>
+    <ProjectGuid>{67CE4846-1C3C-4D56-945F-6115FC3A2A87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ArgusTV.UI.MediaPortal</RootNamespace>
@@ -84,16 +84,16 @@
       <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll</HintPath>
     </Reference>
     <Reference Include="Common.Utils">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\Common.Utils.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Core">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\Core.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\Core.dll</HintPath>
     </Reference>
     <Reference Include="Databases">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\Databases.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\Databases.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\Dialogs.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -107,13 +107,13 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TvLibrary.Interfaces">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\TvLibrary.Interfaces.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\TvLibrary.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Utils">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\Utils.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\Utils.dll</HintPath>
     </Reference>
     <Reference Include="WindowPlugins">
-      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies\WindowPlugins.dll</HintPath>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies13\WindowPlugins.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

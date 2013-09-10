@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <description>
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Note for skinners: this one is not needed,
+    we just use this to display the ARGUS TV logo
+    instead of the currentmodule propertie
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  </description>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.png</texture>
+      <width>1280</width>
+      <height>720</height>
+      <visible>skin.hassetting(#skin.no.category.fanart)+!control.isvisible(91919293)+!control.isvisible(91919294)</visible>
+    </control>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>270</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>58</posX>
+      <posY>28</posY>
+      <width>200</width>
+      <height>40</height>
+      <texture>ARGUS_logo.png</texture>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1244</posX>
+      <posY>60</posY>
+      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    <control>
+      <description>Total duration Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1140</posX>
+      <posY>85</posY>
+      <label>180</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
+    </control>
+    <control>
+      <description>Total duration Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1244</posX>
+      <posY>85</posY>
+      <label>#totalduration</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>65</posY>
+      <width>711</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+  </controls>
+</window>

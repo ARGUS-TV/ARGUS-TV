@@ -286,6 +286,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)PostBuild.cmd" "$(TargetDir)" "$(TargetPath)" "$(ConfigurationName)"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.cmd" "$(TargetDir)" "$(TargetPath)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
