@@ -64,6 +64,12 @@ namespace ArgusTV.WinForms.UserControls
             }
         }
 
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            _channelGroupsComboBox.Width = this.Width - _channelGroupsComboBox.Left;
+        }
+
         private void LoadGroups()
         {
             ChannelType channelType = this.ChannelType;
