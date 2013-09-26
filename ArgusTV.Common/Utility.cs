@@ -94,14 +94,16 @@ namespace ArgusTV.Common
             string dirName = Path.GetDirectoryName(fileName);
 
             long freeBytesForUser, totalBytes, freeBytes;
-            if (GetDiskFreeSpaceEx(dirName, out freeBytesForUser, out totalBytes, out freeBytes))
+            if (GetDiskFreeSpaceEx(dirName, out freeBytesForUser, out totalBytes, out freeBytes)
+                && freeBytes > 0)
             {
                 return freeBytes;
             }
 
             // Let's retry once...
             System.Threading.Thread.Sleep(50);
-            if (GetDiskFreeSpaceEx(dirName, out freeBytesForUser, out totalBytes, out freeBytes))
+            if (GetDiskFreeSpaceEx(dirName, out freeBytesForUser, out totalBytes, out freeBytes)
+                && freeBytes > 0)
             {
                 return freeBytes;
             }

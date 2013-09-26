@@ -40,9 +40,6 @@ namespace ArgusTV.WinForms
             this._removeProfileColumn = new System.Windows.Forms.DataGridViewLinkColumn();
             this._profilesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this._connectionsLabel = new System.Windows.Forms.Label();
-            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.serverSettingsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.savePasswordDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this._profilesDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._profilesBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -92,10 +89,7 @@ namespace ArgusTV.WinForms
             this._profilesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this._nameColumn,
             this._editProfileColumn,
-            this._removeProfileColumn,
-            this.nameDataGridViewTextBoxColumn,
-            this.serverSettingsDataGridViewTextBoxColumn,
-            this.savePasswordDataGridViewCheckBoxColumn});
+            this._removeProfileColumn});
             this._profilesDataGridView.DataSource = this._profilesBindingSource;
             this._profilesDataGridView.Location = new System.Drawing.Point(18, 38);
             this._profilesDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -168,27 +162,6 @@ namespace ArgusTV.WinForms
             this._connectionsLabel.TabIndex = 0;
             this._connectionsLabel.Text = "Connections:";
             // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
-            this.nameDataGridViewTextBoxColumn.HeaderText = "Name";
-            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
-            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // serverSettingsDataGridViewTextBoxColumn
-            // 
-            this.serverSettingsDataGridViewTextBoxColumn.DataPropertyName = "ServerSettings";
-            this.serverSettingsDataGridViewTextBoxColumn.HeaderText = "ServerSettings";
-            this.serverSettingsDataGridViewTextBoxColumn.Name = "serverSettingsDataGridViewTextBoxColumn";
-            this.serverSettingsDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // savePasswordDataGridViewCheckBoxColumn
-            // 
-            this.savePasswordDataGridViewCheckBoxColumn.DataPropertyName = "SavePassword";
-            this.savePasswordDataGridViewCheckBoxColumn.HeaderText = "SavePassword";
-            this.savePasswordDataGridViewCheckBoxColumn.Name = "savePasswordDataGridViewCheckBoxColumn";
-            this.savePasswordDataGridViewCheckBoxColumn.ReadOnly = true;
-            // 
             // SelectProfileForm
             // 
             this.AcceptButton = this._okButton;
@@ -226,8 +199,5 @@ namespace ArgusTV.WinForms
         private System.Windows.Forms.DataGridViewTextBoxColumn _nameColumn;
         private System.Windows.Forms.DataGridViewLinkColumn _editProfileColumn;
         private System.Windows.Forms.DataGridViewLinkColumn _removeProfileColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn serverSettingsDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn savePasswordDataGridViewCheckBoxColumn;
     }
 }
