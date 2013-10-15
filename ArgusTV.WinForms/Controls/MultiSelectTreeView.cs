@@ -166,7 +166,7 @@ namespace ArgusTV.WinForms.Controls
                             }
 
                             TreeNode node = uppernode;
-                            while (indexUpper <= indexBottom)
+                            while (node != null && indexUpper <= indexBottom)
                             {
                                 if (!_selectedNodes.Contains(node)) // new node ?
                                 {
