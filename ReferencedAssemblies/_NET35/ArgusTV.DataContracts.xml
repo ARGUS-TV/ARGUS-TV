@@ -774,6 +774,11 @@
             One or more mailadresses (separated by a ;) of people to notify in case of problems.
             </summary>
         </member>
+        <member name="F:ArgusTV.DataContracts.ConfigurationKey.Scheduler.EmailSender">
+            <summary>
+            The from address to use when sending e-mails.
+            </summary>
+        </member>
         <member name="F:ArgusTV.DataContracts.ConfigurationKey.Scheduler.SmtpServer">
             <summary>
             The SMTP server host name that is used to send out notification mails.
@@ -1337,6 +1342,16 @@
         <member name="P:ArgusTV.DataContracts.GuideProgram.Actors">
             <summary>
             The actors appearing in the program.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgram.SeriesId">
+            <summary>
+            The ID of the series or null (e.g. for OpenTV).
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.GuideProgram.IsSeriesTermination">
+            <summary>
+            The termination flag for the series (e.g. for OpenTV).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.LastModifiedTime">
@@ -4457,7 +4472,7 @@
             Create a unique upcoming program integer ID for an upcoming program that records a
             manual schedule.
             </summary>
-            <param name="scheduleId">The unique integer ID of the manual schedule.</param>
+            <param name="scheduleIntId">The unique integer ID of the manual schedule.</param>
             <param name="startTime">The start time of the upcoming program.</param>
             <returns>The unique upcoming program ID.</returns>
         </member>
