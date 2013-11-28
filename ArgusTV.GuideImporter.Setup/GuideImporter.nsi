@@ -2,7 +2,7 @@
 
 ; Constants
 !define PRODUCT_NAME "ARGUS TV Guide Importer"
-!define PRODUCT_VERSION "2.1"
+!define PRODUCT_VERSION "2.2"
 !define PRODUCT_PUBLISHER "ARGUS TV"
 !define PRODUCT_WEB_SITE "http://www.argus-tv.com"
 !define PRODUCT_DIR_REGKEY "Software\ARGUS TV\Install"
@@ -62,7 +62,7 @@ Page Custom RemovePreviousVersionPage RemovePreviousVersionPageLeave
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "bin\${TARGET}\ARGUS TV Guide Importer Setup.exe"
+OutFile "bin\${TARGET}\ARGUS TV Guide Importer.exe"
 InstallDir "$PROGRAMFILES\ARGUS TV"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails hide
