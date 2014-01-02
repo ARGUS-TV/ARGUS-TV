@@ -4,7 +4,36 @@
 <defaultcontrol>11</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:604</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_my tv.png', 'background.png'))</define>	
 <controls>
+
+  <!--            :: BACKGROUNDS ::           	 -->
+	
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+		<texture>#header.hover</texture>
+    <shouldCache>true</shouldCache>		
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+    <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+		<visible>skin.hassetting(#skin.background.useHover)</visible>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 
 	<import>common.window.recordings.xml</import>
 
@@ -101,7 +130,7 @@
 		<id>0</id>
 		<posX>312</posX>
 		<posY>514</posY>
-		<width>800</width>
+		<width>570</width>
 		<font>TitanLight14</font>
 		<textcolor>FF00b7ff</textcolor>
 		<shadowAngle>120</shadowAngle>

@@ -4,15 +4,35 @@
 <defaultcontrol>11</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:638</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_my tv.png', 'background.png'))</define>	
 <controls>
+
+  <!--            :: BACKGROUNDS ::           	 -->
 	
 	<control>
-		<description>BG</description>
+		<description>BACKGROUND</description>
+		<id>0</id>
 		<type>image</type>
-		<id>1</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+		<texture>#header.hover</texture>
+    <shouldCache>true</shouldCache>		
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+    <posY>0</posY>
 		<width>1920</width>
 		<height>1080</height>
-		<texture>background.png</texture>
+		<texture>fanart_overlay.png</texture>
+		<visible>skin.hassetting(#skin.background.useHover)</visible>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
 	<control>
