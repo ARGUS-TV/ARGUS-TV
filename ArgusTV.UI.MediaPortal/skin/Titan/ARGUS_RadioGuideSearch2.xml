@@ -3,7 +3,7 @@
 <id>49851</id>
 <defaultcontrol>2</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
-<define>#header.label:724</define>	
+<define>#header.label:Search Radio Guide</define>	
 <controls>
 
 	<control>
@@ -63,16 +63,16 @@
 	</control>
 	
 	<control>
-		<id>0</id>
-		<type>image</type>
-		<posX>66</posX>
-		<posY>34</posY>
-		<width>61</width>
-		<height>57</height>
-		<texture>icon_radio.png</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+    <id>0</id>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>32</posY>
+    <width>55</width>
+    <height>66</height>
+    <texture>ARGUS_icon.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
 	
 	<import>common.time.xml</import>
 	
