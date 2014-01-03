@@ -90,21 +90,28 @@ namespace ArgusTV.UI.Notifier
 
         private void _toolTipTimer_Tick(object sender, EventArgs e)
         {
-            _toolTipTimer.Stop();
-            if (!_iconContextMenuStripIsOpen)
+            try
             {
-                Point position = Cursor.Position;
-                if (Math.Abs(position.X - _toolTipMousePosition.X) < 6
-                    && Math.Abs(position.Y - _toolTipMousePosition.Y) < 6)
+                _toolTipTimer.Stop();
+                if (!_iconContextMenuStripIsOpen)
                 {
-                    this.Invoke(new EventHandler(this.EnsureToolTipShown), this, EventArgs.Empty);
-                    _toolTipTimer.Interval = 20;
-                    _toolTipTimer.Start();
+                    Point position = Cursor.Position;
+                    if (Math.Abs(position.X - _toolTipMousePosition.X) < 6
+                        && Math.Abs(position.Y - _toolTipMousePosition.Y) < 6)
+                    {
+                        this.Invoke(new EventHandler(this.EnsureToolTipShown), this, EventArgs.Empty);
+                        _toolTipTimer.Interval = 20;
+                        _toolTipTimer.Start();
+                    }
+                    else
+                    {
+                        this.Invoke(new EventHandler(this.CloseToolTip), this, EventArgs.Empty);
+                    }
                 }
-                else
-                {
-                    this.Invoke(new EventHandler(this.CloseToolTip), this, EventArgs.Empty);
-                }
+            }
+            catch
+            {
+                // We don't care about any possible errors here.
             }
         }
 
