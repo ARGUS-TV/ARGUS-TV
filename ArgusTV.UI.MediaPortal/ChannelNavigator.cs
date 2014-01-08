@@ -949,9 +949,19 @@ namespace ArgusTV.UI.MediaPortal
                     Thread.Sleep(100);
                     Log.Debug("ChannelNavigator: AsyncStopLiveStream wait 100ms {0}",_lastChannelChangeFailed);
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(200);
 
-                this.ControlAgent.StopLiveStream(_streamToStopAsync);
+                for (int i = 0; i < 10; i++)
+                {
+                    try
+                    {
+                        this.ControlAgent.StopLiveStream(_streamToStopAsync);
+                    }
+                    catch
+                    {
+                        Thread.Sleep(25);
+                    }
+                }
                 _streamToStopAsync = null;
             }
         }
