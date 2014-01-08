@@ -1,5 +1,5 @@
 ﻿/*
- *	Copyright (C) 2007-2013 ARGUS TV
+ *	Copyright (C) 2007-2014 ARGUS TV
  *	http://www.argus-tv.com
  *
  *  This Program is free software; you can redistribute it and/or modify

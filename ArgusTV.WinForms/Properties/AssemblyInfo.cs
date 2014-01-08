@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ARGUS TV")]
 [assembly: AssemblyProduct("ArgusTV.WinForms")]
-[assembly: AssemblyCopyright("Copyright © 2007-2013 ARGUS TV")]
+[assembly: AssemblyCopyright("Copyright © 2007-2014 ARGUS TV")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

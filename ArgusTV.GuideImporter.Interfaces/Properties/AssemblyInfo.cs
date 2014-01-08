@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ArgusTV.GuideImporter.Interfaces")]
-[assembly: AssemblyCopyright("Copyright © ARGUS TV 2012-2013")]
+[assembly: AssemblyCopyright("Copyright © ARGUS TV 2012-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
