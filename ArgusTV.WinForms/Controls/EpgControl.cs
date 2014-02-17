@@ -38,6 +38,8 @@ namespace ArgusTV.WinForms.Controls
         private EpgTimeControl _epgTimeControl;
         private Timer _cursorTimer;
 
+        private static readonly float _widthFactor;
+
         public const int EpgHoursOffset = 3;
 
         #region Events
@@ -72,6 +74,14 @@ namespace ArgusTV.WinForms.Controls
         }
 
         #endregion
+
+        static EpgControl()
+        {
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                _widthFactor = (graphics.DpiX / 96);
+            }
+        }
 
         public EpgControl()
         {
@@ -144,7 +154,7 @@ namespace ArgusTV.WinForms.Controls
         {
             int pos = EpgTimeControl.GetTimeCursorPosition(DateTime.Now.TimeOfDay, -180);
             pos = Math.Min(pos, 5760 - _epgProgramsControl.Width);
-            _epgProgramsControl.ScrollLeft = -pos;
+            _epgProgramsControl.ScrollLeft = (int)(-pos * _widthFactor);
             SetTimeIndicator();
         }
 
