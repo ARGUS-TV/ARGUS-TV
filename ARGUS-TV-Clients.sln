@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal", "ArgusTV.UI.MediaPortal\ArgusTV.UI.MediaPortal.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal12", "ArgusTV.UI.MediaPortal12\ArgusTV.UI.MediaPortal12.csproj", "{6526A789-1DE2-4A8B-894B-4582A617C4E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal", "ArgusTV.UI.MediaPortal16\ArgusTV.UI.MediaPortal16.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortal", "MediaPortal", "{C9BC5650-2133-4500-A090-EAE3C6EC38EB}"
 EndProject
@@ -29,42 +27,41 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_NET35", "_NET35", "{94EDBC
 		ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.xml = ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies", "MediaPortalAssemblies", "{EA0E77C0-9623-4542-BDFE-B0DF5CAB6CF7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies16", "MediaPortalAssemblies16", "{EA0E77C0-9623-4542-BDFE-B0DF5CAB6CF7}"
 	ProjectSection(SolutionItems) = preProject
-		ReferencedAssemblies\MediaPortalAssemblies\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies\Common.Utils.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Core.dll = ReferencedAssemblies\MediaPortalAssemblies\Core.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies\Databases.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies\Dialogs.dll
-		ReferencedAssemblies\MediaPortalAssemblies\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies\DirectShowLib.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies\Gentle.Common.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies\Gentle.Framework.dll
-		ReferencedAssemblies\MediaPortalAssemblies\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies\PluginBase.dll
-		ReferencedAssemblies\MediaPortalAssemblies\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies\SetupControls.dll
-		ReferencedAssemblies\MediaPortalAssemblies\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies\TvBusinessLayer.dll
-		ReferencedAssemblies\MediaPortalAssemblies\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies\TvControl.dll
-		ReferencedAssemblies\MediaPortalAssemblies\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies\TVDatabase.dll
-		ReferencedAssemblies\MediaPortalAssemblies\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies\TvLibrary.Interfaces.dll
-		ReferencedAssemblies\MediaPortalAssemblies\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies\Utils.dll
-		ReferencedAssemblies\MediaPortalAssemblies\WindowPlugins.dll = ReferencedAssemblies\MediaPortalAssemblies\WindowPlugins.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies16\Common.Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Core.dll = ReferencedAssemblies\MediaPortalAssemblies16\Core.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies16\Databases.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies16\Dialogs.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies16\DirectShowLib.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies16\Gentle.Common.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies16\Gentle.Framework.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies16\PluginBase.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies16\SetupControls.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies16\TvBusinessLayer.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies16\TvControl.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies16\TVDatabase.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies16\TvLibrary.Interfaces.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies16\Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies16\WindowPlugins.dll = ReferencedAssemblies\MediaPortalAssemblies16\WindowPlugins.dll
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies12", "MediaPortalAssemblies12", "{2BCD51B5-9D55-4BFC-BE8B-4F0A69D47060}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortalAssemblies17", "MediaPortalAssemblies17", "{2BCD51B5-9D55-4BFC-BE8B-4F0A69D47060}"
 	ProjectSection(SolutionItems) = preProject
-		ReferencedAssemblies\MediaPortalAssemblies12\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies12\Common.Utils.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Core.dll = ReferencedAssemblies\MediaPortalAssemblies12\Core.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies12\Databases.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies12\Dialogs.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies12\DirectShowLib.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Common.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies12\Gentle.Framework.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies12\PluginBase.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies12\SetupControls.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvBusinessLayer.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvControl.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies12\TVDatabase.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies12\TvLibrary.Interfaces.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies12\Utils.dll
-		ReferencedAssemblies\MediaPortalAssemblies12\WindowPlugins.dll = ReferencedAssemblies\MediaPortalAssemblies12\WindowPlugins.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Common.Utils.dll = ReferencedAssemblies\MediaPortalAssemblies17\Common.Utils.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Core.dll = ReferencedAssemblies\MediaPortalAssemblies17\Core.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Databases.dll = ReferencedAssemblies\MediaPortalAssemblies17\Databases.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Dialogs.dll = ReferencedAssemblies\MediaPortalAssemblies17\Dialogs.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\DirectShowLib.dll = ReferencedAssemblies\MediaPortalAssemblies17\DirectShowLib.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Common.dll = ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Common.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Framework.dll = ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Framework.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\PluginBase.dll = ReferencedAssemblies\MediaPortalAssemblies17\PluginBase.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\SetupControls.dll = ReferencedAssemblies\MediaPortalAssemblies17\SetupControls.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\TvBusinessLayer.dll = ReferencedAssemblies\MediaPortalAssemblies17\TvBusinessLayer.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\TvControl.dll = ReferencedAssemblies\MediaPortalAssemblies17\TvControl.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\TVDatabase.dll = ReferencedAssemblies\MediaPortalAssemblies17\TVDatabase.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\TvLibrary.Interfaces.dll = ReferencedAssemblies\MediaPortalAssemblies17\TvLibrary.Interfaces.dll
+		ReferencedAssemblies\MediaPortalAssemblies17\Utils.dll = ReferencedAssemblies\MediaPortalAssemblies17\Utils.dll
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_NET35", "_NET35", "{0F187D8B-50EA-4E47-9E33-67F288251F30}"
@@ -103,7 +100,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.GuideImporter.Setup
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{9123D4B9-1851-4B51-9AB1-3D7CB31A2F47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal13", "ArgusTV.UI.MediaPortal13\ArgusTV.UI.MediaPortal13.csproj", "{67CE4846-1C3C-4D56-945F-6115FC3A2A87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal17", "ArgusTV.UI.MediaPortal17\ArgusTV.UI.MediaPortal17.csproj", "{67CE4846-1C3C-4D56-945F-6115FC3A2A87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

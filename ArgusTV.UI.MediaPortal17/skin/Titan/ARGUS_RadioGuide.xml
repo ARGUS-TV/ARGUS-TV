@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>762</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:100762</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_my radio.png', 'background.png'))</define>		
+<controls>
+  
+    <include condition="#(eq(#skin.tvguide.rows,' 7'))">ARGUS_RadioGuide.7rows.xml</include>
+    <include condition="#(eq(#skin.tvguide.rows,' 11'))">ARGUS_RadioGuide.11rows.xml</include>
+
+  <control>
+			<id>0</id>
+			<type>image</type>
+			<posX>66</posX>
+			<posY>32</posY>
+			<width>55</width>
+			<height>66</height>
+			<texture>ARGUS_icon.png</texture>
+		</control>
+	
+    <import>common.time.settings.xml</import>
+	
+ 		<include condition="#(eq(#skin.radioguide.rows,' 11'))">common.overlay.xml</include>   	
+	
+  </controls>
+</window>

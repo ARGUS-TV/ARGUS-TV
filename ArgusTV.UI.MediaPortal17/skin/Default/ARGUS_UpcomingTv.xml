@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>49848</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>Background.png</texture>
+      <width>720</width>
+      <height>576</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>24</id>
+      <posX>39</posX>
+      <posY>96</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <type>button</type>
+        <description>Program type button</description>
+        <id>2</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>17</onup>
+        <ondown>12</ondown>
+        <label>Type:</label>
+      </control>
+      <control>
+        <type>checkbutton</type>
+        <description>group by schedule</description>
+        <id>12</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>2</onup>
+        <ondown>9</ondown>
+        <label>group by schedule</label>
+      </control>
+      <control>
+        <type>sortbutton</type>
+        <description>Program type button</description>
+        <id>9</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>12</onup>
+        <ondown>11</ondown>
+        <label>sort</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>new</description>
+        <id>11</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>9</onup>
+        <ondown>99</ondown>
+        <label>617</label>
+      </control>
+    </control>
+
+      <control>
+        <description>upcoming episodes listcontrol</description>
+        <type>listcontrol</type>
+        <id>10</id>
+        <posX>259</posX>
+        <posY>88</posY>
+        <height>304</height>
+        <width>424</width>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <textXOff>5</textXOff>
+        <textYOff>1</textYOff>
+        <textXOff2>419</textXOff2>
+        <textYOff2>25</textYOff2>
+        <textXOff3>99</textXOff3>
+        <textYOff3>25</textYOff3>
+        <IconXOff>5</IconXOff>
+        <PinIconXOff>398</PinIconXOff>
+        <PinIconYOff>6</PinIconYOff>
+        <PinIconWidth>20</PinIconWidth>
+        <PinIconHeight>20</PinIconHeight>
+        <spinWidth>25</spinWidth>
+        <spinHeight>26</spinHeight>
+        <spinPosX>630</spinPosX>
+        <spinPosY>356</spinPosY>
+        <itemWidth>30</itemWidth>
+        <itemHeight>44</itemHeight>
+        <textureFocus>album_background_focus.png</textureFocus>
+        <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+        <spaceBetweenItems>0</spaceBetweenItems>
+        <keepaspectratio>yes</keepaspectratio>
+        <textureHeight>52</textureHeight>
+        <font2>font10</font2>
+        <font3>font10</font3>
+      </control>
+
+    <control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>259</posX>
+      <posY>404</posY>
+      <width>438</width>
+      <height>0</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+
+    <control>
+      <description>Current program channel</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>310</posX>
+      <posY>408</posY>
+      <width>382</width>
+      <label>#TV.Upcoming.Channel   #TV.Scheduled.Time</label>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+    </control>
+    
+      <control>
+        <type>fadelabel</type>
+        <description>Current program title</description>
+        <id>13</id>
+        <posX>310</posX>
+        <posY>427</posY>
+        <align>left</align>
+        <width>382</width>
+        <label>#TV.Upcoming.Title</label>
+        <disabledcolor>ff808080</disabledcolor>
+        <textcolor>gainsboro</textcolor>
+        <font>font14</font>
+      </control>
+    
+      <control>
+        <type>textboxscrollup</type>
+        <description>Description1</description>
+        <id>15</id>
+        <posX>259</posX>
+        <posY>480</posY>
+        <height>76</height>
+        <width>450</width>
+        <colordiffuse>ffffffff</colordiffuse>
+        <label>#TV.Upcoming.Description</label>
+        <font>font11</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+    
+      <control>
+				<type>label</type>
+				<description>genre</description>
+				<id>17</id>
+        <posX>310</posX>
+        <posY>452</posY>
+        <width>382</width>
+				<label>#TV.Upcoming.Genre</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>FFB2D4F5</textcolor>
+       </control>
+
+    <control>
+      <type>image</type>
+      <posX>259</posX>
+      <posY>412</posY>
+      <width>45</width>
+      <height>58</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
+    </control>
+    
+  </controls>
+</window>

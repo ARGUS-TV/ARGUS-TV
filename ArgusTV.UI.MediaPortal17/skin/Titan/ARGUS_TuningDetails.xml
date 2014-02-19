@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>3012</id>
+<defaultcontrol>99</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:200041</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_my tv.png', 'background.png'))</define>	
+<controls>
+
+  <!--            :: BACKGROUNDS ::           	 -->
+	
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+		<texture>#header.hover</texture>
+    <shouldCache>true</shouldCache>		
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+    <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+		<visible>skin.hassetting(#skin.background.useHover)</visible>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>34</posY>
+    <width>61</width>
+    <height>57</height>
+    <texture>icon_tv.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+  <control>
+   	<id>0</id>
+    <type>label</type>
+    <posX>144</posX>
+    <posY>38</posY>
+    <width>855</width>
+    <font>TitanLight22</font>
+    <textcolor>ffffff</textcolor>
+    <label>#header.label</label>
+		<align>left</align>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+      
+	<control>
+  	<id>0</id>
+    <type>label</type>
+    <posX>1848</posX>
+    <posY>36</posY>
+    <width>555</width>
+    <font>TitanLight22</font>
+    <textcolor>ffffff</textcolor>
+    <label>#time</label>
+		<align>right</align>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+		
+	<control>
+		<description>viewport thumbs</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>10</posX>
+		<posY>72</posY>
+		<width>1903</width>
+		<height>970</height>
+		<texture>panel_thumbs_xl.png</texture>
+ 		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+ 	
+	<control>
+		<description>video window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>95</posX>
+		<posY>249</posY>
+		<width>542</width>
+		<height>310</height>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+		
+	<control>
+		<description>video window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>95</posX>
+		<posY>249</posY>
+		<width>542</width>
+		<height>310</height>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>0</id>
+		<posX>788</posX>
+		<posY>200</posY>
+		<label>#TV.TuningDetails.ChannelName.label</label>
+		<font>TitanLight16</font>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	 	<control>
+		<description></description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1190</posX>
+		<posY>200</posY>
+		<label>#TV.TuningDetails.ChannelName.value</label>
+		<font>fontB16</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>0</id>
+		<posX>788</posX>
+		<posY>252</posY>
+		<label>#TV.TuningDetails.Provider.label</label>
+		<font>TitanLight16</font>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1190</posX>
+		<posY>252</posY>
+		<label>#TV.TuningDetails.Provider.value</label>
+		<font>fontB16</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Signal level</description>
+		<type>label</type>
+		<id>22</id>
+		<posX>788</posX>
+		<posY>354</posY>
+		<label>#TV.TuningDetails.SignalLevel.label</label>
+		<font>TitanLight16</font>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Signal level 0</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1092</posX>
+		<posY>338</posY>
+		<label> 0</label>
+		<font>font11</font>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Signal level 100</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1770</posX>
+		<posY>338</posY>
+		<label> 100</label>
+		<font>font11</font>
+		<align>right</align>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Progress background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1092</posX>
+		<posY>372</posY>
+		<width>677</width>
+		<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+	</control>
+
+	<control>
+		<description>Signal level progress bar</description>
+		<type>progress</type>
+		<id>23</id>
+		<posX>1082</posX>
+		<posY>374</posY>
+		<width>677</width>
+		<height>15</height>
+		<label>#TV.TuningDetails.SignalLevel.value</label>
+		<texturebg>-</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>yes</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Signal Quality</description>
+		<type>label</type>
+		<id>24</id>
+		<posX>788</posX>
+		<posY>406</posY>
+		<label>#TV.TuningDetails.SignalQuality.label</label>
+		<font>TitanLight16</font>
+		<textcolor>FF00b7ff</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Progress background</description>
+		<type>image</type>
+		<id>0</id>
+			<posX>1092</posX>
+			<posY>425</posY>
+			<width>677</width>
+			<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+	</control>
+
+	<control>
+		<description>Signal level progress bar</description>
+		<type>progress</type>
+		<id>23</id>
+		<posX>1082</posX>
+		<posY>427</posY>
+		<width>677</width>
+		<height>15</height>
+		<label>#TV.TuningDetails.SignalQuality.value</label>
+		<texturebg>-</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>yes</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1440</posX>
+		<posY>500</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail1.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>500</posY>
+		<label>#TV.TuningDetails.Detail1.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>6</id>
+		<posX>788</posX>
+		<posY>500</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.ChannelType.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>500</posY>
+		<label>#TV.TuningDetails.ChannelType.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>7</id>
+		<posX>1440</posX>
+		<posY>534</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail2.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>534</posY>
+		<label>#TV.TuningDetails.Detail2.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>4</id>
+		<posX>788</posX>
+		<posY>534</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Frequency.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>RTSP URL value</description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>534</posY>
+		<label>#TV.TuningDetails.Frequency.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>8</id>
+		<posX>788</posX>
+		<posY>568</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.StreamingMode.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>568</posY>
+		<label>#TV.TuningDetails.StreamingMode.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>9</id>
+		<posX>1440</posX>
+		<posY>568</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail3.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>568</posY>
+		<label>#TV.TuningDetails.Detail3.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>10</id>
+		<posX>788</posX>
+		<posY>602</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.RTSPURL.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>fadelabel</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>602</posY>
+		<width>400</width>
+		<label>#TV.TuningDetails.RTSPURL.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>11</id>
+		<posX>1440</posX>
+		<posY>602</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail4.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>602</posY>
+		<label>#TV.TuningDetails.Detail4.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>12</id>
+		<posX>788</posX>
+		<posY>636</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.VideoResolution.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>636</posY>
+		<label>#TV.TuningDetails.VideoResolution.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>13</id>
+		<posX>1440</posX>
+		<posY>636</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail5.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>636</posY>
+		<label>#TV.TuningDetails.Detail5.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>14</id>
+		<posX>788</posX>
+		<posY>670</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.AudioType.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>670</posY>
+		<label>#TV.TuningDetails.AudioType.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>15</id>
+		<posX>1440</posX>
+		<posY>670</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail6.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>670</posY>
+		<label>#TV.TuningDetails.Detail6.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>16</id>
+		<posX>788</posX>
+		<posY>704</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.AudioLanguage.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>704</posY>
+		<label>#TV.TuningDetails.AudioLanguage.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>17</id>
+		<posX>1440</posX>
+		<posY>704</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail7.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>704</posY>
+		<label>#TV.TuningDetails.Detail7.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>18</id>
+		<posX>788</posX>
+		<posY>738</posY>
+		<width>200</width>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.SubtitleStream.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>992</posX>
+		<posY>738</posY>
+		<label>#TV.TuningDetails.SubtitleStream.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>19</id>
+		<posX>1440</posX>
+		<posY>738</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<label>#TV.TuningDetails.Detail8.label</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description></description>
+		<type>label</type>
+		<id>5</id>
+		<posX>1640</posX>
+		<posY>738</posY>
+		<label>#TV.TuningDetails.Detail8.value</label>
+		<font>TitanLight11</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+</controls>
+</window>
