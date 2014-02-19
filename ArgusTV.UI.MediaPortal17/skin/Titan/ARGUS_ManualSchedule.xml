@@ -1,0 +1,623 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>49853</id>
+<defaultcontrol>11</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#header.label:638</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_my tv.png', 'background.png'))</define>	
+<controls>
+
+  <!--            :: BACKGROUNDS ::           	 -->
+	
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+		<texture>#header.hover</texture>
+    <shouldCache>true</shouldCache>		
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+    <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+		<visible>skin.hassetting(#skin.background.useHover)</visible>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>VIEWPORT</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>145</posY>
+		<width>1903</width>
+		<height>897</height>
+		<texture>panel_tv.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<!--						:: Count Background ::						-->
+
+	<control Style="smallTitle">
+		<description>Selected item Label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>510</posX>
+		<posY>1015</posY>
+		<label>#selecteditem</label>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>1</id>
+		<label>#currentmodule: #itemcount</label>
+		<posX>96</posX>
+		<posY>998</posY>
+		<align>left</align>
+		<font>TitanLight12</font>
+		<textcolor>000000</textcolor>
+		<visible>Control.IsVisible(10)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>32</posY>
+    <width>55</width>
+    <height>66</height>
+    <texture>ARGUS_icon.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+	<import>common.time.xml</import>
+
+	<control>
+		<type>group</type>
+		<layout>StackLayout</layout>
+		<description>group element</description>
+		<posX>99</posX>
+		<posY>719</posY>
+		<layout>GridLayout(2, 0, 3, 7, 1)</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>		
+			
+		<control>
+			<description>Record</description>
+			<type>button</type>
+			<id>11</id>
+			<label>682</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
+		</control>
+		
+		<control>
+			<description>Alert me</description>
+			<type>button</type>
+			<id>22</id>
+			<label>1040</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
+		</control>
+		
+		<control>
+			<description>Priority</description>
+			<type>button</type>
+			<id>10</id>
+			<label>991</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
+		</control>
+		
+		<control>
+			<description>Keep</description>
+			<type>button</type>
+			<id>21</id>
+			<label>1042</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
+		</control>
+		
+			<control>
+			<description>Rename</description>
+			<type>button</type>
+			<id>25</id>
+			<label>118</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>		
+		</control>
+
+		<control>
+			<description></description>
+			<type>button</type>
+			<id>1</id>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+		</control>
+		
+	</control>
+	
+	<control>
+		<description>upcoming label</description>
+		<type>label</type>
+		<id>27</id>
+		<posX>978</posX>
+		<posY>220</posY>
+		<width>800</width>
+		<textcolor>85cffe</textcolor>
+		<font>TitanLight20</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>List Lines</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>968</posX>
+		<posY>385</posY>
+		<width>861</width>
+		<height>506</height>
+		<texture>list_lines_tv_small.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<type>group</type>
+		<description>group element</description>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<dimColor>ffffffff</dimColor>
+		
+		<control>
+			<description>Episoden listcontrol</description>
+			<type>listcontrol</type>
+			<id>26</id>
+			<posX>918</posX>
+			<posY>331</posY>
+			<height>700</height>
+			<width>943</width>
+			<onleft>11</onleft>
+			<onright>11</onright>
+			<scrollOffset>1</scrollOffset>
+			<PinIconHeight>45</PinIconHeight>
+			<PinIconWidth>75</PinIconWidth>
+			<PinIconXOff>44</PinIconXOff>
+			<PinIconYOff>5</PinIconYOff>
+			<itemWidth>40</itemWidth>
+			<itemHeight>30</itemHeight>
+			<textureFocus>listcontrol_item_selected_tv.png</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<IconXOff>20</IconXOff>
+			<IconYOff>13</IconYOff>				
+			<textXOff>50</textXOff>
+			<textXOff2>914</textXOff2>
+			<keepaspectratio>no</keepaspectratio>
+			<spinCanFocus>no</spinCanFocus>
+			<dimColor>ffffffff</dimColor>
+			<spinPosX>1832</spinPosX>
+			<spinPosY>950</spinPosY>
+		</control>
+	</control>
+
+	<control>
+		<description>Group Select</description>
+		<type>spincontrol</type>
+		<id>12</id>
+		<posX>110</posX>
+		<posY>281</posY>
+		<showrange>no</showrange>
+		<digits>6</digits>
+		<orientation>vertical</orientation>
+		<onup></onup>
+		<ondown>16</ondown>
+		<onleft>11</onleft>
+		<onright>13</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<font>TitanLight14</font>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Channel Select</description>
+		<type>spincontrol</type>
+		<id>13</id>
+		<posX>450</posX>
+		<posY>281</posY>
+		<showrange>no</showrange>
+		<digits>6</digits>
+		<orientation>vertical</orientation>
+		<onup></onup>
+		<ondown>15</ondown>
+		<onleft>12</onleft>
+		<onright>16</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<font>TitanLight14</font>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	
+	<control>
+		<description>Date</description>
+		<type>group</type>
+		<layout>StackLayout</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<dimColor>ffffffff</dimColor>
+		<posX>110</posX>
+		<posY>430</posY>
+		<layout>GridLayout(3, 0, 30, 7, 1)</layout>
+		
+		<control>
+			<description>Day Select</description>
+			<type>spincontrol</type>
+			<id>16</id>
+			<showrange>no</showrange>
+			<digits>3</digits>
+			<orientation>vertical</orientation>
+			<onup>12</onup>
+			<ondown></ondown>
+			<onleft>11</onleft>
+			<onright>17</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>			
+		</control>
+		
+		<control>
+			<description>Month Select</description>
+			<type>spincontrol</type>
+			<id>17</id>
+			<showrange>no</showrange>
+			<digits>3</digits>
+			<orientation>vertical</orientation>
+			<onup>12</onup>
+			<ondown></ondown>
+			<onleft>16</onleft>
+			<onright>18</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+		
+		<control>
+			<description>Year Select</description>
+			<type>spincontrol</type>
+			<id>18</id>
+			<showrange>no</showrange>
+			<digits>3</digits>
+			<orientation>vertical</orientation>
+			<onup>12</onup>
+			<ondown></ondown>
+			<onleft>17</onleft>
+			<onright>15</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+	</control>
+	
+	<control>
+		<description>Time</description>
+		<type>group</type>
+		<layout>StackLayout</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<dimColor>ffffffff</dimColor>
+		<posX>450</posX>
+		<posY>430</posY>
+		<layout>GridLayout(3, 0, 30, 7, 1)</layout>
+		
+		<control>
+			<description>Hours Select</description>
+			<type>spincontrol</type>
+			<id>15</id>
+			<showrange>no</showrange>
+			<digits>2</digits>
+			<orientation>vertical</orientation>
+			<onup>13</onup>
+			<ondown></ondown>
+			<onleft>18</onleft>
+			<onright>14</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+		
+		<control>
+			<description>Minutes Select</description>
+			<type>spincontrol</type>
+			<id>14</id>
+			<showrange>no</showrange>
+			<digits>2</digits>
+			<orientation>vertical</orientation>
+			<onup>13</onup>
+			<ondown></ondown>
+			<onleft>15</onleft>
+			<onright>20</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+	</control>
+	
+	<control>
+		<description>Duration</description>
+		<type>group</type>
+		<layout>StackLayout</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<dimColor>ffffffff</dimColor>
+		<posX>700</posX>
+		<posY>430</posY>
+		<layout>GridLayout(3, 0, 30, 7, 1)</layout>
+		
+		<control>
+			<description>Duration Hours</description>
+			<type>spincontrol</type>
+			<id>20</id>
+			<showrange>no</showrange>
+			<digits>2</digits>
+			<orientation>vertical</orientation>	
+			<onup>13</onup>
+			<ondown></ondown>
+			<onleft>14</onleft>
+			<onright>19</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+		
+		<control>
+			<description>Duration Minutes</description>
+			<type>spincontrol</type>
+			<id>19</id>
+			<showrange>no</showrange>
+			<digits>2</digits>
+			<orientation>vertical</orientation>
+			<onup>13</onup>
+			<ondown></ondown>
+			<onleft>20</onleft>
+			<onright>3</onright>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>TitanLight14</font>				
+		</control>
+	</control>
+	
+	<control>
+		<description>Days select</description>
+		<type>group</type>
+		<layout>StackLayout</layout>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<dimColor>ffffffff</dimColor>
+		<posX>99</posX>
+		<posY>561</posY>
+		<layout>GridLayout(7, 0, 8, 0, 1)</layout>
+		
+		<control>
+			<description>monday</description>
+			<type>checkbutton</type>
+			<id>3</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>657</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>11</onleft>
+			<onup>16</onup>
+			<ondown>11</ondown>
+			<onright>4</onright>
+		</control>
+		
+		<control>
+			<description>tuesday</description>
+			<type>checkbutton</type>
+			<id>4</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>658</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onup>17</onup>
+			<ondown>11</ondown>
+			<onright>5</onright>
+		</control>
+		
+		<control>
+			<description>wednesday</description>
+			<type>checkbutton</type>
+			<id>5</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>659</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onup>18</onup>
+			<ondown>11</ondown>
+			<onright>6</onright>
+		</control>
+		
+		<control>
+			<description>thursday</description>
+			<type>checkbutton</type>
+			<id>6</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>660</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onup></onup>
+			<ondown>11</ondown>
+			<onright>7</onright>
+		</control>
+		
+		<control>
+			<description>friday</description>
+			<type>checkbutton</type>
+			<id>7</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>661</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onup></onup>
+			<ondown>11</ondown>
+			<onright>8</onright>
+		</control>
+		
+		<control>
+			<description>saturday</description>
+			<type>checkbutton</type>
+			<id>8</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>662</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>7</onleft>
+			<onup></onup>
+			<ondown>11</ondown>
+			<onright>9</onright>
+		</control>
+		
+		<control>
+			<description>sunday</description>
+			<type>checkbutton</type>
+			<id>9</id>
+			<width>100</width>
+			<textXOff>15</textXOff>
+			<label>663</label>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
+			<onleft>8</onleft>
+			<onup></onup>
+			<ondown>11</ondown>
+			<onright>11</onright>
+		</control>
+	</control>
+	
+	<control>
+		<description>Group</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>99</posX>
+		<posY>221</posY>
+		<label>971</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Channel</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>439</posX>
+		<posY>221</posY>
+		<label>602</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>date</description>
+		<type>label</type>
+		<id>23</id>
+		<posX>99</posX>
+		<posY>370</posY>
+		<label>636</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control> 
+	
+	<control>
+		<description>starttime</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>439</posX>
+		<posY>370</posY>
+		<label>635</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>duration</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>689</posX>
+		<posY>370</posY>
+		<label>180</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>select days</description>
+		<type>label</type>
+		<id>24</id>
+		<posX>99</posX>
+		<posY>510</posY>
+		<label>3015</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<import>common.overlay.xml</import>
+
+</controls>
+</window>
