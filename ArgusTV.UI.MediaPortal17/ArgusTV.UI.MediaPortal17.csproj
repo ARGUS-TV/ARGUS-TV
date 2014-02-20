@@ -333,17 +333,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\_NET35\ArgusTV.Client.Common\ArgusTV.Client.Common.NET35.csproj">
-      <Project>{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}</Project>
-      <Name>ArgusTV.Client.Common.NET35</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\_NET35\ArgusTV.UI.Process\ArgusTV.UI.Process.NET35.csproj">
-      <Project>{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}</Project>
-      <Name>ArgusTV.UI.Process.NET35</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <ProjectReference Include="..\_NET40\ArgusTV.Client.Common\ArgusTV.Client.Common.NET40.csproj">
+      <Project>{2702dcfe-6086-48a0-a6dc-db1d272aefb2}</Project>
+      <Name>ArgusTV.Client.Common.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.UI.Process\ArgusTV.UI.Process.NET40.csproj">
+      <Project>{a35f0ed7-98ed-4ee2-99c6-ea2af880f8c4}</Project>
+      <Name>ArgusTV.UI.Process.NET40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

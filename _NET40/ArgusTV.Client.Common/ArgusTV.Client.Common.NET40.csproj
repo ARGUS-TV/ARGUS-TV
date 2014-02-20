@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8C4}</ProjectGuid>
+    <ProjectGuid>{2702DCFE-6086-48A0-A6DC-DB1D272AEFB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ArgusTV.UI.Process</RootNamespace>
-    <AssemblyName>ArgusTV.UI.Process</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>ArgusTV.Client.Common</RootNamespace>
+    <AssemblyName>ArgusTV.Client.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>Svn</SccProjectName>
     <SccLocalPath>Svn</SccLocalPath>
@@ -22,6 +22,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,7 +52,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\ArgusTV.UI.Process.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\ArgusTV.Client.Common.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -60,6 +61,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ArgusTV.DataContracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
@@ -79,91 +81,32 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\ArgusTV.UI.Process\ChannelProgramsList.cs">
-      <Link>ChannelProgramsList.cs</Link>
+    <Compile Include="..\..\ArgusTV.Client.Common\ChannelLogosCache.cs">
+      <Link>ChannelLogosCache.cs</Link>
     </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\ChannelProgramView.cs">
-      <Link>ChannelProgramView.cs</Link>
+    <Compile Include="..\..\ArgusTV.Client.Common\ClientUtility.cs">
+      <Link>ClientUtility.cs</Link>
     </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\CurrentAndNextProgramsList.cs">
-      <Link>CurrentAndNextProgramsList.cs</Link>
+    <Compile Include="..\..\ArgusTV.Client.Common\ConnectionProfile.cs">
+      <Link>ConnectionProfile.cs</Link>
     </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\CurrentAndNextProgramView.cs">
-      <Link>CurrentAndNextProgramView.cs</Link>
+    <Compile Include="..\..\ArgusTV.Client.Common\ConnectionProfiles.cs">
+      <Link>ConnectionProfiles.cs</Link>
     </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\EditSchedule\EditScheduleController.cs">
-      <Link>EditSchedule\EditScheduleController.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\EditSchedule\EditScheduleModel.cs">
-      <Link>EditSchedule\EditScheduleModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\EditSchedule\TitleRuleTypeIndex.cs">
-      <Link>EditSchedule\TitleRuleTypeIndex.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Guide\ChannelPrograms.cs">
-      <Link>Guide\ChannelPrograms.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Guide\GuideController.cs">
-      <Link>Guide\GuideController.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Guide\GuideModel.cs">
-      <Link>Guide\GuideModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Guide\GuideUpcomingProgram.cs">
-      <Link>Guide\GuideUpcomingProgram.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\KeepUntilControlUtility.cs">
-      <Link>KeepUntilControlUtility.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\LiveStreamsList.cs">
-      <Link>LiveStreamsList.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\LiveStreamView.cs">
-      <Link>LiveStreamView.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\ProcessUtility.cs">
-      <Link>ProcessUtility.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\RecorderTunersCache.cs">
-      <Link>RecorderTunersCache.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Recordings\RecordingsController.cs">
-      <Link>Recordings\RecordingsController.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\Recordings\RecordingsModel.cs">
-      <Link>Recordings\RecordingsModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\ScheduleNamesCache.cs">
-      <Link>ScheduleNamesCache.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\SearchGuide\SearchGuideController.cs">
-      <Link>SearchGuide\SearchGuideController.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\SearchGuide\SearchGuideModel.cs">
-      <Link>SearchGuide\SearchGuideModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\SerializableDictionary.cs">
-      <Link>SerializableDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\SortableBindingList.cs">
-      <Link>SortableBindingList.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\UpcomingGuideProgramsDictionary.cs">
-      <Link>UpcomingGuideProgramsDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\UpcomingOrActiveProgramsList.cs">
-      <Link>UpcomingOrActiveProgramsList.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.UI.Process\UpcomingOrActiveProgramView.cs">
-      <Link>UpcomingOrActiveProgramView.cs</Link>
+    <Compile Include="..\..\ArgusTV.Client.Common\EventsListenerServiceBase.cs">
+      <Link>EventsListenerServiceBase.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

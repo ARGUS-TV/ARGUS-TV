@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ARGUS TV")]
 [assembly: AssemblyProduct("ArgusTV.Client.Common")]
-[assembly: AssemblyCopyright("Copyright © 2007-2013 ARGUS TV")]
+[assembly: AssemblyCopyright("Copyright © 2007-2014 ARGUS TV")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,3 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion(ArgusTV.DataContracts.Constants.AssemblyVersion)]
 [assembly: AssemblyFileVersion(ArgusTV.DataContracts.Constants.AssemblyVersion)]
-
-[assembly: Obfuscation(Feature = "code control flow obfuscation", Exclude = false)]
