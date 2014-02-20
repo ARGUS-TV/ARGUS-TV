@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ArgusTV.UI.Process")]
+[assembly: AssemblyTitle("ArgusTV.Client.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ARGUS TV")]
-[assembly: AssemblyProduct("ArgusTV.UI.Process")]
+[assembly: AssemblyProduct("ArgusTV.Client.Common")]
 [assembly: AssemblyCopyright("Copyright © 2007-2014 ARGUS TV")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("01fdce1b-481b-4841-89f2-f73b3849e1e5")]
+[assembly: Guid("d502d78f-d0bb-4dd5-95fa-cbdb8fd93404")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,5 +33,3 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion(ArgusTV.DataContracts.Constants.AssemblyVersion)]
 [assembly: AssemblyFileVersion(ArgusTV.DataContracts.Constants.AssemblyVersion)]
-
-[assembly: Obfuscation(Feature = "code control flow obfuscation", Exclude = false)]
