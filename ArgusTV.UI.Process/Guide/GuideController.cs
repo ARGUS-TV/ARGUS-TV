@@ -55,9 +55,13 @@ namespace ArgusTV.UI.Process.Guide
             _model.ChannelType = channelType;
             _model.ChannelGroups.Clear();
             _model.ChannelGroups.AddRange(tvSchedulerAgent.GetAllChannelGroups(channelType, true));
-            _model.ChannelGroups.Add(new ChannelGroup(
-                channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                (int)channelType, _model.AllChannelsGroupName, true, 0, 0));
+            _model.ChannelGroups.Add(new ChannelGroup()
+            {
+                ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                ChannelType = channelType,
+                GroupName = _model.AllChannelsGroupName,
+                VisibleInGuide = true
+            });
 
             if (_model.GuideDateTime == DateTime.MinValue)
             {

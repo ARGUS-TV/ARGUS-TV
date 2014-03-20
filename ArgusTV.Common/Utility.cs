@@ -20,16 +20,17 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Text;
-using System.Security.Cryptography;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.ServiceModel;
-
+using System.Security.AccessControl;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using System.Text;
 using ArgusTV.Common.Logging;
 using ArgusTV.DataContracts;
 
@@ -462,5 +463,31 @@ namespace ArgusTV.Common
         }
 
         #endregion
+
+        public static int GetFreeTcpPort()
+        {
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            try
+            {
+                return ((IPEndPoint)listener.LocalEndpoint).Port;
+            }
+            finally
+            {
+                listener.Stop();
+            }
+        }
+
+        public static void CreateFolderForEveryone(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                var sec = Directory.GetAccessControl(path);
+                var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+                sec.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.Modify | FileSystemRights.Synchronize, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
+                Directory.SetAccessControl(path, sec);
+            }
+        }
     }
 }

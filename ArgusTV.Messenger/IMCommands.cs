@@ -938,7 +938,14 @@ namespace ArgusTV.Messenger
             List<ChannelGroup> groups = new List<ChannelGroup>(tvSchedulerAgent.GetAllChannelGroups(channelType, true));
             Guid allChannelsGroupId = (channelType == ChannelType.Television)
                 ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId;
-            groups.Add(new ChannelGroup(allChannelsGroupId, (int)channelType, "All channels", true, int.MaxValue, 0));
+            groups.Add(new ChannelGroup()
+            {
+                ChannelGroupId = allChannelsGroupId,
+                ChannelType = channelType,
+                GroupName = "All channels",
+                Sequence = int.MaxValue,
+                VisibleInGuide = true
+            });
             return groups;
         }
 

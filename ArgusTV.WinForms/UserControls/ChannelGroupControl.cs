@@ -80,9 +80,13 @@ namespace ArgusTV.WinForms.UserControls
                     using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
                     {
                         List<ChannelGroup> channelGroups = new List<ChannelGroup>(tvSchedulerAgent.GetAllChannelGroups(channelType, true));
-                        ChannelGroup allChannelsGroup = new ChannelGroup(
-                            channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                            (int)channelType, "All Channels", true, 0, 0);
+                        ChannelGroup allChannelsGroup = new ChannelGroup()
+                        {
+                            ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                            ChannelType = channelType,
+                            GroupName = "All Channels",
+                            VisibleInGuide = true
+                        };
                         if (this.ShowAllChannelsOnTop)
                         {
                             channelGroups.Insert(0, allChannelsGroup);
@@ -100,8 +104,8 @@ namespace ArgusTV.WinForms.UserControls
                 }
             }
             _channelGroupsComboBox.DataSource = _channelGroups[channelType];
-            _channelGroupsComboBox.DisplayMember = ChannelGroup.FieldName.GroupName;
-            _channelGroupsComboBox.ValueMember = ChannelGroup.FieldName.ChannelGroupId;
+            _channelGroupsComboBox.DisplayMember = "GroupName";
+            _channelGroupsComboBox.ValueMember = "ChannelGroupId";
         }
 
         private void _channelTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

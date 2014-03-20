@@ -47,7 +47,11 @@ namespace ArgusTV.UI.Process.EditSchedule
             if (schedule.ScheduleType == ScheduleType.Recording)
             {
                 _model.RecordingFormats = new SortableBindingList<RecordingFileFormat>(tvSchedulerAgent.GetAllRecordingFileFormats());
-                _model.RecordingFormats.Insert(0, new RecordingFileFormat(Guid.Empty, defaultFormatName, String.Empty));
+                _model.RecordingFormats.Insert(0, new RecordingFileFormat()
+                {
+                    Name = defaultFormatName,
+                    Format = String.Empty
+                });
             }
 
             Channel[] channels = tvSchedulerAgent.GetAllChannels(schedule.ChannelType, false);
@@ -59,9 +63,13 @@ namespace ArgusTV.UI.Process.EditSchedule
 
             _model.ChannelGroups.Clear();
             _model.ChannelGroups.AddRange(tvSchedulerAgent.GetAllChannelGroups(schedule.ChannelType, !_model.IsManual));
-            _model.ChannelGroups.Add(new ChannelGroup(
-                schedule.ChannelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                (int)schedule.ChannelType, allChannelsGroupName, true, 0, 0));
+            _model.ChannelGroups.Add(new ChannelGroup()
+            {
+                ChannelGroupId = schedule.ChannelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                ChannelType = schedule.ChannelType,
+                GroupName = allChannelsGroupName,
+                VisibleInGuide = true
+            });
 
             if (!_model.IsManual)
             {

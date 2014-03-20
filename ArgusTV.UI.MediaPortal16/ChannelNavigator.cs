@@ -315,9 +315,14 @@ namespace ArgusTV.UI.MediaPortal
 
                     if (!hideAllChannelsGroup || groups.Count == 0)
                     {
-                        groups.Add(new ChannelGroup(
-                            channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                            (int)channelType, Utility.GetLocalizedText(TextId.AllChannels), true, int.MaxValue, 0));
+                        groups.Add(new ChannelGroup()
+                        {
+                            ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                            ChannelType = channelType,
+                            GroupName = Utility.GetLocalizedText(TextId.AllChannels),
+                            Sequence = int.MaxValue,
+                            VisibleInGuide = true
+                        });
                     }
 
                     _navigatorChannels[channelType].Groups = groups;
