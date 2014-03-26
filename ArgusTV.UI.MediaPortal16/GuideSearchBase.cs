@@ -86,7 +86,7 @@ namespace ArgusTV.UI.MediaPortal
         private string _selectedTitle = string.Empty;
 
         private ChannelType _channelType;
-        private ScheduleRules _rules = new ScheduleRules();
+        private List<ScheduleRule> _rules = new List<ScheduleRule>();
         List<object> _categorieArguments = new List<object>();
         List<object> _channelArguments = new List<object>();
 
@@ -655,7 +655,7 @@ namespace ArgusTV.UI.MediaPortal
                 return;
             }
 
-            ScheduleRules rules = new ScheduleRules();
+            List<ScheduleRule> rules = new List<ScheduleRule>();
             for (int i = 0; i < _rules.Count; i++)
             {
                 rules.Add(_rules[i]);

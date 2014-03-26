@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Globalization;
 
 using ArgusTV.DataContracts;
+using ArgusTV.DataContracts.Extensions;
 using ArgusTV.UI.Process.Guide;
 using ArgusTV.UI.Process;
 
@@ -618,19 +619,22 @@ namespace ArgusTV.WinForms.Controls
                 {
                     bool isBroadcasted = true;
 
-                    if (Channel.BroadcastStartTime.HasValue && Channel.BroadcastStopTime.HasValue)
-                    {                        
-                        if (Channel.BroadcastStartTime < Channel.BroadcastStopTime)
+                    TimeSpan? broadcastStartTime = Channel.GetBroadcastStartTime();
+                    TimeSpan? broadcastStopTime = Channel.GetBroadcastStopTime();
+
+                    if (broadcastStartTime.HasValue && broadcastStopTime.HasValue)
+                    {
+                        if (broadcastStartTime < broadcastStopTime)
                         {
                             isBroadcasted = false;
                             // eg 12:00 - 15:00
-                            if ((this.StartTime.TimeOfDay >= Channel.BroadcastStartTime && this.StopTime.TimeOfDay > this.StartTime.TimeOfDay && this.StopTime.TimeOfDay <= Channel.BroadcastStopTime))
+                            if ((this.StartTime.TimeOfDay >= broadcastStartTime && this.StopTime.TimeOfDay > this.StartTime.TimeOfDay && this.StopTime.TimeOfDay <= broadcastStopTime))
                                 isBroadcasted = true;
                         }
                         else
                         {
                             // eg 16:30 - 12:00  
-                            if (this.StartTime.TimeOfDay >= Channel.BroadcastStopTime && this.StopTime.TimeOfDay <= Channel.BroadcastStartTime && this.StopTime.TimeOfDay >= Channel.BroadcastStopTime)
+                            if (this.StartTime.TimeOfDay >= broadcastStopTime && this.StopTime.TimeOfDay <= broadcastStartTime && this.StopTime.TimeOfDay >= broadcastStopTime)
                                 isBroadcasted = false;
                         }   
                     }                    

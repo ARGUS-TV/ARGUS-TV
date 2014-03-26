@@ -41,9 +41,9 @@ namespace ArgusTV.Client.Common
             return expression;
         }
 
-        public static string GetEpisodeNumberRuleText(ScheduleRules rules)
+        public static string GetEpisodeNumberRuleText(List<ScheduleRule> rules)
         {
-            ScheduleRule rule = rules.FindRuleByType(ScheduleRuleType.EpisodeNumberEquals);
+            var rule = rules.FindRuleByType(ScheduleRuleType.EpisodeNumberEquals);
             if (rule != null)
             {
                 return JoinORedArguments(rule.Arguments);
@@ -55,7 +55,7 @@ namespace ArgusTV.Client.Common
 
         #region Set Rules Text
 
-        public static void AppendTitleRule(ScheduleRules rules, TextRuleType textRuleType, string text)
+        public static void AppendTitleRule(List<ScheduleRule> rules, TextRuleType textRuleType, string text)
         {
             text = (text ?? String.Empty).Trim();
             if (!String.IsNullOrEmpty(text))
@@ -77,7 +77,7 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        public static void AppendEpisodeTitleRule(ScheduleRules rules, TextRuleType textRuleType, string text)
+        public static void AppendEpisodeTitleRule(List<ScheduleRule> rules, TextRuleType textRuleType, string text)
         {
             text = (text ?? String.Empty).Trim();
             if (!String.IsNullOrEmpty(text))
@@ -99,7 +99,7 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        public static void AppendEpisodeNumberRule(ScheduleRules rules, TextRuleType textRuleType, string text)
+        public static void AppendEpisodeNumberRule(List<ScheduleRule> rules, TextRuleType textRuleType, string text)
         {
             text = (text ?? String.Empty).Trim();
             if (!String.IsNullOrEmpty(text))
@@ -121,12 +121,12 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        public static void AppendDescriptionRule(ScheduleRules rules, string text)
+        public static void AppendDescriptionRule(List<ScheduleRule> rules, string text)
         {
             AppendContainsRule(rules, ScheduleRuleType.DescriptionContains, ScheduleRuleType.DescriptionDoesNotContain, text);
         }
 
-        public static void AppendProgramInfoRule(ScheduleRules rules, string text)
+        public static void AppendProgramInfoRule(List<ScheduleRule> rules, string text)
         {
             AppendContainsRule(rules, ScheduleRuleType.ProgramInfoContains, ScheduleRuleType.ProgramInfoDoesNotContain, text);
         }
@@ -135,7 +135,7 @@ namespace ArgusTV.Client.Common
 
         #region Set "When" Rules
 
-        public static void AppendOnDateAndDaysOfWeekRule(ScheduleRules rules, ScheduleDaysOfWeek daysOfWeek, DateTime? onDateTime)
+        public static void AppendOnDateAndDaysOfWeekRule(List<ScheduleRule> rules, ScheduleDaysOfWeek daysOfWeek, DateTime? onDateTime)
         {
             if (daysOfWeek == ScheduleDaysOfWeek.None)
             {
@@ -157,13 +157,13 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        public static void AppendAroundTimeRule(ScheduleRules rules, DateTime aroundTime)
+        public static void AppendAroundTimeRule(List<ScheduleRule> rules, DateTime aroundTime)
         {
             rules.Add(ScheduleRuleType.AroundTime,
                 new ScheduleTime(aroundTime.Hour, aroundTime.Minute, aroundTime.Second));
         }
 
-        public static void AppendStartingBetweenRule(ScheduleRules rules, DateTime lowerTime, DateTime upperTime)
+        public static void AppendStartingBetweenRule(List<ScheduleRule> rules, DateTime lowerTime, DateTime upperTime)
         {
             rules.Add(ScheduleRuleType.StartingBetween,
                 new ScheduleTime(lowerTime.Hour, lowerTime.Minute, lowerTime.Second),
@@ -174,7 +174,7 @@ namespace ArgusTV.Client.Common
 
         #region Private Methods
 
-        private static string GetTitleRuleExpression(ScheduleRules rules, ScheduleRuleType equalsRule, ScheduleRuleType startsWithRule,
+        private static string GetTitleRuleExpression(List<ScheduleRule> rules, ScheduleRuleType equalsRule, ScheduleRuleType startsWithRule,
             ScheduleRuleType containsRule, ScheduleRuleType doesNotContainRule, out TextRuleType typeIndex)
         {
             string expression = GetContainsExpression(rules, containsRule, doesNotContainRule);
@@ -224,7 +224,7 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        private static string GetContainsExpression(ScheduleRules rules, ScheduleRuleType containsRule, ScheduleRuleType doesNotContainRule)
+        private static string GetContainsExpression(List<ScheduleRule> rules, ScheduleRuleType containsRule, ScheduleRuleType doesNotContainRule)
         {
             StringBuilder expression = new StringBuilder();
             foreach (ScheduleRule rule in rules)
@@ -261,7 +261,7 @@ namespace ArgusTV.Client.Common
             Not
         }
 
-        private static void AppendORableRule(ScheduleRules rules, ScheduleRuleType rule, string expression)
+        private static void AppendORableRule(List<ScheduleRule> rules, ScheduleRuleType rule, string expression)
         {
             expression = expression.Trim();
             if (!String.IsNullOrEmpty(expression))
@@ -292,7 +292,7 @@ namespace ArgusTV.Client.Common
             }
         }
 
-        private static void AppendContainsRule(ScheduleRules rules, ScheduleRuleType containsRule,
+        private static void AppendContainsRule(List<ScheduleRule> rules, ScheduleRuleType containsRule,
             ScheduleRuleType doesNotContainRule, string expression)
         {
             expression = (expression ?? String.Empty).Trim();

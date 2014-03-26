@@ -247,7 +247,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 try
                 {
-                    ScheduleRule daysofweekrule = sched.Rules.FindRuleByType(ScheduleRuleType.DaysOfWeek);
+                    var daysofweekrule = sched.Rules.FindRuleByType(ScheduleRuleType.DaysOfWeek);
                     if (daysofweekrule != null)
                     {
                         string daysofweek = daysofweekrule.Arguments[0].ToString();
