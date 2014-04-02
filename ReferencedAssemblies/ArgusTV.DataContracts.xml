@@ -332,21 +332,6 @@
             Contains information about a channel that is allocated to a recorder's card.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.CardChannelAllocation.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.CardChannelAllocation.#ctor(System.Guid,System.String,ArgusTV.DataContracts.ChannelType,System.Guid,System.String)">
-            <summary>
-            Constructs a new instance of a CardChannelAllocation.
-            </summary>
-            <param name="recorderTunerId">The ID of the recorder used for this recording.</param>
-            <param name="cardId">The unique ID of the recorder's card that will be used for the recording.</param>
-            <param name="channelType">The type of the channel that will be recorded.</param>
-            <param name="channelId">The ID of the channel that will be recorded.</param>
-            <param name="channelName">The name of the channel that will be recorded.</param>
-        </member>
         <member name="P:ArgusTV.DataContracts.CardChannelAllocation.RecorderTunerId">
             <summary>
             The ID of the recorder used for this recording.
@@ -482,6 +467,25 @@
             <summary>
             This channel is not tunable on any of your cards.
             </summary>
+        </member>
+        <member name="T:ArgusTV.DataContracts.Extensions.ChannelExtensions">
+            <summary>
+            Channel extensions.
+            </summary>
+        </member>
+        <member name="M:ArgusTV.DataContracts.Extensions.ChannelExtensions.GetBroadcastStartTime(ArgusTV.DataContracts.Channel)">
+            <summary>
+            Get the broadcast start time of a channel as a TimeSpan.
+            </summary>
+            <param name="channel">The channel.</param>
+            <returns>A TimeSpan holding the time or null.</returns>
+        </member>
+        <member name="M:ArgusTV.DataContracts.Extensions.ChannelExtensions.GetBroadcastStopTime(ArgusTV.DataContracts.Channel)">
+            <summary>
+            Get the broadcast stop time of a channel as a TimeSpan.
+            </summary>
+            <param name="channel">The channel.</param>
+            <returns>A TimeSpan holding the time or null.</returns>
         </member>
         <member name="T:ArgusTV.DataContracts.GuideProgramFlags">
             <summary>
@@ -648,11 +652,6 @@
         <member name="P:ArgusTV.DataContracts.IProgramSummary.Flags">
             <summary>
             The program's flags defining things like aspect ratio, SD or HD,...
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.IProgramSummary.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.IProgramSummary.EpisodeNumberDisplay">
@@ -912,11 +911,6 @@
             The program's flags defining things like aspect ratio, SD or HD,...
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.RecordingSummary.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.RecordingSummary.SeriesNumber">
             <summary>
             If known, the series number the recorded program belongs to.
@@ -993,24 +987,6 @@
             The default recording file format.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.RecordingFileFormat.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.RecordingFileFormat.#ctor(System.Guid,System.String,System.String)">
-            <summary>
-            Create an instance of a processing command.
-            </summary>
-            <param name="recordingFileFormatId">The unique ID of the recording format.</param>
-            <param name="name">The name of the recording format.</param>
-            <param name="format">The format string.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.RecordingFileFormat.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.RecordingFileFormat.RecordingFileFormatId">
             <summary>
             The unique ID of the recording format.
@@ -1025,18 +1001,6 @@
             <summary>
             The format string.
             </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.RecordingFileFormat.FieldName">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.RecordingFileFormat.FieldName.RecordingFileFormatId">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.RecordingFileFormat.FieldName.Name">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.RecordingFileFormat.FieldName.Format">
-            <exclude/>
         </member>
         <member name="T:ArgusTV.DataContracts.NewVersionInfo">
             <summary>
@@ -1151,11 +1115,6 @@
         <member name="P:ArgusTV.DataContracts.GuideProgramSummary.Flags">
             <summary>
             The program's flags defining things like aspect ratio, SD or HD,...
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.GuideProgramSummary.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgramSummary.SeriesNumber">
@@ -1931,20 +1890,6 @@
             Informaton about a RecordingShare.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.RecordingShareAccessibilityInfo.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.RecordingShareAccessibilityInfo.#ctor(System.Guid,System.String,System.String,System.Boolean)">
-            <summary>
-            Create a new instance of a RecordingShareAccessibilityInfo.
-            </summary>
-            <param name="recorderTunerId">The unique Id of the recorder</param>
-            <param name="recorderTunerName">The friendly name of the recorder</param>
-            <param name="share">The share location</param>
-            <param name="shareIsOK">Indication if the share is accessible</param>
-        </member>
         <member name="P:ArgusTV.DataContracts.RecordingShareAccessibilityInfo.RecorderTunerId">
             <summary>
             The unique Id of the recorder.
@@ -2000,18 +1945,6 @@
             A post/live/delete processing command for recordings as defined in a schedule.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleProcessingCommand.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleProcessingCommand.#ctor(System.Guid,System.String)">
-            <summary>
-            Create an instance of a processing command.
-            </summary>
-            <param name="processingCommandId">The unique ID of the processing command.</param>
-            <param name="name">The name of the processing command.</param>
-        </member>
         <member name="P:ArgusTV.DataContracts.ScheduleProcessingCommand.ProcessingCommandId">
             <summary>
             The unique ID of the processing command.
@@ -2025,30 +1958,6 @@
         <member name="T:ArgusTV.DataContracts.ProcessingCommand">
             <summary>
             A post/live/delete processing command for recordings.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ProcessingCommand.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ProcessingCommand.#ctor(System.Guid,System.String,System.String,System.String,System.Boolean,System.Boolean,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Create an instance of a processing command.
-            </summary>
-            <param name="processingCommandId">The unique ID of the processing command.</param>
-            <param name="name">The name of the processing command.</param>
-            <param name="commandPath">The full path to the command.</param>
-            <param name="arguments">The command arguments.</param>
-            <param name="isDefaultTelevision">Is this command assigned to new television schedules by default?</param>
-            <param name="isDefaultRadio">Is this command assigned to new radio schedules by default?</param>
-            <param name="runMode">Defines when the command runs.</param>
-            <param name="runAtHours">If the run mode is PostAtTime this is the hours part of the time to run the command.</param>
-            <param name="runAtMinutes">If the run mode is PostAtTime this is the minutes part of the time to run the command.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.ProcessingCommand.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ProcessingCommand.ProcessingCommandId">
@@ -2095,36 +2004,6 @@
             <summary>
             If the run mode is PostAtTime this is the minutes part of the time to run the command.
             </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.ProcessingCommand.FieldName">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.ProcessingCommandId">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.Name">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.CommandPath">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.Arguments">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.RunMode">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.RunAtHours">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.RunAtMinutes">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.IsDefaultTelevision">
-            <exclude/>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ProcessingCommand.FieldName.IsDefaultRadio">
-            <exclude/>
         </member>
         <member name="T:ArgusTV.DataContracts.ProcessingRunMode">
             <summary>
@@ -2385,11 +2264,6 @@
             The program's flags defining things like aspect ratio, SD or HD,...
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.UpcomingRecording.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingRecording.EpisodeNumberDisplay">
             <summary>
             A string to display the episode number in a UI.
@@ -2408,27 +2282,6 @@
         <member name="T:ArgusTV.DataContracts.PluginService">
             <summary>
             A plugin-service. Currently these are all recorders.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.PluginService.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.PluginService.#ctor(System.Guid,System.String,System.Boolean,System.Int32,System.String,System.String)">
-            <summary>
-            Constructs a new instance of a PluginService.
-            </summary>
-            <param name="pluginServiceId">The unique ID of the plugin service.</param>
-            <param name="name">The name of the plugin service.</param>
-            <param name="isActive">Is the plugin service active?</param>
-            <param name="priority">The relative priority of the plugin service as an integer.</param>
-            <param name="serviceInterface">The interface name implemented by the plugin service, currently always "IRecorderTunerService".</param>
-            <param name="serviceUrl">The URL of the WCF plugin service.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.PluginService.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.PluginService.PluginServiceId">
@@ -2460,27 +2313,6 @@
             <summary>
             The URL of the WCF plugin service.
             </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.PluginService.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.PluginServiceId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.Name">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.IsActive">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.Priority">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.ServiceInterface">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.PluginService.FieldName.ServiceUrl">
-            <exclude />
         </member>
         <member name="T:ArgusTV.DataContracts.ChannelProgram">
             <summary>
@@ -2559,11 +2391,6 @@
         <member name="P:ArgusTV.DataContracts.ChannelProgram.Flags">
             <summary>
             The program's flags defining things like aspect ratio, SD or HD,...
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.ChannelProgram.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ChannelProgram.SeriesNumber">
@@ -2701,6 +2528,11 @@
             A TV or radio channel group.
             </summary>
         </member>
+        <member name="M:ArgusTV.DataContracts.ChannelGroup.#ctor">
+            <summary>
+            The default constructor.
+            </summary>
+        </member>
         <member name="F:ArgusTV.DataContracts.ChannelGroup.AllTvChannelsGroupId">
             <summary>
             Identifier for the special 'All TV Channels' group.
@@ -2709,27 +2541,6 @@
         <member name="F:ArgusTV.DataContracts.ChannelGroup.AllRadioChannelsGroupId">
             <summary>
             Identifier for the special 'All Radio Channels' group.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ChannelGroup.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ChannelGroup.#ctor(System.Guid,System.Int32,System.String,System.Boolean,System.Int32,System.Int32)">
-            <summary>
-            Constructs an instance of a channel group.
-            </summary>
-            <param name="channelGroupId">The unique ID of the channel group.</param>
-            <param name="channelType">The type of the channels in the group.</param>
-            <param name="groupName">The name of the group.</param>
-            <param name="visibleInGuide">Is this group visible in the guide?</param>
-            <param name="sequence">The sequence number by which groups are ordered.</param>
-            <param name="version">INTERNAL USE ONLY.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.ChannelGroup.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ChannelGroup.ChannelGroupId">
@@ -2766,27 +2577,6 @@
             <summary>
             INTERNAL USE ONLY.
             </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.ChannelGroup.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.ChannelGroupId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.ChannelType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.GroupName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.VisibleInGuide">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.Sequence">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ChannelGroup.FieldName.Version">
-            <exclude />
         </member>
         <member name="T:ArgusTV.DataContracts.RecordingGroup">
             <summary>
@@ -2869,11 +2659,6 @@
             A recorded program.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.Recording.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
         <member name="M:ArgusTV.DataContracts.Recording.CreateProgramTitle">
             <summary>
             Build a full program title for display purposes.
@@ -2900,11 +2685,6 @@
             </summary>
             <param name="recordingFileName">The recording's file name.</param>
             <returns>The thumbnail file name.</returns>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Recording.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
-            </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.Recording.RecordingId">
             <summary>
@@ -3066,11 +2846,6 @@
             The program's flags defining things like aspect ratio, SD or HD,...
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Recording.VideoAspect">
-            <summary>
-            The video aspect ratio of the program (obsolete, use Flags instead).
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.Recording.SeriesNumber">
             <summary>
             If known, the series number the recorded program belongs to.
@@ -3147,149 +2922,9 @@
             The stop time of the recorded program (same as ProgramStopTime).
             </summary>
         </member>
-        <member name="T:ArgusTV.DataContracts.Recording.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.RecordingId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ScheduleId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ScheduleName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.SchedulePriority">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.IsPartOfSeries">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.KeepUntilMode">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.KeepUntilValue">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.LastWatchedTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.LastWatchedPosition">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.IsFullyWatched">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.FullyWatchedCount">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ChannelId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ChannelDisplayName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ChannelType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.RecordingStartTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.RecordingStopTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.RecordingFileName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.IsPartialRecording">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ProgramStartTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.ProgramStopTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Title">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.SubTitle">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Description">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Category">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.IsRepeat">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.IsPremiere">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.VideoAspect">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.SeriesNumber">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.EpisodeNumberDisplay">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.EpisodeNumber">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.EpisodeNumberTotal">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.EpisodePart">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.EpisodePartTotal">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Rating">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.StarRating">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Director">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.Actors">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.PendingDelete">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Recording.FieldName.RecordingFileFormatId">
-            <exclude />
-        </member>
         <member name="T:ArgusTV.DataContracts.ScheduleRecordedProgram">
             <summary>
             An entry in the history of recorded programs for a schedule.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleRecordedProgram.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleRecordedProgram.#ctor(System.Int32,System.Guid,System.String,System.String,System.DateTime)">
-            <summary>
-            Constructs a new ScheduleRecordedProgram.
-            </summary>
-            <param name="scheduleRecordedProgramId">The unique ID of the recorded program entry.</param>
-            <param name="scheduleId">The ID of the schedule this recording belongs to.</param>
-            <param name="title">The title of the recording.</param>
-            <param name="episode">The episode title of the recording.</param>
-            <param name="recordedOn">The start time of the recorded program.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.ScheduleRecordedProgram.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.ScheduleRecordedProgram.ScheduleRecordedProgramId">
@@ -3316,24 +2951,6 @@
             <summary>
             The start time of the recorded program.
             </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName.ScheduleRecordedProgramId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName.ScheduleId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName.Title">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName.Episode">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRecordedProgram.FieldName.RecordedOn">
-            <exclude />
         </member>
         <member name="T:ArgusTV.DataContracts.UpcomingGuideProgram">
             <summary>
@@ -3565,11 +3182,6 @@
             The program's flags defining things like aspect ratio, SD or HD,...
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.UpcomingProgram.VideoAspect">
-            <summary>
-            The video aspect ratio of the program.
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.EpisodeNumberDisplay">
             <summary>
             The episode number (as a string) of the upcoming program.
@@ -3624,36 +3236,6 @@
         <member name="P:ArgusTV.DataContracts.UpcomingProgram.ActualDuration">
             <summary>
             The actual duration of the upcoming program (includes pre- and post-padding).
-            </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.ScheduleRules">
-            <summary>
-            A collection of schedule rules.
-            </summary>
-        </member>
-        <member name="F:ArgusTV.DataContracts.ScheduleRules.Version">
-            <summary>
-            The version number for the rules XML.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleRules.Add(ArgusTV.DataContracts.ScheduleRuleType,System.Object[])">
-            <summary>
-            Add a new rule (with optional arguments).
-            </summary>
-            <param name="type">The type of the rule to add.</param>
-            <param name="args">Optional arguments to the rule.</param>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleRules.FindRuleByType(ArgusTV.DataContracts.ScheduleRuleType)">
-            <summary>
-            Find a rule with a given type.
-            </summary>
-            <param name="ruleType">The type to search for.</param>
-            <returns>The schedule rule of the given type, or null if no rule of the given type was found.</returns>
-        </member>
-        <member name="M:ArgusTV.DataContracts.ScheduleRules.Validate">
-            <summary>
-            Validate the collection of rules. Will throw a ArgusTVException if the combination
-            of rules is not valid.
             </summary>
         </member>
         <member name="T:ArgusTV.DataContracts.GuideSource">
@@ -4077,28 +3659,6 @@
             Create a new instance using the default constructor.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.Channel.#ctor(System.Guid,System.Guid,System.Int32,System.String,System.Int32,System.Boolean,System.Int32,System.Int32,System.DateTime,System.DateTime,System.Int32,System.Int32)">
-            <summary>
-            Constructs an instance of a channel.
-            </summary>
-            <param name="channelId">The unique channel ID.</param>
-            <param name="guideChannelId">The ID of the guide channel that holds the guide data for this channel.</param>
-            <param name="channelType">The type of the channel.</param>
-            <param name="displayName">The display name of the channel.</param>
-            <param name="logicalChannelNumber">The logical channel number of the channel.</param>
-            <param name="visibleInGuide">Is this channel visible in the guide?</param>
-            <param name="defaultPreRecordSeconds">The number of default pre-record seconds to use for new schedules on this channel, or null to use the global default.</param>
-            <param name="defaultPostRecordSeconds">The number of default post-record seconds to use for new schedules on this channel, or null to use the global default.</param>
-            <param name="broadcastStartTime">In case a channel shares its broadcast with another channel you can set its broadcast start time to make sure recordings are never started when the channel is not available yet.</param>
-            <param name="broadcastStopTime">In case a channel shares its broadcast with another channel you can set its broadcast stop time to make sure recordings are never extended beyond the time the channel is available.</param>
-            <param name="sequence">The sequence number by which channels are ordered.</param>
-            <param name="version">INTERNAL USE ONLY.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Channel.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
-            </summary>
-        </member>
         <member name="P:ArgusTV.DataContracts.Channel.ChannelId">
             <summary>
             The unique channel ID.
@@ -4144,13 +3704,13 @@
             The number of default post-record seconds to use for new schedules on this channel, or null to use the global default.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStartTime">
+        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStart">
             <summary>
             In case a channel shares its broadcast with another channel you can set its broadcast
             start time to make sure recordings are never started when the channel is not available yet.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStopTime">
+        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStop">
             <summary>
             In case a channel shares its broadcast with another channel you can set its broadcast
             stop time to make sure recordings are never extended beyond the time the channel is available.
@@ -4171,90 +3731,9 @@
             Channel name prefixed with the logical channel number (if there is one).
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Channel.DefaultPreRecordMinutes">
-            <summary>
-            The default pre-record time in minutes to use for new schedules on this channel, or null to use the global default.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Channel.DefaultPostRecordMinutes">
-            <summary>
-            The default post-record time in minutes to use for new schedules on this channel, or null to use the global default.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStart">
-            <summary>
-            In case a channel shares its broadcast with another channel you can set its broadcast
-            start time to make sure recordings are never started when the channel is not available yet.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Channel.BroadcastStop">
-            <summary>
-            In case a channel shares its broadcast with another channel you can set its broadcast
-            stop time to make sure recordings are never extended beyond the time the channel is available.
-            </summary>
-        </member>
-        <member name="T:ArgusTV.DataContracts.Channel.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.ChannelId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.GuideChannelId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.ChannelType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.DisplayName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.LogicalChannelNumber">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.DefaultPreRecordSeconds">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.DefaultPostRecordSeconds">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.VisibleInGuide">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.BroadcastStartTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.BroadcastStopTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.Sequence">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Channel.FieldName.Version">
-            <exclude />
-        </member>
         <member name="T:ArgusTV.DataContracts.LogEntry">
             <summary>
             An entry in the application (database) log.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.LogEntry.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.LogEntry.#ctor(System.Int32,System.String,System.Int32,System.DateTime,System.String)">
-            <summary>
-            Create a new instance of a LogEntry.
-            </summary>
-            <param name="logId">The unique ID of the log entry.</param>
-            <param name="module">The module that made the log entry.</param>
-            <param name="logSeverity">The severity of the log entry.</param>
-            <param name="logTime">The date and time of the log entry.</param>
-            <param name="message">The log message.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.LogEntry.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.LogEntry.LogId">
@@ -4282,47 +3761,9 @@
             The log message.
             </summary>
         </member>
-        <member name="T:ArgusTV.DataContracts.LogEntry.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.LogEntry.FieldName.LogId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.LogEntry.FieldName.Module">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.LogEntry.FieldName.LogSeverity">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.LogEntry.FieldName.LogTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.LogEntry.FieldName.Message">
-            <exclude />
-        </member>
         <member name="T:ArgusTV.DataContracts.GuideChannel">
             <summary>
             A guide channel.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.GuideChannel.#ctor">
-            <summary>
-            Create a new instance using the default constructor.
-            </summary>
-        </member>
-        <member name="M:ArgusTV.DataContracts.GuideChannel.#ctor(System.Guid,System.String,System.String,System.Int32,System.Int32)">
-            <summary>
-            Constructs a guide channel.
-            </summary>
-            <param name="guideChannelId">The unique guide channel ID.</param>
-            <param name="xmlTvId">The channel's XMLTV ID (if known).</param>
-            <param name="name">The name of the guide channel.</param>
-            <param name="channelType">The type of the channel.</param>
-            <param name="version">INTERNAL USE ONLY.</param>
-        </member>
-        <member name="P:ArgusTV.DataContracts.GuideChannel.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideChannel.GuideChannelId">
@@ -4350,24 +3791,6 @@
             INTERNAL USE ONLY.
             </summary>
         </member>
-        <member name="T:ArgusTV.DataContracts.GuideChannel.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideChannel.FieldName.GuideChannelId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideChannel.FieldName.XmlTvId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideChannel.FieldName.Name">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideChannel.FieldName.ChannelType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideChannel.FieldName.Version">
-            <exclude />
-        </member>
         <member name="T:ArgusTV.DataContracts.GuideProgram">
             <summary>
             Information about a program belonging to a guide channel.
@@ -4375,7 +3798,7 @@
         </member>
         <member name="M:ArgusTV.DataContracts.GuideProgram.#ctor">
             <summary>
-            Create a new instance using the default constructor.
+            The default constructor.
             </summary>
         </member>
         <member name="M:ArgusTV.DataContracts.GuideProgram.CreateProgramTitle">
@@ -4421,11 +3844,6 @@
             </summary>
             <param name="channelId">The ID of the channel.</param>
             <returns>The unique upcoming program ID.</returns>
-        </member>
-        <member name="P:ArgusTV.DataContracts.GuideProgram.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
-            </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.GuideProgramId">
             <summary>
@@ -4500,11 +3918,6 @@
         <member name="P:ArgusTV.DataContracts.GuideProgram.Flags">
             <summary>
             The program's flags defining things like aspect ratio, SD or HD,...
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.GuideProgram.VideoAspect">
-            <summary>
-            The video aspect ratio of the program (obsolete, use Flags instead).
             </summary>
         </member>
         <member name="P:ArgusTV.DataContracts.GuideProgram.SeriesNumber">
@@ -4582,205 +3995,102 @@
             INTERNAL USE ONLY.
             </summary>
         </member>
-        <member name="T:ArgusTV.DataContracts.GuideProgram.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.GuideProgramId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.GuideChannelId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.Title">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.StartTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.StopTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.SubTitle">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.Description">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.Category">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.IsRepeat">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.IsPremiere">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.VideoAspect">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.SeriesNumber">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.EpisodeNumberDisplay">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.EpisodeNumber">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.EpisodeNumberTotal">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.EpisodePart">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.EpisodePartTotal">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.Rating">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.StarRating">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.PreviouslyAiredTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.LastModifiedTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.IsDeleted">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.GuideProgram.FieldName.Version">
-            <exclude />
-        </member>
         <member name="T:ArgusTV.DataContracts.Schedule">
             <summary>
             A schedule.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.Schedule.#ctor">
+        <member name="T:ArgusTV.DataContracts.ScheduleBase`1">
             <summary>
-            Create a new instance using the default constructor.
+            Base schedule class
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.Schedule.#ctor(System.Guid,System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Guid,System.DateTime,System.Int32)">
+        <member name="M:ArgusTV.DataContracts.ScheduleBase`1.#ctor">
             <summary>
-            Constructs a new instance of a schedule.
-            </summary>
-            <param name="scheduleId">The unique ID of the schedule.</param>
-            <param name="name">The name of the schedule.</param>
-            <param name="channelType">The channel-type of this schedule.</param>
-            <param name="scheduleType">The type of the schedule.</param>
-            <param name="schedulePriority">The priority of the schedule.</param>
-            <param name="keepUntilMode">Defines how long to keep this recording before deleting it.</param>
-            <param name="keepUntilValue">Defines how long to keep this recording before deleting it (see KeepUntilMode).</param>
-            <param name="rulesXml">All the rules serialized to XML.</param>
-            <param name="rulesXmlVersion">The version of the rules XML.</param>
-            <param name="preRecordSeconds">The number of seconds to start the recording before the program start time.</param>
-            <param name="postRecordSeconds">The number of seconds to stop the recording past the program stop time.</param>
-            <param name="isActive">Is this schedule active?</param>
-            <param name="isOneTime">Is this a one-time schedule?</param>
-            <param name="recordingFileFormatId">The unique ID of the file format for this schedule, or null for the default.</param>
-            <param name="lastModifiedTime">The time the schedule was last modified.</param>
-            <param name="version">INTERNAL USE ONLY.</param>
-        </member>
-        <member name="M:ArgusTV.DataContracts.Schedule.SerializeRules">
-            <summary>
-            Serializes all rules to the RulesXml member.
+            The default constructor.
             </summary>
         </member>
-        <member name="M:ArgusTV.DataContracts.Schedule.DeserializeRules">
-            <summary>
-            Deserializes all rules from the RulesXml member.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.IsChanged">
-            <summary>
-            Indicates whether the entity is changed and requires saving or not.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.ScheduleId">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.ScheduleId">
             <summary>
             The unique ID of the schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.Id">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.Id">
             <summary>
             The unique integer ID of the schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.Name">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.Name">
             <summary>
             The name of the schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.ChannelType">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.ChannelType">
             <summary>
             The channel-type of this schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.ScheduleType">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.ScheduleType">
             <summary>
             The type of the schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.SchedulePriority">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.SchedulePriority">
             <summary>
             The priority of the schedule.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.KeepUntilMode">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.KeepUntilMode">
             <summary>
             Defines how long to keep this recording before deleting it.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.KeepUntilValue">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.KeepUntilValue">
             <summary>
             Defines how long to keep this recording before deleting it (see KeepUntilMode).
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.PreRecordSeconds">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.Rules">
+            <summary>
+            The rules that make up the schedule.
+            </summary>
+        </member>
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.PreRecordSeconds">
             <summary>
             The number of seconds to start the recording before the program start time, or null for the default.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.PostRecordSeconds">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.PostRecordSeconds">
             <summary>
             The number of seconds to stop the recording past the program stop time, or null for the default.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.IsActive">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.IsActive">
             <summary>
             Is this schedule active?
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.IsOneTime">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.IsOneTime">
             <summary>
             Is this a one-time schedule?
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.RecordingFileFormatId">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.RecordingFileFormatId">
             <summary>
             The unique ID of the file format for this schedule, or null for the default.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.LastModifiedTime">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.LastModifiedTime">
             <summary>
             The time the record was last modified.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.Version">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.Version">
             <summary>
             INTERNAL USE ONLY.
             </summary>
         </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.Rules">
-            <summary>
-            The collection of the schedule's rules.
-            </summary>
-        </member>
-        <member name="P:ArgusTV.DataContracts.Schedule.ProcessingCommands">
+        <member name="P:ArgusTV.DataContracts.ScheduleBase`1.ProcessingCommands">
             <summary>
             The collection of the schedule's processing commands.
             </summary>
@@ -4795,76 +4105,50 @@
             The number of minutes to stop the recording past the program stop time, or null for the default.
             </summary>
         </member>
-        <member name="T:ArgusTV.DataContracts.Schedule.FieldName">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.ScheduleId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.Name">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.ChannelType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.ScheduleType">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.SchedulePriority">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.KeepUntilMode">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.KeepUntilValue">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.RulesXml">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.RulesXmlVersion">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.PreRecordSeconds">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.PostRecordSeconds">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.IsActive">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.IsOneTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.RecordingFileFormatId">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.LastModifiedTime">
-            <exclude />
-        </member>
-        <member name="F:ArgusTV.DataContracts.Schedule.FieldName.Version">
-            <exclude />
-        </member>
-        <member name="T:ArgusTV.DataContracts.VideoAspectRatio">
+        <member name="T:ArgusTV.DataContracts.SerializableSchedule">
             <summary>
-            The aspect ratio of the video.
+            Schedule class that easily serializes as e.g. JSON.
             </summary>
         </member>
-        <member name="F:ArgusTV.DataContracts.VideoAspectRatio.Unknown">
+        <member name="T:ArgusTV.DataContracts.SerializableSchedule.SerializableRule">
             <summary>
-            Unknown aspect ratio.
+            A schedule-rule serializable with 'string' type and arguments.
             </summary>
         </member>
-        <member name="F:ArgusTV.DataContracts.VideoAspectRatio.Standard">
+        <member name="T:ArgusTV.DataContracts.ScheduleExtensions">
             <summary>
-            Standard or 4:3 aspect ratio.
+            Handy extensions on schedules and their rules.
             </summary>
         </member>
-        <member name="F:ArgusTV.DataContracts.VideoAspectRatio.Widescreen">
+        <member name="M:ArgusTV.DataContracts.ScheduleExtensions.ToSerializable(ArgusTV.DataContracts.Schedule)">
             <summary>
-            Widescreen or 16:9 aspect ratio.
+            Convert the schedule to a more serializable-friendly one (e.g for JSON).
             </summary>
+            <param name="schedule">The schedule to convert.</param>
+            <returns>The serializable schedule.</returns>
+        </member>
+        <member name="M:ArgusTV.DataContracts.ScheduleExtensions.ToSchedule(ArgusTV.DataContracts.SerializableSchedule)">
+            <summary>
+            Convert the serializable schedule to a normal one, with typed rules.
+            </summary>
+            <param name="serializableSchedule">The serializable schedule.</param>
+            <returns>A schedule with typed rules.</returns>
+        </member>
+        <member name="M:ArgusTV.DataContracts.ScheduleExtensions.Add(System.Collections.Generic.List{ArgusTV.DataContracts.ScheduleRule},ArgusTV.DataContracts.ScheduleRuleType,System.Object[])">
+            <summary>
+            Add a new rule (with optional arguments).
+            </summary>
+            <param name="scheduleRules">The schedule rules collection.</param>
+            <param name="type">The type of the rule to add.</param>
+            <param name="args">Optional arguments to the rule.</param>
+        </member>
+        <member name="M:ArgusTV.DataContracts.ScheduleExtensions.FindRuleByType(System.Collections.Generic.List{ArgusTV.DataContracts.ScheduleRule},ArgusTV.DataContracts.ScheduleRuleType)">
+            <summary>
+            Find a rule with a given type.
+            </summary>
+            <param name="scheduleRules">The schedule rules collection.</param>
+            <param name="ruleType">The type to search for.</param>
+            <returns>The schedule rule of the given type, or null if no rule of the given type was found.</returns>
         </member>
     </members>
 </doc>

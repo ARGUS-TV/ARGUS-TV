@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ArgusTV.Batch.ProcessCommand")]
-[assembly: AssemblyCopyright("Copyright © ARGUS TV 2007-2013")]
+[assembly: AssemblyCopyright("Copyright © ARGUS TV 2007-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

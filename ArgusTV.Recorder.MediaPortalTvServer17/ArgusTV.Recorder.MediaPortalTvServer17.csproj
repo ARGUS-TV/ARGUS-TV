@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{58093DA6-8D8C-483D-B1E5-0B149820E914}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArgusTV.Recorder.MediaPortalTvServer</RootNamespace>
+    <AssemblyName>ArgusTV.Recorder.MediaPortalTvServer</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ArgusTV.Recorder.MediaPortalTVServer.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ArgusTV.DataContracts">
+      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.ServiceAgents">
+      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.ServiceContracts">
+      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Utils, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\Common.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="DirectShowLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\DirectShowLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Common, Version=1.5.0.29113, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.5.0.29113, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\ReferencedAssemblies\Nancy\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginBase, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\PluginBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SetupControls, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\SetupControls.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TvBusinessLayer, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\TvBusinessLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="TvControl, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\TvControl.dll</HintPath>
+    </Reference>
+    <Reference Include="TVDatabase, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\TVDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="TvLibrary.Interfaces, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\TvLibrary.Interfaces.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="RestBootstrapper.cs" />
+    <Compile Include="TvServerRecorderModule.cs" />
+    <Compile Include="CreateChannelLinkForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateChannelLinkForm.Designer.cs">
+      <DependentUpon>CreateChannelLinkForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateShareForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateShareForm.Designer.cs">
+      <DependentUpon>CreateShareForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RecordingThread.cs" />
+    <Compile Include="SettingName.cs" />
+    <Compile Include="Channels\ChannelLink.cs" />
+    <Compile Include="Channels\ChannelLinks.cs" />
+    <Compile Include="Channels\LinkedMediaPortalChannel.cs" />
+    <Compile Include="SetupForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SetupForm.Designer.cs">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortalRecorderTunerService.cs" />
+    <Compile Include="ThreeStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TvServerPlugin.cs" />
+    <Compile Include="DvbEpgThread.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="Wizards\ImportChannels\ImportChannelsContext.cs" />
+    <Compile Include="Wizards\ImportChannels\ImportChannelsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ImportChannels\ImportChannelsPage.Designer.cs">
+      <DependentUpon>ImportChannelsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\ImportChannels\ImportChannelsPageBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ImportChannels\ImportChannelsWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\ImportChannels\FinishPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ImportChannels\FinishPage.Designer.cs">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\WizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\WizardForm.Designer.cs">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\WizardPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\WizardPage.Designer.cs">
+      <DependentUpon>WizardPage.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CreateChannelLinkForm.resx">
+      <DependentUpon>CreateChannelLinkForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateShareForm.resx">
+      <DependentUpon>CreateShareForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\ImportChannels\ImportChannelsPage.resx">
+      <DependentUpon>ImportChannelsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\ImportChannels\FinishPage.resx">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\WizardForm.resx">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\WizardPage.resx">
+      <DependentUpon>WizardPage.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PostBuild.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WizardHeader.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\_NET40\ArgusTV.Common.Recorders\ArgusTV.Common.Recorders.NET40.csproj">
+      <Project>{f6dd8172-e02f-4b38-bdf1-c2ec9f0d86f0}</Project>
+      <Name>ArgusTV.Common.Recorders.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.Common\ArgusTV.Common.NET40.csproj">
+      <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f543567}</Project>
+      <Name>ArgusTV.Common.NET40</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>$(ProjectDir)PostBuild.cmd $(TargetDir) $(TargetPath) $(ConfigurationName)
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

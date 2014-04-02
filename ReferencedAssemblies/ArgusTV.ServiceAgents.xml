@@ -1273,7 +1273,7 @@
             <param name="type">The type of the schedule.</param>
             <returns>A new schedule without rules (note that you still need to call SaveSchedule() to save it).</returns>
         </member>
-        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.AddSchedule(ArgusTV.DataContracts.ChannelType,System.String,ArgusTV.DataContracts.ScheduleType,ArgusTV.DataContracts.SchedulePriority,ArgusTV.DataContracts.ScheduleRules,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+        <member name="M:ArgusTV.ServiceAgents.SchedulerServiceAgent.AddSchedule(ArgusTV.DataContracts.ChannelType,System.String,ArgusTV.DataContracts.ScheduleType,ArgusTV.DataContracts.SchedulePriority,System.Collections.Generic.List{ArgusTV.DataContracts.ScheduleRule},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Add a new schedule.
             </summary>
