@@ -23,8 +23,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process.SearchGuide
 {
@@ -50,11 +50,11 @@ namespace ArgusTV.UI.Process.SearchGuide
         public void ClearSearchText()
         {
             _model.SearchText = String.Empty;
-            _model.Titles = new string[0];
+            _model.Titles = new List<string>();
             ClearCurrentTitle();
         }
 
-        public void SearchTitles(ISchedulerService tvSchedulerAgent, string searchText)
+        public void SearchTitles(SchedulerServiceProxy schedulerProxy, string searchText)
         {
             _model.SearchText = searchText.Trim();
             if (String.IsNullOrEmpty(_model.SearchText))
@@ -63,7 +63,7 @@ namespace ArgusTV.UI.Process.SearchGuide
             }
             else
             {
-                _model.Titles = tvSchedulerAgent.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText, false);
+                _model.Titles = schedulerProxy.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText);
                 ClearCurrentTitle();
             }
         }
@@ -72,21 +72,21 @@ namespace ArgusTV.UI.Process.SearchGuide
         {
             _model.CurrentTitle = String.Empty;
             _model.AllUpcomingGuidePrograms.Clear();
-            _model.CurrentTitlePrograms = new ChannelProgramsList(new ChannelProgram[0]);
+            _model.CurrentTitlePrograms = new ChannelProgramsList(new List<ChannelProgram>());
         }
 
-        public void GetProgramsForTitle(ISchedulerService tvSchedulerServiceAgent, IControlService tvControlServiceAgent, string title)
+        public void GetProgramsForTitle(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy, string title)
         {
             _model.CurrentTitle = title;
-            RefreshAllUpcomingPrograms(tvSchedulerServiceAgent, tvControlServiceAgent);
-            _model.CurrentTitlePrograms = new ChannelProgramsList(tvSchedulerServiceAgent.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false));
+            RefreshAllUpcomingPrograms(schedulerProxy, controlProxy);
+            _model.CurrentTitlePrograms = new ChannelProgramsList(schedulerProxy.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false));
         }
 
-        public void RefreshAllUpcomingPrograms(ISchedulerService tvSchedulerServiceAgent, IControlService tvControlServiceAgent)
+        public void RefreshAllUpcomingPrograms(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy)
         {
-            UpcomingRecording[] upcomingRecordings = tvControlServiceAgent.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            UpcomingGuideProgram[] upcomingAlerts = tvSchedulerServiceAgent.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            UpcomingGuideProgram[] upcomingSuggestions = tvSchedulerServiceAgent.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = controlProxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
+            var upcomingAlerts = schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
+            var upcomingSuggestions = schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
             _model.AllUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
         }
     }

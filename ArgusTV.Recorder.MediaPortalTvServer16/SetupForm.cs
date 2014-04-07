@@ -33,16 +33,16 @@ using TvLibrary.Log;
 using TvEngine;
 using TvControl;
 
-using ArgusTV.ServiceAgents;
 using ArgusTV.DataContracts;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
 using ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
     public partial class SetupForm : SetupTv.SectionSettings
     {
-        private SchedulerServiceAgent _tvSchedulerAgent;
+        private SchedulerServiceProxy _schedulerProxy;
 
         public SetupForm()
         {
@@ -205,16 +205,13 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
             if (_plugin.IsArgusTVConnectionInitialized)
             {
-                _tvSchedulerAgent = new SchedulerServiceAgent();
+                _schedulerProxy = new SchedulerServiceProxy();
             }
         }
 
         private void DisconnectFromArgusTV()
         {
-            if (_tvSchedulerAgent != null)
-            {
-                _tvSchedulerAgent.Dispose();
-            }
+            _schedulerProxy = null;
         }
 
         private void _connectButton_Click(object sender, EventArgs e)
@@ -307,7 +304,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 Cursor.Current = Cursors.WaitCursor;
 
                 ChannelType channelType = (ChannelType)_channelTypeComboBox.SelectedIndex;
-                List<Channel> channels = new List<Channel>(_tvSchedulerAgent.GetAllChannels(channelType, false));
+                List<Channel> channels = new List<Channel>(_schedulerProxy.GetAllChannels(channelType, false));
 
                 ChannelLinks.RemoveObsoleteLinks(channelType, channels);
 

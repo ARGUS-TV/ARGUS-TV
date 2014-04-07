@@ -21,14 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.ServiceModel;
 using System.Globalization;
 using System.Net;
 using System.Net.Security;
 using System.Threading;
-
-using ArgusTV.ServiceContracts.Events;
-using ArgusTV.UI.Notifier.EventListeners;
 
 namespace ArgusTV.UI.Notifier
 {
@@ -63,9 +59,9 @@ namespace ArgusTV.UI.Notifier
                         StatusForm form = new StatusForm();
                         form.EventsServiceBaseUrl = eventsServiceBaseUrl;
 
-                        ServiceHost recordingEventsHost = EventsListenerService.CreateServiceHost(eventsServiceBaseUrl);
-                        EventsListenerService.StatusForm = form;
-                        recordingEventsHost.Open();
+                        //ServiceHost recordingEventsHost = EventsListenerService.CreateServiceHost(eventsServiceBaseUrl);
+                        //EventsListenerService.StatusForm = form;
+                        //recordingEventsHost.Open();
 
                         try
                         {
@@ -73,7 +69,7 @@ namespace ArgusTV.UI.Notifier
                         }
                         finally
                         {
-                            recordingEventsHost.Close();
+                            //recordingEventsHost.Close();
                         }
                     }
                 }

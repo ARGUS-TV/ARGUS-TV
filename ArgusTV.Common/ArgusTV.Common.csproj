@@ -83,9 +83,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts">
-      <HintPath>..\ReferencedAssemblies\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\argus-tv\ArgusTV.Suite.Solution\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -149,6 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2d3b808e-4e79-40df-b2fa-8c87fb50d7aa}</Project>
+      <Name>ArgusTV.DataContracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

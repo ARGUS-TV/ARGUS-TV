@@ -5,11 +5,8 @@
     <Setting Name="ArgusTVServerName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">localhost</Value>
     </Setting>
-    <Setting Name="ArgusTVTcpPort" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">49942</Value>
-    </Setting>
-    <Setting Name="EventsTcpPort" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">49826</Value>
+    <Setting Name="ArgusTVHttpPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">49943</Value>
     </Setting>
     <Setting Name="LogLevel" Type="System.Diagnostics.SourceLevels" Scope="Application">
       <Value Profile="(Default)">Verbose</Value>

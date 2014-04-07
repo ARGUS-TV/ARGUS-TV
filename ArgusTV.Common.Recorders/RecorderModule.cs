@@ -66,25 +66,24 @@ namespace ArgusTV.Common.Recorders
             Get["/Ping"] = p =>
             {
                 int result = -1;
-                _staContext.Send((s) => { result = Service.Ping(); }, null);
+                List<string> macAddresses = null;
+                _staContext.Send((s) =>
+                {
+                    result = Service.Ping();
+                    macAddresses = Service.GetMacAddresses();
+                }, null);
                 return new
                 {
-                    result = Constants.RecorderApiVersion
+                    result = Constants.RecorderApiVersion,
+                    macAddresses = macAddresses
                 };
             };
 
-            // Get the server's MAC address(es).  These can be stored on the client after a successful
-            // connect and later used to re-connect with wake-on-lan.
-            //
-            // Returns an array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").
-            Get["/MacAddresses"] = p =>
+            // Ask the recorder to keep its machine awake.
+            Put["/KeepAlive"] = p =>
             {
-                List<String> result = null;
-                _staContext.Send((s) => { result = Service.GetMacAddresses(); }, null);
-                return new
-                {
-                    result = result
-                };
+                _staContext.Send((s) => { Service.KeepAlive(); }, null);
+                return HttpStatusCode.OK;
             };
 
             // Ask the recorder to initialize by registering itself over the Recorder callback's

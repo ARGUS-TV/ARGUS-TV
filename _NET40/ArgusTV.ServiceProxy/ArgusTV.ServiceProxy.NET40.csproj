@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7C5F1D5B-AA36-48BD-B20F-47E62538643A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArgusTV.ServiceProxy</RootNamespace>
+    <AssemblyName>ArgusTV.ServiceProxy</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DOTNET4</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;DOTNET4</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ArgusTVNotFoundException.cs">
+      <Link>ArgusTVNotFoundException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ConfigurationServiceProxy.cs">
+      <Link>ConfigurationServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ControlServiceProxy.cs">
+      <Link>ControlServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\CoreServiceProxy.cs">
+      <Link>CoreServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\GuideServiceProxy.cs">
+      <Link>GuideServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\LogServiceProxy.cs">
+      <Link>LogServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ProxyFactory.cs">
+      <Link>ProxyFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\RestProxyBase.cs">
+      <Link>RestProxyBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\SchedulerServiceProxy.cs">
+      <Link>SchedulerServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ServerSettings.cs">
+      <Link>ServerSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\ServiceTransport.cs">
+      <Link>ServiceTransport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\WakeOnLan.cs">
+      <Link>WakeOnLan.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\WakeOnLanSettings.cs">
+      <Link>WakeOnLanSettings.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj">
+      <Project>{cdb911a5-a3e1-46b3-98f3-dd1ee63f64b1}</Project>
+      <Name>ArgusTV.DataContracts.NET40</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

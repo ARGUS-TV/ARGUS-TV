@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CDB911A5-A3E1-46B3-98F3-DD1EE63F64B1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArgusTV.DataContracts</RootNamespace>
+    <AssemblyName>ArgusTV.DataContracts</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\ArgusTV.SolutionItems\ArgusTV.snk</AssemblyOriginatorKeyFile>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>http://localhost/ArgusTV.DataContracts/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\ArgusTV.DataContracts.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ArgusTV.DataContracts.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\ArgusTV.DataContracts\ActiveRecording.cs">
+      <Link>ActiveRecording.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ArgusTVException.cs">
+      <Link>ArgusTVException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ArgusTVUnexpectedErrorException.cs">
+      <Link>ArgusTVUnexpectedErrorException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\CardChannelAllocation.cs">
+      <Link>CardChannelAllocation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Channel.cs">
+      <Link>Channel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ChannelGroup.cs">
+      <Link>ChannelGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ChannelLiveState.cs">
+      <Link>ChannelLiveState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ChannelProgram.cs">
+      <Link>ChannelProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ChannelType.cs">
+      <Link>ChannelType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ConfigurationKey.cs">
+      <Link>ConfigurationKey.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ConfigurationModule.cs">
+      <Link>ConfigurationModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\CurrentAndNextProgram.cs">
+      <Link>CurrentAndNextProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\EventGroup.cs">
+      <Link>EventGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\GuideChannel.cs">
+      <Link>GuideChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\GuideProgram.cs">
+      <Link>GuideProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\GuideProgramFlags.cs">
+      <Link>GuideProgramFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\GuideProgramSummary.cs">
+      <Link>GuideProgramSummary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\GuideSource.cs">
+      <Link>GuideSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\IProgramSummary.cs">
+      <Link>IProgramSummary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\KeepUntilMode.cs">
+      <Link>KeepUntilMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\LiveStream.cs">
+      <Link>LiveStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\LiveStreamAbortReason.cs">
+      <Link>LiveStreamAbortReason.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\LiveStreamResult.cs">
+      <Link>LiveStreamResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\LogEntry.cs">
+      <Link>LogEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\LogSeverity.cs">
+      <Link>LogSeverity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\NewVersionInfo.cs">
+      <Link>NewVersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\PluginService.cs">
+      <Link>PluginService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ProcessingCommand.cs">
+      <Link>ProcessingCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ProcessingRunMode.cs">
+      <Link>ProcessingRunMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Recording.cs">
+      <Link>Recording.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingDiskInfo.cs">
+      <Link>RecordingDiskInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingDisksInfo.cs">
+      <Link>RecordingDisksInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingFileFormat.cs">
+      <Link>RecordingFileFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingGroup.cs">
+      <Link>RecordingGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingGroupMode.cs">
+      <Link>RecordingGroupMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingShareAccessibilityInfo.cs">
+      <Link>RecordingShareAccessibilityInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\RecordingSummary.cs">
+      <Link>RecordingSummary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Schedule.cs">
+      <Link>Schedule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleDaysOfWeek.cs">
+      <Link>ScheduleDaysOfWeek.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\SchedulePriority.cs">
+      <Link>SchedulePriority.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleProcessingCommand.cs">
+      <Link>ScheduleProcessingCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleRecordedProgram.cs">
+      <Link>ScheduleRecordedProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleRule.cs">
+      <Link>ScheduleRule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleRuleType.cs">
+      <Link>ScheduleRuleType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleSummary.cs">
+      <Link>ScheduleSummary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleTime.cs">
+      <Link>ScheduleTime.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ScheduleType.cs">
+      <Link>ScheduleType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ServiceEvent.cs">
+      <Link>ServiceEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\ServiceEventNames.cs">
+      <Link>ServiceEventNames.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\TeletextPage.cs">
+      <Link>TeletextPage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\CardType.cs">
+      <Link>Tuning\CardType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\FecCodeRate.cs">
+      <Link>Tuning\FecCodeRate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\GuardInterval.cs">
+      <Link>Tuning\GuardInterval.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\HAlpha.cs">
+      <Link>Tuning\HAlpha.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\Modulation.cs">
+      <Link>Tuning\Modulation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\Pilot.cs">
+      <Link>Tuning\Pilot.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\RollOff.cs">
+      <Link>Tuning\RollOff.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\ServiceTuning.cs">
+      <Link>Tuning\ServiceTuning.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\SignalPolarisation.cs">
+      <Link>Tuning\SignalPolarisation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\Tuning\TransmissionMode.cs">
+      <Link>Tuning\TransmissionMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingCancellationReason.cs">
+      <Link>UpcomingCancellationReason.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingGuideProgram.cs">
+      <Link>UpcomingGuideProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingProgram.cs">
+      <Link>UpcomingProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingProgramPriority.cs">
+      <Link>UpcomingProgramPriority.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingRecording.cs">
+      <Link>UpcomingRecording.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\UpcomingRecordingsFilter.cs">
+      <Link>UpcomingRecordingsFilter.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

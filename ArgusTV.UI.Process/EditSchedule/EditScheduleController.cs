@@ -24,8 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process.EditSchedule
 {
@@ -38,7 +38,7 @@ namespace ArgusTV.UI.Process.EditSchedule
             _model = model;
         }
 
-        public void Initialize(IGuideService tvGuideAgent, ISchedulerService tvSchedulerAgent, Schedule schedule,
+        public void Initialize(GuideServiceProxy guideProxy, SchedulerServiceProxy schedulerProxy, Schedule schedule,
             bool forceManualSchedule, string allChannelsGroupName, string defaultFormatName)
         {
             _model.Schedule = schedule;
@@ -47,7 +47,7 @@ namespace ArgusTV.UI.Process.EditSchedule
 
             if (schedule.ScheduleType == ScheduleType.Recording)
             {
-                _model.RecordingFormats = new SortableBindingList<RecordingFileFormat>(tvSchedulerAgent.GetAllRecordingFileFormats());
+                _model.RecordingFormats = new SortableBindingList<RecordingFileFormat>(schedulerProxy.GetAllRecordingFileFormats());
                 _model.RecordingFormats.Insert(0, new RecordingFileFormat()
                 {
                     Name = defaultFormatName,
@@ -55,7 +55,7 @@ namespace ArgusTV.UI.Process.EditSchedule
                 });
             }
 
-            Channel[] channels = tvSchedulerAgent.GetAllChannels(schedule.ChannelType, false);
+            var channels = schedulerProxy.GetAllChannels(schedule.ChannelType, false);
             _model.AllChannels.Clear();
             foreach (Channel channel in channels)
             {
@@ -63,7 +63,7 @@ namespace ArgusTV.UI.Process.EditSchedule
             }
 
             _model.ChannelGroups.Clear();
-            _model.ChannelGroups.AddRange(tvSchedulerAgent.GetAllChannelGroups(schedule.ChannelType, !_model.IsManual));
+            _model.ChannelGroups.AddRange(schedulerProxy.GetAllChannelGroups(schedule.ChannelType, !_model.IsManual));
             _model.ChannelGroups.Add(new ChannelGroup()
             {
                 ChannelGroupId = schedule.ChannelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
@@ -74,27 +74,27 @@ namespace ArgusTV.UI.Process.EditSchedule
 
             if (!_model.IsManual)
             {
-                _model.Categories = tvGuideAgent.GetAllCategories();
+                _model.Categories = guideProxy.GetAllCategories();
             }
         }
 
-        public void SaveSchedule(ISchedulerService tvSchedulerAgent)
+        public void SaveSchedule(SchedulerServiceProxy schedulerProxy)
         {
-            tvSchedulerAgent.SaveSchedule(_model.Schedule);
+            schedulerProxy.SaveSchedule(_model.Schedule);
             ScheduleNamesCache.Clear();
         }
 
-        public void RefreshUpcomingPrograms(ISchedulerService tvSchedulerAgent)
+        public void RefreshUpcomingPrograms(SchedulerServiceProxy schedulerProxy)
         {
-            _model.UpcomingPrograms = tvSchedulerAgent.GetUpcomingPrograms(_model.Schedule, true);
+            _model.UpcomingPrograms = schedulerProxy.GetUpcomingPrograms(_model.Schedule, true);
         }
 
-        public void EnsureChannelsByGroup(ISchedulerService tvSchedulerAgent, Guid channelGroupId)
+        public void EnsureChannelsByGroup(SchedulerServiceProxy schedulerProxy, Guid channelGroupId)
         {
             if (!_model.ChannelsByGroup.ContainsKey(channelGroupId))
             {
                 _model.ChannelsByGroup[channelGroupId] =
-                    new List<Channel>(tvSchedulerAgent.GetChannelsInGroup(channelGroupId, true));
+                    new List<Channel>(schedulerProxy.GetChannelsInGroup(channelGroupId, true));
             }
         }
 

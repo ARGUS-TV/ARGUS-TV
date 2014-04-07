@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process
 {
@@ -71,14 +71,12 @@ namespace ArgusTV.UI.Process
                 {
                     try
                     {
-                        using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+                        var controlProxy = new ControlServiceProxy();
+
+                        _pluginServices.Clear();
+                        foreach (PluginService pluginService in controlProxy.GetAllPluginServices(false))
                         {
-                            _pluginServices.Clear();
-                            PluginService[] pluginServices = tvControlAgent.GetAllPluginServices(false);
-                            foreach (PluginService pluginService in pluginServices)
-                            {
-                                _pluginServices.Add(pluginService.PluginServiceId, pluginService);
-                            }
+                            _pluginServices.Add(pluginService.PluginServiceId, pluginService);
                         }
                     }
                     catch { }

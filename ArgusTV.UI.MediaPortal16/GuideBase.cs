@@ -45,8 +45,7 @@ using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process.Guide;
 #endregion
 
@@ -317,10 +316,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 _model = new GuideModel();
                 _controller = new GuideController(_model);
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    _controller.Initialize(tvSchedulerAgent, _channelType, 3, Utility.GetLocalizedText(TextId.AllChannels));
-                }
+                _controller.Initialize(new SchedulerServiceProxy(), _channelType, 3, Utility.GetLocalizedText(TextId.AllChannels));
             }
 
             if (PluginMain.Navigator.CurrentGroup != null
@@ -1398,11 +1394,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     Channel channel = (Channel)_channelList[_singleChannelNumber].channel;
                     setGuideHeadingVisibility(false);
-                    using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
-                    using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                    {
-                        RenderSingleChannel(tvSchedulerAgent, tvGuideAgent, channel);
-                    }
+                    RenderSingleChannel(new SchedulerServiceProxy(), new GuideServiceProxy(), channel);
                 }
                 else
                 {
@@ -1421,70 +1413,69 @@ namespace ArgusTV.UI.MediaPortal
                             chan = 0;
                         }
                     }
-                    using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
-                    using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+
+                    var guideProxy = new GuideServiceProxy();
+                    var schedulerProxy = new SchedulerServiceProxy();
+
+                    _controller.RefreshChannelsEpgData(guideProxy, visibleChannels, Utils.longtodate(iStart), Utils.longtodate(iEnd));
+
+                    // make sure the TV Guide heading is visiable and the single channel labels are not.
+                    setGuideHeadingVisibility(true);
+                    SetSingleChannelLabelVisibility(false);
+                    chan = _channelOffset;
+
+                    int firstButtonYPos = 0;
+                    int lastButtonYPos = 0;
+
+                    for (int iChannel = 0; iChannel < _channelCount; iChannel++)
                     {
-                        _controller.RefreshChannelsEpgData(tvGuideAgent, visibleChannels,
-                            Utils.longtodate(iStart), Utils.longtodate(iEnd));
-
-                        // make sure the TV Guide heading is visiable and the single channel labels are not.
-                        setGuideHeadingVisibility(true);
-                        SetSingleChannelLabelVisibility(false);
-                        chan = _channelOffset;
-
-                        int firstButtonYPos = 0;
-                        int lastButtonYPos = 0;
-
-                        for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+                        if (chan < _channelList.Count)
                         {
-                            if (chan < _channelList.Count)
+                            GuideBaseChannel tvGuideChannel = _channelList[chan];
+                            RenderChannel(schedulerProxy, guideProxy, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
+                            // remember bottom y position from last visible button
+                            GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+                            if (imgBut != null)
                             {
-                                GuideBaseChannel tvGuideChannel = _channelList[chan];
-                                RenderChannel(tvSchedulerAgent, tvGuideAgent, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
-                                // remember bottom y position from last visible button
-                                GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
-                                if (imgBut != null)
-                                {
-                                    if (iChannel == 0)
-                                        firstButtonYPos = imgBut.YPosition;
+                                if (iChannel == 0)
+                                    firstButtonYPos = imgBut.YPosition;
 
-                                    lastButtonYPos = imgBut.YPosition + imgBut.Height;
-                                }
-                            }
-                            chan++;
-                            if (chan >= _channelList.Count && _channelList.Count > _channelCount)
-                            {
-                                chan = 0;
-                            }
-                            if (chan > _channelList.Count)
-                            {
-                                GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
-                                if (imgBut != null)
-                                {
-                                    imgBut.IsVisible = false;
-                                }
+                                lastButtonYPos = imgBut.YPosition + imgBut.Height;
                             }
                         }
+                        chan++;
+                        if (chan >= _channelList.Count && _channelList.Count > _channelCount)
+                        {
+                            chan = 0;
+                        }
+                        if (chan > _channelList.Count)
+                        {
+                            GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+                            if (imgBut != null)
+                            {
+                                imgBut.IsVisible = false;
+                            }
+                        }
+                    }
 
-                        GUIImage vertLine = GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
-                        if (vertLine != null)
-                        {
-                            // height taken from last button (bottom) minus the yposition of slider plus the offset of slider in relation to first button
-                            vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
-                        }
-                        // update selected channel
-                        _singleChannelNumber = _cursorX + _channelOffset;
-                        if (_singleChannelNumber >= _channelList.Count)
-                        {
-                            _singleChannelNumber -= _channelList.Count;
-                        }
+                    GUIImage vertLine = GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
+                    if (vertLine != null)
+                    {
+                        // height taken from last button (bottom) minus the yposition of slider plus the offset of slider in relation to first button
+                        vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
+                    }
+                    // update selected channel
+                    _singleChannelNumber = _cursorX + _channelOffset;
+                    if (_singleChannelNumber >= _channelList.Count)
+                    {
+                        _singleChannelNumber -= _channelList.Count;
+                    }
 
-                        // instead of direct casting us "as"; else it fails for other controls!
-                        GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
-                        if (null != img)
-                        {
-                            _currentChannel = (Channel)img.Data;
-                        }
+                    // instead of direct casting us "as"; else it fails for other controls!
+                    GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
+                    if (null != img)
+                    {
+                        _currentChannel = (Channel)img.Data;
                     }
                 }
                 UpdateVerticalScrollbar();
@@ -1493,14 +1484,10 @@ namespace ArgusTV.UI.MediaPortal
 
         private string GetChannelLogo(Channel channel)
         {
-            string logoImagePath;
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+            string logoImagePath = Utility.GetLogoImage(channel, new SchedulerServiceProxy());
+            if (!System.IO.File.Exists(logoImagePath))
             {
-                logoImagePath = Utility.GetLogoImage(channel, tvSchedulerAgent);
-                if (!System.IO.File.Exists(logoImagePath))
-                {
-                    logoImagePath = "defaultVideoBig.png";
-                }
+                logoImagePath = "defaultVideoBig.png";
             }
             return logoImagePath;
         }
@@ -1621,7 +1608,7 @@ namespace ArgusTV.UI.MediaPortal
             _currentRecOrNotify = _currentProgram != null && PluginMain.IsActiveRecording(_currentChannel.ChannelId, _currentProgram);
         }
 
-        private void RenderSingleChannel(SchedulerServiceAgent tvSchedulerAgent, GuideServiceAgent tvGuideAgent, Channel channel)
+        private void RenderSingleChannel(SchedulerServiceProxy schedulerProxy, GuideServiceProxy guideProxy, Channel channel)
         {
             string strLogo;
             int chan = _channelOffset;
@@ -1657,7 +1644,7 @@ namespace ArgusTV.UI.MediaPortal
             if (channel.GuideChannelId.HasValue)
             {
                 programs = new List<GuideProgramSummary>(
-                    tvGuideAgent.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)));
+                    guideProxy.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)));
             }
 
             _totalProgramCount = programs.Count;
@@ -2142,7 +2129,7 @@ namespace ArgusTV.UI.MediaPortal
             }
         }
 
-        private void RenderChannel(SchedulerServiceAgent tvSchedulerAgent, GuideServiceAgent tvGuideAgent,
+        private void RenderChannel(SchedulerServiceProxy schedulerProxy, GuideServiceProxy guideProxy,
             int iChannel, GuideBaseChannel tvGuideChannel, long iStart, long iEnd, bool selectCurrentShow)
         {
             Channel channel = tvGuideChannel.channel;
@@ -2644,7 +2631,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (selectCurrentShow && iChannel == _cursorX)
                         {
                             _cursorY = iProgram + 1;
-                            _currentProgram = tvGuideAgent.GetProgramById(program.GuideProgramId);
+                            _currentProgram = guideProxy.GetProgramById(program.GuideProgramId);
                             m_dtStartTime = program.StartTime;
                             SetProperties();
                         }
@@ -3183,10 +3170,7 @@ namespace ArgusTV.UI.MediaPortal
             if (null != img)
             {
                 SetFocus();
-                using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
-                {
-                    _currentProgram = tvGuideAgent.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
-                }
+                _currentProgram = new GuideServiceProxy().GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
                 if (updateIcon)
                 {
                     bool isRecording;
@@ -3345,10 +3329,8 @@ namespace ArgusTV.UI.MediaPortal
                 if (null != img && img.IsVisible)
                 {
                     img.ColourDiffuse = 0xffffffff;
-                    using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
-                    {
-                        _currentProgram = tvGuideAgent.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
-                    }
+                    var guideProxy = new GuideServiceProxy();
+                    _currentProgram = guideProxy.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
                     SetProperties();
                 }
                 GUIControl.FocusControl(GetID, iControlId);
@@ -3531,10 +3513,7 @@ namespace ArgusTV.UI.MediaPortal
 
                             if (dlgYesNo.IsConfirmed && activeRecording != null)
                             {
-                                using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-                                {
-                                    tvControlAgent.AbortActiveRecording(activeRecording);
-                                }
+                                new ControlServiceProxy().AbortActiveRecording(activeRecording);
                             }
                         }
                         break;
@@ -3685,13 +3664,10 @@ namespace ArgusTV.UI.MediaPortal
                     switch (dlg.SelectedId)
                     {
                         case 979: // Play recording from beginning 
-                            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+                            Recording recording = new ControlServiceProxy().GetRecordingById(activeRecording.RecordingId);
+                            if (recording != null)
                             {
-                                Recording recording = tvControlAgent.GetRecordingById(activeRecording.RecordingId);
-                                if (recording != null)
-                                {
-                                    RecordedBase.PlayFromPreRecPoint(recording);
-                                }
+                                RecordedBase.PlayFromPreRecPoint(recording);
                             }
                             break;
 
@@ -4021,11 +3997,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (refresh)
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-                {
-                    _controller.RefreshUpcomingPrograms(tvSchedulerAgent, tvControlAgent);
-                }
+                _controller.RefreshUpcomingPrograms(new SchedulerServiceProxy(), new ControlServiceProxy());
             }
         }
 
@@ -4040,29 +4012,27 @@ namespace ArgusTV.UI.MediaPortal
             {
                 try
                 {
-                    using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                    var schedulerProxy = new SchedulerServiceProxy();
+                    foreach (Channel chan in schedulerProxy.GetChannelsInGroup(_model.CurrentChannelGroupId, true))
                     {
-                        foreach (Channel chan in tvSchedulerAgent.GetChannelsInGroup(_model.CurrentChannelGroupId, true))
-                        {
-                            GuideBaseChannel tvGuidChannel = new GuideBaseChannel();
-                            tvGuidChannel.channel = chan;
+                        GuideBaseChannel tvGuidChannel = new GuideBaseChannel();
+                        tvGuidChannel.channel = chan;
 
-                            if (tvGuidChannel.channel.VisibleInGuide && tvGuidChannel.channel.ChannelType == _channelType)
+                        if (tvGuidChannel.channel.VisibleInGuide && tvGuidChannel.channel.ChannelType == _channelType)
+                        {
+                            if (_showChannelNumber)
                             {
-                                if (_showChannelNumber)
+                                if (_byIndex)
                                 {
-                                    if (_byIndex)
-                                    {
-                                        tvGuidChannel.channelNum = _channelList.Count + 1;
-                                    }
-                                    else if (chan.LogicalChannelNumber.HasValue)
-                                    {
-                                        tvGuidChannel.channelNum = chan.LogicalChannelNumber.Value;
-                                    }
+                                    tvGuidChannel.channelNum = _channelList.Count + 1;
                                 }
-                                tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel);
-                                _channelList.Add(tvGuidChannel);
+                                else if (chan.LogicalChannelNumber.HasValue)
+                                {
+                                    tvGuidChannel.channelNum = chan.LogicalChannelNumber.Value;
+                                }
                             }
+                            tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel);
+                            _channelList.Add(tvGuidChannel);
                         }
                     }
                 }

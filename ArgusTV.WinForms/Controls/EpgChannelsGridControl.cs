@@ -29,7 +29,7 @@ using System.Globalization;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process.Guide;
 using ArgusTV.Client.Common;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.WinForms.Controls
 {
@@ -124,54 +124,53 @@ namespace ArgusTV.WinForms.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Region clippingRegion = e.Graphics.Clip;
+            var proxy = new SchedulerServiceProxy();
 
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+            foreach (var cell in _channelCells)
             {
-                foreach (var cell in _channelCells)
-                {
-                    Rectangle visibleRectangle = new Rectangle(cell.Rectangle.Location, cell.Rectangle.Size);
-                    visibleRectangle.Intersect(e.ClipRectangle);
+                Rectangle visibleRectangle = new Rectangle(cell.Rectangle.Location, cell.Rectangle.Size);
+                visibleRectangle.Intersect(e.ClipRectangle);
 
-                    Region cellRegion = new Region(visibleRectangle);
-                    cellRegion.Intersect(clippingRegion);
-                    if (cellRegion.IsEmpty(e.Graphics))
+                Region cellRegion = new Region(visibleRectangle);
+                cellRegion.Intersect(clippingRegion);
+                if (cellRegion.IsEmpty(e.Graphics))
+                {
+                    continue;
+                }
+
+                e.Graphics.SetClip(visibleRectangle);
+
+                Padding innerPadding = new Padding(2, 2, 2, 2);
+
+                if (cell.Channel != null)
+                {
+                    Rectangle innerRectangle = new Rectangle(cell.Rectangle.Left + innerPadding.Left, cell.Rectangle.Top + innerPadding.Top,
+                        cell.Rectangle.Width - innerPadding.Horizontal, cell.Rectangle.Height - innerPadding.Vertical);
+
+                    Image logoImage = null;
+                    try
                     {
-                        continue;
+                        logoImage = ChannelLogosCache.GetLogoImage(proxy, cell.Channel, (int)(64 * _widthFactor), (int)(64 * _heightFactor));
+                    }
+                    catch
+                    {
+                        logoImage = null;
                     }
 
-                    e.Graphics.SetClip(visibleRectangle);
-
-                    Padding innerPadding = new Padding(2, 2, 2, 2);
-
-                    if (cell.Channel != null)
+                    if (logoImage == null)
                     {
-                        Rectangle innerRectangle = new Rectangle(cell.Rectangle.Left + innerPadding.Left, cell.Rectangle.Top + innerPadding.Top,
-                            cell.Rectangle.Width - innerPadding.Horizontal, cell.Rectangle.Height - innerPadding.Vertical);
-
-                        Image logoImage = null;
-                        try
-                        {
-                            logoImage = ChannelLogosCache.GetLogoImage(tvSchedulerAgent, cell.Channel, (int)(64 * _widthFactor), (int)(64 * _heightFactor));
-                        }
-                        catch
-                        {
-                            logoImage = null;
-                        }
-
-                        if (logoImage == null)
-                        {
-                            e.Graphics.DrawString(cell.Channel.DisplayName, _channelFont, _channelBrush,
-                                new RectangleF(innerRectangle.Left, innerRectangle.Top + 6, innerRectangle.Width, innerRectangle.Height));
-                        }
-                        else
-                        {
-                            e.Graphics.DrawImage(logoImage, innerRectangle.Left + (int)Math.Round((innerRectangle.Width - logoImage.Width) / 2F),
-                                innerRectangle.Top + (int)Math.Round((innerRectangle.Height - logoImage.Height) / 2F),
-                                logoImage.Width, logoImage.Height);
-                        }
+                        e.Graphics.DrawString(cell.Channel.DisplayName, _channelFont, _channelBrush,
+                            new RectangleF(innerRectangle.Left, innerRectangle.Top + 6, innerRectangle.Width, innerRectangle.Height));
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(logoImage, innerRectangle.Left + (int)Math.Round((innerRectangle.Width - logoImage.Width) / 2F),
+                            innerRectangle.Top + (int)Math.Round((innerRectangle.Height - logoImage.Height) / 2F),
+                            logoImage.Width, logoImage.Height);
                     }
                 }
             }
+
             base.OnPaint(e);
         }
 

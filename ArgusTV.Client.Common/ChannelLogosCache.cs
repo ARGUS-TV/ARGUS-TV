@@ -26,9 +26,8 @@ using System.Text;
 using System.IO;
 using System.Drawing;
 
-using ArgusTV.ServiceContracts;
-using ArgusTV.ServiceAgents;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Client.Common
 {
@@ -42,23 +41,23 @@ namespace ArgusTV.Client.Common
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\LogosCache");
         }
 
-        public static Image GetLogoImage(ISchedulerService tvSchedulerAgent, Channel channel, int width, int height)
+        public static Image GetLogoImage(SchedulerServiceProxy schedulerProxy, Channel channel, int width, int height)
         {
-            return GetLogoImage(tvSchedulerAgent, channel.ChannelId, channel.DisplayName, width, height);
+            return GetLogoImage(schedulerProxy, channel.ChannelId, channel.DisplayName, width, height);
         }
 
-        public static Image GetLogoImage(ISchedulerService tvSchedulerAgent, Guid channelId, string channelDisplayName, int width, int height)
+        public static Image GetLogoImage(SchedulerServiceProxy schedulerProxy, Guid channelId, string channelDisplayName, int width, int height)
         {
-            string fileName = GetLogoPath(tvSchedulerAgent, channelId, channelDisplayName, width, height);
+            string fileName = GetLogoPath(schedulerProxy, channelId, channelDisplayName, width, height);
             return fileName == null ? null : Image.FromFile(fileName);
         }
 
-        public static string GetLogoPath(ISchedulerService tvSchedulerAgent, Channel channel, int width, int height)
+        public static string GetLogoPath(SchedulerServiceProxy schedulerProxy, Channel channel, int width, int height)
         {
-            return GetLogoPath(tvSchedulerAgent, channel.ChannelId, channel.DisplayName, width, height);
+            return GetLogoPath(schedulerProxy, channel.ChannelId, channel.DisplayName, width, height);
         }
 
-        public static string GetLogoPath(ISchedulerService tvSchedulerAgent, Guid channelId, string channelDisplayName, int width, int height)
+        public static string GetLogoPath(SchedulerServiceProxy schedulerProxy, Guid channelId, string channelDisplayName, int width, int height)
         {
             string cachePath = Path.Combine(_cacheBasePath, width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture));
             Directory.CreateDirectory(cachePath);
@@ -71,7 +70,7 @@ namespace ArgusTV.Client.Common
                 modifiedDateTime = File.GetLastWriteTime(logoImagePath);
             }
 
-            byte[] imageBytes = tvSchedulerAgent.GetChannelLogo(channelId, width, height, true, modifiedDateTime);
+            byte[] imageBytes = schedulerProxy.GetChannelLogo(channelId, width, height, modifiedDateTime);
             if (imageBytes == null)
             {
                 if (File.Exists(logoImagePath))

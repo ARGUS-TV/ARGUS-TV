@@ -28,7 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.WinForms.UserControls
 {
@@ -77,26 +77,23 @@ namespace ArgusTV.WinForms.UserControls
             {
                 try
                 {
-                    using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                    List<ChannelGroup> channelGroups = new List<ChannelGroup>(new SchedulerServiceProxy().GetAllChannelGroups(channelType, true));
+                    ChannelGroup allChannelsGroup = new ChannelGroup()
                     {
-                        List<ChannelGroup> channelGroups = new List<ChannelGroup>(tvSchedulerAgent.GetAllChannelGroups(channelType, true));
-                        ChannelGroup allChannelsGroup = new ChannelGroup()
-                        {
-                            ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                            ChannelType = channelType,
-                            GroupName = "All Channels",
-                            VisibleInGuide = true
-                        };
-                        if (this.ShowAllChannelsOnTop)
-                        {
-                            channelGroups.Insert(0, allChannelsGroup);
-                        }
-                        else
-                        {
-                            channelGroups.Add(allChannelsGroup);
-                        }
-                        _channelGroups[channelType] = channelGroups;
+                        ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                        ChannelType = channelType,
+                        GroupName = "All Channels",
+                        VisibleInGuide = true
+                    };
+                    if (this.ShowAllChannelsOnTop)
+                    {
+                        channelGroups.Insert(0, allChannelsGroup);
                     }
+                    else
+                    {
+                        channelGroups.Add(allChannelsGroup);
+                    }
+                    _channelGroups[channelType] = channelGroups;
                 }
                 catch (Exception ex)
                 {

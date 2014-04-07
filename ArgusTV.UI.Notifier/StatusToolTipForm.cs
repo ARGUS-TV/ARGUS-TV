@@ -76,11 +76,11 @@ namespace ArgusTV.UI.Notifier
         }
 
         private ServerStatus _serverStatus;
-        private ActiveRecording[] _activeRecordings = new ActiveRecording[0];
-        private LiveStream[] _liveStreams = new LiveStream[0];
+        private IList<ActiveRecording> _activeRecordings = new List<ActiveRecording>();
+        private IList<LiveStream> _liveStreams = new List<LiveStream>();
         private UpcomingRecording _upcomingRecording;
 
-        public void Show(Point location, ServerStatus serverStatus, ActiveRecording[] activeRecordings, LiveStream[] liveStreams, UpcomingRecording upcomingRecording)
+        public void Show(Point location, ServerStatus serverStatus, IList<ActiveRecording> activeRecordings, IList<LiveStream> liveStreams, UpcomingRecording upcomingRecording)
         {
             _serverStatus = serverStatus;
             _activeRecordings = activeRecordings;
@@ -91,20 +91,20 @@ namespace ArgusTV.UI.Notifier
             int height = _programsTop;
             if (_serverStatus != ServerStatus.NotConnected)
             {
-                if (activeRecordings.Length > 0)
+                if (activeRecordings.Count > 0)
                 {
                     height += fontHeight;
-                    height += (2 * fontHeight + _programsGap) * activeRecordings.Length;
-                    if (liveStreams.Length > 0
+                    height += (2 * fontHeight + _programsGap) * activeRecordings.Count;
+                    if (liveStreams.Count > 0
                         || upcomingRecording != null)
                     {
                         height += _programsExtraGap;
                     }
                 }
-                if (liveStreams.Length > 0)
+                if (liveStreams.Count > 0)
                 {
                     height += fontHeight;
-                    height += (fontHeight + _programsGap) * liveStreams.Length;
+                    height += (fontHeight + _programsGap) * liveStreams.Count;
                     if (upcomingRecording != null)
                     {
                         height += _programsExtraGap;
@@ -206,7 +206,7 @@ namespace ArgusTV.UI.Notifier
                 }
                 else
                 {
-                    if (_activeRecordings.Length > 0)
+                    if (_activeRecordings.Count > 0)
                     {
                         e.Graphics.DrawString("Currently recording:", SystemFonts.MessageBoxFont, textBrush, left - 2, top);
                         top += SystemFonts.MessageBoxFont.Height;
@@ -217,7 +217,7 @@ namespace ArgusTV.UI.Notifier
                         top += _programsExtraGap;
                     }
 
-                    if (_liveStreams.Length > 0)
+                    if (_liveStreams.Count > 0)
                     {
                         e.Graphics.DrawString("Currently streaming:", SystemFonts.MessageBoxFont, textBrush, left - 2, top);
                         top += SystemFonts.MessageBoxFont.Height;

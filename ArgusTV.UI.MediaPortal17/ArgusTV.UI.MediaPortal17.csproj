@@ -74,15 +74,6 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceAgents">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Common.GUIPlugins">
       <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\Common.GUIPlugins.dll</HintPath>
     </Reference>
@@ -108,7 +99,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -121,7 +111,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelNavigator.cs" />
-    <Compile Include="EventListener.cs" />
     <Compile Include="settings\ChannelManagment.cs" />
     <Compile Include="settings\ClientSettingsBase.cs" />
     <Compile Include="settings\ServerSettingsBase.cs" />
@@ -333,12 +322,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\_NET40\ArgusTV.Client.Common\ArgusTV.Client.Common.NET40.csproj">
       <Project>{2702dcfe-6086-48a0-a6dc-db1d272aefb2}</Project>
       <Name>ArgusTV.Client.Common.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj">
+      <Project>{cdb911a5-a3e1-46b3-98f3-dd1ee63f64b1}</Project>
+      <Name>ArgusTV.DataContracts.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.NET40.csproj">
+      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538643a}</Project>
+      <Name>ArgusTV.ServiceProxy.NET40</Name>
     </ProjectReference>
     <ProjectReference Include="..\_NET40\ArgusTV.UI.Process\ArgusTV.UI.Process.NET40.csproj">
       <Project>{a35f0ed7-98ed-4ee2-99c6-ea2af880f8c4}</Project>

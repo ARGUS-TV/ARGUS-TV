@@ -25,7 +25,7 @@ using System.Threading;
 
 using MSNPSharp;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Messenger.Msn
 {

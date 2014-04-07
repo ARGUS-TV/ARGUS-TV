@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using RestSharp;
 using ArgusTV.DataContracts;
+using ArgusTV.Common.Recorders.Utility;
 
 namespace ArgusTV.Common.Recorders
 {

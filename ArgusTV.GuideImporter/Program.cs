@@ -26,7 +26,7 @@ using System.Reflection;
 using System.IO;
 
 using ArgusTV.Common.Logging;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 using ArgusTV.GuideImporter.Interfaces;
 
@@ -58,7 +58,7 @@ namespace ArgusTV.GuideImporter
 
             string initErrorMessage;
             InitializeArgusTVServiceChannelFactories(out initErrorMessage);
-            if (ServiceChannelFactories.IsInitialized)
+            if (ProxyFactory.IsInitialized)
             {
                 try
                 {
@@ -121,9 +121,9 @@ namespace ArgusTV.GuideImporter
                 errorMessage = null;
                 ServerSettings serverSettings = new ServerSettings();
                 serverSettings.ServerName = Properties.Settings.Default.ArgusTVServerName;
-                serverSettings.Transport = ServiceTransport.NetTcp;
+                serverSettings.Transport = ServiceTransport.Http;
                 serverSettings.Port = Properties.Settings.Default.ArgusTVPort;
-                ServiceChannelFactories.Initialize(serverSettings, true);
+                ProxyFactory.Initialize(serverSettings, true);
             }
             catch (Exception ex)
             {

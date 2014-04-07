@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceContracts;
 using ArgusTV.UI.Process.Guide;
 
 namespace ArgusTV.UI.Process
@@ -37,8 +36,8 @@ namespace ArgusTV.UI.Process
             _upcomingRecordings = new UpcomingOrActiveProgramsList(new UpcomingProgram[0]);
         }
 
-        public UpcomingGuideProgramsDictionary(UpcomingRecording[] upcomingRecordings,
-            UpcomingGuideProgram[] upcomingAlerts, UpcomingGuideProgram[] upcomingSuggestions)
+        public UpcomingGuideProgramsDictionary(IEnumerable<UpcomingRecording> upcomingRecordings,
+            IEnumerable<UpcomingGuideProgram> upcomingAlerts, IEnumerable<UpcomingGuideProgram> upcomingSuggestions)
         {
             _upcomingRecordings = new UpcomingOrActiveProgramsList(AddAllUpcomingRecordings(upcomingRecordings));
             AddAllUpcomingProgramsForType(ScheduleType.Alert, upcomingAlerts);
@@ -58,7 +57,7 @@ namespace ArgusTV.UI.Process
 	        get { return _upcomingRecordings;}
         }
 
-        private UpcomingRecording[] AddAllUpcomingRecordings(UpcomingRecording[] upcomingRecordings)
+        private IEnumerable<UpcomingRecording> AddAllUpcomingRecordings(IEnumerable<UpcomingRecording> upcomingRecordings)
         {
             foreach (UpcomingRecording upcomingRecording in upcomingRecordings)
             {
@@ -67,7 +66,7 @@ namespace ArgusTV.UI.Process
             return upcomingRecordings;
         }
 
-        private void AddAllUpcomingProgramsForType(ScheduleType type, UpcomingGuideProgram[] upcomingGuidePrograms)
+        private void AddAllUpcomingProgramsForType(ScheduleType type, IEnumerable<UpcomingGuideProgram> upcomingGuidePrograms)
         {
             foreach (UpcomingGuideProgram upcomingGuideProgram in upcomingGuidePrograms)
             {

@@ -53,7 +53,8 @@ namespace ArgusTV.Common
 
         public static DateTime ParseIsoDate(this string source)
         {
-            string[] formats = new string[] { "yyyy-MM-ddTHH:mm:sszzz", "yyyy-MM-ddTHH:mm:ss", "yyyyMMddTHHmmss", "yyyyMMdd", "yyyy-MM-dd" };
+            source = source.Replace(' ', '+');
+            string[] formats = new string[] { "yyyy-MM-ddTHH:mm:ss.fffffffzzz", "yyyy-MM-ddTHH:mm:ss.fffffff", "yyyy-MM-ddTHH:mm:sszzz", "yyyy-MM-ddTHH:mm:ss", "yyyyMMddTHHmmss", "yyyyMMdd", "yyyy-MM-dd" };
             return DateTime.ParseExact(source, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowLeadingWhite|DateTimeStyles.AllowTrailingWhite|DateTimeStyles.AssumeLocal);
         }
     }

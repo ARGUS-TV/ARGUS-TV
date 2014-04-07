@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferencedAssemblies\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
     </Reference>
@@ -50,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RecorderNotFoundException.cs" />
     <Compile Include="RecorderServiceBase.cs" />
     <Compile Include="RecorderProxy.cs" />
     <Compile Include="Utility\FileSizeChecker.cs" />
@@ -63,17 +60,21 @@
     <Compile Include="ThreadedRecorderService.cs" />
     <Compile Include="Utility\FileUtility.cs" />
     <Compile Include="Utility\RecorderJsonSerializerStrategy.cs" />
+    <Compile Include="Utility\WakeOnLan.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GitHub\ARGUS-TV-Clients\ArgusTV.Common\ArgusTV.Common.csproj">
+    <ProjectReference Include="..\ArgusTV.Common\ArgusTV.Common.csproj">
       <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f5472be}</Project>
       <Name>ArgusTV.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2d3b808e-4e79-40df-b2fa-8c87fb50d7aa}</Project>
+      <Name>ArgusTV.DataContracts</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

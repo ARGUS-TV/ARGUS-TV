@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOTNET4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,15 +26,11 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DOTNET4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Nancy, Version=0.22.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
@@ -57,6 +53,9 @@
     </Compile>
     <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderModule.cs">
       <Link>RecorderModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderNotFoundException.cs">
+      <Link>RecorderNotFoundException.cs</Link>
     </Compile>
     <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderProxy.cs">
       <Link>RecorderProxy.cs</Link>
@@ -88,6 +87,9 @@
     <Compile Include="..\..\ArgusTV.Common.Recorders\Utility\RestProxyBase.cs">
       <Link>Utility\RestProxyBase.cs</Link>
     </Compile>
+    <Compile Include="..\..\ArgusTV.Common.Recorders\Utility\WakeOnLan.cs">
+      <Link>Utility\WakeOnLan.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +99,10 @@
     <ProjectReference Include="..\ArgusTV.Common\ArgusTV.Common.NET40.csproj">
       <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f543567}</Project>
       <Name>ArgusTV.Common.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj">
+      <Project>{cdb911a5-a3e1-46b3-98f3-dd1ee63f64b1}</Project>
+      <Name>ArgusTV.DataContracts.NET40</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -27,7 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -104,7 +104,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (this.ContainsFocus)
             {
-                _portNumericUpDown.Value = ServerSettings.DefaultTcpPort;
+                _portNumericUpDown.Value = ServerSettings.DefaultHttpPort;
             }
         }
 
@@ -137,11 +137,11 @@ namespace ArgusTV.UI.MediaPortal
             {
                 Cursor.Current = Cursors.WaitCursor;
                 _serverSettings.ServerName = _serverTextBox.Text.Trim();
-                _serverSettings.Transport = ServiceTransport.NetTcp;
+                _serverSettings.Transport = ServiceTransport.Http;
                 _serverSettings.Port = (int)_portNumericUpDown.Value;
                 _serverSettings.WakeOnLan.Enabled = _useWolCheckBox.Checked;
                 _serverSettings.WakeOnLan.TimeoutSeconds = (int)_wolSecondsNumericUpDown.Value;
-                ServiceChannelFactories.Initialize(_serverSettings, true);
+                ProxyFactory.Initialize(_serverSettings, true);
                 _isSingleSeat = Utility.IsThisASingleSeatSetup(_serverSettings.ServerName);
                 return true;
             }

@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2D3B808E-4E79-40DF-B2FA-8C87FB50D7AA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArgusTV.DataContracts</RootNamespace>
+    <AssemblyName>ArgusTV.DataContracts</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\ArgusTV.SolutionItems\ArgusTV.snk</AssemblyOriginatorKeyFile>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>http://localhost/TvScheduler.Entities/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\ArgusTV.DataContracts.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\ArgusTV.DataContracts.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ArgusTV.DataContracts.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConfigurationKey.cs" />
+    <Compile Include="ConfigurationModule.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="CardChannelAllocation.cs" />
+    <Compile Include="ActiveRecording.cs" />
+    <Compile Include="ChannelType.cs" />
+    <Compile Include="ChannelLiveState.cs" />
+    <Compile Include="Extensions\ChannelExtensions.cs" />
+    <Compile Include="GuideProgramFlags.cs" />
+    <Compile Include="LiveStreamAbortReason.cs" />
+    <Compile Include="ServiceEventNames.cs" />
+    <Compile Include="ServiceEvent.cs" />
+    <Compile Include="TeletextPage.cs" />
+    <Compile Include="IProgramSummary.cs" />
+    <Compile Include="RecordingDisksInfo.cs" />
+    <Compile Include="RecordingDiskInfo.cs" />
+    <Compile Include="RecordingSummary.cs" />
+    <Compile Include="RecordingFileFormat.cs" />
+    <Compile Include="NewVersionInfo.cs" />
+    <Compile Include="GuideProgramSummary.cs" />
+    <Compile Include="Tuning\CardType.cs" />
+    <Compile Include="Tuning\FecCodeRate.cs" />
+    <Compile Include="Tuning\GuardInterval.cs" />
+    <Compile Include="Tuning\HAlpha.cs" />
+    <Compile Include="Tuning\ServiceTuning.cs" />
+    <Compile Include="Tuning\Modulation.cs" />
+    <Compile Include="Tuning\Pilot.cs" />
+    <Compile Include="Tuning\RollOff.cs" />
+    <Compile Include="Tuning\SignalPolarisation.cs" />
+    <Compile Include="Tuning\TransmissionMode.cs" />
+    <Compile Include="UpcomingRecordingsFilter.cs" />
+    <Compile Include="UpcomingCancellationReason.cs" />
+    <Compile Include="CurrentAndNextProgram.cs" />
+    <Compile Include="UpcomingProgramPriority.cs" />
+    <Compile Include="LiveStream.cs" />
+    <Compile Include="LiveStreamResult.cs" />
+    <Compile Include="EventGroup.cs" />
+    <Compile Include="RecordingShareAccessibilityInfo.cs" />
+    <Compile Include="RecordingGroupMode.cs" />
+    <Compile Include="ScheduleProcessingCommand.cs" />
+    <Compile Include="ProcessingCommand.cs" />
+    <Compile Include="ProcessingRunMode.cs" />
+    <Compile Include="KeepUntilMode.cs" />
+    <Compile Include="ArgusTVUnexpectedErrorException.cs" />
+    <Compile Include="UpcomingRecording.cs" />
+    <Compile Include="PluginService.cs" />
+    <Compile Include="ChannelProgram.cs" />
+    <Compile Include="ScheduleSummary.cs" />
+    <Compile Include="ChannelGroup.cs" />
+    <Compile Include="RecordingGroup.cs" />
+    <Compile Include="Recording.cs" />
+    <Compile Include="ScheduleRecordedProgram.cs" />
+    <Compile Include="UpcomingGuideProgram.cs" />
+    <Compile Include="UpcomingProgram.cs" />
+    <Compile Include="GuideSource.cs" />
+    <Compile Include="ScheduleRule.cs" />
+    <Compile Include="ScheduleDaysOfWeek.cs" />
+    <Compile Include="SchedulePriority.cs" />
+    <Compile Include="LogSeverity.cs" />
+    <Compile Include="ScheduleRuleType.cs" />
+    <Compile Include="ScheduleTime.cs" />
+    <Compile Include="ScheduleType.cs" />
+    <Compile Include="Channel.cs" />
+    <Compile Include="LogEntry.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GuideChannel.cs" />
+    <Compile Include="GuideProgram.cs" />
+    <Compile Include="Schedule.cs" />
+    <Compile Include="ArgusTVException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

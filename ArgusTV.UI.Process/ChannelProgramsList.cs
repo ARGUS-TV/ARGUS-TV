@@ -28,12 +28,12 @@ namespace ArgusTV.UI.Process
     [Serializable]
     public class ChannelProgramsList : SortableBindingList<ChannelProgramView>
     {
-        public ChannelProgramsList(ChannelProgram[] programs)
+        public ChannelProgramsList(IEnumerable<ChannelProgram> programs)
             : base(CreateViewList(programs))
         {
         }
 
-        private static IEnumerable<ChannelProgramView> CreateViewList(ChannelProgram[] programs)
+        private static IEnumerable<ChannelProgramView> CreateViewList(IEnumerable<ChannelProgram> programs)
         {
             List<ChannelProgramView> viewList = new List<ChannelProgramView>();
             foreach (ChannelProgram program in programs)

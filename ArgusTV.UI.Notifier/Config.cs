@@ -28,7 +28,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 
 using ArgusTV.Client.Common;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Notifier
 {
@@ -39,20 +39,14 @@ namespace ArgusTV.UI.Notifier
 
         public Config()
         {
-            TcpServerName = "localhost";
-            HttpsServerName = String.Empty;
-            TcpPort = ServerSettings.DefaultTcpPort;
-            HttpsPort = ServerSettings.DefaultBinaryHttpsPort;
+            ServerName = "localhost";
+            Port = ServerSettings.DefaultHttpsPort;
             MmcPath = @"..\Scheduler Console\ArgusTV.Scheduler.Console.exe";
-
-            PollIntervalSeconds = 60;
             ShowRecordingBalloons = true;
             BalloonTimeoutSeconds = 5;
         }
 
         #region Properties
-
-        public int PollIntervalSeconds { get; set; }
 
         public bool ShowRecordingBalloons { get; set; }
 
@@ -60,13 +54,9 @@ namespace ArgusTV.UI.Notifier
 
         public string MmcPath { get; set; }
 
-        public string TcpServerName { get; set; }
+        public string ServerName { get; set; }
 
-        public int TcpPort { get; set; }
-
-        public string HttpsServerName { get; set; }
-
-        public int HttpsPort { get; set; }
+        public int Port { get; set; }
 
         public string UserName { get; set; }
 

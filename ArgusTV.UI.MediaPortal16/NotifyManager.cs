@@ -34,7 +34,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -122,38 +122,36 @@ namespace ArgusTV.UI.MediaPortal
 
         private void ProcessAlerts(DateTime preNotifySecs)
         {
-            using (SchedulerServiceAgent tvschedulerAgent = new SchedulerServiceAgent())
+            var schedulerProxy = new SchedulerServiceProxy();
+
+            List<UpcomingProgram> upcomingPrograms = schedulerProxy.GetAllUpcomingPrograms(ScheduleType.Alert, false);
+            if (upcomingPrograms.Count > 0)
             {
-                List<UpcomingProgram> upcomingPrograms = new List<UpcomingProgram>(
-                    tvschedulerAgent.GetAllUpcomingPrograms(ScheduleType.Alert, false));
-                if (upcomingPrograms.Count > 0)
+                DateTime _now = DateTime.Now;
+                foreach (UpcomingProgram program in upcomingPrograms)
                 {
-                    DateTime _now = DateTime.Now;
-                    foreach (UpcomingProgram program in upcomingPrograms)
+                    if (preNotifySecs > program.StartTime && _now < program.StopTime
+                        && !AlreadyNotifiedAlerts.Contains(program.ScheduleId))
                     {
-                        if (preNotifySecs > program.StartTime && _now < program.StopTime
-                            && !AlreadyNotifiedAlerts.Contains(program.ScheduleId))
-                        {
-                            NotifyProgram(program);
-                            AlreadyNotifiedAlerts.Add(program.ScheduleId);
-                            Log.Debug("NotifyManager: AlreadyNotifiedAlerts.Add {0}", program.Title);
-                        }
-                        else if (_now >= program.StopTime
-                            && AlreadyNotifiedConflict.Contains(program.ScheduleId))
-                        {
-                            Log.Debug("NotifyManager: AlreadyNotifiedAlerts.Remove");
-                            AlreadyNotifiedAlerts.Remove(program.ScheduleId);
-                        }
+                        NotifyProgram(program);
+                        AlreadyNotifiedAlerts.Add(program.ScheduleId);
+                        Log.Debug("NotifyManager: AlreadyNotifiedAlerts.Add {0}", program.Title);
+                    }
+                    else if (_now >= program.StopTime
+                        && AlreadyNotifiedConflict.Contains(program.ScheduleId))
+                    {
+                        Log.Debug("NotifyManager: AlreadyNotifiedAlerts.Remove");
+                        AlreadyNotifiedAlerts.Remove(program.ScheduleId);
+                    }
 
-                        if (program.StartTime < _nextCheckTimeAlerts && program.StartTime > _now)
-                        {
-                            _nextCheckTimeAlerts = program.StartTime;
-                        }
+                    if (program.StartTime < _nextCheckTimeAlerts && program.StartTime > _now)
+                    {
+                        _nextCheckTimeAlerts = program.StartTime;
+                    }
 
-                        if (program.StopTime < _nextCheckTimeAlerts && program.StopTime > _now)
-                        {
-                            _nextCheckTimeAlerts = program.StopTime;
-                        }
+                    if (program.StopTime < _nextCheckTimeAlerts && program.StopTime > _now)
+                    {
+                        _nextCheckTimeAlerts = program.StopTime;
                     }
                 }
             }

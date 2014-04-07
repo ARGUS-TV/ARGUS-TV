@@ -60,15 +60,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceAgents">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Common.Utils, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies17\Common.Utils.dll</HintPath>
@@ -105,7 +96,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TvBusinessLayer, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
@@ -240,6 +230,14 @@
     <ProjectReference Include="..\_NET40\ArgusTV.Common\ArgusTV.Common.NET40.csproj">
       <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f543567}</Project>
       <Name>ArgusTV.Common.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj">
+      <Project>{cdb911a5-a3e1-46b3-98f3-dd1ee63f64b1}</Project>
+      <Name>ArgusTV.DataContracts.NET40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\_NET40\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.NET40.csproj">
+      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538643a}</Project>
+      <Name>ArgusTV.ServiceProxy.NET40</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

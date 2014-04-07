@@ -94,6 +94,12 @@ namespace ArgusTV.Common.Recorders
             return Constants.RecorderApiVersion;
         }
 
+        public virtual void KeepAlive()
+        {
+            // Inform the local system we need it.
+            SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+        }
+
         public virtual List<string> GetMacAddresses()
         {
             List<string> macAddresses = new List<string>();
@@ -225,6 +231,22 @@ namespace ArgusTV.Common.Recorders
 			}
 			_disposed = true;
         }
+
+        #endregion
+
+        #region P/Invoke
+
+        [FlagsAttribute]
+        private enum EXECUTION_STATE : uint
+        {
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000
+        }
+
+        [System.Runtime.InteropServices.DllImport("Kernel32.DLL", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
         #endregion
     }

@@ -28,12 +28,12 @@ namespace ArgusTV.UI.Process
     [Serializable]
     public class LiveStreamsList : SortableBindingList<LiveStreamView>
     {
-        public LiveStreamsList(LiveStream[] liveStreams)
+        public LiveStreamsList(IEnumerable<LiveStream> liveStreams)
             : base(CreateViewList(liveStreams))
         {
         }
 
-        private static IEnumerable<LiveStreamView> CreateViewList(LiveStream[] liveStreams)
+        private static IEnumerable<LiveStreamView> CreateViewList(IEnumerable<LiveStream> liveStreams)
         {
             List<LiveStreamView> viewList = new List<LiveStreamView>();
             foreach (LiveStream liveStream in liveStreams)

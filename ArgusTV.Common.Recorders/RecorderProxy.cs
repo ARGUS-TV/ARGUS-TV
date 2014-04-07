@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using RestSharp;
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
+using ArgusTV.Common.Recorders.Utility;
 
 namespace ArgusTV.Common.Recorders
 {
@@ -34,13 +35,30 @@ namespace ArgusTV.Common.Recorders
         }
 
         /// <summary>
-        /// Ping RecorderTuner service.
+        /// Ping the Recorder service.
         /// </summary>
-        /// <returns>The version of the API on the recorder, to be compared to Constants.RecorderApiVersion.</returns>
-        public int Ping()
+        /// <returns>Returns true if the API on the recorder is correct, and a list of the MAC addresses of the Recorder machine.</returns>
+        public bool Ping(out List<string> macAddresses)
         {
             var request = NewRequest("/Ping", Method.GET);
-            return ExecuteResult<int>(request);
+            var data = Execute<PingResult>(request);
+            macAddresses = data.macAddresses;
+            return data.result == ArgusTV.DataContracts.Constants.RecorderApiVersion;
+        }
+
+        private class PingResult
+        {
+            public int result { get; set; }
+            public List<string> macAddresses { get; set; }
+        }
+
+        /// <summary>
+        /// Ask the recorder to keep its machine alive.
+        /// </summary>
+        public void KeepAlive()
+        {
+            var request = NewRequest("/KeepAlive", Method.PUT);
+            ExecuteAsync(request);
         }
 
         /// <summary>

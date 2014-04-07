@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using RestSharp;
 using ArgusTV.Common.Logging;
-using ArgusTV.Common.Recorders.Utility;
 
-namespace ArgusTV.Common.Recorders
+namespace ArgusTV.Common.Recorders.Utility
 {
     public abstract class RestProxyBase
     {
@@ -52,6 +51,25 @@ namespace ArgusTV.Common.Recorders
             }
         }
 
+        private bool IsConnectionError(Exception ex)
+        {
+            System.Net.WebException webException = ex as System.Net.WebException;
+            if (ex != null)
+            {
+                switch (webException.Status)
+                {
+                    case System.Net.WebExceptionStatus.ConnectFailure:
+                    case System.Net.WebExceptionStatus.NameResolutionFailure:
+                    case System.Net.WebExceptionStatus.ProxyNameResolutionFailure:
+                    case System.Net.WebExceptionStatus.RequestProhibitedByProxy:
+                    case System.Net.WebExceptionStatus.SecureChannelFailure:
+                    case System.Net.WebExceptionStatus.TrustFailure:
+                        return true;
+                }
+            }
+            return false;
+        }
+
         protected IRestResponse Execute(RestRequest request)
         {
             try
@@ -59,7 +77,11 @@ namespace ArgusTV.Common.Recorders
                 var response = _client.Execute(request);
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                    if (response.StatusCode == 0 && IsConnectionError(response.ErrorException))
+                    {
+                        throw new RecorderNotFoundException(response.ErrorMessage ?? response.StatusDescription);
+                    }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                     {
                         var error = SimpleJson.DeserializeObject<RestError>(response.Content);
                         throw new ApplicationException(error.detail);
@@ -67,6 +89,10 @@ namespace ArgusTV.Common.Recorders
                     throw new ApplicationException(response.ErrorMessage ?? response.StatusDescription);
                 }
                 return response;
+            }
+            catch (ApplicationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

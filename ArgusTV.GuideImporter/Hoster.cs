@@ -24,7 +24,7 @@ using System.Text;
 using System.Diagnostics;
 
 using ArgusTV.GuideImporter.Interfaces;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.GuideImporter
@@ -123,18 +123,16 @@ namespace ArgusTV.GuideImporter
                     {
                         plugin.PrepareImport(feedbackCallback, new KeepImportServiceAliveCallback(KeepImportServiceAlive));
 
-                        using (GuideServiceAgent guideAgent = new GuideServiceAgent())
+                        var guideProxy = new GuideServiceProxy();
+                        guideProxy.StartGuideImport();
+                        try
                         {
-                            guideAgent.StartGuideImport();
-                            try
-                            {
-                                PluginSetting pluginSetting = GetPluginSetting(pluginName);
-                                plugin.Import(pluginSetting.ChannelsToSkip, new ImportDataCallback(SaveGuideDataInArgusTV), progressCallback, feedbackCallback, new KeepImportServiceAliveCallback(KeepImportServiceAlive));
-                            }
-                            finally
-                            {
-                                guideAgent.EndGuideImport();
-                            }
+                            PluginSetting pluginSetting = GetPluginSetting(pluginName);
+                            plugin.Import(pluginSetting.ChannelsToSkip, new ImportDataCallback(SaveGuideDataInArgusTV), progressCallback, feedbackCallback, new KeepImportServiceAliveCallback(KeepImportServiceAlive));
+                        }
+                        finally
+                        {
+                            guideProxy.EndGuideImport();
                         }
                     }
                 }
@@ -158,31 +156,25 @@ namespace ArgusTV.GuideImporter
         {
             if (guideProgramData.Length > 0)
             {
-                using (GuideServiceAgent guideServiceAgent = new GuideServiceAgent())
+                var guideProxy = new GuideServiceProxy();
+                var schedulerProxy = new SchedulerServiceProxy();
+
+                Guid guideChannelId = EnsureDefaultChannel(channel, channelType, updateChannelName);
+                foreach (GuideProgram guideProgram in guideProgramData)
                 {
-                    using (SchedulerServiceAgent schedulerServiceAgent = new SchedulerServiceAgent())
+                    guideProgram.GuideChannelId = guideChannelId;
+                    try
                     {
-                        Guid guideChannelId = EnsureDefaultChannel(channel, channelType, updateChannelName);
-                        foreach (GuideProgram guideProgram in guideProgramData)
-                        {
-                            guideProgram.GuideChannelId = guideChannelId;
-                            try
-                            {
-                                guideServiceAgent.ImportProgram(guideProgram, GuideSource.XmlTv);
-                            }
-                            catch { }
-                        }
+                        guideProxy.ImportProgram(guideProgram, GuideSource.XmlTv);
                     }
+                    catch { }
                 }
             }
         }
 
         public static void LogMessageInArgusTV(string message, LogSeverity severity)
         {
-            using (LogServiceAgent logServiceAgent = new LogServiceAgent())
-            {
-                logServiceAgent.LogMessage("GuideImporter", severity, message);
-            }
+            new LogServiceProxy().LogMessage("GuideImporter", severity, message);
         }
         #endregion
 
@@ -190,56 +182,53 @@ namespace ArgusTV.GuideImporter
 
         private Guid EnsureDefaultChannel(ImportGuideChannel channel, ChannelType channelType, bool updateChannelName)
         {
-            using (GuideServiceAgent guideServiceAgent = new GuideServiceAgent())
+            var guideProxy = new GuideServiceProxy();
+            var schedulerProxy = new SchedulerServiceProxy();
+
+            Guid guideChannelId = guideProxy.EnsureChannelExists(channel.ExternalId, channel.ChannelName, channelType);
+
+            // If we have exactly one channel, check LCN and DisplayName :
+            var channels = schedulerProxy.GetChannelsForGuideChannel(guideChannelId);
+            if (channels.Count == 1 && updateChannelName)
             {
-                using (SchedulerServiceAgent schedulerServiceAgent = new SchedulerServiceAgent())
-                {                    
-                    Guid guideChannelId = guideServiceAgent.EnsureChannel(channel.ExternalId, channel.ChannelName, channelType);
+                bool needsToBeSaved = false;
+                if (channels[0].LogicalChannelNumber == null && channel.LogicalChannelNumber.HasValue)
+                {
+                    channels[0].LogicalChannelNumber = channel.LogicalChannelNumber;
+                    needsToBeSaved = true;
+                }
+                if (channels[0].DisplayName != channel.ChannelName)
+                {
+                    channels[0].DisplayName = channel.ChannelName;
+                    needsToBeSaved = true;
+                }
 
-                    // If we have exactly one channel, check LCN and DisplayName :
-                    Channel[] channels = schedulerServiceAgent.GetChannelsForGuideChannel(guideChannelId);
-                    if (channels.Length == 1 && updateChannelName)
-                    {
-                        bool needsToBeSaved = false;
-                        if (channels[0].LogicalChannelNumber == null && channel.LogicalChannelNumber.HasValue)
-                        {
-                            channels[0].LogicalChannelNumber = channel.LogicalChannelNumber;
-                            needsToBeSaved = true;
-                        }
-                        if (channels[0].DisplayName != channel.ChannelName)
-                        {
-                            channels[0].DisplayName = channel.ChannelName;
-                            needsToBeSaved = true;
-                        }
-
-                        if (needsToBeSaved)
-                        {
-                            schedulerServiceAgent.SaveChannel(channels[0]);
-                        }
-                    }
-                    else if(channels.Length == 0)
-                    {
-                        // No channels linked to the GuideChannel. If we have an existing channel with the same name, then link it.   
-                        Channel existingChannel = schedulerServiceAgent.GetChannelByDisplayName(channelType, channel.ChannelName);
-                        if (existingChannel != null)
-                        {
-                            existingChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
-                            schedulerServiceAgent.SaveChannel(existingChannel);
-                        }
-                        else
-                        {
-                            schedulerServiceAgent.EnsureDefaultChannel(guideChannelId, channelType, channel.ChannelName, null);
-                            channels = schedulerServiceAgent.GetChannelsForGuideChannel(guideChannelId);
-                            if (channels.Length == 1)
-                            {
-                                channels[0].LogicalChannelNumber = channel.LogicalChannelNumber;
-                                schedulerServiceAgent.SaveChannel(channels[0]);
-                            }
-                        }
-                    }
-                    return guideChannelId;
+                if (needsToBeSaved)
+                {
+                    schedulerProxy.SaveChannel(channels[0]);
                 }
             }
+            else if(channels.Count == 0)
+            {
+                // No channels linked to the GuideChannel. If we have an existing channel with the same name, then link it.   
+                Channel existingChannel = schedulerProxy.GetChannelByDisplayName(channelType, channel.ChannelName);
+                if (existingChannel != null)
+                {
+                    existingChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
+                    schedulerProxy.SaveChannel(existingChannel);
+                }
+                else
+                {
+                    schedulerProxy.EnsureDefaultChannel(guideChannelId, channelType, channel.ChannelName, null);
+                    channels = schedulerProxy.GetChannelsForGuideChannel(guideChannelId);
+                    if (channels.Count == 1)
+                    {
+                        channels[0].LogicalChannelNumber = channel.LogicalChannelNumber;
+                        schedulerProxy.SaveChannel(channels[0]);
+                    }
+                }
+            }
+            return guideChannelId;
         }
         #endregion
 
@@ -255,10 +244,7 @@ namespace ArgusTV.GuideImporter
                 SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
 
                 // Tell the server we still need it.
-                using (CoreServiceAgent coreServiceAgent = new CoreServiceAgent())
-                {
-                    coreServiceAgent.KeepServerAlive();
-                }
+                new CoreServiceProxy().KeepServerAlive();
             }
             catch { }
         }

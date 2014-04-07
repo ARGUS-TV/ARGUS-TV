@@ -31,8 +31,8 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
-using ArgusTV.ServiceAgents;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
 {
@@ -90,37 +90,36 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 _exportProgressBar.Visible = true;
                 Application.DoEvents();
 
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
+                var schedulerProxy = new SchedulerServiceProxy();
+                var guideProxy = new GuideServiceProxy();
+ 
+                _channelMembersByName.Clear();
+                _channelGroupsByName.Clear();
+                var allGroups = schedulerProxy.GetAllChannelGroups(this.Context.ChannelType, false);
+                foreach (ChannelGroup channelGroup in allGroups)
                 {
-                    _channelMembersByName.Clear();
-                    _channelGroupsByName.Clear();
-                    ChannelGroup[] allGroups = tvSchedulerAgent.GetAllChannelGroups(this.Context.ChannelType, false);
-                    foreach (ChannelGroup channelGroup in allGroups)
-                    {
-                        _channelGroupsByName[channelGroup.GroupName] = channelGroup;
-                    }
-
-                    int count = 0;
-                    foreach (ImportChannelsContext.ImportChannel importChannel in this.Context.ImportChannels)
-                    {
-                        _exportingFileLabel.Text = importChannel.Channel.DisplayName;
-                        Application.DoEvents();
-                        ImportChannel(tvGuideAgent, tvSchedulerAgent, importChannel);
-                        _exportProgressBar.Value = ++count;
-                    }
-
-                    foreach (string groupName in _channelGroupsByName.Keys)
-                    {
-                        if (_channelMembersByName.ContainsKey(groupName))
-                        {
-                            tvSchedulerAgent.SetChannelGroupMembers(
-                                _channelGroupsByName[groupName].ChannelGroupId, _channelMembersByName[groupName].ToArray());
-                        }
-                    }
-
-                    Channels.ChannelLinks.Save();
+                    _channelGroupsByName[channelGroup.GroupName] = channelGroup;
                 }
+
+                int count = 0;
+                foreach (ImportChannelsContext.ImportChannel importChannel in this.Context.ImportChannels)
+                {
+                    _exportingFileLabel.Text = importChannel.Channel.DisplayName;
+                    Application.DoEvents();
+                    ImportChannel(guideProxy, schedulerProxy, importChannel);
+                    _exportProgressBar.Value = ++count;
+                }
+
+                foreach (string groupName in _channelGroupsByName.Keys)
+                {
+                    if (_channelMembersByName.ContainsKey(groupName))
+                    {
+                        schedulerProxy.SetChannelGroupMembers(
+                            _channelGroupsByName[groupName].ChannelGroupId, _channelMembersByName[groupName].ToArray());
+                    }
+                }
+
+                Channels.ChannelLinks.Save();
 
                 return true;
             }
@@ -142,7 +141,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
         private Dictionary<string, ChannelGroup> _channelGroupsByName = new Dictionary<string, ChannelGroup>();
         private Dictionary<string, List<Guid>> _channelMembersByName = new Dictionary<string, List<Guid>>();
 
-        private void ImportChannel(GuideServiceAgent tvGuideAgent, SchedulerServiceAgent tvSchedulerAgent, ImportChannelsContext.ImportChannel importChannel)
+        private void ImportChannel(GuideServiceProxy guideProxy, SchedulerServiceProxy schedulerProxy, ImportChannelsContext.ImportChannel importChannel)
         {
             Guid channelId;
 
@@ -155,7 +154,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 channel.DisplayName = importChannel.Channel.DisplayName;
                 channel.LogicalChannelNumber = importChannel.LogicalChannelNumber;
                 channel.Sequence = importChannel.Channel.SortOrder;
-                channel = tvSchedulerAgent.SaveChannel(channel);
+                channel = schedulerProxy.SaveChannel(channel);
                 Channels.ChannelLinks.SetLinkedMediaPortalChannel(channel, importChannel.Channel);
 
                 channelId = channel.ChannelId;
@@ -188,7 +187,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                         channelGroup.VisibleInGuide = true;
                         channelGroup.ChannelType = this.Context.ChannelType;
                         channelGroup.Sequence = groupSequence;
-                        channelGroup = tvSchedulerAgent.SaveChannelGroup(channelGroup);
+                        channelGroup = schedulerProxy.SaveChannelGroup(channelGroup);
                         _channelGroupsByName[groupName] = channelGroup;
                         _channelMembersByName[groupName] = new List<Guid>();
                     }
@@ -196,7 +195,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                     if (!_channelMembersByName.ContainsKey(groupName))
                     {
                         _channelMembersByName[groupName] = new List<Guid>(
-                            tvSchedulerAgent.GetChannelGroupMembers(_channelGroupsByName[groupName].ChannelGroupId));
+                            schedulerProxy.GetChannelGroupMembers(_channelGroupsByName[groupName].ChannelGroupId));
                     }
 
                     _channelMembersByName[groupName].Add(channelId);

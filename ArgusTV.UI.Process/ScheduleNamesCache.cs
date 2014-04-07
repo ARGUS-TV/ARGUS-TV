@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process
 {
@@ -84,13 +84,11 @@ namespace ArgusTV.UI.Process
                 {
                     try
                     {
-                        using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                        {
-                            _scheduleNames.Clear();
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Recording);
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Alert);
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Suggestion);
-                        }
+                        var schedulerProxy = new SchedulerServiceProxy();
+                        _scheduleNames.Clear();
+                        GetScheduleNames(schedulerProxy, ScheduleType.Recording);
+                        GetScheduleNames(schedulerProxy, ScheduleType.Alert);
+                        GetScheduleNames(schedulerProxy, ScheduleType.Suggestion);
                     }
                     catch { }
                 }
@@ -102,14 +100,14 @@ namespace ArgusTV.UI.Process
             }
         }
 
-        private void GetScheduleNames(SchedulerServiceAgent tvSchedulerAgent, ScheduleType type)
+        private void GetScheduleNames(SchedulerServiceProxy schedulerProxy, ScheduleType type)
         {
-            ScheduleSummary[] schedules = tvSchedulerAgent.GetAllSchedules(ChannelType.Television, type, false);
+            var schedules = schedulerProxy.GetAllSchedules(ChannelType.Television, type, false);
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);
             }
-            schedules = tvSchedulerAgent.GetAllSchedules(ChannelType.Radio, type, false);
+            schedules = schedulerProxy.GetAllSchedules(ChannelType.Radio, type, false);
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);

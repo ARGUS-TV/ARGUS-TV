@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Messenger
 {
@@ -139,10 +139,7 @@ namespace ArgusTV.Messenger
                 // Inform the local system we need it.
                 SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
                 // Tell the server we need it.
-                using (CoreServiceAgent coreAgent = new CoreServiceAgent())
-                {
-                    coreAgent.KeepServerAlive();
-                }
+                new CoreServiceProxy().KeepServerAlive();
             }
             catch { }
         }

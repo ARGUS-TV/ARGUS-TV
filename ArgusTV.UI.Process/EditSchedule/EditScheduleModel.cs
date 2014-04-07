@@ -74,17 +74,17 @@ namespace ArgusTV.UI.Process.EditSchedule
             get { return _channelGroups; }
         }
 
-        private string[] _categories = new string[0];
+        private List<string> _categories = new List<string>();
 
-        public string[] Categories
+        public List<string> Categories
         {
             get { return _categories; }
             internal set { _categories = value; }
         }
 
-        private UpcomingProgram[] _upcomingPrograms = new UpcomingProgram[0];
+        private List<UpcomingProgram> _upcomingPrograms = new List<UpcomingProgram>();
 
-        public UpcomingProgram[] UpcomingPrograms
+        public List<UpcomingProgram> UpcomingPrograms
         {
             get { return _upcomingPrograms; }
             internal set { _upcomingPrograms = value; }

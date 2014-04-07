@@ -28,8 +28,8 @@ using System.Runtime.InteropServices;
 
 using ArgusTV.UI.Process.Guide;
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.WinForms.Controls
 {
@@ -535,107 +535,106 @@ namespace ArgusTV.WinForms.Controls
 
         private void item_Click(object sender, EventArgs e)
         {
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+            var schedulerProxy = new SchedulerServiceProxy();
+
+            Schedule schedule = null;
+            if (sender == _editScheduleItem)
             {
-                Schedule schedule = null;
-                if (sender == _editScheduleItem)
+                if (this.EditSchedule != null
+                    && this.ScheduleId.HasValue)
                 {
-                    if (this.EditSchedule != null
-                        && this.ScheduleId.HasValue)
-                    {
-                        this.EditSchedule(this, new EditScheduleEventArgs(this.ScheduleId.Value));
-                    }
+                    this.EditSchedule(this, new EditScheduleEventArgs(this.ScheduleId.Value));
                 }
-                else if (sender == _deleteScheduleItem)
+            }
+            else if (sender == _deleteScheduleItem)
+            {
+                if (this.DeleteSchedule != null
+                    && this.ScheduleId.HasValue)
                 {
-                    if (this.DeleteSchedule != null
-                        && this.ScheduleId.HasValue)
-                    {
-                        this.DeleteSchedule(this, new EditScheduleEventArgs(this.ScheduleId.Value));
-                    }
+                    this.DeleteSchedule(this, new EditScheduleEventArgs(this.ScheduleId.Value));
                 }
-                else if (sender == _cancelProgramItem
-                    || sender == _uncancelProgramItem
-                    || sender == _abortRecordingItem)
+            }
+            else if (sender == _cancelProgramItem
+                || sender == _uncancelProgramItem
+                || sender == _abortRecordingItem)
+            {
+                if (this.CancelProgram != null
+                    && this.ScheduleId.HasValue)
                 {
-                    if (this.CancelProgram != null
-                        && this.ScheduleId.HasValue)
-                    {
-                        this.CancelProgram(this, new CancelProgramEventArgs(sender != _uncancelProgramItem, this.ScheduleId.Value,
-                            _guideProgramId, _channel.ChannelId, _startTime));
-                    }
+                    this.CancelProgram(this, new CancelProgramEventArgs(sender != _uncancelProgramItem, this.ScheduleId.Value,
+                        _guideProgramId, _channel.ChannelId, _startTime));
                 }
-                else if (sender == _addToPreviouslyRecordedHistoryItem
-                    || sender == _removeFromPreviouslyRecordedHistoryItem)
+            }
+            else if (sender == _addToPreviouslyRecordedHistoryItem
+                || sender == _removeFromPreviouslyRecordedHistoryItem)
+            {
+                if (this.AddRemoveProgramHistory != null
+                    && _upcomingProgram != null)
                 {
-                    if (this.AddRemoveProgramHistory != null
-                        && _upcomingProgram != null)
-                    {
-                        this.AddRemoveProgramHistory(this,
-                            new AddRemoveProgramHistoryEventArgs(sender == _addToPreviouslyRecordedHistoryItem, _upcomingProgram));
-                    }
+                    this.AddRemoveProgramHistory(this,
+                        new AddRemoveProgramHistoryEventArgs(sender == _addToPreviouslyRecordedHistoryItem, _upcomingProgram));
                 }
-                else if (sender == _recordItem)
+            }
+            else if (sender == _recordItem)
+            {
+                schedule = GuideController.CreateRecordOnceSchedule(schedulerProxy, _channel.ChannelType, _channel.ChannelId, _title, _subTitle, _episodeNumberDisplay, _startTime);
+            }
+            else if (sender == _recordDailyItem)
+            {
+                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.Daily, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+            }
+            else if (sender == _recordWeeklyItem)
+            {
+                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.Weekly, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+            }
+            else if (sender == _recordAnyTimeItem)
+            {
+                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.AnyTime, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+            }
+            else if (sender == _playWithVlcItem)
+            {
+                if (this.PlayWithVlc != null
+                    && _activeRecording != null)
                 {
-                    schedule = GuideController.CreateRecordOnceSchedule(tvSchedulerAgent, _channel.ChannelType, _channel.ChannelId, _title, _subTitle, _episodeNumberDisplay, _startTime);
+                    this.PlayWithVlc(this,
+                        new PlayWithVlcEventArgs(_activeRecording.RecordingFileName));
                 }
-                else if (sender == _recordDailyItem)
+            }
+            else if (((ToolStripMenuItem)sender).OwnerItem == _priorityScheduleItem)
+            {
+                UpcomingProgramPriority? newPriority = null;
+                if (sender != _resetToSchedulePriorityItem)
                 {
-                    schedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.Daily, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                    newPriority = (UpcomingProgramPriority)((ToolStripMenuItem)sender).Tag;
                 }
-                else if (sender == _recordWeeklyItem)
+                if (this.SetProgramPriority != null
+                    && _upcomingProgram != null)
                 {
-                    schedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.Weekly, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                    this.SetProgramPriority(this,
+                        new SetProgramPriorityEventArgs(_upcomingProgram.UpcomingProgramId, _startTime, newPriority));
                 }
-                else if (sender == _recordAnyTimeItem)
+            }
+            else if (((ToolStripMenuItem)sender).OwnerItem == _preRecordScheduleItem
+                || ((ToolStripMenuItem)sender).OwnerItem == _postRecordScheduleItem)
+            {
+                int? seconds = null;
+                if (sender != _resetToSchedulePreRecordItem
+                    && sender != _resetToSchedulePostRecordItem)
                 {
-                    schedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.AnyTime, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                    seconds = (int)((ToolStripMenuItem)sender).Tag;
                 }
-                else if (sender == _playWithVlcItem)
+                if (this.SetProgramPrePostRecord != null
+                    && _upcomingProgram != null)
                 {
-                    if (this.PlayWithVlc != null
-                        && _activeRecording != null)
-                    {
-                        this.PlayWithVlc(this,
-                            new PlayWithVlcEventArgs(_activeRecording.RecordingFileName));
-                    }
+                    this.SetProgramPrePostRecord(this,
+                        new SetProgramPrePostRecordEventArgs(_upcomingProgram.UpcomingProgramId, _startTime,
+                            ((ToolStripMenuItem)sender).OwnerItem == _preRecordScheduleItem, seconds));
                 }
-                else if (((ToolStripMenuItem)sender).OwnerItem == _priorityScheduleItem)
-                {
-                    UpcomingProgramPriority? newPriority = null;
-                    if (sender != _resetToSchedulePriorityItem)
-                    {
-                        newPriority = (UpcomingProgramPriority)((ToolStripMenuItem)sender).Tag;
-                    }
-                    if (this.SetProgramPriority != null
-                        && _upcomingProgram != null)
-                    {
-                        this.SetProgramPriority(this,
-                            new SetProgramPriorityEventArgs(_upcomingProgram.UpcomingProgramId, _startTime, newPriority));
-                    }
-                }
-                else if (((ToolStripMenuItem)sender).OwnerItem == _preRecordScheduleItem
-                    || ((ToolStripMenuItem)sender).OwnerItem == _postRecordScheduleItem)
-                {
-                    int? seconds = null;
-                    if (sender != _resetToSchedulePreRecordItem
-                        && sender != _resetToSchedulePostRecordItem)
-                    {
-                        seconds = (int)((ToolStripMenuItem)sender).Tag;
-                    }
-                    if (this.SetProgramPrePostRecord != null
-                        && _upcomingProgram != null)
-                    {
-                        this.SetProgramPrePostRecord(this,
-                            new SetProgramPrePostRecordEventArgs(_upcomingProgram.UpcomingProgramId, _startTime,
-                                ((ToolStripMenuItem)sender).OwnerItem == _preRecordScheduleItem, seconds));
-                    }
-                }
-                if (schedule != null
-                    && this.CreateNewSchedule != null)
-                {
-                    this.CreateNewSchedule(this, new CreateNewScheduleEventArgs(schedule));
-                }
+            }
+            if (schedule != null
+                && this.CreateNewSchedule != null)
+            {
+                this.CreateNewSchedule(this, new CreateNewScheduleEventArgs(schedule));
             }
         }
 
