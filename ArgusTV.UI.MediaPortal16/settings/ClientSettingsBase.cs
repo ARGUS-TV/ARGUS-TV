@@ -37,8 +37,7 @@ using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Util;
 using MediaPortal.Player;
 
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -207,7 +206,7 @@ namespace ArgusTV.UI.MediaPortal
                 VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
                 if (keyboard != null)
                 {
-                    int port = ServerSettings.DefaultTcpPort;
+                    int port = ServerSettings.DefaultHttpPort;
                     keyboard.Reset();
                     keyboard.IsSearchKeyboard = false;
                     keyboard.Text = _tcpPortButton.Label ?? port.ToString();
@@ -216,7 +215,7 @@ namespace ArgusTV.UI.MediaPortal
                     {
                         if (!Int32.TryParse(keyboard.Text, out port))
                         {
-                            port = ServerSettings.DefaultTcpPort;
+                            port = ServerSettings.DefaultHttpPort;
                         }
                         _tcpPortButton.Label = port.ToString();
                     }
@@ -343,21 +342,21 @@ namespace ArgusTV.UI.MediaPortal
             string errorMessage = string.Empty;
 
             PluginMain.ForceNoConnection = true;
-            if (ServiceChannelFactories.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 wasConnected = true;
-                if (_serverNameButton.Label != ServiceChannelFactories.ServerSettings.ServerName)
+                if (_serverNameButton.Label != Proxies.ServerSettings.ServerName)
                 {
                     serverChanged = true;
                 }
-                if (Int32.Parse(_tcpPortButton.Label) != ServiceChannelFactories.ServerSettings.Port)
+                if (Int32.Parse(_tcpPortButton.Label) != Proxies.ServerSettings.Port)
                 {
                     portChanged = true;
                 }
             }
 
             _serverSettings.ServerName = _serverNameButton.Label;
-            _serverSettings.Transport = ServiceTransport.NetTcp;
+            _serverSettings.Transport = ServiceTransport.Http;
             _serverSettings.Port = Int32.Parse(_tcpPortButton.Label);
             _serverSettings.WakeOnLan.Enabled = _enableWolButton.Selected;
             _serverSettings.WakeOnLan.TimeoutSeconds = Int32.Parse(_WolTimeoutButton.SpinLabel);

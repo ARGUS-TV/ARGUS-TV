@@ -23,7 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.Process.SearchGuide
@@ -47,9 +46,9 @@ namespace ArgusTV.UI.Process.SearchGuide
             internal set { _allUpcomingGuidePrograms = value; }
         }
 
-        private string[] _titles = new string[0];
+        private List<string> _titles = new List<string>();
 
-        public string[] Titles
+        public List<string> Titles
         {
             get { return _titles; }
             internal set { _titles = value; }

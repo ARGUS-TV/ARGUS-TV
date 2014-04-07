@@ -30,7 +30,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -111,7 +111,7 @@ namespace ArgusTV.UI.MediaPortal
 
             try
             {
-                _lastStatus = (PluginMain.ActiveRecordings.Length > 0);
+                _lastStatus = (PluginMain.ActiveRecordings.Count > 0);
             }
             catch
             {

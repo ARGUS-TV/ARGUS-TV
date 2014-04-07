@@ -31,7 +31,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -51,7 +51,7 @@ namespace ArgusTV.UI.MediaPortal
         private static object _nextlock = new object();
         private static object _currlock = new object();
         private static object _activeRecordingsLock = new object();
-        private static ActiveRecording[] _activeRecordings;
+        private static List<ActiveRecording> _activeRecordings;
         private static DateTime _activeRecordingsUpdateTime = DateTime.MinValue;
 
         public static bool UpcomingAlertsChanged { get; set; }
@@ -62,7 +62,7 @@ namespace ArgusTV.UI.MediaPortal
 
         #region Active Recordings
         
-        internal static ActiveRecording[] ActiveRecordings
+        internal static List<ActiveRecording> ActiveRecordings
         {
             get
             {
@@ -73,11 +73,8 @@ namespace ArgusTV.UI.MediaPortal
                         if (DateTime.Now >= _activeRecordingsUpdateTime || ActiveRecordingsChanged)
                         {
                             ActiveRecordingsChanged = false;
-                            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-                            {
-                                _activeRecordings = tvControlAgent.GetActiveRecordings();
-                                _activeRecordingsUpdateTime = DateTime.Now.AddSeconds(15);
-                            }
+                            _activeRecordings = Proxies.ControlService.GetActiveRecordings().Result;
+                            _activeRecordingsUpdateTime = DateTime.Now.AddSeconds(15);
                         }
                     }
                 }
@@ -274,34 +271,30 @@ namespace ArgusTV.UI.MediaPortal
 
             lock (_refreshCurrAndNextLock)
             {
-                using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, false, null).Result;
+                if (currentAndNext != null)
                 {
-                    CurrentAndNextProgram currentAndNext = tvSchedulerAgent.GetCurrentAndNextForChannel(channel.ChannelId, false, null);
-                    if (currentAndNext != null)
+                    if (currentAndNext.Current != null)
                     {
-                        if (currentAndNext.Current != null)
-                        {
-                            _currentProgram = tvGuideAgent.GetProgramById(currentAndNext.Current.GuideProgramId);
-                        }
-                        else
-                        {
-                            _currentProgram = null;
-                        }
-                        if (currentAndNext.Next != null)
-                        {
-                            _nextProgram = tvGuideAgent.GetProgramById(currentAndNext.Next.GuideProgramId);
-                        }
-                        else
-                        {
-                            _nextProgram = null;
-                        }
+                        _currentProgram = Proxies.GuideService.GetProgramById(currentAndNext.Current.GuideProgramId).Result;
+                    }
+                    else
+                    {
+                        _currentProgram = null;
+                    }
+                    if (currentAndNext.Next != null)
+                    {
+                        _nextProgram = Proxies.GuideService.GetProgramById(currentAndNext.Next.GuideProgramId).Result;
                     }
                     else
                     {
                         _nextProgram = null;
-                        _currentProgram = null;
                     }
+                }
+                else
+                {
+                    _nextProgram = null;
+                    _currentProgram = null;
                 }
             }
         }
@@ -311,14 +304,10 @@ namespace ArgusTV.UI.MediaPortal
             if (channel != null
                 && channel.GuideChannelId.HasValue)
             {
-                using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
+                var programs = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time).Result;
+                if (programs.Count > 0)
                 {
-                    GuideProgramSummary[] programs =
-                        tvGuideAgent.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time);
-                    if (programs.Length > 0)
-                    {
-                        return tvGuideAgent.GetProgramById(programs[0].GuideProgramId);
-                    }
+                    return Proxies.GuideService.GetProgramById(programs[0].GuideProgramId).Result;
                 }
             }
             return null;
@@ -362,7 +351,7 @@ namespace ArgusTV.UI.MediaPortal
         /// <returns></returns>
         internal static bool EnsureConnection(bool showHomeOnError, bool schowError)
         {
-            if (!ServiceChannelFactories.IsInitialized)
+            if (!Proxies.IsInitialized)
             {
                 bool succeeded = false;
                 string errorMessage = string.Empty;
@@ -418,7 +407,7 @@ namespace ArgusTV.UI.MediaPortal
                 }
             }
 
-            if (!ServiceChannelFactories.IsInitialized)
+            if (!Proxies.IsInitialized)
             {
                 if (showHomeOnError && GUIWindowManager.ActiveWindow != 0)
                 {
@@ -516,7 +505,12 @@ namespace ArgusTV.UI.MediaPortal
                     serverSettings.ServerName = "mediaserver";
                 }
 #endif
-                serverSettings.Port = xmlreader.GetValueAsInt(_settingSection, TvHome.SettingName.TcpPort, ServerSettings.DefaultTcpPort);
+                serverSettings.Port = xmlreader.GetValueAsInt(_settingSection, TvHome.SettingName.TcpPort, ServerSettings.DefaultHttpPort);
+                if (serverSettings.Port == 49942)
+                {
+                    // Auto-adjust old net.tcp port to HTTP.
+                    serverSettings.Port = 49943;
+                }
                 serverSettings.WakeOnLan.MacAddresses = xmlreader.GetValueAsString(_settingSection, TvHome.SettingName.MacAddresses, String.Empty);
                 serverSettings.WakeOnLan.IPAddress = xmlreader.GetValueAsString(_settingSection, TvHome.SettingName.IPAddress, String.Empty);
                 serverSettings.WakeOnLan.Enabled = xmlreader.GetValueAsBool(_settingSection, TvHome.SettingName.UseWakeOnLan, false);

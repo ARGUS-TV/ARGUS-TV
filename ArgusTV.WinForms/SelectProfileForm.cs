@@ -26,7 +26,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using ArgusTV.ServiceAgents;
 using ArgusTV.Client.Common;
 
 namespace ArgusTV.WinForms

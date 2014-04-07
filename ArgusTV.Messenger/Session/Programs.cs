@@ -30,28 +30,28 @@ namespace ArgusTV.Messenger.Session
     internal class Programs
     {
         public Channel _channel;
-        public GuideProgramSummary[] _guidePrograms;
-        public ChannelProgram[] _searchedPrograms;
-        private UpcomingProgram[] _upcomingPrograms;
-        private UpcomingRecording[] _upcomingRecordings;
+        public IList<GuideProgramSummary> _guidePrograms;
+        public IList<ChannelProgram> _searchedPrograms;
+        private IList<UpcomingProgram> _upcomingPrograms;
+        private IList<UpcomingRecording> _upcomingRecordings;
 
-        public Programs(Channel channel, GuideProgramSummary[] guidePrograms)
+        public Programs(Channel channel, IList<GuideProgramSummary> guidePrograms)
         {
             _channel = channel;
             _guidePrograms = guidePrograms;
         }
 
-        public Programs(ChannelProgram[] searchedPrograms)
+        public Programs(IList<ChannelProgram> searchedPrograms)
         {
             _searchedPrograms = searchedPrograms;
         }
 
-        public Programs(UpcomingProgram[] upcomingPrograms)
+        public Programs(IList<UpcomingProgram> upcomingPrograms)
         {
             _upcomingPrograms = upcomingPrograms;
         }
 
-        public Programs(UpcomingRecording[] upcomingRecordings)
+        public Programs(IList<UpcomingRecording> upcomingRecordings)
         {
             _upcomingRecordings = upcomingRecordings;
         }
@@ -61,22 +61,22 @@ namespace ArgusTV.Messenger.Session
             get { return _channel; }
         }
 
-        public GuideProgramSummary[] GuidePrograms
+        public IList<GuideProgramSummary> GuidePrograms
         {
             get { return _guidePrograms; }
         }
 
-        public ChannelProgram[] SearchedPrograms
+        public IList<ChannelProgram> SearchedPrograms
         {
             get { return _searchedPrograms; }
         }
 
-        public UpcomingProgram[] UpcomingPrograms
+        public IList<UpcomingProgram> UpcomingPrograms
         {
             get { return _upcomingPrograms; }
         }
 
-        public UpcomingRecording[] UpcomingRecordings
+        public IList<UpcomingRecording> UpcomingRecordings
         {
             get { return _upcomingRecordings; }
         }
@@ -92,28 +92,28 @@ namespace ArgusTV.Messenger.Session
             if (--number >= 0)
             {
                 if (_guidePrograms != null
-                    && number < _guidePrograms.Length)
+                    && number < _guidePrograms.Count)
                 {
                     channel = this.Channel;
                     upcomingProgramId = _guidePrograms[number].GetUniqueUpcomingProgramId(channel.ChannelId);
                     return _guidePrograms[number];
                 }
                 else if (_searchedPrograms != null
-                    && number < _searchedPrograms.Length)
+                    && number < _searchedPrograms.Count)
                 {
                     channel = _searchedPrograms[number].Channel;
                     upcomingProgramId = _searchedPrograms[number].GetUniqueUpcomingProgramId();
                     return _searchedPrograms[number];
                 }
                 else if (_upcomingPrograms != null
-                    && number < _upcomingPrograms.Length)
+                    && number < _upcomingPrograms.Count)
                 {
                     channel = _upcomingPrograms[number].Channel;
                     upcomingProgramId = _upcomingPrograms[number].UpcomingProgramId;
                     return _upcomingPrograms[number];
                 }
                 else if (_upcomingRecordings != null
-                    && number < _upcomingRecordings.Length)
+                    && number < _upcomingRecordings.Count)
                 {
                     channel = _upcomingRecordings[number].Program.Channel;
                     upcomingProgramId = _upcomingRecordings[number].Program.UpcomingProgramId;

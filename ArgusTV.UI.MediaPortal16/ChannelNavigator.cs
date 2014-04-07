@@ -36,7 +36,7 @@ using MediaPortal.Profile;
 
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -139,23 +139,6 @@ namespace ArgusTV.UI.MediaPortal
                         Log.Debug("ChannelNavigator.StopRenderBlackImage()");
                     }
                 }
-            }
-        }
-
-        #endregion
-
-        #region Service Agents
-
-        private ControlServiceAgent _tvControlAgent;
-        private ControlServiceAgent ControlAgent
-        {
-            get
-            {
-                if (_tvControlAgent == null)
-                {
-                    _tvControlAgent = new ControlServiceAgent();
-                }
-                return _tvControlAgent;
             }
         }
 
@@ -285,53 +268,50 @@ namespace ArgusTV.UI.MediaPortal
         {
             try
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                List<ChannelGroup> groups = Proxies.SchedulerService.GetAllChannelGroups(channelType, true).Result;
+                if (_currentChannelGroup != null
+                    && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllTvChannelsGroupId
+                    && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllRadioChannelsGroupId)
                 {
-                    List<ChannelGroup> groups = new List<ChannelGroup>(tvSchedulerAgent.GetAllChannelGroups(channelType, true));
-                    if (_currentChannelGroup != null
-                        && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllTvChannelsGroupId
-                        && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllRadioChannelsGroupId)
+                    bool currentFound = false;
+                    foreach (ChannelGroup group in groups)
                     {
-                        bool currentFound = false;
-                        foreach (ChannelGroup group in groups)
+                        if (group.ChannelGroupId == _currentChannelGroup.ChannelGroupId)
                         {
-                            if (group.ChannelGroupId == _currentChannelGroup.ChannelGroupId)
-                            {
-                                currentFound = true;
-                                break;
-                            }
-                        }
-                        if (!currentFound)
-                        {
-                            _currentChannelGroup = null;
+                            currentFound = true;
+                            break;
                         }
                     }
-
-                    bool hideAllChannelsGroup = false;
-                    using (Settings xmlreader = new MPSettings())
+                    if (!currentFound)
                     {
-                        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+                        _currentChannelGroup = null;
                     }
+                }
 
-                    if (!hideAllChannelsGroup || groups.Count == 0)
+                bool hideAllChannelsGroup = false;
+                using (Settings xmlreader = new MPSettings())
+                {
+                    hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+                }
+
+                if (!hideAllChannelsGroup || groups.Count == 0)
+                {
+                    groups.Add(new ChannelGroup()
                     {
-                        groups.Add(new ChannelGroup()
-                        {
-                            ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
-                            ChannelType = channelType,
-                            GroupName = Utility.GetLocalizedText(TextId.AllChannels),
-                            Sequence = int.MaxValue,
-                            VisibleInGuide = true
-                        });
-                    }
+                        ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
+                        ChannelType = channelType,
+                        GroupName = Utility.GetLocalizedText(TextId.AllChannels),
+                        Sequence = int.MaxValue,
+                        VisibleInGuide = true
+                    });
+                }
 
-                    _navigatorChannels[channelType].Groups = groups;
+                _navigatorChannels[channelType].Groups = groups;
 
-                    if (_currentChannelGroup == null && _navigatorChannels[channelType].Groups.Count > 0)
-                    {
-                        _currentChannelGroup = _navigatorChannels[channelType].Groups[0];
-                        RefreshChannelsInGroup(tvSchedulerAgent, channelType);
-                    }
+                if (_currentChannelGroup == null && _navigatorChannels[channelType].Groups.Count > 0)
+                {
+                    _currentChannelGroup = _navigatorChannels[channelType].Groups[0];
+                    RefreshChannelsInGroup(channelType);
                 }
             }
             catch (Exception ex)
@@ -373,18 +353,15 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     try
                     {
-                        using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                        foreach (ChannelGroup group in _navigatorChannels[channelType].Groups)
                         {
-                            foreach (ChannelGroup group in _navigatorChannels[channelType].Groups)
+                            if (group != _currentChannelGroup)
                             {
-                                if (group != _currentChannelGroup)
+                                channel = FindChannelInGroupByNumber(group.ChannelGroupId, channelNr);
+                                if (channel != null)
                                 {
-                                    channel = FindChannelInGroupByNumber(tvSchedulerAgent, group.ChannelGroupId, channelNr);
-                                    if (channel != null)
-                                    {
-                                        channelGroup = group;
-                                        break;
-                                    }
+                                    channelGroup = group;
+                                    break;
                                 }
                             }
                         }
@@ -413,9 +390,9 @@ namespace ArgusTV.UI.MediaPortal
             return null;
         }
 
-        private Channel FindChannelInGroupByNumber(SchedulerServiceAgent tvSchedulerAgent, Guid channelGroupId, int channelNr)
+        private Channel FindChannelInGroupByNumber(Guid channelGroupId, int channelNr)
         {
-            return FindChannelByNumber(new List<Channel>(tvSchedulerAgent.GetChannelsInGroup(channelGroupId, true)), channelNr);
+            return FindChannelByNumber(new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(channelGroupId, true).Result), channelNr);
         }
 
         public void ZapNow()
@@ -649,77 +626,78 @@ namespace ArgusTV.UI.MediaPortal
             Log.Debug("ChannelNavigator: TuneLiveStream(), channel = {0}", channel.DisplayName);
             if (channel != null)
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                LiveStream liveStream = _liveStream;
+                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, true, _liveStream).Result;
+
+                _currentChannel = channel;
+                _doingChannelChange = true;
+                RenderBlackImage();
+
+                if (liveStream != null)
                 {
-                    LiveStream liveStream = _liveStream;
-                    CurrentAndNextProgram currentAndNext = tvSchedulerAgent.GetCurrentAndNextForChannel(channel.ChannelId, true, _liveStream);//null);
-
-                    _currentChannel = channel;
-                    _doingChannelChange = true;
-                    RenderBlackImage();
-
-                    if (liveStream != null)
+                    try
                     {
-                        try
+                        g_Player.PauseGraph();
+                        g_Player.OnZapping(0x80);
+
+                        var res = Proxies.ControlService.TuneLiveStream(channel, liveStream).Result;
+                        liveStream = res.LiveStream;
+                        result = res.LiveStreamResult;
+                        Log.Debug("ChannelNavigator: First try to re-tune the existing TV stream (staying on the same card), result = {0}", result);
+
+                        if (result == LiveStreamResult.Succeeded)
                         {
-                            g_Player.PauseGraph();
-                            g_Player.OnZapping(0x80);
+                            if (_isAnalog)
+                                g_Player.OnZapping(-1);
 
-                            result = this.ControlAgent.TuneLiveStream(channel, ref liveStream);
-                            Log.Debug("ChannelNavigator: First try to re-tune the existing TV stream (staying on the same card), result = {0}", result);
-
-                            if (result == LiveStreamResult.Succeeded)
+                            double duration = g_Player.Duration;
+                            if (g_Player.Duration < 0.0)
+                                result = LiveStreamResult.UnknownError;
+                            else
                             {
-                                if (_isAnalog)
-                                    g_Player.OnZapping(-1);
-
-                                double duration = g_Player.Duration;
-                                if (g_Player.Duration < 0.0)
-                                    result = LiveStreamResult.UnknownError;
-                                else
-                                {
-                                    g_Player.SeekAbsolute(duration);
-                                    g_Player.ContinueGraph();
-                                }
-                            }
-                            else if (result == LiveStreamResult.NoRetunePossible)// not mapped to card, card in use by recorder or other user ---> start new stream
-                            {
-                                // Now re-try the new channel with a new stream.
-                                Log.Debug("ChannelNavigator: Seems a re-tune has failed, stop the current stream and start a new one");
-                                SilentlyStopLiveStream(liveStream);
-                                result = StartAndPlayNewLiveStream(channel, liveStream);
+                                g_Player.SeekAbsolute(duration);
+                                g_Player.ContinueGraph();
                             }
                         }
-                        catch
+                        else if (result == LiveStreamResult.NoRetunePossible)// not mapped to card, card in use by recorder or other user ---> start new stream
                         {
-                            result = LiveStreamResult.UnknownError;
-                            Log.Error("ChannelNavigator: TuneLiveStream error");
+                            // Now re-try the new channel with a new stream.
+                            Log.Debug("ChannelNavigator: Seems a re-tune has failed, stop the current stream and start a new one");
+                            SilentlyStopLiveStream(liveStream);
+                            result = StartAndPlayNewLiveStream(channel, liveStream);
                         }
                     }
-                    else 
+                    catch
                     {
-                        result = StartAndPlayNewLiveStream(channel,liveStream);
+                        result = LiveStreamResult.UnknownError;
+                        Log.Error("ChannelNavigator: TuneLiveStream error");
                     }
+                }
+                else 
+                {
+                    result = StartAndPlayNewLiveStream(channel,liveStream);
+                }
 
-                    _doingChannelChange = false;
-                    if (result == LiveStreamResult.Succeeded)
-                    {
-                        _lastChannelChangeFailed = false;
-                        StopRenderBlackImage();
-                    }
-                    else
-                    {
-                        _lastChannelChangeFailed = true;
-                        SilentlyStopLiveStream(liveStream);
-                        ChannelTuneFailedNotifyUser(result, channel);
-                    }
+                _doingChannelChange = false;
+                if (result == LiveStreamResult.Succeeded)
+                {
+                    _lastChannelChangeFailed = false;
+                    StopRenderBlackImage();
+                }
+                else
+                {
+                    _lastChannelChangeFailed = true;
+                    SilentlyStopLiveStream(liveStream);
+                    ChannelTuneFailedNotifyUser(result, channel);
                 }
             }
         }
 
         private LiveStreamResult StartAndPlayNewLiveStream(Channel channel,LiveStream liveStream)
         {
-            LiveStreamResult result = this.ControlAgent.TuneLiveStream(channel, ref liveStream);
+            var res = Proxies.ControlService.TuneLiveStream(channel, liveStream).Result;
+            liveStream = res.LiveStream;
+            LiveStreamResult result = res.LiveStreamResult;
             Log.Debug("ChannelNavigator: start a new live stream, result = {0}", result);
 
             if (result == LiveStreamResult.Succeeded)
@@ -785,10 +763,7 @@ namespace ArgusTV.UI.MediaPortal
                     _navigatorChannels[_currentChannel.ChannelType].PreviousChannel = channel;
                     _currentChannel = null;
 
-                    using (SchedulerServiceAgent SchedulerAgent = new SchedulerServiceAgent())
-                    {
-                        tvlogo = Utility.GetLogoImage(channel, SchedulerAgent);
-                    }
+                    tvlogo = Utility.GetLogoImage(channel);
 
                     if (channel.ChannelType == ChannelType.Television)
                         caption = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName;
@@ -822,7 +797,7 @@ namespace ArgusTV.UI.MediaPortal
             GetPlayerFileNameAndOffset(liveStream, out fileName, out isRTSP);
 
             if (liveStream != null)
-                _isAnalog = (ControlAgent.GetLiveStreamTuningDetails(liveStream).CardType == CardType.Analog);
+                _isAnalog = (Proxies.ControlService.GetLiveStreamTuningDetails(liveStream).Result.CardType == CardType.Analog);
 
             if (!isRTSP)
             {
@@ -909,7 +884,7 @@ namespace ArgusTV.UI.MediaPortal
             Log.Debug("ChannelNavigator: StopLiveStream()");
             if (_liveStream != null)
             {
-                this.ControlAgent.StopLiveStream(_liveStream);
+                Proxies.ControlService.StopLiveStream(_liveStream).Wait();
                 _liveStream = null;
 
                 if (_currentChannel != null)
@@ -960,7 +935,7 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     try
                     {
-                        this.ControlAgent.StopLiveStream(_streamToStopAsync);
+                        Proxies.ControlService.StopLiveStream(_streamToStopAsync).Wait();
                     }
                     catch
                     {
@@ -973,13 +948,17 @@ namespace ArgusTV.UI.MediaPortal
 
         public void SendLiveStreamKeepAlive()
         {
-            if (_liveStream != null)
+            try
             {
-                if (!this.ControlAgent.KeepLiveStreamAlive(_liveStream))
+                if (_liveStream != null)
                 {
-                    if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio)) g_Player.Stop();
+                    if (!Proxies.ControlService.KeepLiveStreamAlive(_liveStream).Result)
+                    {
+                        if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio)) g_Player.Stop();
+                    }
                 }
             }
+            catch { }
         }
 
         #endregion
@@ -988,20 +967,12 @@ namespace ArgusTV.UI.MediaPortal
 
         private void RefreshChannelsInGroup(ChannelType channelType)
         {
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-            {
-                RefreshChannelsInGroup(tvSchedulerAgent, channelType);
-            }
-        }
-
-        private void RefreshChannelsInGroup(SchedulerServiceAgent tvSchedulerAgent, ChannelType channelType)
-        {
             try
             {
                 if (_currentChannelGroup != null)
                 {
                     _navigatorChannels[channelType].Channels = new List<Channel>(
-                        tvSchedulerAgent.GetChannelsInGroup(_currentChannelGroup.ChannelGroupId, true));
+                        Proxies.SchedulerService.GetChannelsInGroup(_currentChannelGroup.ChannelGroupId, true).Result);
                 }
                 else
                 {
@@ -1025,7 +996,7 @@ namespace ArgusTV.UI.MediaPortal
             bool hasTeletext = false;
             if (_liveStream != null)
             {
-                hasTeletext = this.ControlAgent.HasTeletext(_liveStream);
+                hasTeletext = Proxies.ControlService.HasTeletext(_liveStream).Result;
             }
             return hasTeletext;
         }
@@ -1034,10 +1005,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-                {
-                    tvControlAgent.StartGrabbingTeletext(_liveStream);
-                }
+                Proxies.ControlService.StartGrabbingTeletext(_liveStream).Wait();
             }
         }
 
@@ -1045,7 +1013,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                this.ControlAgent.StopGrabbingTeletext(_liveStream);
+                Proxies.ControlService.StopGrabbingTeletext(_liveStream).Wait();
             }
         }
 
@@ -1054,7 +1022,7 @@ namespace ArgusTV.UI.MediaPortal
             bool isGrabbingTeletext = false;
             if (_liveStream != null)
             {
-                isGrabbingTeletext = this.ControlAgent.IsGrabbingTeletext(_liveStream);
+                isGrabbingTeletext = Proxies.ControlService.IsGrabbingTeletext(_liveStream).Result;
             }
             return isGrabbingTeletext;
         }
@@ -1063,7 +1031,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                return this.ControlAgent.GetTeletextPage(_liveStream, pageNumber, subPageNumber);
+                return Proxies.ControlService.GetTeletextPage(_liveStream, pageNumber, subPageNumber).Result;
             }
             return null;
         }
@@ -1187,10 +1155,6 @@ namespace ArgusTV.UI.MediaPortal
                     GUIGraphicsContext.OnBlackImageRendered -= GUIGraphicsContext_OnBlackImageRendered;
                     _waitForBlackScreenEvent.Close();
                     _waitForBlackScreenEvent = null;
-                    if (_tvControlAgent != null)
-                    {
-                        _tvControlAgent.Dispose();
-                    }
                 }
                 // No unmanaged resources to dispose
             }

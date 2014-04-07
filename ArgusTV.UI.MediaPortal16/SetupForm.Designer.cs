@@ -77,9 +77,9 @@ namespace ArgusTV.UI.MediaPortal
             this._transportLabel.AutoSize = true;
             this._transportLabel.Location = new System.Drawing.Point(8, 48);
             this._transportLabel.Name = "_transportLabel";
-            this._transportLabel.Size = new System.Drawing.Size(53, 13);
+            this._transportLabel.Size = new System.Drawing.Size(49, 13);
             this._transportLabel.TabIndex = 3;
-            this._transportLabel.Text = "TCP Port:";
+            this._transportLabel.Text = "http port:";
             // 
             // _okButton
             // 
@@ -175,7 +175,7 @@ namespace ArgusTV.UI.MediaPortal
             this._standbyInfoLabel.Size = new System.Drawing.Size(265, 44);
             this._standbyInfoLabel.TabIndex = 7;
             this._standbyInfoLabel.Text = "If checked, the server and client will be kept alive when you\'re not on the home " +
-                "screen.                        (no need for the powerscheduler plugin)";
+    "screen.                        (no need for the powerscheduler plugin)";
             // 
             // _noStandbyWhenNotHomeCheckBox
             // 

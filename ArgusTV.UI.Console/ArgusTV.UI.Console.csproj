@@ -1,0 +1,658 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{017FEF75-E2FD-4C9E-952E-AF195A8410D1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArgusTV.UI.Console</RootNamespace>
+    <AssemblyName>ArgusTV.Scheduler.Console</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PublishUrl>http://localhost/TvScheduler.ManagementConsole.WinUI/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\ArgusTV.SolutionItems\ArgusTV.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ArgusTV.Scheduler.Console.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectForm.Designer.cs">
+      <DependentUpon>ConnectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ContentPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MenuHeaderLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\MenuItemLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ThreeStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SelectProcessingCommandTimeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectProcessingCommandTimeForm.Designer.cs">
+      <DependentUpon>SelectProcessingCommandTimeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImportSchedule.cs" />
+    <Compile Include="ExportScheduleList.cs" />
+    <Compile Include="ExportSchedule.cs" />
+    <Compile Include="MmcApplication.cs" />
+    <Compile Include="Panels\ActiveRecordingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ActiveRecordingsPanel.Designer.cs">
+      <DependentUpon>ActiveRecordingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\AboutPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\AboutPanel.Designer.cs">
+      <DependentUpon>AboutPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\RecordingFormatsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\RecordingFormatsPanel.Designer.cs">
+      <DependentUpon>RecordingFormatsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\LiveStreamPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\LiveStreamPanel.Designer.cs">
+      <DependentUpon>LiveStreamPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ProcessingCommandsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ProcessingCommandsPanel.Designer.cs">
+      <DependentUpon>ProcessingCommandsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\PluginServicesPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\PluginServicesPanel.Designer.cs">
+      <DependentUpon>PluginServicesPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ScheduleHistoryPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ScheduleHistoryPanel.Designer.cs">
+      <DependentUpon>ScheduleHistoryPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PluginServiceSetting.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SelectProcessingCommandsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectProcessingCommandsForm.Designer.cs">
+      <DependentUpon>SelectProcessingCommandsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LogonForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogonForm.Designer.cs">
+      <DependentUpon>LogonForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainMenuMode.cs" />
+    <Compile Include="Panels\ChannelsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ChannelsPanel.Designer.cs">
+      <DependentUpon>ChannelsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ChannelGroupsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\ChannelGroupsPanel.Designer.cs">
+      <DependentUpon>ChannelGroupsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SearchGuidePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\SearchGuidePanel.Designer.cs">
+      <DependentUpon>SearchGuidePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\GuideChannelsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\GuideChannelsPanel.Designer.cs">
+      <DependentUpon>GuideChannelsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\RecordingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\RecordingsPanel.Designer.cs">
+      <DependentUpon>RecordingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\SettingsPanel.Designer.cs">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\GuidePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\GuidePanel.Designer.cs">
+      <DependentUpon>GuidePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\EditSchedulePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\EditSchedulePanel.Designer.cs">
+      <DependentUpon>EditSchedulePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\LogPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\LogPanel.Designer.cs">
+      <DependentUpon>LogPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SchedulesPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\SchedulesPanel.Designer.cs">
+      <DependentUpon>SchedulesPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\UpcomingProgramsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panels\UpcomingProgramsPanel.Designer.cs">
+      <DependentUpon>UpcomingProgramsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ConnectForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ConnectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectProcessingCommandTimeForm.resx">
+      <DependentUpon>SelectProcessingCommandTimeForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogonForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LogonForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ChannelsPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ChannelsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ChannelGroupsPanel.resx">
+      <DependentUpon>ChannelGroupsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ActiveRecordingsPanel.resx">
+      <DependentUpon>ActiveRecordingsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\AboutPanel.resx">
+      <DependentUpon>AboutPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\RecordingFormatsPanel.resx">
+      <DependentUpon>RecordingFormatsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\LiveStreamPanel.resx">
+      <DependentUpon>LiveStreamPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ProcessingCommandsPanel.resx">
+      <DependentUpon>ProcessingCommandsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\PluginServicesPanel.resx">
+      <DependentUpon>PluginServicesPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\ScheduleHistoryPanel.resx">
+      <DependentUpon>ScheduleHistoryPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\SearchGuidePanel.resx">
+      <DependentUpon>SearchGuidePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\GuideChannelsPanel.resx">
+      <DependentUpon>GuideChannelsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\RecordingsPanel.resx">
+      <DependentUpon>RecordingsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\SettingsPanel.resx">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\GuidePanel.resx">
+      <DependentUpon>GuidePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\EditSchedulePanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EditSchedulePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\LogPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LogPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\SchedulesPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SchedulesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panels\UpcomingProgramsPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UpcomingProgramsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectProcessingCommandsForm.resx">
+      <DependentUpon>SelectProcessingCommandsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplashScreenForm.resx">
+      <DependentUpon>SplashScreenForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\KeepUntilControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>KeepUntilControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\TvChannelProgramsControl.resx">
+      <DependentUpon>TvChannelProgramsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\LogListControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LogListControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\ScheduleDaysOfWeekControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ScheduleDaysOfWeekControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\SchedulePriorityControl.resx">
+      <DependentUpon>SchedulePriorityControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\ScheduleTypeControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ScheduleTypeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\ExportRecordings\ExportRecordingsPage.resx">
+      <DependentUpon>ExportRecordingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\ExportRecordings\FinishPage.resx">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\FinishPage.resx">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\MovedRecordingsPage.resx">
+      <DependentUpon>MovedRecordingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\ScanRecordingFoldersPage.resx">
+      <DependentUpon>ScanRecordingFoldersPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\ScanExistingRecordingsPage.resx">
+      <DependentUpon>ScanExistingRecordingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\DeleteRecordingsPage.resx">
+      <DependentUpon>DeleteRecordingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\ImportRecordingsPage.resx">
+      <DependentUpon>ImportRecordingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\SynchronizeRecordings\SelectFoldersPage.resx">
+      <DependentUpon>SelectFoldersPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\WizardForm.resx">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Wizards\WizardPage.resx">
+      <DependentUpon>WizardPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.manifest" />
+    <None Include="Properties\DataSources\GuideProgramsList.datasource" />
+    <None Include="Properties\DataSources\SchedulesList.datasource" />
+    <None Include="Properties\DataSources\UpcomingProgramsList.datasource" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="SplashScreenForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplashScreenForm.Designer.cs">
+      <DependentUpon>SplashScreenForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\KeepUntilControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\KeepUntilControl.Designer.cs">
+      <DependentUpon>KeepUntilControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\TvChannelProgramsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\TvChannelProgramsControl.Designer.cs">
+      <DependentUpon>TvChannelProgramsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LogListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\LogListControl.Designer.cs">
+      <DependentUpon>LogListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ScheduleDaysOfWeekControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\ScheduleDaysOfWeekControl.Designer.cs">
+      <DependentUpon>ScheduleDaysOfWeekControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SchedulePriorityControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\SchedulePriorityControl.Designer.cs">
+      <DependentUpon>SchedulePriorityControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ScheduleTypeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\ScheduleTypeControl.Designer.cs">
+      <DependentUpon>ScheduleTypeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utility.cs" />
+    <Compile Include="Wizards\ExportRecordings\ExportRecordingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ExportRecordings\ExportRecordingsPage.Designer.cs">
+      <DependentUpon>ExportRecordingsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\ExportRecordings\ExportRecordingsPageBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ExportRecordings\ExportRecordingsContext.cs" />
+    <Compile Include="Wizards\ExportRecordings\ExportRecordingsWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\ExportRecordings\FinishPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\ExportRecordings\FinishPage.Designer.cs">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\FinishPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\FinishPage.Designer.cs">
+      <DependentUpon>FinishPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\MovedRecordingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\MovedRecordingsPage.Designer.cs">
+      <DependentUpon>MovedRecordingsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\MoveTvRecording.cs" />
+    <Compile Include="Wizards\SynchronizeRecordings\ScanRecordingFoldersPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\ScanRecordingFoldersPage.Designer.cs">
+      <DependentUpon>ScanRecordingFoldersPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\ScanExistingRecordingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\ScanExistingRecordingsPage.Designer.cs">
+      <DependentUpon>ScanExistingRecordingsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\DeleteRecordingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\DeleteRecordingsPage.Designer.cs">
+      <DependentUpon>DeleteRecordingsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\ImportRecordingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\ImportRecordingsPage.Designer.cs">
+      <DependentUpon>ImportRecordingsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\MediaPortalXml.cs" />
+    <Compile Include="Wizards\SynchronizeRecordings\SelectFoldersPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\SelectFoldersPage.Designer.cs">
+      <DependentUpon>SelectFoldersPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\SynchronizeRecordingsContext.cs" />
+    <Compile Include="Wizards\SynchronizeRecordings\SynchronizeRecordingsPageBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\SynchronizeRecordings\SynchronizeRecordingsWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\TvRecording.cs" />
+    <Compile Include="Wizards\WizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\WizardForm.Designer.cs">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\WizardPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Wizards\WizardPage.Designer.cs">
+      <DependentUpon>WizardPage.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArgusTV.Client.Common\ArgusTV.Client.Common.csproj">
+      <Project>{2702DCFE-6086-48A0-A6DC-DB1D272AEFB3}</Project>
+      <Name>ArgusTV.Client.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.Common\ArgusTV.Common.csproj">
+      <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f5472be}</Project>
+      <Name>ArgusTV.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2d3b808e-4e79-40df-b2fa-8c87fb50d7aa}</Project>
+      <Name>ArgusTV.DataContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.csproj">
+      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538d5da}</Project>
+      <Name>ArgusTV.ServiceProxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.WinForms\ArgusTV.WinForms.csproj">
+      <Project>{3dd48154-4e62-4caf-834d-2f6565e16e63}</Project>
+      <Name>ArgusTV.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.UI.Process\ArgusTV.UI.Process.csproj">
+      <Project>{A35F0ED7-98ED-4EE2-99C6-EA2AF880F8CD}</Project>
+      <Name>ArgusTV.UI.Process</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.ico" />
+    <None Include="Resources\RecordingFolder.ico" />
+    <None Include="Resources\RecordingFolderInProgress.ico" />
+    <None Include="Resources\RecordingFolderInProgressOpen.ico" />
+    <None Include="Resources\RecordingFolderOpen.ico" />
+    <None Include="Resources\MenuHeaderBullet.png" />
+    <None Include="Resources\MenuItemBullet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\Channel.ico" />
+    <None Include="Resources\ChannelGroupClosed.ico" />
+    <None Include="Resources\ChannelGroupOpen.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\ArgusTV.UI.Process.CurrentAndNextProgramsList.datasource" />
+    <None Include="Resources\Logo_Dot_i.png" />
+    <None Include="Resources\RecordGrayIcon.ico" />
+    <None Include="Resources\RecordSeriesGrayIcon.ico" />
+    <None Include="Resources\AboutLogo.png" />
+    <None Include="Resources\WizardHeader.bmp" />
+    <None Include="Resources\LogError.ico" />
+    <None Include="Resources\LogInformation.ico" />
+    <None Include="Resources\LogWarning.ico" />
+    <None Include="Resources\Transparent.ico" />
+    <None Include="Resources\TvRecording.ico" />
+    <None Include="Resources\TvRecordingInProgress.ico" />
+    <None Include="Resources\TvRecordingMissing.ico" />
+    <None Include="Resources\TvRecordingPartial.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Donate.png" />
+    <Content Include="Resources\SplashScreen.png" />
+    <Content Include="Resources\TvRecordingInProgressUnwatched.ico" />
+    <Content Include="Resources\TvRecordingPartialUnwatched.ico" />
+    <Content Include="Resources\TvRecordingUnwatched.ico" />
+    <Content Include="Resources\WaitIndicator.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

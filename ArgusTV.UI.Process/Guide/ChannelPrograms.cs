@@ -23,7 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.Process.Guide
@@ -31,7 +30,7 @@ namespace ArgusTV.UI.Process.Guide
     [Serializable]
     public class ChannelPrograms
     {
-        public ChannelPrograms(DateTime lowerBoundTime, DateTime upperBoundTime, GuideProgramSummary[] guidePrograms)
+        public ChannelPrograms(DateTime lowerBoundTime, DateTime upperBoundTime, IEnumerable<GuideProgramSummary> guidePrograms)
         {
             _lowerBoundTime = lowerBoundTime;
             _upperBoundTime = upperBoundTime;

@@ -30,7 +30,7 @@ using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -1628,10 +1628,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_channelId != Guid.Empty && strChannel != string.Empty)
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    strLogo = Utility.GetLogoImage(_channelId, strChannel, tvSchedulerAgent);
-                }
+                strLogo = Utility.GetLogoImage(_channelId, strChannel);
             }
 
             if (imgTvChannelLogo != null)
@@ -1784,11 +1781,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     if (_channelId != Guid.Empty && channelName != string.Empty)
                     {
-                        string strLogo = string.Empty;
-                        using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                        {
-                            strLogo = Utility.GetLogoImage(_channelId, channelName, tvSchedulerAgent);
-                        }
+                        string strLogo = Utility.GetLogoImage(_channelId, channelName);
                         if (string.IsNullOrEmpty(strLogo))
                         {
                             strLogo = "defaultVideoBig.png";

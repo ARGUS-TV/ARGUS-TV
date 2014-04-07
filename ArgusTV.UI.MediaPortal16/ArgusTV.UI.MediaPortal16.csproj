@@ -20,7 +20,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -46,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,6 +57,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <OutputPath>bin\Test\</OutputPath>
@@ -72,17 +74,9 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceAgents">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceAgents.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceContracts">
-      <HintPath>..\ReferencedAssemblies\_NET35\ArgusTV.ServiceContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Common.Utils, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies16\Common.Utils.dll</HintPath>
@@ -102,11 +96,11 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -125,7 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelNavigator.cs" />
-    <Compile Include="EventListener.cs" />
     <Compile Include="settings\ChannelManagment.cs" />
     <Compile Include="settings\ClientSettingsBase.cs" />
     <Compile Include="settings\ServerSettingsBase.cs" />
@@ -301,6 +294,7 @@
     <Content Include="skin\Titan\Media\ARGUS_text.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="PostBuild.cmd" />
   </ItemGroup>
   <ItemGroup>
@@ -337,16 +331,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\_NET40\ArgusTV.Client.Common\ArgusTV.Client.Common.NET40.csproj">
-      <Project>{2702dcfe-6086-48a0-a6dc-db1d272aefb2}</Project>
-      <Name>ArgusTV.Client.Common.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.Client.Common\ArgusTV.Client.Common.csproj">
+      <Project>{2702dcfe-6086-48a0-a6dc-db1d272aefb3}</Project>
+      <Name>ArgusTV.Client.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\_NET40\ArgusTV.UI.Process\ArgusTV.UI.Process.NET40.csproj">
-      <Project>{a35f0ed7-98ed-4ee2-99c6-ea2af880f8c4}</Project>
-      <Name>ArgusTV.UI.Process.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2d3b808e-4e79-40df-b2fa-8c87fb50d7aa}</Project>
+      <Name>ArgusTV.DataContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.csproj">
+      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538d5da}</Project>
+      <Name>ArgusTV.ServiceProxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.UI.Process\ArgusTV.UI.Process.csproj">
+      <Project>{a35f0ed7-98ed-4ee2-99c6-ea2af880f8cd}</Project>
+      <Name>ArgusTV.UI.Process</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

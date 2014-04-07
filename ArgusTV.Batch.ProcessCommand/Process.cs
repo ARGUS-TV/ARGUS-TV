@@ -27,8 +27,7 @@ using System.Runtime.Serialization;
 using System.Diagnostics;
 using System.Management;
 
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.Batch.ProcessCommand
@@ -49,48 +48,45 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, "Creating MP xml");
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
+                        string recordedFileName = args[1];
+
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
+                        if (recording != null)
                         {
-                            string recordedFileName = args[1];
+                            Tags tags = new Tags();
+                            tags.SimpleTags.Add(new SimpleTag("TITLE", recording.Title));
+                            tags.SimpleTags.Add(new SimpleTag("COMMENT", recording.Description));
+                            tags.SimpleTags.Add(new SimpleTag("GENRE", recording.Category));
+                            tags.SimpleTags.Add(new SimpleTag("CHANNEL_NAME", recording.ChannelDisplayName));
 
-                            Recording recording = controlServiceAgent.GetRecordingByFileName(recordedFileName);
-                            if (recording != null)
+                            string myVideoFileName = Path.ChangeExtension(recordedFileName, "xml");
+                            FileStream outFile = new FileStream(myVideoFileName, FileMode.Create, FileAccess.Write, FileShare.None);
+                            try
                             {
-                                Tags tags = new Tags();
-                                tags.SimpleTags.Add(new SimpleTag("TITLE", recording.Title));
-                                tags.SimpleTags.Add(new SimpleTag("COMMENT", recording.Description));
-                                tags.SimpleTags.Add(new SimpleTag("GENRE", recording.Category));
-                                tags.SimpleTags.Add(new SimpleTag("CHANNEL_NAME", recording.ChannelDisplayName));
+                                XmlSerializerNamespaces nspaces = new XmlSerializerNamespaces();
+                                nspaces.Add(String.Empty, String.Empty);
 
-                                string myVideoFileName = Path.ChangeExtension(recordedFileName, "xml");
-                                FileStream outFile = new FileStream(myVideoFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-                                try
-                                {
-                                    XmlSerializerNamespaces nspaces = new XmlSerializerNamespaces();
-                                    nspaces.Add(String.Empty, String.Empty);
-
-                                    XmlSerializer serializer = new XmlSerializer(typeof(Tags));
-                                    serializer.Serialize(outFile, tags, nspaces);
-                                }
-                                catch (SerializationException ex)
-                                {
-                                    Debug.WriteLine("Failed to serialize. Reason: " + ex.Message, "Error");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine(ex.Message);
-                                }
-                                finally
-                                {
-                                    outFile.Close();
-                                }
+                                XmlSerializer serializer = new XmlSerializer(typeof(Tags));
+                                serializer.Serialize(outFile, tags, nspaces);
                             }
-                            else
+                            catch (SerializationException ex)
                             {
-                                Log(LogSeverity.Error, string.Format("Failed to find recording \"{0}\"", recordedFileName));
+                                Debug.WriteLine("Failed to serialize. Reason: " + ex.Message, "Error");
                             }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                outFile.Close();
+                            }
+                        }
+                        else
+                        {
+                            Log(LogSeverity.Error, string.Format("Failed to find recording \"{0}\"", recordedFileName));
                         }
                     }
                 }
@@ -102,15 +98,11 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, string.Format("Deleting {0} from ARGUS TV {1} the actual recording", args[1], (args[2] == "1" ? "and" : "but not")));
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
-                        {
-                            string recordedFileName = args[1];
-                            Boolean keepGile = (args[2] == "1" ? true : false);
-                            controlServiceAgent.DeleteRecording(recordedFileName, keepGile);
-
-                        }
+                        string recordedFileName = args[1];
+                        Boolean keepGile = (args[2] == "1" ? true : false);
+                        Proxies.ControlService.DeleteRecording(recordedFileName, keepGile).Wait();
                     }
                 }
                 else if (args.Length == 4 && String.Equals(args[0], "description", StringComparison.InvariantCultureIgnoreCase))
@@ -120,21 +112,18 @@ namespace ArgusTV.Batch.ProcessCommand
                     string outputFileName = Path.ChangeExtension(args[1], args[2]);
                     string fileString = args[3].ToLower();
                     Log(LogSeverity.Information, string.Format("Creating description file for {0} called {1}", args[1], outputFileName));
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
+                        Recording tvRecording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
+                        fileString = fileString.Replace("{description}", tvRecording.Description);
+                        fileString = fileString.Replace("{starttime}", tvRecording.StartTime.ToString());
+                        fileString = fileString.Replace("{stoptime}", tvRecording.StopTime.ToString());
+                        fileString = fileString.Replace("{title}", tvRecording.Title.ToString());
+                        fileString = fileString.Replace("{episodenumber}", tvRecording.EpisodeNumber.ToString());
+                        fileString = fileString.Replace("{seriesnumber}", tvRecording.SeriesNumber.ToString());
+                        using (StreamWriter descriptionfile = new StreamWriter(outputFileName, false, Encoding.UTF8))
                         {
-                            Recording tvRecording = controlServiceAgent.GetRecordingByFileName(recordedFileName);
-                            fileString = fileString.Replace("{description}", tvRecording.Description);
-                            fileString = fileString.Replace("{starttime}", tvRecording.StartTime.ToString());
-                            fileString = fileString.Replace("{stoptime}", tvRecording.StopTime.ToString());
-                            fileString = fileString.Replace("{title}", tvRecording.Title.ToString());
-                            fileString = fileString.Replace("{episodenumber}", tvRecording.EpisodeNumber.ToString());
-                            fileString = fileString.Replace("{seriesnumber}", tvRecording.SeriesNumber.ToString());
-                            using (StreamWriter descriptionfile = new StreamWriter(outputFileName, false, Encoding.UTF8))
-                            {
-                                descriptionfile.WriteLine(fileString);
-                            }
+                            descriptionfile.WriteLine(fileString);
                         }
                     }
                 }
@@ -142,74 +131,62 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, string.Format("Renaming {0} to {1}", args[1], args[2]));
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
+                        string recordedFileName = args[1];
+                        string newFileName = args[2];
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(newFileName).Result;
+
+                        if (recording == null)
                         {
-                            string recordedFileName = args[1];
-                            string newFileName = args[2];
-                            Recording recording;
-
-                            using (ControlServiceAgent controlAgent = new ControlServiceAgent())
-                            {
-                                recording = controlAgent.GetRecordingByFileName(newFileName);
-                            }
-
-                            if (recording == null)
-                            {
-                                string lUncPath;
-                                if (newFileName.StartsWith("\\"))
-                                    lUncPath = newFileName;
-                                else
-                                {
-                                    try
-                                    {
-                                        lUncPath = GetUncPath(newFileName);
-                                    }
-                                    catch (IOException)
-                                    {
-                                        Console.Error.WriteLine("Could not get a UNC path for recording");
-                                        Log(LogSeverity.Warning, string.Format("Could not convert {0} to an unc path", newFileName));
-                                        LogArgs(LogSeverity.Information, args);
-                                        return -2;
-                                    }
-                                }
-                                controlServiceAgent.ChangeRecordingFile(recordedFileName, lUncPath, null, null);
-                            }
+                            string lUncPath;
+                            if (newFileName.StartsWith("\\"))
+                                lUncPath = newFileName;
                             else
                             {
-                                Console.Error.WriteLine("Could not move recording as another one with same name allready exsist");
-                                Log(LogSeverity.Warning, string.Format("Could not rename as a recording with the name {0} allready exist in database", newFileName));
-                                LogArgs(LogSeverity.Information, args);
-                                return -2;
+                                try
+                                {
+                                    lUncPath = GetUncPath(newFileName);
+                                }
+                                catch (IOException)
+                                {
+                                    Console.Error.WriteLine("Could not get a UNC path for recording");
+                                    Log(LogSeverity.Warning, string.Format("Could not convert {0} to an unc path", newFileName));
+                                    LogArgs(LogSeverity.Information, args);
+                                    return -2;
+                                }
                             }
+                            Proxies.ControlService.ChangeRecordingFile(recordedFileName, lUncPath, null, null).Wait();
+                        }
+                        else
+                        {
+                            Console.Error.WriteLine("Could not move recording as another one with same name already exists");
+                            Log(LogSeverity.Warning, string.Format("Could not rename as a recording with the name {0} already exists in database", newFileName));
+                            LogArgs(LogSeverity.Information, args);
+                            return -2;
                         }
                     }
                 }
                 else if (args.Length >= 2 && String.Equals(args[0], "IsPartial", StringComparison.InvariantCultureIgnoreCase))
                 {
                     InitializeServiceChannelFactories();
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
+                        string recordedFileName = args[1];
+                        Recording recording;
+
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
+
+                        if (recording != null)
                         {
-                            string recordedFileName = args[1];
-                            Recording recording;
-
-                            using (ControlServiceAgent controlAgent = new ControlServiceAgent())
-                            {
-                                recording = controlAgent.GetRecordingByFileName(recordedFileName);
-                            }
-
-                            if (recording != null)
-                                return (recording.IsPartialRecording ? -1 : 0);
-                            else
-                            {
-                                Console.Error.WriteLine("Could not check recording as it could not be found in the database");
-                                Log(LogSeverity.Warning, string.Format("{0} not found in the ARGUS TV database", args[1]));
-                                LogArgs(LogSeverity.Information, args);
-                                return -2;
-                            }
+                            return (recording.IsPartialRecording ? -1 : 0);
+                        }
+                        else
+                        {
+                            Console.Error.WriteLine("Could not check recording as it could not be found in the database");
+                            Log(LogSeverity.Warning, string.Format("{0} not found in the ARGUS TV database", args[1]));
+                            LogArgs(LogSeverity.Information, args);
+                            return -2;
                         }
                     }
                     else
@@ -220,23 +197,17 @@ namespace ArgusTV.Batch.ProcessCommand
                 else if (args.Length >= 2 && String.Equals(args[0], "Exist", StringComparison.InvariantCultureIgnoreCase))
                 {
                     InitializeServiceChannelFactories();
-                    if (ServiceChannelFactories.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        using (ControlServiceAgent controlServiceAgent = new ControlServiceAgent())
-                        {
-                            string recordedFileName = args[1];
-                            Recording recording;
+                        string recordedFileName = args[1];
+                        Recording recording;
 
-                            using (ControlServiceAgent controlAgent = new ControlServiceAgent())
-                            {
-                                recording = controlAgent.GetRecordingByFileName(recordedFileName);
-                            }
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
 
-                            if (recording != null)
-                                return 0;
-                            else
-                                return -1;
-                        }
+                        if (recording != null)
+                            return 0;
+                        else
+                            return -1;
                     }
                     else
                     {
@@ -257,7 +228,7 @@ namespace ArgusTV.Batch.ProcessCommand
             {
                 return -2;
             }
-            if (ServiceChannelFactories.IsInitialized)
+            if (Proxies.IsInitialized)
                 return 0;
             else
                 return -3;
@@ -268,7 +239,7 @@ namespace ArgusTV.Batch.ProcessCommand
             ServerSettings serverSettings = new ServerSettings();
             serverSettings.ServerName = Properties.Settings.Default.ArgusTVServerName;
             serverSettings.Port = Properties.Settings.Default.ArgusTVPort;
-            ServiceChannelFactories.Initialize(serverSettings, false);
+            Proxies.Initialize(serverSettings, false);
         }
 
         private static void ShowHelp()
@@ -315,34 +286,28 @@ namespace ArgusTV.Batch.ProcessCommand
 
         private static void Log(LogSeverity severity, string message)
         {
-            if (!ServiceChannelFactories.IsInitialized)
+            if (!Proxies.IsInitialized)
                 InitializeServiceChannelFactories();
 
-            if (ServiceChannelFactories.IsInitialized)
+            if (Proxies.IsInitialized)
             {
-                using (LogServiceAgent logServiceAgent = new LogServiceAgent())
-                {
-                    logServiceAgent.LogMessage(_moduleName, severity, message);
-                }
+                Proxies.LogService.LogMessage(_moduleName, severity, message);
             }
         }
 
         private static void LogArgs(LogSeverity severity, string[] args)
         {
-            if (!ServiceChannelFactories.IsInitialized)
+            if (!Proxies.IsInitialized)
                 InitializeServiceChannelFactories();
 
-            if (ServiceChannelFactories.IsInitialized)
+            if (Proxies.IsInitialized)
             {
-                using (LogServiceAgent logServiceAgent = new LogServiceAgent())
+                StringBuilder message = new StringBuilder(String.Format("BatchProcessor called with {0} args :", args.Length));
+                foreach (string arg in args)
                 {
-                    StringBuilder message = new StringBuilder(String.Format("BatchProcessor called with {0} args :", args.Length));
-                    foreach (string arg in args)
-                    {
-                        message.AppendFormat(" {0},", arg);
-                    }
-                    logServiceAgent.LogMessage(_moduleName, severity, message.ToString(0, message.Length - 1));
+                    message.AppendFormat(" {0},", arg);
                 }
+                Proxies.LogService.LogMessage(_moduleName, severity, message.ToString(0, message.Length - 1));
             }
         }
     }

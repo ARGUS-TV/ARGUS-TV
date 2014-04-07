@@ -23,8 +23,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process.Recordings
 {
@@ -48,10 +48,20 @@ namespace ArgusTV.UI.Process.Recordings
             _model.RecordingsByGroup.Clear();
         }
 
-        public void ReloadRecordingGroups(IControlService tvControlAgent, RecordingGroupMode groupMode)
+        public void ReloadRecordingGroups(RecordingGroupMode groupMode)
         {
-            _model.RecordingGroups = new List<RecordingGroup>(tvControlAgent.GetAllRecordingGroups(_model.ChannelType, groupMode));
+            _model.RecordingGroups = new List<RecordingGroup>(Proxies.ControlService.GetAllRecordingGroups(_model.ChannelType, groupMode).Result);
             _model.RecordingsByGroup.Clear();
+
+            int index = 0;
+            _model.RecordingGroups.ForEach(g =>
+            {
+                if (g.SingleRecording != null)
+                {
+                    _model.RecordingsByGroup[index] = new List<RecordingSummary>() { g.SingleRecording };
+                }
+                index++;
+            });
         }
 
         public RecordingSummary GetRecordingById(Guid recordingId)
@@ -72,26 +82,23 @@ namespace ArgusTV.UI.Process.Recordings
             return null;
         }
 
-        public RecordingSummary[] GetRecordingsForGroup(IControlService tvControlAgent, int groupIndex, bool includeNonExisting)
+        public List<RecordingSummary> GetRecordingsForGroup(int groupIndex, bool includeNonExisting)
         {
             if (!_model.RecordingsByGroup.ContainsKey(groupIndex))
             {
                 switch (_model.RecordingGroups[groupIndex].RecordingGroupMode)
                 {
                     case RecordingGroupMode.GroupBySchedule:
-                        _model.RecordingsByGroup[groupIndex] = tvControlAgent.GetRecordingsForSchedule(_model.RecordingGroups[groupIndex].ScheduleId, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForSchedule(_model.RecordingGroups[groupIndex].ScheduleId, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByChannel:
-                        _model.RecordingsByGroup[groupIndex] = tvControlAgent.GetRecordingsOnChannel(_model.RecordingGroups[groupIndex].ChannelId, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsOnChannel(_model.RecordingGroups[groupIndex].ChannelId, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByProgramTitle:
-                        _model.RecordingsByGroup[groupIndex] = tvControlAgent.GetRecordingsForProgramTitle(_model.ChannelType, _model.RecordingGroups[groupIndex].ProgramTitle, includeNonExisting);
-                        break;
-                    case RecordingGroupMode.GroupByRecordingDay:
-                        _model.RecordingsByGroup[groupIndex] = tvControlAgent.GetRecordingsForOneDay(_model.ChannelType, _model.RecordingGroups[groupIndex].LatestProgramStartTime, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForProgramTitle(_model.ChannelType, _model.RecordingGroups[groupIndex].ProgramTitle, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByCategory:
-                        _model.RecordingsByGroup[groupIndex] = tvControlAgent.GetRecordingsForCategory(_model.ChannelType, _model.RecordingGroups[groupIndex].Category, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForCategory(_model.ChannelType, _model.RecordingGroups[groupIndex].Category, includeNonExisting).Result;
                         break;
                 }
             }
@@ -117,10 +124,6 @@ namespace ArgusTV.UI.Process.Recordings
                                                                   recordingGroup.RecordingsCount,
                                                                   recordingGroup.LatestProgramStartTime,
                                                                   recordingsText);
-                case RecordingGroupMode.GroupByRecordingDay:
-                    return String.Format("{0:D} ({1} {2})", recordingGroup.LatestProgramStartTime,
-                                                            recordingGroup.RecordingsCount,
-                                                            recordingsText);
                 case RecordingGroupMode.GroupByCategory:
                     return String.Format("{0} - {2:g} ({1} {3})", String.IsNullOrEmpty(recordingGroup.Category) ? unknownText : recordingGroup.Category,
                                                                   recordingGroup.RecordingsCount,

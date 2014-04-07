@@ -37,8 +37,8 @@ using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.PostProcessing;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
 using ArgusTV.UI.Process.Guide;
+using ArgusTV.ServiceProxy;
 
 #endregion
 
@@ -906,27 +906,24 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (_dlgYesNo.IsConfirmed)
                         {
-                            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(activeRecording.Program.ScheduleId).Result;
+                            if (schedule != null)
                             {
-                                Schedule schedule = tvSchedulerAgent.GetScheduleById(activeRecording.Program.ScheduleId);
-                                if (schedule != null)
+                                if (activeRecording.Program.IsPartOfSeries)
                                 {
-                                    if (activeRecording.Program.IsPartOfSeries)
-                                    {
-                                        tvSchedulerAgent.CancelUpcomingProgram(schedule.ScheduleId,
-                                            currentProgram == null ? null : (Guid?)currentProgram.GuideProgramId,
-                                            currentChannel.ChannelId, activeRecording.Program.StartTime);
-                                    }
-                                    else
-                                    {
-                                        tvSchedulerAgent.DeleteSchedule(schedule.ScheduleId);
-                                    }
-                                    string text = String.Format("{0} {1}-{2}",
-                                          activeRecording.Program.Title,
-                                          activeRecording.Program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                          activeRecording.Program.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-                                    ShowRecordingNotifyDialog(tvSchedulerAgent, currentChannel, text, TextId.RecordingStopped);
+                                    Proxies.SchedulerService.CancelUpcomingProgram(schedule.ScheduleId,
+                                        currentProgram == null ? null : (Guid?)currentProgram.GuideProgramId,
+                                        currentChannel.ChannelId, activeRecording.Program.StartTime).Wait();
                                 }
+                                else
+                                {
+                                    Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId).Wait();
+                                }
+                                string text = String.Format("{0} {1}-{2}",
+                                        activeRecording.Program.Title,
+                                        activeRecording.Program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        activeRecording.Program.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                ShowRecordingNotifyDialog(currentChannel, text, TextId.RecordingStopped);
                             }
                         }
                     }
@@ -935,72 +932,68 @@ namespace ArgusTV.UI.MediaPortal
                         _dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                         if (_dialogMenu != null)
                         {
-                            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+                            _dialogMenu.Reset();
+                            _dialogMenu.SetHeading(Utility.GetLocalizedText(TextId.Record));
+                            if (currentProgram != null)
                             {
-                                _dialogMenu.Reset();
-                                _dialogMenu.SetHeading(Utility.GetLocalizedText(TextId.Record));
-                                if (currentProgram != null)
-                                {
-                                    _dialogMenu.Add(Utility.GetLocalizedText(TextId.CurrentProgram));
-                                }
-                                _dialogMenu.Add("15 " + Utility.GetLocalizedText(TextId.Minutes));
-                                _dialogMenu.Add("30 " + Utility.GetLocalizedText(TextId.Minutes));
-                                _dialogMenu.Add("1 " + Utility.GetLocalizedText(TextId.Hour));
-                                _dialogMenu.Add("1 " + Utility.GetLocalizedText(TextId.Hour) + " 30 " + Utility.GetLocalizedText(TextId.Minutes));
-                                _dialogMenu.Add("2 " + Utility.GetLocalizedText(TextId.Hours));
-                                _bottomDialogMenuVisible = true;
+                                _dialogMenu.Add(Utility.GetLocalizedText(TextId.CurrentProgram));
+                            }
+                            _dialogMenu.Add("15 " + Utility.GetLocalizedText(TextId.Minutes));
+                            _dialogMenu.Add("30 " + Utility.GetLocalizedText(TextId.Minutes));
+                            _dialogMenu.Add("1 " + Utility.GetLocalizedText(TextId.Hour));
+                            _dialogMenu.Add("1 " + Utility.GetLocalizedText(TextId.Hour) + " 30 " + Utility.GetLocalizedText(TextId.Minutes));
+                            _dialogMenu.Add("2 " + Utility.GetLocalizedText(TextId.Hours));
+                            _bottomDialogMenuVisible = true;
 
-                                _dialogMenu.DoModal(GetID);
+                            _dialogMenu.DoModal(GetID);
 
-                                _bottomDialogMenuVisible = false;
+                            _bottomDialogMenuVisible = false;
 
-                                Schedule schedule = null;
-                                string notifyText = String.Empty;
+                            Schedule schedule = null;
+                            string notifyText = String.Empty;
 
-                                int selectedLabel = _dialogMenu.SelectedLabel;
-                                if (currentProgram == null)
-                                {
-                                    selectedLabel++;
-                                }
-                                switch (selectedLabel)
-                                {
-                                    case 0:
-                                        schedule = GuideController.CreateRecordOnceSchedule(tvSchedulerAgent,
-                                            PluginMain.Navigator.CurrentChannel.ChannelType,
-                                            PluginMain.Navigator.CurrentChannel.ChannelId, currentProgram.Title, currentProgram.SubTitle,
-                                            currentProgram.EpisodeNumberDisplay, currentProgram.StartTime);
-                                        notifyText = String.Format("{0} {1}-{2}",
-                                              currentProgram.Title,
-                                              currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                              currentProgram.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-                                        break;
+                            int selectedLabel = _dialogMenu.SelectedLabel;
+                            if (currentProgram == null)
+                            {
+                                selectedLabel++;
+                            }
+                            switch (selectedLabel)
+                            {
+                                case 0:
+                                    schedule = GuideController.CreateRecordOnceSchedule(PluginMain.Navigator.CurrentChannel.ChannelType,
+                                        PluginMain.Navigator.CurrentChannel.ChannelId, currentProgram.Title, currentProgram.SubTitle,
+                                        currentProgram.EpisodeNumberDisplay, currentProgram.StartTime);
+                                    notifyText = String.Format("{0} {1}-{2}",
+                                            currentProgram.Title,
+                                            currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                            currentProgram.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                    break;
 
-                                    case 1:
-                                        schedule = CreateManualSchedule(currentChannel, 15, out notifyText);
-                                        break;
+                                case 1:
+                                    schedule = CreateManualSchedule(currentChannel, 15, out notifyText);
+                                    break;
 
-                                    case 2:
-                                        schedule = CreateManualSchedule(currentChannel, 30, out notifyText);
-                                        break;
+                                case 2:
+                                    schedule = CreateManualSchedule(currentChannel, 30, out notifyText);
+                                    break;
 
-                                    case 3:
-                                        schedule = CreateManualSchedule(currentChannel, 60, out notifyText);
-                                        break;
+                                case 3:
+                                    schedule = CreateManualSchedule(currentChannel, 60, out notifyText);
+                                    break;
 
-                                    case 4:
-                                        schedule = CreateManualSchedule(currentChannel, 90, out notifyText);
-                                        break;
+                                case 4:
+                                    schedule = CreateManualSchedule(currentChannel, 90, out notifyText);
+                                    break;
 
-                                    case 5:
-                                        schedule = CreateManualSchedule(currentChannel, 2 * 60, out notifyText);
-                                        break;
-                                }
+                                case 5:
+                                    schedule = CreateManualSchedule(currentChannel, 2 * 60, out notifyText);
+                                    break;
+                            }
 
-                                if (schedule != null)
-                                {
-                                    tvSchedulerAgent.SaveSchedule(schedule);
-                                    ShowRecordingNotifyDialog(tvSchedulerAgent, currentChannel, notifyText, TextId.RecordingStarted);
-                                }
+                            if (schedule != null)
+                            {
+                                Proxies.SchedulerService.SaveSchedule(schedule).Wait();
+                                ShowRecordingNotifyDialog(currentChannel, notifyText, TextId.RecordingStarted);
                             }
                         }
                     }
@@ -1310,15 +1303,14 @@ namespace ArgusTV.UI.MediaPortal
             return base.OnMessage(message);
         }
 
-        private void ShowRecordingNotifyDialog(SchedulerServiceAgent tvSchedulerAgent,
-            Channel currentChannel, string text, TextId headingTextId)
+        private void ShowRecordingNotifyDialog(Channel currentChannel, string text, TextId headingTextId)
         {
             if (!_enableRecNotification)
             {
                 GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlgNotify != null)
                 {
-                    string logo = Utility.GetLogoImage(currentChannel, tvSchedulerAgent);
+                    string logo = Utility.GetLogoImage(currentChannel);
                     dlgNotify.Reset();
                     dlgNotify.ClearAll();
                     dlgNotify.SetImage(logo);
@@ -1334,17 +1326,14 @@ namespace ArgusTV.UI.MediaPortal
 
         private Schedule CreateManualSchedule(Channel channel, int durationMinutes, out string notifyText)
         {
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-            {
-                Schedule schedule = tvSchedulerAgent.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording);
-                DateTime startTime = DateTime.Now;
-                TimeSpan duration = new TimeSpan(0, durationMinutes, 0);
-                schedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);
-                schedule.Rules.Add(ScheduleRuleType.ManualSchedule, startTime, new ScheduleTime(duration));
-                schedule.Name = String.Format(CultureInfo.CurrentCulture, "{0} {1:g}-{2:t}", channel.DisplayName, startTime, startTime.Add(duration));
-                notifyText = schedule.Name;
-                return schedule;
-            }
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording).Result;
+            DateTime startTime = DateTime.Now;
+            TimeSpan duration = new TimeSpan(0, durationMinutes, 0);
+            schedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);
+            schedule.Rules.Add(ScheduleRuleType.ManualSchedule, startTime, new ScheduleTime(duration));
+            schedule.Name = String.Format(CultureInfo.CurrentCulture, "{0} {1:g}-{2:t}", channel.DisplayName, startTime, startTime.Add(duration));
+            notifyText = schedule.Name;
+            return schedule;
         }
 
         void ShowContextMenu()

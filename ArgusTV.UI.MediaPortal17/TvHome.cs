@@ -23,22 +23,20 @@
 #endregion
 
 using System;
-using System.Threading;
-using System.Windows.Forms;
-using System.Globalization;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
+using System.Net;
 using System.Net.NetworkInformation;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
-using MediaPortal.Player;
-using MediaPortal.Util;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Profile;
-
-using ArgusTV.ServiceAgents;
+using MediaPortal.Util;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -78,7 +76,6 @@ namespace ArgusTV.UI.MediaPortal
 
         // Create the crop manager once to enable it.
         private TvCropManager _tvCropManager = new TvCropManager();
-        private EventListener _eventListener = new EventListener();
         private NotifyManager _notifyManager = new NotifyManager();
 
         #region ISetupForm Members
@@ -233,7 +230,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (PluginMain.IsConnected())
                         {
                             // Tell the server we need it.
-                            this.CoreAgent.KeepServerAlive();
+                            Proxies.CoreService.KeepServerAlive();
                         }
 
                         if (displayNeeded)
@@ -250,10 +247,12 @@ namespace ArgusTV.UI.MediaPortal
                 if (PluginMain.IsConnected())
                 {
                     PluginMain.Navigator.SendLiveStreamKeepAlive();
-                    _eventListener.EnsureListener();
                 }
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Log.Error("DoKeepAlive: failed to keep live stream alive: {0}", ex.ToString());
+            }
             return 0;
         }
 
@@ -309,27 +308,27 @@ namespace ArgusTV.UI.MediaPortal
                     Thread.Sleep(2000);
                 }
                 Log.Debug("CacheChannelsThread: started");
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    List<CurrentAndNextProgram> _currentAndNextPrograms = new List<CurrentAndNextProgram>();
-                    try
-                    {
-                        ChannelGroup currgroup = PluginMain.Navigator.CurrentGroup;
-                        if (currgroup != null)
-                        {
-                            _currentAndNextPrograms = new List<CurrentAndNextProgram>(tvSchedulerAgent.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, true, null));
-                        }
 
-                        List<ChannelGroup> groups = PluginMain.Navigator.GetGroups(ChannelType.Television);
-                        foreach (ChannelGroup group in groups)
-                        {
-                            _currentAndNextPrograms = new List<CurrentAndNextProgram>(tvSchedulerAgent.GetCurrentAndNextForGroup(group.ChannelGroupId, true, true, null));
-                        }
+                List<CurrentAndNextProgram> _currentAndNextPrograms = new List<CurrentAndNextProgram>();
+                try
+                {
+                    ChannelGroup currgroup = PluginMain.Navigator.CurrentGroup;
+                    if (currgroup != null)
+                    {
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, null).Result);
                     }
-                    catch { Log.Error("CacheChannelsThread: error"); }
-                    _currentAndNextPrograms.Clear();
-                    _currentAndNextPrograms = null;
+
+                    List<ChannelGroup> groups = PluginMain.Navigator.GetGroups(ChannelType.Television);
+                    foreach (ChannelGroup group in groups)
+                    {
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(group.ChannelGroupId, true, null).Result);
+                    }
                 }
+                catch { Log.Error("CacheChannelsThread: error"); }
+
+                _currentAndNextPrograms.Clear();
+                _currentAndNextPrograms = null;
+
                 Log.Debug("CacheChannelsThread: ended");
             }
         }
@@ -481,10 +480,10 @@ namespace ArgusTV.UI.MediaPortal
                 try
                 {
                     SaveSettings();
+                    StopEventListenerTask();
                     StopKeepAliveThread();
                     StopCacheMiniGuideChannelsThread();
                     _notifyManager.stop();
-                    //_eventListener.StopListener(); 
 
                     g_Player.Stop();
                     if (PluginMain.Navigator != null)
@@ -517,9 +516,9 @@ namespace ArgusTV.UI.MediaPortal
 
                     PluginMain.EnsureConnection(true, false);
                     _notifyManager.start();
-                    _eventListener.StartListener();
                     StartKeepAliveThread();
                     StartCacheMiniGuideChannelsThread();
+                    EnsureEventListenerTaskStarted();
                     
                     if (PluginMain.IsConnected())
                     {
@@ -662,16 +661,12 @@ namespace ArgusTV.UI.MediaPortal
                                     text = text.Replace("\\r", " ");
 
                                     string heading = string.Empty;
-                                    string tvlogo = string.Empty;
-                                    using (SchedulerServiceAgent SchedulerAgent = new SchedulerServiceAgent())
-                                    {
-                                        if (channel.ChannelType == ChannelType.Television)
-                                            heading = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName; //my tv
-                                        else
-                                            heading = GUILocalizeStrings.Get(665) + " - " + channel.DisplayName; //my radio
+                                    if (channel.ChannelType == ChannelType.Television)
+                                        heading = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName; //my tv
+                                    else
+                                        heading = GUILocalizeStrings.Get(665) + " - " + channel.DisplayName; //my radio
 
-                                        tvlogo = Utility.GetLogoImage(channel, SchedulerAgent);
-                                    }
+                                    string tvlogo = Utility.GetLogoImage(channel);
 
                                     GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                                     if (pDlgNotify != null)
@@ -712,11 +707,8 @@ namespace ArgusTV.UI.MediaPortal
                             else
                                 head = GUILocalizeStrings.Get(1447);
 
-                            using (SchedulerServiceAgent SchedulerAgent = new SchedulerServiceAgent())
-                            {
-                                Channel chan = SchedulerAgent.GetChannelById(recording.ChannelId);
-                                logo = Utility.GetLogoImage(chan, SchedulerAgent);
-                            }
+                            Channel chan = Proxies.SchedulerService.GetChannelById(recording.ChannelId).Result;
+                            logo = Utility.GetLogoImage(chan);
 
                             string _text = String.Format("{0} {1}-{2}",
                                                   recording.Title,
@@ -774,27 +766,21 @@ namespace ArgusTV.UI.MediaPortal
                         }
 
                         string description = GUILocalizeStrings.Get(736);
-                        using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
+
+                        try
                         {
-                            try
+                            if (prog.GuideProgramId.HasValue)
                             {
-                                if (prog.GuideProgramId.HasValue)
-                                {
-                                    GuideProgram Program = tvGuideAgent.GetProgramById(prog.GuideProgramId.Value);
-                                    description = Program.CreateCombinedDescription(false);
-                                }
+                                GuideProgram Program = Proxies.GuideService.GetProgramById(prog.GuideProgramId.Value).Result;
+                                description = Program.CreateCombinedDescription(false);
                             }
-                            catch { }
                         }
+                        catch { }
 
                         tvNotifyDlg.SetLine(1, prog.Title);
                         tvNotifyDlg.SetLine(2, description);
                         tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), prog.Channel.DisplayName));
-                        string strLogo = string.Empty;
-                        using (SchedulerServiceAgent SchedulerAgent = new SchedulerServiceAgent())
-                        {
-                            strLogo = Utility.GetLogoImage(prog.Channel, SchedulerAgent);
-                        }
+                        string strLogo = Utility.GetLogoImage(prog.Channel);
 
                         tvNotifyDlg.SetImage(strLogo);
                         tvNotifyDlg.TimeOut = _notifyTVTimeout;
@@ -1053,6 +1039,238 @@ namespace ArgusTV.UI.MediaPortal
         public bool ShowDefaultHome()
         {
             return true;
+        }
+
+        #endregion
+
+        #region Events Listener
+
+        private readonly string _eventsClientId = Dns.GetHostName() + "-be22d158859f40ce9fdb505818fd48fe"; // Unique for the MediaPortal client!
+        private bool _eventListenerSubscribed;
+        private Task _eventListenerTask;
+        private CancellationTokenSource _connectionCancellationTokenSource;
+        private SynchronizationContext _uiSyncContext;
+
+        private void EnsureEventListenerTaskStarted()
+        {
+            if (_eventListenerTask == null)
+            {
+                _uiSyncContext = SynchronizationContext.Current;
+
+                _connectionCancellationTokenSource = new CancellationTokenSource();
+                _eventListenerTask = new Task(() => HandleServiceEvents(_connectionCancellationTokenSource.Token),
+                    _connectionCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+                _eventListenerTask.Start();
+            }
+        }
+
+        private void StopEventListenerTask()
+        {
+            try
+            {
+                if (_connectionCancellationTokenSource != null)
+                {
+                    _connectionCancellationTokenSource.Cancel();
+                    _eventListenerTask.Wait();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (_eventListenerTask != null)
+                {
+                    _eventListenerTask.Dispose();
+                    _eventListenerTask = null;
+                }
+                if (_connectionCancellationTokenSource != null)
+                {
+                    _connectionCancellationTokenSource.Dispose();
+                    _connectionCancellationTokenSource = null;
+                }
+            }
+        }
+
+        private int _eventsErrorCount = 0;
+
+        private void HandleServiceEvents(CancellationToken cancellationToken)
+        {
+            for (;;)
+            {
+                if (Proxies.IsInitialized)
+                {
+                    IList<ServiceEvent> events = null;
+                    if (!_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents | EventGroup.ScheduleEvents).Wait();
+                            _eventListenerSubscribed = true;
+                            _eventsErrorCount = 0;
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    if (_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken).Result;
+                            if (events == null)
+                            {
+                                _eventListenerSubscribed = false;
+                            }
+                            else
+                            {
+                                ProcessEvents(events);
+                            }
+                        }
+                        catch
+                        {
+                            if (++_eventsErrorCount > 5)
+                            {
+                                _eventListenerSubscribed = false;
+                            }
+                        }
+                    }
+                }
+                if (cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(_eventListenerSubscribed ? 0 : 2)))
+                {
+                    break;
+                }
+            }
+
+            if (Proxies.IsInitialized
+                && _eventListenerSubscribed)
+            {
+                try
+                {
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId).Wait();
+                }
+                catch
+                {
+                }
+                _eventListenerSubscribed = false;
+            }
+        }
+
+        private void ProcessEvents(IList<ServiceEvent> events)
+        {
+            foreach (var @event in events)
+            {
+                if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingRecordingsChanged()");
+                        PluginMain.UpcomingRecordingsChanged = true;
+                        UpdateGuide();
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.UpcomingAlertsChanged)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingAlertsChanged()");
+                        PluginMain.UpcomingAlertsChanged = true;
+                        UpdateGuide();
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.UpcomingSuggestionsChanged)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingSuggestionsChanged()");
+                        UpdateGuide();
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.RecordingStarted)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording started: {0}", recording.Title);
+                        OnRecordingStarted(recording);
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.RecordingEnded)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording ended: {0}", recording.Title);
+                        PluginMain.ActiveRecordingsChanged = true;
+                        OnRecordingEnded(recording);
+                        UpdateRecordings();
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.LiveStreamEnded)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: LiveStreamEnded()");
+                        OnLiveStreamEnded((LiveStream)@event.Arguments[0], LiveStreamAbortReason.Unknown, null);
+                    }, null);
+                }
+                else if (@event.Name == ServiceEventNames.LiveStreamAborted)
+                {
+                    _uiSyncContext.Post(s =>
+                    {
+                        LiveStream stream = (LiveStream)@event.Arguments[0];
+                        LiveStreamAbortReason reason = (LiveStreamAbortReason)@event.Arguments[1];
+                        Log.Debug("Eventlistener: Livestreamaborted, stream = {0}, reason = {1}", stream.RtspUrl, reason.ToString());
+                        OnLiveStreamEnded(stream, reason, (UpcomingProgram)@event.Arguments[2]);
+                    }, null);
+                }
+            }
+        }
+
+        private void OnLiveStreamEnded(LiveStream liveStream, LiveStreamAbortReason reason, UpcomingProgram program)
+        {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING, 0, 0, 0, 0, 0, null);
+            msg.Object = liveStream;
+            msg.Object2 = program;
+            msg.Label = reason.ToString();
+            msg.Param1 = 4321;//indentification
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+        }
+
+        private void OnRecordingStarted(Recording recording)
+        {
+            PluginMain.ActiveRecordingsChanged = true;
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_REC, 0, 0, 0, 0, 0, null);
+            msg.Param1 = 1;//started
+            msg.Object = recording;
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+        }
+
+        private void OnRecordingEnded(Recording recording)
+        {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_REC, 0, 0, 0, 0, 0, null);
+            msg.Param1 = 0;//ended
+            msg.Object = recording;
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+        }
+
+        private void UpdateGuide()
+        {
+            if (GUIWindowManager.ActiveWindow == WindowId.TvGuide || GUIWindowManager.ActiveWindow == WindowId.RadioGuide)
+            {
+                GuideBase.ReloadSchedules = true;
+            }
+        }
+
+        private void UpdateRecordings()
+        {
+            if (GUIWindowManager.ActiveWindow == WindowId.RecordedRadio || GUIWindowManager.ActiveWindow == WindowId.RecordedTv)
+            {
+                RecordedBase.NeedUpdate = true;
+            }
         }
 
         #endregion

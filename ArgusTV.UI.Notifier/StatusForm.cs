@@ -21,39 +21,37 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.ServiceModel;
-using System.Net.Security;
 using System.IO;
+using System.Net;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process;
-using ArgusTV.WinForms;
-
+using ArgusTV.Common.Logging;
 
 namespace ArgusTV.UI.Notifier
 {
     public partial class StatusForm : Form
     {
-        #region Private members
-
-        private const int _retryTcpConnectionMinutes = 10;
         private const int _maxTipTextLength = 256;
-        private string _eventsServiceBaseUrl;
+
+        private string _eventsClientId;
+        private SynchronizationContext _uiSyncContext;
 
         private ServerStatus _serverStatus = ServerStatus.NotConnected;
         private SettingsForm _settingsForm;
+
+        private Task _eventListenerTask;
+        private CancellationTokenSource _listenerCancellationTokenSource;
         
         private Point _toolTipMousePosition;
         private StatusToolTipForm _toolTipForm;
         private bool _iconContextMenuStripIsOpen;
-
-        #endregion
 
         public StatusForm()
         {
@@ -61,6 +59,76 @@ namespace ArgusTV.UI.Notifier
             _notifyIcon.Text = String.Empty;
             Config.Load();
             _notifyIcon.MouseMove += new MouseEventHandler(_notifyIcon_MouseMove);
+            _uiSyncContext = SynchronizationContext.Current;
+
+            _eventsClientId = String.Format("{0}-{1}-99b8cd44d1ab459cb16f199a48086588", // Unique for the Notifier!
+                Dns.GetHostName(), System.Environment.GetEnvironmentVariable("SESSIONNAME"));
+            StartEventListenerTask();
+        }
+
+        private void SettingsForm_Load(object sender, EventArgs e)
+        {
+            _activeRecordingsControl.ShowScheduleName = true;
+            _upcomingProgramsControl.Sortable = true;
+            _upcomingProgramsControl.ShowScheduleName = true;
+            this.Text += " " + Constants.ProductVersion;
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                CancelEventListenerTask();
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void StartEventListenerTask()
+        {
+            _listenerCancellationTokenSource = new CancellationTokenSource();
+            _eventListenerTask = new Task(() => ConnectAndHandleEvents(_listenerCancellationTokenSource.Token),
+                _listenerCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            _eventListenerTask.Start();
+        }
+
+        private void CancelEventListenerTask()
+        {
+            try
+            {
+                if (_listenerCancellationTokenSource != null)
+                {
+                    _listenerCancellationTokenSource.Cancel();
+                    _eventListenerTask.Wait();
+                }
+            }
+            catch
+            {
+                // Swallow
+            }
+            finally
+            {
+                if (_eventListenerTask != null)
+                {
+                    _eventListenerTask.Dispose();
+                    _eventListenerTask = null;
+                }
+                if (_listenerCancellationTokenSource != null)
+                {
+                    _listenerCancellationTokenSource.Dispose();
+                    _listenerCancellationTokenSource = null;
+                }
+            }
+        }
+
+        private void RestartEventListenerTask()
+        {
+            CancelEventListenerTask();
+            StartEventListenerTask();
         }
 
         #region Tooltip / TrayIcon / Balloon
@@ -174,6 +242,7 @@ namespace ArgusTV.UI.Notifier
             {
                 _notifyIcon.Icon = Properties.Resources.InError;
                 this.IsConnected = false;
+                RestartEventListenerTask();
             }
             this.Icon = _notifyIcon.Icon;
         }
@@ -205,13 +274,8 @@ namespace ArgusTV.UI.Notifier
                 _notifyIcon.ShowBalloonTip(Config.Current.BalloonTimeoutSeconds * 1000, title, tipText.ToString(), ToolTipIcon.Info);
             }
         }
-        #endregion
 
-        internal string EventsServiceBaseUrl
-        {
-            get { return _eventsServiceBaseUrl; }
-            set { _eventsServiceBaseUrl = value; }
-        }
+        #endregion
 
         #region Opening/Closing
 
@@ -257,6 +321,7 @@ namespace ArgusTV.UI.Notifier
             }
             this.Activate();
             RefreshActiveAndUpcomingRecordings();
+            RefreshStatus();
         }
 
         #endregion
@@ -274,8 +339,8 @@ namespace ArgusTV.UI.Notifier
                     && !String.IsNullOrEmpty(Config.Current.MmcPath)
                     && File.Exists(Config.Current.MmcPath);
                 _wakeupServerToolStripMenuItem.Enabled = Config.Current != null
-                    && !IsConnected
-                    && !String.IsNullOrEmpty(Config.Current.TcpServerName)
+                    && !this.IsConnected
+                    && !String.IsNullOrEmpty(Config.Current.ServerName)
                     && !String.IsNullOrEmpty(Config.Current.MacAddresses)
                     && !String.IsNullOrEmpty(Config.Current.IpAddress);
             }
@@ -313,10 +378,12 @@ namespace ArgusTV.UI.Notifier
         {
             if (Config.Current != null)
             {
-                SendWakeOnLanArgs args = new SendWakeOnLanArgs()
+                var args = new SendWakeOnLanArgs()
                 {
-                    TcpServerName = Config.Current.TcpServerName,
-                    TcpPort = Config.Current.TcpPort,
+                    ServerName = Config.Current.ServerName,
+                    Port = Config.Current.Port,
+                    UserName = Config.Current.UserName,
+                    Password = Config.Current.Password,
                     IpAddress = Config.Current.IpAddress,
                     MacAddresses = Config.Current.MacAddresses
                 };
@@ -338,7 +405,7 @@ namespace ArgusTV.UI.Notifier
                     if (_settingsForm.ShowDialog(this) == DialogResult.OK)
                     {
                         this.IsConnected = false;
-                        EnsureConnection();
+                        RestartEventListenerTask();
                     }
                 }
                 _settingsForm = null;
@@ -347,20 +414,7 @@ namespace ArgusTV.UI.Notifier
 
         private void _exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.IsConnected
-                && this.ServiceTransport == ServiceTransport.NetTcp)
-            {
-                try
-                {
-                    using (CoreServiceAgent coreAgent = new CoreServiceAgent())
-                    {
-                        coreAgent.RemoveEventListener(_eventsServiceBaseUrl);
-                    }
-                }
-                catch
-                {
-                }
-            }
+            CancelEventListenerTask();
             Application.Exit();
         }
 
@@ -422,23 +476,23 @@ namespace ArgusTV.UI.Notifier
 
         public void OnRecordingEnded(Recording recording)
         {
-            RefreshStatusNow();
             ShowRecordingBalloon("Recording Ended", recording, false);
+            OnActiveRecordingsChanged();
         }
 
         public void OnLiveStreamStarted(LiveStream liveStream)
         {
-            RefreshStatusNow();
+            OnActiveRecordingsChanged();
         }
 
         public void OnLiveStreamEnded(LiveStream liveStream)
         {
-            RefreshStatusNow();
+            OnActiveRecordingsChanged();
         }
 
         public bool OnUpcomingRecordingsChanged()
         {
-            if (this.IsConnected
+            if (Proxies.IsInitialized
                 && this.Visible
                 && this.WindowState == FormWindowState.Normal)
             {
@@ -450,7 +504,7 @@ namespace ArgusTV.UI.Notifier
 
         public void OnActiveRecordingsChanged()
         {
-            if (this.IsConnected)
+            if (Proxies.IsInitialized)
             {
                 if (!OnUpcomingRecordingsChanged())
                 {
@@ -458,49 +512,8 @@ namespace ArgusTV.UI.Notifier
                 }
             }
         }
+
         #endregion
-
-        #region Privates
-
-        private void RefreshStatusNow()
-        {
-            _refreshTimer.Stop();
-            _refreshTimer.Interval = 10;
-            _refreshTimer.Start();
-        }
-
-        private void _refreshTimer_Tick(object sender, EventArgs e)
-        {
-            _refreshTimer.Stop();
-            try
-            {
-                EnsureConnection();
-                OnActiveRecordingsChanged();
-            }
-            catch
-            {
-            }
-            finally
-            {
-#if DEBUG
-                _refreshTimer.Interval = 10000;
-#else
-                _refreshTimer.Interval = Math.Max(2000, Config.Current.PollIntervalSeconds * 1000);
-#endif
-                _refreshTimer.Start();
-            }
-        }
-
-        private void SettingsForm_Load(object sender, EventArgs e)
-        {
-            _activeRecordingsControl.ShowScheduleName = true;
-            _upcomingProgramsControl.Sortable = true;
-            _upcomingProgramsControl.ShowScheduleName = true;
-            this.Text += " " + Constants.ProductVersion;
-            EnsureConnection();
-            _refreshTimer.Interval = 500;
-            _refreshTimer.Start();
-        }
 
         private void PlaySelectedRecording()
         {
@@ -524,157 +537,165 @@ namespace ArgusTV.UI.Notifier
             }
             return activeRecording;
         }
-        #endregion
 
         #region Connection
 
-        private object _connectionLock = new object();
-        private bool _isConnected;
-        private ServiceTransport _serviceTransport;
+        private bool _eventListenerSubscribed;
+        private int _eventsErrorCount;
 
-        public bool IsConnected
+        public bool IsConnected { get; set; }
+
+        private void ConnectAndHandleEvents(CancellationToken cancellationToken)
         {
-            get
+            Logger.Info("Connection and event listener task started...");
+
+            _eventListenerSubscribed = false;
+            _eventsErrorCount = 0;
+
+            for (; ; )
             {
-                lock (_connectionLock)
+                if (Proxies.IsInitialized)
                 {
-                    return _isConnected;
+                    IList<ServiceEvent> events = null;
+                    if (!_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents).Wait();
+                            _eventListenerSubscribed = true;
+                            _eventsErrorCount = 0;
+
+                            Logger.Info("SubscribeServiceEvents() succeeded");
+
+                            this.IsConnected = true;
+                            _uiSyncContext.Post(s => RefreshStatus(), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warn("SubscribeServiceEvents() failed: " + ex.ToString());
+                        }
+                    }
+                    if (_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            this.IsConnected = true;
+                            _uiSyncContext.Post(s => RefreshStatus(), null);
+
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken).Result;
+                            if (events == null)
+                            {
+                                _eventListenerSubscribed = false;
+                                _uiSyncContext.Post(s => RefreshStatus(), null);
+                            }
+                            else
+                            {
+                                if (events.Count == 0)
+                                {
+                                    // In case of a timeout, let's refresh the general status -- to make sure we don't miss any events.
+                                    _uiSyncContext.Post(s => RefreshStatus(), null);
+                                }
+                                ProcessEvents(events);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            if (ex is ArgusTVNotFoundException
+                                || ++_eventsErrorCount > 5)
+                            {
+                                _eventListenerSubscribed = false;
+                                _uiSyncContext.Post(s => SetStatusIcon(ServerStatus.NotConnected), null);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    _uiSyncContext.Send(s => InitializeConnectionToArgusTV(), null);
+                }
+                if (cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(_eventListenerSubscribed ? 0 : 10)))
+                {
+                    break;
                 }
             }
-            set
+
+            if (Proxies.IsInitialized
+                && _eventListenerSubscribed)
             {
-                lock (_connectionLock)
-                {
-                    _isConnected = value;
-                }
-            }
-        }
-
-        public ServiceTransport ServiceTransport
-        {
-            get
-            {
-                lock (_connectionLock)
-                {
-                    return _serviceTransport;
-                }
-            }
-        }
-
-        private void EnsureConnection()
-        {
-            lock (_connectionLock)
-            {
-                if (!_connectionBackgroundWorker.IsBusy)
-                {
-                    _connectionBackgroundWorker.RunWorkerAsync();
-                }
-            }
-        }
-
-        private DateTime _nextTcpConnectionAttemptTime = DateTime.MinValue;
-
-        #region BackgroundWorker
-
-        private void _connectionBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {            
-            bool retryTcpConnection =
-                (this.ServiceTransport == ServiceTransport.BinaryHttps
-                && !String.IsNullOrEmpty(Config.Current.TcpServerName)
-                && DateTime.Now > _nextTcpConnectionAttemptTime);
-            if (!this.IsConnected
-                || retryTcpConnection)
-            {
-                e.Result = false;
-
                 try
                 {
-                    if (!String.IsNullOrEmpty(Config.Current.TcpServerName))
-                    {
-                        ServerSettings serverSettings = new ServerSettings();
-                        serverSettings.ServerName = Config.Current.TcpServerName;
-                        serverSettings.Port = Config.Current.TcpPort;
-                        serverSettings.Transport = ServiceTransport.NetTcp;
-
-                        ServiceChannelFactories.Initialize(serverSettings, true);
-
-                        using (CoreServiceAgent coreAgent = new CoreServiceAgent())
-                        {
-                            coreAgent.EnsureEventListener(EventGroup.RecordingEvents, _eventsServiceBaseUrl, Constants.EventListenerApiVersion);
-                        }
-                        lock (_connectionLock)
-                        {
-                            _serviceTransport = serverSettings.Transport;
-                            _isConnected = true;
-                        }
-                        _nextTcpConnectionAttemptTime = DateTime.MaxValue;
-                        e.Result = true;
-                    }
-                    else
-                    {
-                        ConnectOverHttps();
-                        e.Result = true;
-                    }
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId).Wait();
                 }
                 catch
                 {
-                    try
-                    {
-                        ConnectOverHttps();
-                        e.Result = true;
-                    }
-                    catch
-                    {
-                        this.IsConnected = false;
-                    }
+                }
+                _eventListenerSubscribed = false;
+            }
+        }
+
+        private void ProcessEvents(IList<ServiceEvent> events)
+        {
+            foreach(var @event in events)
+            {
+                if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged)
+                {
+                    _uiSyncContext.Post(s => OnUpcomingRecordingsChanged(), null);
+                }
+                else if (@event.Name == ServiceEventNames.ActiveRecordingsChanged)
+                {
+                    _uiSyncContext.Post(s => OnActiveRecordingsChanged(), null);
+                }
+                else if (@event.Name == ServiceEventNames.RecordingStarted)
+                {
+                    _uiSyncContext.Post(s => OnRecordingStarted((Recording)@event.Arguments[0]), null);
+                }
+                else if (@event.Name == ServiceEventNames.RecordingEnded)
+                {
+                    _uiSyncContext.Post(s => OnRecordingEnded((Recording)@event.Arguments[0]), null);
+                }
+                else if (@event.Name == ServiceEventNames.LiveStreamStarted
+                    || @event.Name == ServiceEventNames.LiveStreamTuned)
+                {
+                    _uiSyncContext.Post(s => OnLiveStreamStarted((LiveStream)@event.Arguments[0]), null);
+                }
+                else if (@event.Name == ServiceEventNames.LiveStreamEnded
+                    || @event.Name == ServiceEventNames.LiveStreamAborted)
+                {
+                    _uiSyncContext.Post(s => OnLiveStreamEnded((LiveStream)@event.Arguments[0]), null);
                 }
             }
-            else
-            {
-                e.Result = this.IsConnected;
-            }
         }
 
-        private void _connectionBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error == null
-                && (bool)e.Result)
-            {
-                RefreshStatus();
-            }
-            else
-            {
-                SetStatusIcon(ServerStatus.NotConnected);
-            }
-        }
         #endregion
 
-        private void ConnectOverHttps()
+        private async void InitializeConnectionToArgusTV()
         {
-            if (!String.IsNullOrEmpty(Config.Current.HttpsServerName))
+            if (!String.IsNullOrEmpty(Config.Current.ServerName))
             {
                 ServerSettings serverSettings = new ServerSettings();
-                serverSettings.ServerName = Config.Current.HttpsServerName;
-                serverSettings.Port = Config.Current.HttpsPort;
+                serverSettings.ServerName = Config.Current.ServerName;
+                serverSettings.Port = Config.Current.Port;
                 serverSettings.UserName = Config.Current.UserName;
                 serverSettings.Password = Config.Current.Password;
-                serverSettings.Transport = ServiceTransport.BinaryHttps;
-                if (ServiceChannelFactories.Initialize(serverSettings, false))
+                serverSettings.Transport = ServiceTransport.Https;
+                this.IsConnected = await Proxies.InitializeAsync(serverSettings, false, new ProxyLogger());
+                if (this.IsConnected)
                 {
-                    lock (_connectionLock)
-                    {
-                        _serviceTransport = serverSettings.Transport;
-                        _isConnected = true;
-                        _nextTcpConnectionAttemptTime = DateTime.Now.AddMinutes(_retryTcpConnectionMinutes);
-                    }
+                    SetStatusIcon(ServerStatus.Idle);
+                }
+                else
+                {
+                    SetStatusIcon(ServerStatus.NotConnected);
                 }
             }
         }
 
         private class SendWakeOnLanArgs
         {
-            public string TcpServerName { get; set; }
-            public int TcpPort { get; set; }
+            public string ServerName { get; set; }
+            public int Port { get; set; }
+            public string UserName { get; set; }
+            public string Password { get; set; }
             public string IpAddress { get; set; }
             public string MacAddresses { get; set; }
         }
@@ -683,66 +704,54 @@ namespace ArgusTV.UI.Notifier
         {
             SendWakeOnLanArgs args = state as SendWakeOnLanArgs;
             if (args != null
-                && !String.IsNullOrEmpty(args.TcpServerName))
+                && !String.IsNullOrEmpty(args.ServerName))
             {
                 ServerSettings serverSettings = new ServerSettings();
-                serverSettings.ServerName = args.TcpServerName;
-                serverSettings.Port = args.TcpPort;
-                serverSettings.Transport = ServiceTransport.NetTcp;
-
+                serverSettings.ServerName = args.ServerName;
+                serverSettings.Port = args.Port;
+                serverSettings.Transport = ServiceTransport.Https;
+                serverSettings.UserName = args.UserName;
+                serverSettings.Password = args.Password;
                 serverSettings.WakeOnLan.IPAddress = args.IpAddress;
                 serverSettings.WakeOnLan.MacAddresses = args.MacAddresses;
                 serverSettings.WakeOnLan.Enabled = true;
-
-                ServiceChannelFactories.Initialize(serverSettings, false);
+                Proxies.Initialize(serverSettings, false, new ProxyLogger());
             }
         }
 
-        #endregion
-
         #region Refresh Status
 
-        private ActiveRecording[] _activeRecordings = new ActiveRecording[0];
-        private LiveStream[] _liveStreams = new LiveStream[0];
+        private IList<ActiveRecording> _activeRecordings = new List<ActiveRecording>();
+        private IList<LiveStream> _liveStreams = new List<LiveStream>();
         private UpcomingRecording _upcomingRecording;
 
         private class RefreshStatusResult
         {
-            public ActiveRecording[] ActiveRecordings { set; get; }
-
-            public LiveStream[] LiveStreams { set; get; }
-
+            public IList<ActiveRecording> ActiveRecordings { set; get; }
+            public IList<LiveStream> LiveStreams { set; get; }
             public UpcomingRecording UpcomingRecording { set; get; }
         }
 
-        public void RefreshStatus()
+        public async void RefreshStatus()
         {
-            if (!_refreshStatusBackgroundWorker.IsBusy)
+            RefreshStatusResult result = null;
+            if (Proxies.IsInitialized)
             {
-                _refreshStatusBackgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        private void _refreshStatusBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (this.IsConnected)
-            {
-                using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+                try
                 {
-                    RefreshStatusResult result = new RefreshStatusResult();
-                    result.ActiveRecordings = tvControlAgent.GetActiveRecordings();
-                    result.LiveStreams = tvControlAgent.GetLiveStreams();
-                    result.UpcomingRecording = tvControlAgent.GetNextUpcomingRecording(false);
-                    e.Result = result;
+                    result = new RefreshStatusResult()
+                    {
+                        ActiveRecordings = await Proxies.ControlService.GetActiveRecordings(),
+                        LiveStreams = await Proxies.ControlService.GetLiveStreams(),
+                        UpcomingRecording = await Proxies.ControlService.GetNextUpcomingRecording(false)
+                    };
+                }
+                catch
+                {
+                    result = null;
                 }
             }
-        }
-
-        private void _refreshStatusBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error != null
-                || e.Cancelled
-                || e.Result == null)
+            if (result == null)
             {
                 _activeRecordings = new ActiveRecording[0];
                 _liveStreams = new LiveStream[0];
@@ -751,7 +760,6 @@ namespace ArgusTV.UI.Notifier
             }
             else
             {
-                RefreshStatusResult result = (RefreshStatusResult)e.Result;
                 _activeRecordings = result.ActiveRecordings;
                 _liveStreams = result.LiveStreams;
                 _upcomingRecording = result.UpcomingRecording;
@@ -759,13 +767,13 @@ namespace ArgusTV.UI.Notifier
             }
         }
 
-        private static ServerStatus GetServerStatus(ActiveRecording[] activeRecordings, LiveStream[] liveStreams)
+        private static ServerStatus GetServerStatus(IList<ActiveRecording> activeRecordings, IList<LiveStream> liveStreams)
         {
-            if (activeRecordings.Length > 0)
+            if (activeRecordings.Count > 0)
             {
                 return ServerStatus.Recording;
             }
-            else if (liveStreams.Length > 0)
+            else if (liveStreams.Count > 0)
             {
                 return ServerStatus.Streaming;
             }
@@ -778,59 +786,42 @@ namespace ArgusTV.UI.Notifier
 
         private class RefreshProgramsResult
         {
-            public UpcomingRecording[] AllUpcomingRecordings { set; get; }
-
+            public IList<UpcomingRecording> AllUpcomingRecordings { set; get; }
             public UpcomingOrActiveProgramsList UpcomingRecordings { set; get; }
-
-            public ActiveRecording[] ActiveRecordings { set; get; }
-
-            public LiveStream[] LiveStreams { set; get; }
+            public IList<ActiveRecording> ActiveRecordings { set; get; }
+            public IList<LiveStream> LiveStreams { set; get; }
         }
 
-        private void RefreshActiveAndUpcomingRecordings()
-        {
-            if (!_refreshProgramsBackgroundWorker.IsBusy)
-            {
-                _refreshProgramsBackgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        private void _refreshProgramsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private async void RefreshActiveAndUpcomingRecordings()
         {
             RefreshProgramsResult result = null;
-            //DateTime startTime = DateTime.Now;
-
-            if (this.IsConnected)
+            if (Proxies.IsInitialized)
             {
-                using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+                try
                 {
-                    result = new RefreshProgramsResult();
-
-                    result.AllUpcomingRecordings = tvControlAgent.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, true);
-                    result.ActiveRecordings = tvControlAgent.GetActiveRecordings();
-                    result.LiveStreams = tvControlAgent.GetLiveStreams();
+                    result = new RefreshProgramsResult()
+                    {
+                        AllUpcomingRecordings = await Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, true),
+                        ActiveRecordings = await Proxies.ControlService.GetActiveRecordings(),
+                        LiveStreams = await Proxies.ControlService.GetLiveStreams()
+                    };
                     result.UpcomingRecordings = new UpcomingOrActiveProgramsList(result.AllUpcomingRecordings);
                     result.UpcomingRecordings.RemoveActiveRecordings(result.ActiveRecordings);
                 }
+                catch
+                {
+                    result = null;
+                }
             }
 
-            //Utility.EnsureMinimumTime(startTime, 250);
-
-            e.Result = result;
-        }
-
-        private void _refreshProgramsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error != null
-                || e.Cancelled)
+            if (result == null)
             {
                 _activeRecordingsControl.UpcomingPrograms = null;
                 _upcomingProgramsControl.UpcomingPrograms = null;
                 SetStatusIcon(ServerStatus.NotConnected);
             }
-            else if (e.Result != null)
+            else
             {
-                RefreshProgramsResult result = (RefreshProgramsResult)e.Result;
                 SetStatusIcon(GetServerStatus(result.ActiveRecordings, result.LiveStreams));
                 _activeRecordingsControl.UnfilteredUpcomingRecordings = new UpcomingOrActiveProgramsList(result.AllUpcomingRecordings);
                 _activeRecordingsControl.UpcomingPrograms = new UpcomingOrActiveProgramsList(result.ActiveRecordings);
@@ -840,5 +831,12 @@ namespace ArgusTV.UI.Notifier
 
         #endregion
 
+        private class ProxyLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { Logger.Verbose(message, args); }
+            public void Info(string message, params object[] args) { Logger.Info(message, args); }
+            public void Warn(string message, params object[] args) { Logger.Warn(message, args); }
+            public void Error(string message, params object[] args) { Logger.Error(message, args); }
+        }
     }
 }

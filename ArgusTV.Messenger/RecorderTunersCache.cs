@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Messenger
 {
@@ -69,14 +69,11 @@ namespace ArgusTV.Messenger
             {
                 if (!_pluginServices.ContainsKey(recorderTunerId))
                 {
-                    using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+                    _pluginServices.Clear();
+                    var pluginServices = Proxies.ControlService.GetAllPluginServices(false).Result;
+                    foreach (PluginService pluginService in pluginServices)
                     {
-                        _pluginServices.Clear();
-                        PluginService[] pluginServices = tvControlAgent.GetAllPluginServices(false);
-                        foreach (PluginService pluginService in pluginServices)
-                        {
-                            _pluginServices.Add(pluginService.PluginServiceId, pluginService);
-                        }
+                        _pluginServices.Add(pluginService.PluginServiceId, pluginService);
                     }
                 }
                 if (_pluginServices.ContainsKey(recorderTunerId))

@@ -24,8 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process.EditSchedule
 {
@@ -38,8 +38,7 @@ namespace ArgusTV.UI.Process.EditSchedule
             _model = model;
         }
 
-        public void Initialize(IGuideService tvGuideAgent, ISchedulerService tvSchedulerAgent, Schedule schedule,
-            bool forceManualSchedule, string allChannelsGroupName, string defaultFormatName)
+        public void Initialize(Schedule schedule, bool forceManualSchedule, string allChannelsGroupName, string defaultFormatName)
         {
             _model.Schedule = schedule;
             _model.IsManual = forceManualSchedule
@@ -47,7 +46,7 @@ namespace ArgusTV.UI.Process.EditSchedule
 
             if (schedule.ScheduleType == ScheduleType.Recording)
             {
-                _model.RecordingFormats = new SortableBindingList<RecordingFileFormat>(tvSchedulerAgent.GetAllRecordingFileFormats());
+                _model.RecordingFormats = new SortableBindingList<RecordingFileFormat>(Proxies.SchedulerService.GetAllRecordingFileFormats().Result);
                 _model.RecordingFormats.Insert(0, new RecordingFileFormat()
                 {
                     Name = defaultFormatName,
@@ -55,7 +54,7 @@ namespace ArgusTV.UI.Process.EditSchedule
                 });
             }
 
-            Channel[] channels = tvSchedulerAgent.GetAllChannels(schedule.ChannelType, false);
+            var channels = Proxies.SchedulerService.GetAllChannels(schedule.ChannelType, false).Result;
             _model.AllChannels.Clear();
             foreach (Channel channel in channels)
             {
@@ -63,7 +62,7 @@ namespace ArgusTV.UI.Process.EditSchedule
             }
 
             _model.ChannelGroups.Clear();
-            _model.ChannelGroups.AddRange(tvSchedulerAgent.GetAllChannelGroups(schedule.ChannelType, !_model.IsManual));
+            _model.ChannelGroups.AddRange(Proxies.SchedulerService.GetAllChannelGroups(schedule.ChannelType, !_model.IsManual).Result);
             _model.ChannelGroups.Add(new ChannelGroup()
             {
                 ChannelGroupId = schedule.ChannelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
@@ -74,27 +73,27 @@ namespace ArgusTV.UI.Process.EditSchedule
 
             if (!_model.IsManual)
             {
-                _model.Categories = tvGuideAgent.GetAllCategories();
+                _model.Categories = Proxies.GuideService.GetAllCategories().Result;
             }
         }
 
-        public void SaveSchedule(ISchedulerService tvSchedulerAgent)
+        public void SaveSchedule()
         {
-            tvSchedulerAgent.SaveSchedule(_model.Schedule);
+            Proxies.SchedulerService.SaveSchedule(_model.Schedule).Wait();
             ScheduleNamesCache.Clear();
         }
 
-        public void RefreshUpcomingPrograms(ISchedulerService tvSchedulerAgent)
+        public void RefreshUpcomingPrograms()
         {
-            _model.UpcomingPrograms = tvSchedulerAgent.GetUpcomingPrograms(_model.Schedule, true);
+            _model.UpcomingPrograms = Proxies.SchedulerService.GetUpcomingPrograms(_model.Schedule, true).Result;
         }
 
-        public void EnsureChannelsByGroup(ISchedulerService tvSchedulerAgent, Guid channelGroupId)
+        public void EnsureChannelsByGroup(Guid channelGroupId)
         {
             if (!_model.ChannelsByGroup.ContainsKey(channelGroupId))
             {
                 _model.ChannelsByGroup[channelGroupId] =
-                    new List<Channel>(tvSchedulerAgent.GetChannelsInGroup(channelGroupId, true));
+                    new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(channelGroupId, true).Result);
             }
         }
 
@@ -395,7 +394,10 @@ namespace ArgusTV.UI.Process.EditSchedule
                     {
                         expression.Append(arg).Append(" OR ");
                     }
-                    expression.Remove(expression.Length - 4, 4);
+                    if (expression.Length >= 4)
+                    {
+                        expression.Remove(expression.Length - 4, 4);
+                    }
                 }
                 else if (rule.Type == doesNotContainRule)
                 {

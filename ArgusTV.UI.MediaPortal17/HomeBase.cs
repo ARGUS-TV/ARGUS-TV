@@ -35,8 +35,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using Action = MediaPortal.GUI.Library.Action;
 
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -79,24 +78,6 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControlAttribute(24)] protected GUIImage _recordImage;
         [SkinControlAttribute(420)] protected GUILabelControl _settingsLabel;
 
-        #region Service Agents
-
-        private CoreServiceAgent _coreAgent;
-
-        protected ICoreService CoreAgent
-        {
-            get
-            {
-                if (_coreAgent == null)
-                {
-                    _coreAgent = new CoreServiceAgent();
-                }
-                return _coreAgent;
-            }
-        }
-
-        #endregion
-
         #region overrides
 
         public override bool Init()
@@ -108,10 +89,6 @@ namespace ArgusTV.UI.MediaPortal
         public override void DeInit()
         {
             SaveSettings();
-            if (_coreAgent != null)
-            {
-                _coreAgent.Dispose();
-            }
             base.DeInit();
         }
 
@@ -947,10 +924,7 @@ namespace ArgusTV.UI.MediaPortal
             string logo = String.Empty;
             if (channelId != Guid.Empty)
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    logo = Utility.GetLogoImage(channelId, channelName, tvSchedulerAgent);
-                }
+                logo = Utility.GetLogoImage(channelId, channelName);
                 if (String.IsNullOrEmpty(logo))
                 {
                     logo = "defaultVideoBig.png";
@@ -972,154 +946,142 @@ namespace ArgusTV.UI.MediaPortal
 
         private void OnActiveRecordings(List<Guid> ignoreActiveRecordings)
         {
-            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+            List<ActiveRecording> activeRecordings = Proxies.ControlService.GetActiveRecordings().Result;
+
+            if (activeRecordings != null && activeRecordings.Count > 0)
             {
-                List<ActiveRecording> activeRecordings = new List<ActiveRecording>(
-                    tvControlAgent.GetActiveRecordings());
-
-                if (activeRecordings != null && activeRecordings.Count > 0)
+                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+                if (dlg == null)
                 {
-                    GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-                    if (dlg == null)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    dlg.Reset();
-                    dlg.SetHeading(200052); // Active Recordings   
+                dlg.Reset();
+                dlg.SetHeading(200052); // Active Recordings   
 
-                    List<ActiveRecording> listedRecordings = new List<ActiveRecording>();
-                    foreach (ActiveRecording activeRecording in activeRecordings)
+                List<ActiveRecording> listedRecordings = new List<ActiveRecording>();
+                foreach (ActiveRecording activeRecording in activeRecordings)
+                {
+                    if (!ignoreActiveRecordings.Contains(activeRecording.RecordingId))
                     {
-                        if (!ignoreActiveRecordings.Contains(activeRecording.RecordingId))
+                        GUIListItem item = new GUIListItem();
+                        string channelName = activeRecording.Program.Channel.DisplayName;
+                        string programTitle = activeRecording.Program.Title;
+                        string time = String.Format("{0}-{1}",
+                            activeRecording.Program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                            activeRecording.Program.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+                        item.Label = channelName;
+                        item.Label2 = programTitle + "  " + time;
+
+                        string strLogo = Utility.GetLogoImage(activeRecording.Program.Channel);
+                        if (string.IsNullOrEmpty(strLogo))
                         {
-                            GUIListItem item = new GUIListItem();
-                            string channelName = activeRecording.Program.Channel.DisplayName;
-                            string programTitle = activeRecording.Program.Title;
-                            string time = String.Format("{0}-{1}",
-                                activeRecording.Program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                activeRecording.Program.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-                            item.Label = channelName;
-                            item.Label2 = programTitle + "  " + time;
-
-                            string strLogo = string.Empty;
-                            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                            {
-                                strLogo = Utility.GetLogoImage(activeRecording.Program.Channel, tvSchedulerAgent);
-                            }
-
-                            if (string.IsNullOrEmpty(strLogo))
-                            {
-                                strLogo = "defaultVideoBig.png";
-                            }
-
-                            item.IconImage = strLogo;
-                            item.IconImageBig = strLogo;
-                            dlg.Add(item);
-                            listedRecordings.Add(activeRecording);
+                            strLogo = "defaultVideoBig.png";
                         }
-                    }
 
-                    dlg.SelectedLabel = listedRecordings.Count - 1;
-
-                    dlg.DoModal(this.GetID);
-                    if (dlg.SelectedLabel < 0 || listedRecordings.Count == 0 || (dlg.SelectedLabel - 1 > listedRecordings.Count))
-                    {
-                        return;
-                    }
-
-                    ActiveRecording selectedRecording = listedRecordings[dlg.SelectedLabel];
-                    listedRecordings = null;
-
-                    bool deleted = OnAbortActiveRecording(selectedRecording);
-                    if (deleted && !ignoreActiveRecordings.Contains(selectedRecording.RecordingId))
-                    {
-                        ignoreActiveRecordings.Add(selectedRecording.RecordingId);
-                    }
-
-                    if (deleted)
-                    {
-                        OnActiveRecordings(ignoreActiveRecordings); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
+                        item.IconImage = strLogo;
+                        item.IconImageBig = strLogo;
+                        dlg.Add(item);
+                        listedRecordings.Add(activeRecording);
                     }
                 }
-                else if (ignoreActiveRecordings == null || ignoreActiveRecordings.Count == 0)
+
+                dlg.SelectedLabel = listedRecordings.Count - 1;
+
+                dlg.DoModal(this.GetID);
+                if (dlg.SelectedLabel < 0 || listedRecordings.Count == 0 || (dlg.SelectedLabel - 1 > listedRecordings.Count))
                 {
-                    GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-                    if (pDlgOK != null)
-                    {
-                        pDlgOK.SetHeading(200052); //my tv
-                        pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
-                        pDlgOK.SetLine(2, "");
-                        pDlgOK.DoModal(this.GetID);
-                    }
+                    return;
+                }
+
+                ActiveRecording selectedRecording = listedRecordings[dlg.SelectedLabel];
+                listedRecordings = null;
+
+                bool deleted = OnAbortActiveRecording(selectedRecording);
+                if (deleted && !ignoreActiveRecordings.Contains(selectedRecording.RecordingId))
+                {
+                    ignoreActiveRecordings.Add(selectedRecording.RecordingId);
+                }
+
+                if (deleted)
+                {
+                    OnActiveRecordings(ignoreActiveRecordings); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
+                }
+            }
+            else if (ignoreActiveRecordings == null || ignoreActiveRecordings.Count == 0)
+            {
+                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+                if (pDlgOK != null)
+                {
+                    pDlgOK.SetHeading(200052); //my tv
+                    pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
+                    pDlgOK.SetLine(2, "");
+                    pDlgOK.DoModal(this.GetID);
                 }
             }
         }
 
         private bool OnAbortActiveRecording(ActiveRecording rec)
         {
-            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
+            if (rec == null) return false;
+            bool aborted = false;
+            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            if (dlg == null) return false;
+            dlg.Reset();
+            dlg.SetHeading(rec.Program.Title);
+            dlg.AddLocalizedString(1449); //Stop recording
+            dlg.AddLocalizedString(979);  //Play recorded from beginning
+            dlg.AddLocalizedString(980);  //Play recorded from live point
+
+            Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId).Result;
+            if (recording != null && recording.LastWatchedPosition.HasValue)
             {
-                if (rec == null) return false;
-                bool aborted = false;
-                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                if (dlg == null) return false;
-                dlg.Reset();
-                dlg.SetHeading(rec.Program.Title);
-                dlg.AddLocalizedString(1449); //Stop recording
-                dlg.AddLocalizedString(979);  //Play recorded from beginning
-                dlg.AddLocalizedString(980);  //Play recorded from live point
-
-                Recording recording = tvControlAgent.GetRecordingById(rec.RecordingId);
-                if (recording != null && recording.LastWatchedPosition.HasValue)
-                {
-                    dlg.AddLocalizedString(900);//play from last point
-                }
-
-                dlg.DoModal(GetID);
-                switch (dlg.SelectedId)
-                {
-                    case 979:
-                        if (recording != null)
-                        {
-                            RecordedBase.PlayFromPreRecPoint(recording);
-                        }
-                        break;
-
-                    case 980: 
-                        RecordedBase.PlayFromLivePoint(rec);
-                        break;
-
-                    case 900:
-                        if (recording != null)
-                        {
-                            RecordedBase.PlayRecording(recording, recording.LastWatchedPosition.Value);
-                        }
-                        break;
-
-                    case 1449: // Abort
-                        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                        if (dlgYesNo != null)
-                        {
-                            dlgYesNo.Reset();
-                            dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.StopRecording));
-                            dlgYesNo.SetLine(1, rec.Program.Channel.DisplayName);
-                            dlgYesNo.SetLine(2, rec.Program.Title);
-                            dlgYesNo.SetLine(3, string.Empty);
-                            dlgYesNo.SetDefaultToYes(false);
-                            dlgYesNo.DoModal(GetID);
-
-                            if (dlgYesNo.IsConfirmed)
-                            {
-                                tvControlAgent.AbortActiveRecording(rec);
-                                aborted = true;
-                            }
-                        }
-                        break;
-                }
-                return aborted;
+                dlg.AddLocalizedString(900);//play from last point
             }
+
+            dlg.DoModal(GetID);
+            switch (dlg.SelectedId)
+            {
+                case 979:
+                    if (recording != null)
+                    {
+                        RecordedBase.PlayFromPreRecPoint(recording);
+                    }
+                    break;
+
+                case 980: 
+                    RecordedBase.PlayFromLivePoint(rec);
+                    break;
+
+                case 900:
+                    if (recording != null)
+                    {
+                        RecordedBase.PlayRecording(recording, recording.LastWatchedPosition.Value);
+                    }
+                    break;
+
+                case 1449: // Abort
+                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                    if (dlgYesNo != null)
+                    {
+                        dlgYesNo.Reset();
+                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.StopRecording));
+                        dlgYesNo.SetLine(1, rec.Program.Channel.DisplayName);
+                        dlgYesNo.SetLine(2, rec.Program.Title);
+                        dlgYesNo.SetLine(3, string.Empty);
+                        dlgYesNo.SetDefaultToYes(false);
+                        dlgYesNo.DoModal(GetID);
+
+                        if (dlgYesNo.IsConfirmed)
+                        {
+                            Proxies.ControlService.AbortActiveRecording(rec).Wait();
+                            aborted = true;
+                        }
+                    }
+                    break;
+            }
+            return aborted;
         }
 
         #endregion

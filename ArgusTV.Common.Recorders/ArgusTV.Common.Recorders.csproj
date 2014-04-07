@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,8 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ArgusTV.Common.Recorders</RootNamespace>
     <AssemblyName>ArgusTV.Common.Recorders</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,21 +31,21 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MonoDebug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\MonoDebug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE;MONO</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.DataContracts, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferencedAssemblies\ArgusTV.DataContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy">
-      <HintPath>..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,30 +53,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RecorderNotFoundException.cs" />
     <Compile Include="RecorderServiceBase.cs" />
     <Compile Include="RecorderProxy.cs" />
+    <Compile Include="SimpleJson.cs" />
     <Compile Include="Utility\FileSizeChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecorderCallbackProxy.cs" />
-    <Compile Include="RecorderModule.cs" />
-    <Compile Include="Utility\RecorderJsonSerializer.cs" />
     <Compile Include="Utility\RecordingThreadBase.cs" />
     <Compile Include="Utility\RecordingThreadCollection.cs" />
     <Compile Include="Utility\RestProxyBase.cs" />
     <Compile Include="ThreadedRecorderService.cs" />
     <Compile Include="Utility\FileUtility.cs" />
     <Compile Include="Utility\RecorderJsonSerializerStrategy.cs" />
+    <Compile Include="Utility\WakeOnLan.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GitHub\ARGUS-TV-Clients\ArgusTV.Common\ArgusTV.Common.csproj">
-      <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f5472be}</Project>
+    <ProjectReference Include="..\ArgusTV.Common\ArgusTV.Common.csproj">
+      <Project>{D0FD6FEC-F7B8-406A-9B87-16FF3F5472BE}</Project>
       <Name>ArgusTV.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2D3B808E-4E79-40DF-B2FA-8C87FB50D7AA}</Project>
+      <Name>ArgusTV.DataContracts</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -23,7 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.Process.Recordings
@@ -47,9 +46,9 @@ namespace ArgusTV.UI.Process.Recordings
             internal set { _recordingGroups = value; }
         }
 
-        private SerializableDictionary<int, RecordingSummary[]> _recordingsByGroup = new SerializableDictionary<int, RecordingSummary[]>();
+        private SerializableDictionary<int, List<RecordingSummary>> _recordingsByGroup = new SerializableDictionary<int, List<RecordingSummary>>();
 
-        public SerializableDictionary<int, RecordingSummary[]> RecordingsByGroup
+        public SerializableDictionary<int, List<RecordingSummary>> RecordingsByGroup
         {
             get { return _recordingsByGroup; }
         }

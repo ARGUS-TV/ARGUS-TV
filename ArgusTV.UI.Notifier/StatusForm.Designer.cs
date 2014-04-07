@@ -7,19 +7,6 @@ namespace ArgusTV.UI.Notifier
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -44,12 +31,8 @@ namespace ArgusTV.UI.Notifier
             this._activeRecordingsControl = new ArgusTV.WinForms.UserControls.UpcomingOrActiveProgramsControl();
             this._closeButton = new System.Windows.Forms.Button();
             this._refreshButton = new System.Windows.Forms.Button();
-            this._refreshTimer = new System.Windows.Forms.Timer(this.components);
-            this._connectionBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this._programContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._playRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._refreshStatusBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this._refreshProgramsBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this._toolTipTimer = new System.Windows.Forms.Timer(this.components);
             this._iconContextMenuStrip.SuspendLayout();
             this._upcomingGroupBox.SuspendLayout();
@@ -67,7 +50,7 @@ namespace ArgusTV.UI.Notifier
             this._optionsToolStripMenuItem,
             this._exitToolStripMenuItem});
             this._iconContextMenuStrip.Name = "_iconContextMenuStrip";
-            this._iconContextMenuStrip.Size = new System.Drawing.Size(205, 142);
+            this._iconContextMenuStrip.Size = new System.Drawing.Size(205, 120);
             this._iconContextMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this._iconContextMenuStrip_Closed);
             this._iconContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this._iconContextMenuStrip_Opening);
             // 
@@ -205,15 +188,6 @@ namespace ArgusTV.UI.Notifier
             this._refreshButton.UseVisualStyleBackColor = true;
             this._refreshButton.Click += new System.EventHandler(this._refreshButton_Click);
             // 
-            // _refreshTimer
-            // 
-            this._refreshTimer.Tick += new System.EventHandler(this._refreshTimer_Tick);
-            // 
-            // _connectionBackgroundWorker
-            // 
-            this._connectionBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this._connectionBackgroundWorker_DoWork);
-            this._connectionBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this._connectionBackgroundWorker_RunWorkerCompleted);
-            // 
             // _programContextMenuStrip
             // 
             this._programContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -227,16 +201,6 @@ namespace ArgusTV.UI.Notifier
             this._playRecordingToolStripMenuItem.Name = "_playRecordingToolStripMenuItem";
             this._playRecordingToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this._playRecordingToolStripMenuItem.Text = "Play Recording With VLC";
-            // 
-            // _refreshStatusBackgroundWorker
-            // 
-            this._refreshStatusBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this._refreshStatusBackgroundWorker_DoWork);
-            this._refreshStatusBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this._refreshStatusBackgroundWorker_RunWorkerCompleted);
-            // 
-            // _refreshProgramsBackgroundWorker
-            // 
-            this._refreshProgramsBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this._refreshProgramsBackgroundWorker_DoWork);
-            this._refreshProgramsBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this._refreshProgramsBackgroundWorker_RunWorkerCompleted);
             // 
             // _toolTipTimer
             // 
@@ -286,13 +250,9 @@ namespace ArgusTV.UI.Notifier
         private System.Windows.Forms.Button _refreshButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem _optionsToolStripMenuItem;
-        private System.Windows.Forms.Timer _refreshTimer;
-        private System.ComponentModel.BackgroundWorker _connectionBackgroundWorker;
         private System.Windows.Forms.ToolStripMenuItem _openManagementConsoleToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip _programContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem _playRecordingToolStripMenuItem;
-        private System.ComponentModel.BackgroundWorker _refreshStatusBackgroundWorker;
-        private System.ComponentModel.BackgroundWorker _refreshProgramsBackgroundWorker;
         private System.Windows.Forms.Timer _toolTipTimer;
         private System.Windows.Forms.ToolStripMenuItem _wakeupServerToolStripMenuItem;
     }

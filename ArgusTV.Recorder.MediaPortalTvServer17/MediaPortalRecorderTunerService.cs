@@ -28,7 +28,6 @@ using System.Text;
 using System.Collections;
 using System.Reflection;
 using System.IO;
-using System.ServiceModel;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -39,11 +38,10 @@ using TvLibrary.Log;
 
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using ArgusTV.ServiceContracts;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
 using ArgusTV.Common.Recorders;
 #if USE_ARGUS_RTSP
-using ArgusTV.StreamingServer.ServiceAgents;
+using ArgusTV.StreamingServer.ServiceProxy;
 #endif
 
 namespace ArgusTV.Recorder.MediaPortalTvServer

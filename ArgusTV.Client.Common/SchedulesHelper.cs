@@ -4,28 +4,25 @@ using System.Linq;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Client.Common
 {
     public static class SchedulesHelper
     {
-        public static Schedule CreateRecordOnceSchedule(ISchedulerService tvSchedulerAgent, IGuideService tvGuideAgent,
-            ChannelType channelType, Guid channelId, Guid guideProgramId)
+        public static Schedule CreateRecordOnceSchedule(ChannelType channelType, Guid channelId, Guid guideProgramId)
         {
-            GuideProgram guideProgram = tvGuideAgent.GetProgramById(guideProgramId);
+            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId).Result;
             if (guideProgram != null)
             {
-                return CreateRecordOnceSchedule(tvSchedulerAgent, channelType,
-                    channelId, guideProgram.Title, guideProgram.SubTitle, guideProgram.EpisodeNumberDisplay, guideProgram.StartTime);
+                return CreateRecordOnceSchedule(channelType, channelId, guideProgram.Title, guideProgram.SubTitle, guideProgram.EpisodeNumberDisplay, guideProgram.StartTime);
             }
             return null;
         }
 
-        public static Schedule CreateRecordOnceSchedule(ISchedulerService tvSchedulerAgent,
-            ChannelType channelType, Guid channelId, string title, string subTitle, string episodeNumber, DateTime startTime)
+        public static Schedule CreateRecordOnceSchedule(ChannelType channelType, Guid channelId, string title, string subTitle, string episodeNumber, DateTime startTime)
         {
-            Schedule schedule = tvSchedulerAgent.CreateNewSchedule(channelType, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording).Result;
             schedule.Name = GuideProgram.CreateProgramTitle(title, subTitle, episodeNumber);
             schedule.Rules.Add(ScheduleRuleType.Channels, channelId);
             schedule.Rules.Add(ScheduleRuleType.OnDate, startTime.Date);
@@ -51,21 +48,20 @@ namespace ArgusTV.Client.Common
             AnyTime
         }
 
-        public static Schedule CreateRecordRepeatingSchedule(ISchedulerService tvSchedulerAgent, IGuideService tvGuideAgent,
-            RepeatingType repeatingType, ChannelType channelType, Guid channelId, Guid guideProgramId, string titleSuffix = null)
+        public static Schedule CreateRecordRepeatingSchedule(RepeatingType repeatingType, ChannelType channelType, Guid channelId, Guid guideProgramId, string titleSuffix = null)
         {
-            GuideProgram guideProgram = tvGuideAgent.GetProgramById(guideProgramId);
+            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId).Result;
             if (guideProgram != null)
             {
-                return CreateRecordRepeatingSchedule(tvSchedulerAgent, repeatingType, channelType, channelId, guideProgram.Title, guideProgram.StartTime, titleSuffix);
+                return CreateRecordRepeatingSchedule(repeatingType, channelType, channelId, guideProgram.Title, guideProgram.StartTime, titleSuffix);
             }
             return null;
         }
 
-        public static Schedule CreateRecordRepeatingSchedule(ISchedulerService tvSchedulerAgent, RepeatingType repeatingType, ChannelType channelType,
+        public static Schedule CreateRecordRepeatingSchedule(RepeatingType repeatingType, ChannelType channelType,
             Guid channelId, string title, DateTime startTime, string titleSuffix = null)
         {
-            Schedule schedule = tvSchedulerAgent.CreateNewSchedule(channelType, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording).Result;
 
             if (repeatingType == RepeatingType.AnyTime)
             {

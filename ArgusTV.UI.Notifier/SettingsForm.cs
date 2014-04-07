@@ -25,11 +25,10 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.ServiceModel;
 using System.Net.Security;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Notifier
 {
@@ -43,16 +42,19 @@ namespace ArgusTV.UI.Notifier
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             Config.Load();
-            _serverTextBox.Text = Config.Current.TcpServerName;
-            _portNumericUpDown.Value = Config.Current.TcpPort;
-            _serverHttpsTextBox.Text = Config.Current.HttpsServerName;
-            _portHttpsNumericUpDown.Value = Config.Current.HttpsPort;
+            _serverHttpsTextBox.Text = Config.Current.ServerName;
+            _portHttpsNumericUpDown.Value = Config.Current.Port;
             _userNameTextBox.Text = Config.Current.UserName;
             _passwordTextBox.Text = Config.Current.Password;
-            _pollIntervalNumericUpDown.Value = Config.Current.PollIntervalSeconds;
             _showRecordingBalloonsCheckBox.Checked = Config.Current.ShowRecordingBalloons;
             _balloonTimeoutNumericUpDown.Value = Config.Current.BalloonTimeoutSeconds;
             _mmcPathTextBox.Text = Config.Current.MmcPath;
+#if DEBUG
+            if (Config.Current.ServerName == "localhost")
+            {
+                _portHttpsNumericUpDown.Value = Config.Current.Port - 2;
+            }
+#endif
             EnableButtons();
         }
 
@@ -78,13 +80,11 @@ namespace ArgusTV.UI.Notifier
 
         private void _testConnectionsButton_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(_serverTextBox.Text.Trim())
-                && String.IsNullOrEmpty(_serverHttpsTextBox.Text.Trim()))
+            if (String.IsNullOrEmpty(_serverHttpsTextBox.Text.Trim()))
             {
                 MessageBox.Show(this, "No local or remote connection settings entered!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            else if (SetAndConnectTcp(true)
-                && SetAndConnectHttps(true))
+            else if (SetAndConnect(true))
             {
                 MessageBox.Show(this, "Connection succeeded!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -92,10 +92,8 @@ namespace ArgusTV.UI.Notifier
 
         private void _okButton_Click(object sender, EventArgs e)
         {
-            if (SetAndConnectTcp(false)
-                && SetAndConnectHttps(false))
+            if (SetAndConnect(false))
             {
-                Config.Current.PollIntervalSeconds = (int)_pollIntervalNumericUpDown.Value;
                 Config.Current.ShowRecordingBalloons = _showRecordingBalloonsCheckBox.Checked;
                 Config.Current.BalloonTimeoutSeconds = (int)_balloonTimeoutNumericUpDown.Value;
                 Config.Current.MmcPath = _mmcPathTextBox.Text;
@@ -106,52 +104,7 @@ namespace ArgusTV.UI.Notifier
             }
         }
 
-        private bool SetAndConnectTcp(bool test)
-        {
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
-
-                ServerSettings serverSettings = new ServerSettings();
-                serverSettings.ServerName = _serverTextBox.Text.Trim();
-                if (!String.IsNullOrEmpty(serverSettings.ServerName))
-                {
-                    serverSettings.Port = (int)_portNumericUpDown.Value;
-                    serverSettings.Transport = ServiceTransport.NetTcp;
-
-                    ServiceChannelFactories.Initialize(serverSettings, true);
-                    
-                    Config.Current.TcpServerName = serverSettings.ServerName;
-                    Config.Current.TcpPort = serverSettings.Port;
-                    Config.Current.MacAddresses = serverSettings.WakeOnLan.MacAddresses;
-                    Config.Current.IpAddress = serverSettings.WakeOnLan.IPAddress;
-                }
-                else
-                {
-                    Config.Current.TcpServerName = String.Empty;
-                    Config.Current.TcpPort = ServerSettings.DefaultTcpPort;
-                }
-                return true;
-            }
-            catch (ArgusTVNotFoundException ex)
-            {
-                if (MessageBox.Show(this, ex.Message, null, test ? MessageBoxButtons.OK : MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
-                {
-                    return !test;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "Failed to connect over TCP." + Environment.NewLine + Environment.NewLine + ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
-            }
-            return false;
-        }
-
-        private bool SetAndConnectHttps(bool test)
+        private bool SetAndConnect(bool test)
         {
             try
             {
@@ -162,25 +115,30 @@ namespace ArgusTV.UI.Notifier
                 if (!String.IsNullOrEmpty(serverSettings.ServerName))
                 {
                     serverSettings.Port = (int)_portHttpsNumericUpDown.Value;
+                    serverSettings.Transport = ServiceTransport.Https;
                     serverSettings.UserName = _userNameTextBox.Text;
                     serverSettings.Password = _passwordTextBox.Text;
-                    serverSettings.Transport = ServiceTransport.BinaryHttps;
 
-                    ServiceChannelFactories.Initialize(serverSettings, true);
-
-                    Config.Current.HttpsServerName = serverSettings.ServerName;
-                    Config.Current.HttpsPort = serverSettings.Port;
-                    Config.Current.UserName = serverSettings.UserName;
-                    Config.Current.Password = serverSettings.Password;
+#if DEBUG
+                    if (serverSettings.ServerName == "localhost")
+                    {
+                        serverSettings.Port += 2;
+                        serverSettings.Transport = ServiceTransport.Http;
+                    }
+#endif
+                    Proxies.Initialize(serverSettings, true);
+                    
+                    Config.Current.ServerName = serverSettings.ServerName;
+                    Config.Current.Port = serverSettings.Port;
                     Config.Current.MacAddresses = serverSettings.WakeOnLan.MacAddresses;
                     Config.Current.IpAddress = serverSettings.WakeOnLan.IPAddress;
+                    Config.Current.UserName = serverSettings.UserName;
+                    Config.Current.Password = serverSettings.Password;
                 }
                 else
                 {
-                    Config.Current.HttpsServerName = String.Empty;
-                    Config.Current.HttpsPort = ServerSettings.DefaultHttpsPort;
-                    Config.Current.UserName = String.Empty;
-                    Config.Current.Password = String.Empty;
+                    Config.Current.ServerName = String.Empty;
+                    Config.Current.Port = ServerSettings.DefaultHttpsPort;
                 }
                 return true;
             }
@@ -193,7 +151,7 @@ namespace ArgusTV.UI.Notifier
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Failed to connect over HTTPS." + Environment.NewLine + Environment.NewLine + ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, "Failed to connect to ARGUS TV." + Environment.NewLine + Environment.NewLine + ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             finally
             {

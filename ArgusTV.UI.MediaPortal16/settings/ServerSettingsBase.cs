@@ -33,10 +33,9 @@ using MediaPortal.Dialogs;
 using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -68,36 +67,6 @@ namespace ArgusTV.UI.MediaPortal
         {
             GetID = WindowId.ServerSettings;
         }
-
-        #region Service agents
-
-        private ConfigurationServiceAgent _configurationServiceAgent;
-        public IConfigurationService ConfigurationServiceAgent
-        {
-            get
-            {
-                if (_configurationServiceAgent == null)
-                {
-                    _configurationServiceAgent = new ConfigurationServiceAgent();
-                }
-                return _configurationServiceAgent;
-            }
-        }
-
-        private LogServiceAgent _logServiceAgent;
-        public ILogService LogServiceAgent
-        {
-            get
-            {
-                if (_logServiceAgent == null)
-                {
-                    _logServiceAgent = new LogServiceAgent();
-                }
-                return _logServiceAgent;
-            }
-        }
-
-        #endregion
 
         #region Overrides
 
@@ -143,10 +112,6 @@ namespace ArgusTV.UI.MediaPortal
         protected override void OnPageDestroy(int new_windowId)
         {
             SaveSettings();
-            if (_configurationServiceAgent != null)
-            {
-                _configurationServiceAgent.Dispose();
-            }
             base.OnPageDestroy(new_windowId);
         }
 
@@ -191,21 +156,21 @@ namespace ArgusTV.UI.MediaPortal
         private void LoadSettings()
         {
             Log.Debug("ServerSettingsBase: LoadSettings()");
-            bool? _autoCreateThumbs = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails, true);
-            bool? _metaDataForRecs = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, true);
-            bool? _swapTunerPriority = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SwapRecorderTunerPriorityForRecordings, true);
-            bool? _autoCombineConsecutive = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AutoCombineConsecutiveRecordings, true);
-            bool? _combineConsecutive = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineConsecutiveRecordings, true);
-            bool? _combineOnlyOnSameChannel = ConfigurationServiceAgent.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineRecordingsOnlyOnSameChannel, true);
+            bool? _autoCreateThumbs = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails).Result;
+            bool? _metaDataForRecs = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles).Result;
+            bool? _swapTunerPriority = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SwapRecorderTunerPriorityForRecordings).Result;
+            bool? _autoCombineConsecutive = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AutoCombineConsecutiveRecordings).Result;
+            bool? _combineConsecutive = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineConsecutiveRecordings).Result;
+            bool? _combineOnlyOnSameChannel = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineRecordingsOnlyOnSameChannel).Result;
 
-            int? _preRecord = ConfigurationServiceAgent.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, true);
-            int? _postRecord = ConfigurationServiceAgent.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, true);
-            int? _keepUntilValue = ConfigurationServiceAgent.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, true);
-            int? _freeDiskSpace = ConfigurationServiceAgent.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, true);
-            int? _minFreeDiskSpace = ConfigurationServiceAgent.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, true);
+            int? _preRecord = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds).Result;
+            int? _postRecord = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds).Result;
+            int? _keepUntilValue = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue).Result;
+            int? _freeDiskSpace = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB).Result;
+            int? _minFreeDiskSpace = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB).Result;
 
-            string _keepUntilMode = ConfigurationServiceAgent.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, true);
-            string _guideSource = ConfigurationServiceAgent.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, true);
+            string _keepUntilMode = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode).Result;
+            string _guideSource = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource).Result;
 
             if (_autoCreateThumbs.HasValue) _autoCreateThumbsButton.Selected = _autoCreateThumbs.Value;
             if (_metaDataForRecs.HasValue) _metaDataForRecsButton.Selected = _metaDataForRecs.Value;
@@ -310,15 +275,15 @@ namespace ArgusTV.UI.MediaPortal
         private void SaveSettings()
         {
             Log.Debug("ServerSettingsBase: SaveSettings()");
-            if (_autoCreateThumbsButton.IsEnabled) ConfigurationServiceAgent.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails, _autoCreateThumbsButton.Selected);
-            if (_metaDataForRecsButton.IsEnabled) ConfigurationServiceAgent.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, _metaDataForRecsButton.Selected);
-            if (_guideSourceButton.IsEnabled) ConfigurationServiceAgent.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, _currentGuideSource.ToString());
-            if (_preRecordButton.IsEnabled) ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, Int32.Parse(_preRecordButton.SpinLabel) * 60);
-            if (_postRecordButton.IsEnabled) ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, Int32.Parse(_postRecordButton.SpinLabel) * 60);
-            if (_keepUntilModeButton.IsEnabled) ConfigurationServiceAgent.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, _currentKeepUntilMode.ToString());
-            if (_keepUntilValueButton.IsEnabled) ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, _currentKeepUntilValue);
-            if (_freeDiskSpaceSpinButton.IsEnabled) ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, Int32.Parse(_freeDiskSpaceSpinButton.SpinLabel) * 1000);
-            if (_minFreeDiskSpaceSpinButton.IsEnabled) ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, Int32.Parse(_minFreeDiskSpaceSpinButton.SpinLabel) * 1000);
+            if (_autoCreateThumbsButton.IsEnabled) Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails, _autoCreateThumbsButton.Selected).Wait();
+            if (_metaDataForRecsButton.IsEnabled) Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, _metaDataForRecsButton.Selected).Wait();
+            if (_guideSourceButton.IsEnabled) Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, _currentGuideSource.ToString()).Wait();
+            if (_preRecordButton.IsEnabled) Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, Int32.Parse(_preRecordButton.SpinLabel) * 60).Wait();
+            if (_postRecordButton.IsEnabled) Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, Int32.Parse(_postRecordButton.SpinLabel) * 60).Wait();
+            if (_keepUntilModeButton.IsEnabled) Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, _currentKeepUntilMode.ToString()).Wait();
+            if (_keepUntilValueButton.IsEnabled) Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, _currentKeepUntilValue).Wait();
+            if (_freeDiskSpaceSpinButton.IsEnabled) Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, Int32.Parse(_freeDiskSpaceSpinButton.SpinLabel) * 1000).Wait();
+            if (_minFreeDiskSpaceSpinButton.IsEnabled) Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, Int32.Parse(_minFreeDiskSpaceSpinButton.SpinLabel) * 1000).Wait();
         }
 
         private void OnRestoreDefaults()
@@ -336,15 +301,15 @@ namespace ArgusTV.UI.MediaPortal
         
                 if (dlgYesNo.IsConfirmed)
                 {
-                    ConfigurationServiceAgent.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails, null);
-                    ConfigurationServiceAgent.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, null);
-                    ConfigurationServiceAgent.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, null);
-                    ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, null);
-                    ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, null);
-                    ConfigurationServiceAgent.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, null);
-                    ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, null);
-                    ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, null);
-                    ConfigurationServiceAgent.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, null);
+                    Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CreateVideoThumbnails, null).Wait();
+                    Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, null).Wait();
+                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, null).Wait();
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, null).Wait();
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, null).Wait();
+                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, null).Wait();
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, null).Wait();
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, null).Wait();
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, null).Wait();
                 }
             }
         }
@@ -525,23 +490,20 @@ namespace ArgusTV.UI.MediaPortal
 
         private void OnDeleteAllGuideData()
         {
-            using (GuideServiceAgent _tvGuideAgent = new GuideServiceAgent())
+            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            if (dlgYesNo != null)
             {
-                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                if (dlgYesNo != null)
-                {
-                    dlgYesNo.Reset();
-                    dlgYesNo.SetHeading(927);
-                    dlgYesNo.SetLine(1, Utility.GetLocalizedText(TextId.DeleteAllGuideData));
-                    dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
-                    dlgYesNo.SetLine(3, string.Empty);
-                    dlgYesNo.SetDefaultToYes(false);
-                    dlgYesNo.DoModal(GetID);
+                dlgYesNo.Reset();
+                dlgYesNo.SetHeading(927);
+                dlgYesNo.SetLine(1, Utility.GetLocalizedText(TextId.DeleteAllGuideData));
+                dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
+                dlgYesNo.SetLine(3, string.Empty);
+                dlgYesNo.SetDefaultToYes(false);
+                dlgYesNo.DoModal(GetID);
 
-                    if (dlgYesNo.IsConfirmed)
-                    {
-                        _tvGuideAgent.DeleteAllPrograms();
-                    }
+                if (dlgYesNo.IsConfirmed)
+                {
+                    Proxies.GuideService.DeleteAllPrograms().Wait();
                 }
             }
         }
@@ -549,14 +511,14 @@ namespace ArgusTV.UI.MediaPortal
         private void OnShowLogs()
         {
             string text = string.Empty;
-            string[] modules = LogServiceAgent.GetAllModules();
+            var modules = Proxies.LogService.GetAllModules().Result;
             string selectedModule = string.Empty;
             LogSeverity selectedSeverity = LogSeverity.Error;
 
             bool showAllSeverities = true;
             bool showAllModules = true;
 
-            if (modules != null && modules.Length > 1)
+            if (modules != null && modules.Count > 1)
             {
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                 if (dlg != null)
@@ -618,16 +580,15 @@ namespace ArgusTV.UI.MediaPortal
                 }
             }
 
-            bool maxReached;
-            LogEntry[] entries = null;
+            List<LogEntry> entries = null;
 
             if (showAllModules && showAllSeverities)
             {
                 SortedList<DateTime, LogEntry> _entries = new SortedList<DateTime, LogEntry>();
                 foreach (string module in modules)
                 {
-                    entries = LogServiceAgent.GetLogEntriesByModule(module, DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries/2, out maxReached);
-                    if (entries != null && entries.Length > 0)
+                    entries = Proxies.LogService.GetLogEntries(DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries / 2, module, null).Result.LogEntries;
+                    if (entries != null && entries.Count > 0)
                     {
                         foreach (LogEntry entry in entries)
                         {
@@ -649,10 +610,10 @@ namespace ArgusTV.UI.MediaPortal
             }
             else if (!showAllModules && showAllSeverities)
             {
-                entries = LogServiceAgent.GetLogEntriesByModule(selectedModule, DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, out maxReached);
-                if (entries != null && entries.Length > 0)
+                entries = Proxies.LogService.GetLogEntries(DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, selectedModule, null).Result.LogEntries;
+                if (entries != null && entries.Count > 0)
                 {
-                    for (int i = 0; i < entries.Length; i++)
+                    for (int i = 0; i < entries.Count; i++)
                     {
                         text += "#" + entries[i].LogSeverity.ToString() + ":"+ entries[i].LogTime.ToString() + ":" + entries[i].Message + "\n";
                     }
@@ -660,10 +621,10 @@ namespace ArgusTV.UI.MediaPortal
             }
             else if (showAllModules && !showAllSeverities)
             {
-                entries = LogServiceAgent.GetLogEntriesBySeverity(selectedSeverity, DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, out maxReached);
-                if (entries != null && entries.Length > 0)
+                entries = Proxies.LogService.GetLogEntries(DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, null, selectedSeverity).Result.LogEntries;
+                if (entries != null && entries.Count > 0)
                 {
-                    for (int i = 0; i < entries.Length; i++)
+                    for (int i = 0; i < entries.Count; i++)
                     {
                         text += "#" + entries[i].LogTime.ToString() + ":" + entries[i].Module.ToString() + ":" + entries[i].Message + "\n";
                     }
@@ -671,16 +632,15 @@ namespace ArgusTV.UI.MediaPortal
             }
             else if (!showAllModules && !showAllSeverities)
             {
-                entries = LogServiceAgent.GetLogEntriesByModuleAndSeverity(selectedModule,selectedSeverity, DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, out maxReached);
-                if (entries != null && entries.Length > 0)
+                entries = Proxies.LogService.GetLogEntries(DateTime.Now.AddDays(-_daysToGetLogsFrom), DateTime.Now, _maxLogEntries, selectedModule, selectedSeverity).Result.LogEntries;
+                if (entries != null && entries.Count > 0)
                 {
-                    for (int i = 0; i < entries.Length; i++)
+                    for (int i = 0; i < entries.Count; i++)
                     {
                         text += "#" + entries[i].LogTime.ToString() + ":" + entries[i].Message + "\n";
                     }
                 }
             }
-
 
             GUIDialogText dlg3 = (GUIDialogText)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TEXT);
             if (dlg3 != null)

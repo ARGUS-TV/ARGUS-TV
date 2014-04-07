@@ -39,7 +39,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Profile;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 #endregion
 
@@ -330,185 +330,181 @@ namespace ArgusTV.UI.MediaPortal
         /// </summary>
         private void FillChannelList()
         {
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
+            _channelsListControl.Clear();
+
+            int i = 0;
+            int SelectedID = 0;
+            string ChannelLogo = string.Empty;
+
+            if (_currentGroup != null)
             {
-                _channelsListControl.Clear();
+                _currentAndNextPrograms = Proxies.SchedulerService.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, PluginMain.Navigator.LiveStream).Result;
+            }
+            else
+            {
+                _currentAndNextPrograms = new List<CurrentAndNextProgram>();
+            }
 
-                int i = 0;
-                int SelectedID = 0;
-                string ChannelLogo = string.Empty;
+            Channel currentChannel = PluginMain.Navigator.CurrentChannel;
+            Channel prevChannel = PluginMain.Navigator.GetPreviousChannel(this.ChannelType);
 
-                if (_currentGroup != null)
+            foreach (CurrentAndNextProgram currentAndNext in _currentAndNextPrograms)
+            {
+                i++;
+                sb.Length = 0;
+                GUIListItem item = new GUIListItem("");
+                item.TVTag = currentAndNext.Channel;
+
+                sb.Append(currentAndNext.Channel.DisplayName);
+                ChannelLogo = Utility.GetLogoImage(currentAndNext.Channel);
+
+                if (!string.IsNullOrEmpty(ChannelLogo))
                 {
-                    _currentAndNextPrograms = new List<CurrentAndNextProgram>(
-                        tvSchedulerAgent.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, true, PluginMain.Navigator.LiveStream));
+                    item.IconImageBig = ChannelLogo;
+                    item.IconImage = ChannelLogo;
                 }
                 else
                 {
-                    _currentAndNextPrograms = new List<CurrentAndNextProgram>();
+                    item.IconImageBig = string.Empty;
+                    item.IconImage = string.Empty;
                 }
 
-                Channel currentChannel = PluginMain.Navigator.CurrentChannel;
-                Channel prevChannel = PluginMain.Navigator.GetPreviousChannel(this.ChannelType);
-
-                foreach (CurrentAndNextProgram currentAndNext in _currentAndNextPrograms)
+                ActiveRecording activeRecording;
+                if (PluginMain.IsChannelRecording(currentAndNext.Channel.ChannelId, out activeRecording))
                 {
-                    i++;
-                    sb.Length = 0;
-                    GUIListItem item = new GUIListItem("");
-                    item.TVTag = currentAndNext.Channel;
-
-                    sb.Append(currentAndNext.Channel.DisplayName);
-                    ChannelLogo = Utility.GetLogoImage(currentAndNext.Channel, tvSchedulerAgent);
-
-                    if (!string.IsNullOrEmpty(ChannelLogo))
+                    if (_showStateIcons)
                     {
-                        item.IconImageBig = ChannelLogo;
-                        item.IconImage = ChannelLogo;
+                        item.PinImage = RecordingIcon;
                     }
                     else
                     {
-                        item.IconImageBig = string.Empty;
-                        item.IconImage = string.Empty;
+                        sb.Append(" ");
+                        sb.Append(recordingText);
                     }
-
-                    ActiveRecording activeRecording;
-                    if (PluginMain.IsChannelRecording(currentAndNext.Channel.ChannelId, out activeRecording))
+                    item.IsPlayed = (currentAndNext.LiveState == ChannelLiveState.NotTunable
+                        || currentAndNext.LiveState == ChannelLiveState.NoFreeCard);
+                }
+                else
+                {
+                    switch (currentAndNext.LiveState)
                     {
-                        if (_showStateIcons)
-                        {
-                            item.PinImage = RecordingIcon;
-                        }
-                        else
-                        {
-                            sb.Append(" ");
-                            sb.Append(recordingText);
-                        }
-                        item.IsPlayed = (currentAndNext.LiveState == ChannelLiveState.NotTunable
-                            || currentAndNext.LiveState == ChannelLiveState.NoFreeCard);
-                    }
-                    else
-                    {
-                        switch (currentAndNext.LiveState)
-                        {
-                            case ChannelLiveState.NotTunable:
-                            case ChannelLiveState.NoFreeCard:
-                                item.IsPlayed = true;
-                                if (_showStateIcons)
-                                {
-                                    item.PinImage = UnavailableIcon;
-                                }
-                                else
-                                {
-                                    sb.Append(" ");
-                                    sb.Append(unavailableText);
-                                }
-                                break;
-
-                            default:
-                                item.IsPlayed = false;
-                                if (_showStateIcons)
-                                {
-                                    item.PinImage = AvailableIcon;
-                                }
-                                break;
-                        }
-                    }
-
-                    if (currentChannel != null)
-                    {
-                        if (currentChannel.ChannelId == currentAndNext.Channel.ChannelId)
-                        {
-                            item.IsRemote = true;
-                            SelectedID = _channelsListControl.Count;
-
-                            if (_showStateIcons && item.PinImage != RecordingIcon
-                                && item.PinImage != UnavailableIcon)
+                        case ChannelLiveState.NotTunable:
+                        case ChannelLiveState.NoFreeCard:
+                            item.IsPlayed = true;
+                            if (_showStateIcons)
                             {
-                                item.PinImage = TimeshiftingIcon;
+                                item.PinImage = UnavailableIcon;
                             }
-                            else if (!_showStateIcons)
+                            else
                             {
                                 sb.Append(" ");
-                                sb.Append(timeshiftingText);
+                                sb.Append(unavailableText);
                             }
-                        }
+                            break;
+
+                        default:
+                            item.IsPlayed = false;
+                            if (_showStateIcons)
+                            {
+                                item.PinImage = AvailableIcon;
+                            }
+                            break;
                     }
-                    else if (prevChannel != null
-                        && prevChannel.ChannelId == currentAndNext.Channel.ChannelId)
+                }
+
+                if (currentChannel != null)
+                {
+                    if (currentChannel.ChannelId == currentAndNext.Channel.ChannelId)
                     {
                         item.IsRemote = true;
                         SelectedID = _channelsListControl.Count;
-                    }
 
-                    sbTmp.Length = 0;
-
-                    bool hasNow = currentAndNext.Current != null;
-                    if (hasNow)
-                    {
-                        sbTmp.Append(currentAndNext.Current.CreateProgramTitle());
-                    }
-                    else
-                    {
-                        sbTmp.Append(noDataAvailableText);
-                    }
-
-                    item.Label2 = sbTmp.ToString();
-                    sbTmp.Insert(0, nowText);
-                    item.Label3 = sbTmp.ToString();
-
-                    sbTmp.Length = 0;
-
-                    if (_showChannelNumber)
-                    {
-                        sb.Append(" - ");
-                        if (!_byIndex)
+                        if (_showStateIcons && item.PinImage != RecordingIcon
+                            && item.PinImage != UnavailableIcon)
                         {
-                            if (currentAndNext.Channel.LogicalChannelNumber.HasValue)
-                            {
-                                sb.Append(currentAndNext.Channel.LogicalChannelNumber.Value.ToString());
-                            }
+                            item.PinImage = TimeshiftingIcon;
                         }
-                        else
+                        else if (!_showStateIcons)
                         {
-                            sb.Append(i);
+                            sb.Append(" ");
+                            sb.Append(timeshiftingText);
                         }
                     }
-
-                    if (hasNow)
-                    {
-                        sb.Append(" - ");
-                        sb.Append(currentAndNext.CurrentPercentageComplete);
-                        sb.Append("%");
-                    }
-
-                    if (currentAndNext.Next != null)
-                    {
-                        sbTmp.Append(/*currentAndNext.Next.StartTime.ToShortTimeString() + " " + */currentAndNext.Next.CreateProgramTitle());
-                    }
-                    else
-                    {
-                        sbTmp.Append(noDataAvailableText);
-                    }
-
-                    item.Label2 = sb.ToString();
-                    sbTmp.Insert(0, nextText);
-                    item.Label = sbTmp.ToString();
-
-                    _channelsListControl.Add(item);
                 }
-                _channelsListControl.SelectedListItemIndex = SelectedID;
-                Log.Debug("miniguide: state check + filling channel list completed");
-
-                if (_channelsListControl.GetID == 37)
+                else if (prevChannel != null
+                    && prevChannel.ChannelId == currentAndNext.Channel.ChannelId)
                 {
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, 37, 0, 0, null);
-                    OnMessage(msg);
+                    item.IsRemote = true;
+                    SelectedID = _channelsListControl.Count;
                 }
 
-                sb.Length = 0;
                 sbTmp.Length = 0;
+
+                bool hasNow = currentAndNext.Current != null;
+                if (hasNow)
+                {
+                    sbTmp.Append(currentAndNext.Current.CreateProgramTitle());
+                }
+                else
+                {
+                    sbTmp.Append(noDataAvailableText);
+                }
+
+                item.Label2 = sbTmp.ToString();
+                sbTmp.Insert(0, nowText);
+                item.Label3 = sbTmp.ToString();
+
+                sbTmp.Length = 0;
+
+                if (_showChannelNumber)
+                {
+                    sb.Append(" - ");
+                    if (!_byIndex)
+                    {
+                        if (currentAndNext.Channel.LogicalChannelNumber.HasValue)
+                        {
+                            sb.Append(currentAndNext.Channel.LogicalChannelNumber.Value.ToString());
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(i);
+                    }
+                }
+
+                if (hasNow)
+                {
+                    sb.Append(" - ");
+                    sb.Append(currentAndNext.CurrentPercentageComplete);
+                    sb.Append("%");
+                }
+
+                if (currentAndNext.Next != null)
+                {
+                    sbTmp.Append(/*currentAndNext.Next.StartTime.ToShortTimeString() + " " + */currentAndNext.Next.CreateProgramTitle());
+                }
+                else
+                {
+                    sbTmp.Append(noDataAvailableText);
+                }
+
+                item.Label2 = sb.ToString();
+                sbTmp.Insert(0, nextText);
+                item.Label = sbTmp.ToString();
+
+                _channelsListControl.Add(item);
             }
+            _channelsListControl.SelectedListItemIndex = SelectedID;
+            Log.Debug("miniguide: state check + filling channel list completed");
+
+            if (_channelsListControl.GetID == 37)
+            {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, 37, 0, 0, null);
+                OnMessage(msg);
+            }
+
+            sb.Length = 0;
+            sbTmp.Length = 0;
         }
 
         #endregion

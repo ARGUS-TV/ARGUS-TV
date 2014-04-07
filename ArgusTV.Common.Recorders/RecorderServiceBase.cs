@@ -25,8 +25,6 @@ using ArgusTV.Common.Logging;
 using ArgusTV.Common.StaThreadSyncronizer;
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using Nancy;
-using Nancy.ModelBinding;
 using System.Management;
 
 namespace ArgusTV.Common.Recorders
@@ -94,26 +92,62 @@ namespace ArgusTV.Common.Recorders
             return Constants.RecorderApiVersion;
         }
 
+        public virtual void KeepAlive()
+        {
+#if !MONO
+            // Inform the local system we need it.
+            SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+#endif
+        }
+
         public virtual List<string> GetMacAddresses()
         {
             List<string> macAddresses = new List<string>();
 
-            using (ManagementObjectSearcher query = new ManagementObjectSearcher("Select MacAddress from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
-            using (ManagementObjectCollection mgmntObjects = query.Get())
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT
+                || Environment.OSVersion.Platform == PlatformID.Win32Windows)
             {
-                foreach (ManagementObject mo in mgmntObjects)
+                using (var query = new ManagementObjectSearcher("Select MacAddress from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
+                    using (var mgmntObjects = query.Get())
                 {
-                    string mac = (string)mo["MacAddress"];
-                    if (!String.IsNullOrEmpty(mac)
-                        && mac != "00:00:00:00:00:00")
+                    foreach (ManagementObject mo in mgmntObjects)
                     {
-                        mac = mac.Replace(":", "");
-                        if (!macAddresses.Contains(mac))
+                        string mac = (string)mo["MacAddress"];
+                        if (!String.IsNullOrEmpty(mac)
+                            && mac != "00:00:00:00:00:00")
                         {
-                            macAddresses.Add(mac);
+                            mac = mac.Replace(":", "");
+                            if (!macAddresses.Contains(mac))
+                            {
+                                macAddresses.Add(mac);
+                            }
+                        }
+                        mo.Dispose();
+                    }
+                }
+            }
+            else
+            {
+                System.Net.NetworkInformation.NetworkInterfaceType Type = 0;
+                try
+                {
+                    System.Net.NetworkInformation.NetworkInterface[] theNetworkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                    foreach (System.Net.NetworkInformation.NetworkInterface currentInterface in theNetworkInterfaces)
+                    {
+                        Type = currentInterface.NetworkInterfaceType;
+                        if (Type == System.Net.NetworkInformation.NetworkInterfaceType.Ethernet || Type == System.Net.NetworkInformation.NetworkInterfaceType.GigabitEthernet || Type == System.Net.NetworkInformation.NetworkInterfaceType.FastEthernetFx)
+                        {
+                            string mac = currentInterface.GetPhysicalAddress().ToString();
+                            mac = mac.Replace(":", "");
+                            if (!macAddresses.Contains(mac))
+                            {
+                                macAddresses.Add(mac);
+                            }
                         }
                     }
-                    mo.Dispose();
+                }
+                catch (Exception)
+                {
                 }
             }
 
@@ -123,7 +157,7 @@ namespace ArgusTV.Common.Recorders
         public virtual void Initialize(Guid recorderId, string schedulerBaseUrl)
         {
             RecorderId = recorderId;
-            new RecorderCallbackProxy(schedulerBaseUrl).RegisterRecorder(RecorderId, this.Name, Assembly.GetCallingAssembly().GetName().Version.ToString());
+            new RecorderCallbackProxy(schedulerBaseUrl).RegisterRecorder(RecorderId, this.Name, Assembly.GetCallingAssembly().GetName().Version.ToString()).Wait();
         }
 
         public abstract string AllocateCard(Channel channel, IList<CardChannelAllocation> alreadyAllocated, bool useReversePriority);
@@ -225,6 +259,22 @@ namespace ArgusTV.Common.Recorders
 			}
 			_disposed = true;
         }
+
+        #endregion
+
+        #region P/Invoke
+
+        [FlagsAttribute]
+        private enum EXECUTION_STATE : uint
+        {
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000
+        }
+
+        [System.Runtime.InteropServices.DllImport("Kernel32.DLL", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
         #endregion
     }

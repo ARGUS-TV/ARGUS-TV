@@ -43,10 +43,9 @@ using MediaPortal.Music.Database;
 
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process.Guide;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process;
 using ArgusTV.Client.Common;
-using ArgusTV.ServiceAgents;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -162,17 +161,17 @@ namespace ArgusTV.UI.MediaPortal
             return GUIGraphicsContext.Skin + @"\Media\ARGUS_" + scheduleType.ToString() + suffix + ".png";
         }
 
-        public static string GetLogoImage(Channel channel, ISchedulerService tvSchedulerAgent)
+        public static string GetLogoImage(Channel channel)
         {
-            return GetLogoImage(channel.ChannelId, channel.DisplayName, tvSchedulerAgent);
+            return GetLogoImage(channel.ChannelId, channel.DisplayName);
         }
 
-        public static string GetLogoImage(Guid channelId, string channelDisplayName, ISchedulerService tvSchedulerAgent)
+        public static string GetLogoImage(Guid channelId, string channelDisplayName)
         {
-            return ChannelLogosCache.GetLogoPath(tvSchedulerAgent, channelId, channelDisplayName, HomeBase.LogoIconWidth, HomeBase.LogoIconHeight);
+            return ChannelLogosCache.GetLogoPath(channelId, channelDisplayName, HomeBase.LogoIconWidth, HomeBase.LogoIconHeight);
         }
 
-        public static string GetRecordingThumb(RecordingSummary recording,bool createNewThumbIfNotFound ,int size ,IControlService tvControlAgent)
+        public static string GetRecordingThumb(RecordingSummary recording,bool createNewThumbIfNotFound, int size)
         {
             string thumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,recording.RecordingId,".jpg");
             if (Utils.FileExistsInCache(thumb))
@@ -188,7 +187,7 @@ namespace ArgusTV.UI.MediaPortal
                     size = 0;
                 }
 
-                byte[] jpegData = tvControlAgent.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime);
+                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime).Result;
                 if (jpegData != null)
                 {
                     try
@@ -245,7 +244,7 @@ namespace ArgusTV.UI.MediaPortal
             CultureInfo culture = Thread.CurrentThread.CurrentCulture;
             string dateFormat = culture.DateTimeFormat.MonthDayPattern.Replace("MMMM", "MM").Replace("MMM", "MM");
             dateFormat = dateFormat.Replace("dddd", "dd").Replace("ddd", "dd");
-            dateFormat = dateFormat.Replace(" ", culture.DateTimeFormat.DateSeparator);
+            dateFormat = dateFormat.Replace(". ", ".").Replace(" ", culture.DateTimeFormat.DateSeparator);
             return culture.DateTimeFormat.GetShortestDayName(dateTime.DayOfWeek) + " " + dateTime.ToString(dateFormat);
         }
 
@@ -313,7 +312,7 @@ namespace ArgusTV.UI.MediaPortal
 
             try
             {
-                ServiceChannelFactories.Initialize(serverSettings, true);
+                Proxies.Initialize(serverSettings, true);
                 using (Settings xmlwriter = new MPSettings())
                 {
                     xmlwriter.SetValue(_settingSection, TvHome.SettingName.MacAddresses, serverSettings.WakeOnLan.MacAddresses);

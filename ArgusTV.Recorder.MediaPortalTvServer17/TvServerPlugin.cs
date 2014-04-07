@@ -26,7 +26,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.ServiceModel;
 
 using TvControl;
 using TvEngine;
@@ -38,18 +37,19 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Log;
 using SetupTv;
-using Nancy.Hosting.Self;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
     public class TvServerPlugin : ITvServerPlugin
     {
         private const string _defaultServerName = "localhost";
-        private const int _defaultPort = ServerSettings.DefaultTcpPort;
+        private const int _defaultPort = ServerSettings.DefaultHttpPort;
         private const string _defaultRecordingsRootUncPath = @"\\MACHINENAME\Recordings\";
 
         public const int DefaultRecorderTunerTcpPort = 49842;
@@ -141,7 +141,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
         public bool IsArgusTVConnectionInitialized
         {
-            get { return ServiceChannelFactories.IsInitialized; }
+            get { return Proxies.IsInitialized; }
         }
 
         #endregion Properties
@@ -149,13 +149,15 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         #region IPlugin Methods
 
         private static IController _controller;
-        private NancyHost _recorderRestHost;
+        private ServiceHost _recorderRestHost;
         private DvbEpgThread _dvbEpgThread;
         private PowerEventHandler _powerEventHandler;
 
         public void Start(IController controller)
         {
             Log.Info("ArgusTV.Recorder.MediaPortalTvServer: Start");
+
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             _controller = controller;
             LoadSettings();
@@ -174,18 +176,34 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += events_OnTvServerEvent;
             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Registered OnTvServerEvent with TV Server");
 
-            HostConfiguration configuration = new HostConfiguration()
-            {
-                AllowChunkedEncoding = true,
-                EnableClientCertificates = false
-            };
-            string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/", _recorderTunerTcpPort);
-            _recorderRestHost = new NancyHost(configuration, new Uri(recorderUrl));
-            _recorderRestHost.Start();
-            Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl + "Recorder/");
+            string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/Recorder", _recorderTunerTcpPort);
+
+            _recorderRestHost = new ServiceHost(typeof(RecorderApiService), new Uri(recorderUrl));
+            _recorderRestHost.AddServiceEndpoint(typeof(IRecorderApi), GetRestBinding(), "").Behaviors.Add(new WebHttpBehavior());
+            _recorderRestHost.Open();
+            
+            Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl);
 
             _dvbEpgThread = new DvbEpgThread();
             _dvbEpgThread.Start();
+        }
+
+        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var name = new System.Reflection.AssemblyName(args.Name);
+            if (name.Name == "NLog")
+            {
+                return System.Reflection.Assembly.Load("NLog");
+            }
+            else if (name.Name == "System.Net.Http")
+            {
+                return System.Reflection.Assembly.Load("System.Net.Http");
+            }
+            else if (name.Name == "Newtonsoft.Json")
+            {
+                return System.Reflection.Assembly.Load("Newtonsoft.Json");
+            }
+            return null;
         }
 
         public void Stop()
@@ -210,9 +228,8 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
             if (_recorderRestHost != null)
             {
-                _recorderRestHost.Stop();
-                TvServerRecorderModule.DisposeModule();
-                _recorderRestHost.Dispose();
+                _recorderRestHost.Close(TimeSpan.FromSeconds(5));
+                RecorderApiService.DisposeModule();
                 _recorderRestHost = null;
             }
         }
@@ -306,7 +323,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         {
             try
             {
-                ServiceChannelFactories.Initialize(_serverSettings, true);
+                Proxies.Initialize(_serverSettings, logger: new ProxyLogger());
             }
             catch (Exception ex)
             {
@@ -329,8 +346,13 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             {
                 TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();
                 _serverSettings.ServerName = layer.GetSetting(SettingName.ServerName, _defaultServerName).Value;
-                _serverSettings.Transport = ServiceTransport.NetTcp;
+                _serverSettings.Transport = ServiceTransport.Http;
                 _serverSettings.Port = Convert.ToInt32(layer.GetSetting(SettingName.Port, _defaultPort.ToString()).Value);
+                if (_serverSettings.Port == 49942)               
+                {
+                    // Auto-adjust old net.tcp port to HTTP.
+                    _serverSettings.Port = 49943;
+                }
                 _restartTvServerOnResume = Convert.ToBoolean(layer.GetSetting(SettingName.ResetTvServerOnResume, false.ToString()).Value);
                 _epgSyncOn = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncOn, false.ToString()).Value);
                 _epgSyncAutoCreateChannels = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannels, false.ToString()).Value);
@@ -341,7 +363,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             catch (Exception ex)
             {
                 _serverSettings.ServerName = _defaultServerName;
-                _serverSettings.Transport = ServiceTransport.NetTcp;
+                _serverSettings.Transport = ServiceTransport.Http;
                 _serverSettings.Port = _defaultPort;
 
                 Log.Error("ArgusTV.Recorder.MediaPortalTvServer: LoadSettings(): {0}", ex.Message);
@@ -417,56 +439,51 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                         {
                             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: ImportEpgPrograms(): received {0} programs on {1}", epgChannel.Programs.Count, mpChannel.DisplayName);
 
-                            using (CoreServiceAgent coreAgent = new CoreServiceAgent())
-                            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                            using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
+                            bool epgSyncAutoCreateChannels = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannels, false.ToString()).Value);
+                            bool epgSyncAutoCreateChannelsWithGroup = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannelsWithGroup, false.ToString()).Value);
+                            string epgLanguages = layer.GetSetting("epgLanguages").Value;
+
+                            Channel channel = EnsureChannelForDvbEpg(mpChannel, epgSyncAutoCreateChannels, epgSyncAutoCreateChannelsWithGroup);
+                            if (channel != null)
                             {
-                                bool epgSyncAutoCreateChannels = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannels, false.ToString()).Value);
-                                bool epgSyncAutoCreateChannelsWithGroup = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannelsWithGroup, false.ToString()).Value);
-                                string epgLanguages = layer.GetSetting("epgLanguages").Value;
+                                EnsureGuideChannelForDvbEpg(channel, mpChannel);
 
-                                Channel channel = EnsureChannelForDvbEpg(tvSchedulerAgent, mpChannel, epgSyncAutoCreateChannels, epgSyncAutoCreateChannelsWithGroup);
-                                if (channel != null)
+                                List<GuideProgram> guidePrograms = new List<GuideProgram>();
+
+                                foreach (EpgProgram epgProgram in epgChannel.Programs)
                                 {
-                                    EnsureGuideChannelForDvbEpg(tvSchedulerAgent, tvGuideAgent, channel, mpChannel);
+                                    string title;
+                                    string description;
+                                    string genre;
+                                    int starRating;
+                                    string classification;
+                                    int parentalRating;
+                                    GetProgramInfoForLanguage(epgProgram.Text, epgLanguages, out title, out description, out genre,
+                                        out starRating, out classification, out parentalRating);
 
-                                    List<GuideProgram> guidePrograms = new List<GuideProgram>();
-
-                                    foreach (EpgProgram epgProgram in epgChannel.Programs)
+                                    if (!String.IsNullOrEmpty(title))
                                     {
-                                        string title;
-                                        string description;
-                                        string genre;
-                                        int starRating;
-                                        string classification;
-                                        int parentalRating;
-                                        GetProgramInfoForLanguage(epgProgram.Text, epgLanguages, out title, out description, out genre,
-                                            out starRating, out classification, out parentalRating);
-
-                                        if (!String.IsNullOrEmpty(title))
-                                        {
-                                            GuideProgram guideProgram = new GuideProgram();
-                                            guideProgram.GuideChannelId = channel.GuideChannelId.Value;
-                                            guideProgram.StartTime = epgProgram.StartTime;
-                                            guideProgram.StopTime = epgProgram.EndTime;
-                                            guideProgram.StartTimeUtc = epgProgram.StartTime.ToUniversalTime();
-                                            guideProgram.StopTime = epgProgram.EndTime;
-                                            guideProgram.StopTimeUtc = epgProgram.EndTime.ToUniversalTime();
-                                            guideProgram.Title = title;
-                                            guideProgram.Description = description;
-                                            guideProgram.Category = genre;
-                                            guideProgram.Rating = classification;
-                                            guideProgram.StarRating = starRating / 7.0;
-                                            guidePrograms.Add(guideProgram);
-                                        }
+                                        GuideProgram guideProgram = new GuideProgram();
+                                        guideProgram.GuideChannelId = channel.GuideChannelId.Value;
+                                        guideProgram.StartTime = epgProgram.StartTime;
+                                        guideProgram.StopTime = epgProgram.EndTime;
+                                        guideProgram.StartTimeUtc = epgProgram.StartTime.ToUniversalTime();
+                                        guideProgram.StopTime = epgProgram.EndTime;
+                                        guideProgram.StopTimeUtc = epgProgram.EndTime.ToUniversalTime();
+                                        guideProgram.Title = title;
+                                        guideProgram.Description = description;
+                                        guideProgram.Category = genre;
+                                        guideProgram.Rating = classification;
+                                        guideProgram.StarRating = starRating / 7.0;
+                                        guidePrograms.Add(guideProgram);
                                     }
+                                }
 
-                                    _dvbEpgThread.ImportProgramsAsync(guidePrograms);
-                                }
-                                else
-                                {
-                                    Log.Info("ArgusTV.Recorder.MediaPortalTvServer: ImportEpgPrograms() failed to ensure channel.");
-                                }
+                                _dvbEpgThread.ImportProgramsAsync(guidePrograms);
+                            }
+                            else
+                            {
+                                Log.Info("ArgusTV.Recorder.MediaPortalTvServer: ImportEpgPrograms() failed to ensure channel.");
                             }
                         }
                         else
@@ -478,7 +495,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
         }
 
-        private static void EnsureGuideChannelForDvbEpg(SchedulerServiceAgent tvSchedulerAgent, GuideServiceAgent tvGuideAgent, Channel channel, TvDatabase.Channel mpChannel)
+        private static void EnsureGuideChannelForDvbEpg(Channel channel, TvDatabase.Channel mpChannel)
         {
             if (!channel.GuideChannelId.HasValue)
             {
@@ -487,28 +504,27 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 {
                     externalId = mpChannel.DisplayName;
                 }
-                channel.GuideChannelId = tvGuideAgent.EnsureChannel(externalId, mpChannel.DisplayName, channel.ChannelType);
-                tvSchedulerAgent.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value);
+                channel.GuideChannelId = Proxies.GuideService.EnsureChannelExists(externalId, mpChannel.DisplayName, channel.ChannelType).Result;
+                Proxies.SchedulerService.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value).Wait();
             }
         }
 
-        private static Channel EnsureChannelForDvbEpg(SchedulerServiceAgent tvSchedulerAgent, TvDatabase.Channel mpChannel,
-            bool epgSyncAutoCreateChannels, bool epgSyncAutoCreateChannelsWithGroup)
+        private static Channel EnsureChannelForDvbEpg(TvDatabase.Channel mpChannel, bool epgSyncAutoCreateChannels, bool epgSyncAutoCreateChannelsWithGroup)
         {
             ChannelLink channelLink = ChannelLinks.GetChannelLinkForMediaPortalChannel(mpChannel);
             ChannelType channelType = mpChannel.IsTv ? ChannelType.Television : ChannelType.Radio;
             Channel channel = null;
             if (channelLink != null)
             {
-                channel = tvSchedulerAgent.GetChannelById(channelLink.ChannelId);
+                channel = Proxies.SchedulerService.GetChannelById(channelLink.ChannelId).Result;
                 if (channel == null)
                 {
-                    channel = tvSchedulerAgent.GetChannelByDisplayName(channelType, channelLink.ChannelName);
+                    channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channelLink.ChannelName).Result;
                 }
             }
             if (channel == null)
             {
-                channel = tvSchedulerAgent.GetChannelByDisplayName(channelType, mpChannel.DisplayName);
+                channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, mpChannel.DisplayName).Result;
             }
             if (channel == null
                 && (epgSyncAutoCreateChannels || epgSyncAutoCreateChannelsWithGroup))
@@ -528,14 +544,14 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                     }
                 }
 
-                Guid channelId = tvSchedulerAgent.EnsureChannel(channelType, mpChannel.DisplayName, groupName);
-                channel = tvSchedulerAgent.GetChannelById(channelId);
+                Guid channelId = Proxies.SchedulerService.EnsureChannel(channelType, mpChannel.DisplayName, groupName).Result;
+                channel = Proxies.SchedulerService.GetChannelById(channelId).Result;
 
                 if (!channel.LogicalChannelNumber.HasValue
                     && mpChannel.ChannelNumber > 0)
                 {
                     channel.LogicalChannelNumber = mpChannel.ChannelNumber;
-                    tvSchedulerAgent.SaveChannel(channel);
+                    Proxies.SchedulerService.SaveChannel(channel).Wait();
                 }
             }
             return channel;
@@ -793,5 +809,33 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         }
 
         #endregion
+
+        #region WCF WebContentTypeMapper
+
+        public class RawWebContentTypeMapper : System.ServiceModel.Channels.WebContentTypeMapper
+        {
+            public override System.ServiceModel.Channels.WebContentFormat GetMessageFormatForContentType(string contentType)
+            {
+                return System.ServiceModel.Channels.WebContentFormat.Raw; // always
+            }
+        }
+
+        static System.ServiceModel.Channels.Binding GetRestBinding()
+        {
+            var result = new System.ServiceModel.Channels.CustomBinding(new WebHttpBinding());
+            var webMEBE = result.Elements.Find<System.ServiceModel.Channels.WebMessageEncodingBindingElement>();
+            webMEBE.ContentTypeMapper = new RawWebContentTypeMapper();
+            return result;
+        }
+
+        #endregion
+
+        internal class ProxyLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { Log.Debug(message, args); }
+            public void Info(string message, params object[] args) { Log.Write(message, args); }
+            public void Warn(string message, params object[] args) { Log.Write(message, args); }
+            public void Error(string message, params object[] args) { Log.Error(message, args); }
+        }
     }
 }

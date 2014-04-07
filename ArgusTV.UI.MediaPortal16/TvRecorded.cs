@@ -39,8 +39,7 @@ using MediaPortal.Util;
 using MediaPortal.Configuration;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process.Recordings;
 
 namespace ArgusTV.UI.MediaPortal

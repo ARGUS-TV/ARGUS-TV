@@ -26,8 +26,7 @@ using MediaPortal.Player;
 
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using ArgusTV.ServiceAgents;
-using ArgusTV.ServiceContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.MediaPortal
 {
@@ -36,19 +35,6 @@ namespace ArgusTV.UI.MediaPortal
         public TuningDetails()
         {
             GetID = (int)Window.WINDOW_TV_TUNING_DETAILS;
-        }
-
-        private ControlServiceAgent _tvControlAgent;
-        public IControlService ControlAgent
-        {
-            get
-            {
-                if (_tvControlAgent == null)
-                {
-                    _tvControlAgent = new ControlServiceAgent();
-                }
-                return _tvControlAgent;
-            }
         }
 
         #region Overrides
@@ -65,10 +51,6 @@ namespace ArgusTV.UI.MediaPortal
             g_Player.PlayBackEnded -= new global::MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
             g_Player.PlayBackChanged -= new global::MediaPortal.Player.g_Player.ChangedHandler(OnPlayBackChanged);
 
-            if (_tvControlAgent != null)
-            {
-                _tvControlAgent.Dispose();
-            }
             base.OnPageDestroy(new_windowId);
         }
 
@@ -92,7 +74,7 @@ namespace ArgusTV.UI.MediaPortal
             if (g_Player.Playing && g_Player.IsTV && _livestream != null && _channel != null
                 && PluginMain.IsConnected())
             {
-                ServiceTuning _serviceTuning = ControlAgent.GetLiveStreamTuningDetails(_livestream);
+                ServiceTuning _serviceTuning = Proxies.ControlService.GetLiveStreamTuningDetails(_livestream).Result;
 
                 if (_livestream.RtspUrl.StartsWith("rtsp://", StringComparison.CurrentCultureIgnoreCase))
                     GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL.value", _livestream.RtspUrl);
@@ -283,7 +265,7 @@ namespace ArgusTV.UI.MediaPortal
             LiveStream _livestream = PluginMain.Navigator.LiveStream;
             if (_livestream != null && g_Player.Playing)
             {
-                ServiceTuning _serviceTuning = ControlAgent.GetLiveStreamTuningDetails(_livestream);
+                ServiceTuning _serviceTuning = Proxies.ControlService.GetLiveStreamTuningDetails(_livestream).Result;
                 GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel.value", _serviceTuning.SignalStrength.ToString());
                 GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality.value", _serviceTuning.SignalQuality.ToString());
                 _livestream = null;

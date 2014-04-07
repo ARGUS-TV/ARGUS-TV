@@ -52,7 +52,7 @@ namespace ArgusTV.Messenger
             CultureInfo culture = CultureInfo.CurrentCulture;
             string dateFormat = culture.DateTimeFormat.MonthDayPattern.Replace("MMMM", "MM").Replace("MMM", "MM");
             dateFormat = dateFormat.Replace("dddd", "dd").Replace("ddd", "dd");
-            dateFormat = dateFormat.Replace(" ", culture.DateTimeFormat.DateSeparator);
+            dateFormat = dateFormat.Replace(". ", ".").Replace(" ", culture.DateTimeFormat.DateSeparator);
             return culture.DateTimeFormat.GetShortestDayName(dateTime.DayOfWeek) + " " + dateTime.ToString(dateFormat);
         }
     }

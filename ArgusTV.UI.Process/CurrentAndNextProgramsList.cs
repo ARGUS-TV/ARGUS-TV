@@ -28,12 +28,12 @@ namespace ArgusTV.UI.Process
     [Serializable]
     public class CurrentAndNextProgramsList : SortableBindingList<CurrentAndNextProgramView>
     {
-        public CurrentAndNextProgramsList(CurrentAndNextProgram[] currentAndNexts)
+        public CurrentAndNextProgramsList(IEnumerable<CurrentAndNextProgram> currentAndNexts)
             : base(CreateViewList(currentAndNexts))
         {
         }
 
-        private static IEnumerable<CurrentAndNextProgramView> CreateViewList(CurrentAndNextProgram[] currentAndNexts)
+        private static IEnumerable<CurrentAndNextProgramView> CreateViewList(IEnumerable<CurrentAndNextProgram> currentAndNexts)
         {
             List<CurrentAndNextProgramView> viewList = new List<CurrentAndNextProgramView>();
             foreach (CurrentAndNextProgram currentAndNext in currentAndNexts)

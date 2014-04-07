@@ -27,22 +27,22 @@ namespace ArgusTV.UI.Process
 {
     public class UpcomingOrActiveProgramsList : SortableBindingList<UpcomingOrActiveProgramView>
     {
-        public UpcomingOrActiveProgramsList(ActiveRecording[] recordings)
+        public UpcomingOrActiveProgramsList(IEnumerable<ActiveRecording> recordings)
             : base(CreateViewList(recordings))
         {
         }
 
-        public UpcomingOrActiveProgramsList(UpcomingRecording[] recordings)
+        public UpcomingOrActiveProgramsList(IEnumerable<UpcomingRecording> recordings)
             : base(CreateViewList(recordings))
         {
         }
 
-        public UpcomingOrActiveProgramsList(UpcomingProgram[] programs)
+        public UpcomingOrActiveProgramsList(IEnumerable<UpcomingProgram> programs)
             : base(CreateViewList(programs))
         {
         }
 
-        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(ActiveRecording[] recordings)
+        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(IEnumerable<ActiveRecording> recordings)
         {
             List<UpcomingOrActiveProgramView> viewList = new List<UpcomingOrActiveProgramView>();
             foreach (ActiveRecording recording in recordings)
@@ -52,7 +52,7 @@ namespace ArgusTV.UI.Process
             return viewList;
         }
 
-        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(UpcomingRecording[] recordings)
+        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(IEnumerable<UpcomingRecording> recordings)
         {
             List<UpcomingOrActiveProgramView> viewList = new List<UpcomingOrActiveProgramView>();
             foreach (UpcomingRecording recording in recordings)
@@ -62,7 +62,7 @@ namespace ArgusTV.UI.Process
             return viewList;
         }
 
-        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(UpcomingProgram[] programs)
+        private static IEnumerable<UpcomingOrActiveProgramView> CreateViewList(IEnumerable<UpcomingProgram> programs)
         {
             List<UpcomingOrActiveProgramView> viewList = new List<UpcomingOrActiveProgramView>();
             foreach (UpcomingProgram program in programs)
@@ -96,7 +96,7 @@ namespace ArgusTV.UI.Process
             }
         }
 
-        public void RemoveActiveRecordings(ActiveRecording[] activeRecordings)
+        public void RemoveActiveRecordings(IList<ActiveRecording> activeRecordings)
         {
             foreach (ActiveRecording activeRecording in activeRecordings)
             {

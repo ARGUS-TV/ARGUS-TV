@@ -1,88 +1,143 @@
+/*
+ *	Copyright (C) 2007-2014 ARGUS TV
+ *	http://www.argus-tv.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections.Generic;
-using RestSharp;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using ArgusTV.Common.Logging;
-using ArgusTV.Common.Recorders.Utility;
+using System.Web;
+using System.Threading.Tasks;
 
-namespace ArgusTV.Common.Recorders
+namespace ArgusTV.Common.Recorders.Utility
 {
     public abstract class RestProxyBase
     {
-        private RestClient _client;
+        /// <exclude />
+        private HttpClient _client;
 
+        /// <exclude />
         public RestProxyBase(string baseUrl)
         {
-            _client = new RestClient(baseUrl);
-        }
-
-        protected RestRequest NewRequest(string url, Method method)
-        {
-            return new RestRequest(url, method)
+            if (!baseUrl.EndsWith("/"))
             {
-                RequestFormat = DataFormat.Json,
-                JsonSerializer = new RecorderJsonSerializer()
+                baseUrl = baseUrl + "/";
+            }
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                Proxy = WebRequest.DefaultWebProxy,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
+            handler.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            _client = new HttpClient(handler, true)
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
         }
 
-        protected void ExecuteAsync(RestRequest request)
+        /// <exclude />
+        protected HttpRequestMessage NewRequest(HttpMethod method, string url, params object[] args)
         {
-            try
+            if (url.StartsWith("/"))
             {
-                var response = _client.ExecuteAsync(request, r =>
-                {
-                    if (r.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        if (r.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                        {
-                            var error = SimpleJson.DeserializeObject<RestError>(r.Content);
-                            Logger.Error(error.detail);
-                        }
-                        else
-                        {
-                            Logger.Error(r.ErrorMessage);
-                        }
-                    }
-                });
+                url = url.Substring(1);
             }
-            catch (Exception ex)
+            if (args != null && args.Length > 0)
             {
-                Logger.Error(ex.ToString());
-                EventLogger.WriteEntry(ex);
-                throw new Exception("An unexpected error occured.");
-            }
-        }
-
-        protected IRestResponse Execute(RestRequest request)
-        {
-            try
-            {
-                var response = _client.Execute(request);
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                List<object> encodedArgs = new List<object>();
+                foreach (var arg in args)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                    string urlArg;
+                    if (arg is DateTime)
                     {
-                        var error = SimpleJson.DeserializeObject<RestError>(response.Content);
-                        throw new ApplicationException(error.detail);
+                        DateTime time = (DateTime)arg;
+                        if (time.Kind == DateTimeKind.Unspecified)
+                        {
+                            urlArg = new DateTime(time.Ticks, DateTimeKind.Local).ToString("o");
+                        }
+                        urlArg = time.ToString("o");
                     }
-                    throw new ApplicationException(response.ErrorMessage ?? response.StatusDescription);
+                    else
+                    {
+                        urlArg = arg.ToString();
+                    }
+                    encodedArgs.Add(HttpUtility.UrlEncode(urlArg));
                 }
-                return response;
+                return new HttpRequestMessage(method, String.Format(url, encodedArgs.ToArray()));
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.ToString());
-                EventLogger.WriteEntry(ex);
-                throw new ApplicationException("An unexpected error occured.");
-            }
+            return new HttpRequestMessage(method, url);
         }
 
-        protected T Execute<T>(RestRequest request)
-            where T: new()
+        /// <exclude />
+        protected bool IsConnectionError(Exception ex)
+        {
+            var requestException = ex as HttpRequestException;
+            if (requestException != null)
+            {
+                var webException = requestException.InnerException as WebException;
+                if (webException != null)
+                {
+                    switch (webException.Status)
+                    {
+                        case System.Net.WebExceptionStatus.ConnectFailure:
+                        case System.Net.WebExceptionStatus.NameResolutionFailure:
+                        case System.Net.WebExceptionStatus.ProxyNameResolutionFailure:
+                        case System.Net.WebExceptionStatus.RequestProhibitedByProxy:
+                        case System.Net.WebExceptionStatus.SecureChannelFailure:
+                        case System.Net.WebExceptionStatus.TrustFailure:
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <exclude />
+        protected async Task ExecuteAsync(HttpRequestMessage request, bool logError = true)
         {
             try
             {
-                var response = Execute(request);
-                return SimpleJson.DeserializeObject<T>(response.Content, new RecorderJsonSerializerStrategy());
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
+                {
+                }
+            }
+            finally
+            {
+                request.Dispose();
+            }
+        }
+
+        /// <exclude />
+        protected async Task<T> ExecuteAsync<T>(HttpRequestMessage request, bool logError = true)
+            where T : new()
+        {
+            try
+            {
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
+                {
+                    return await DeserializeResponseContentAsync<T>(response).ConfigureAwait(false);
+                }
             }
             catch (ApplicationException)
             {
@@ -90,15 +145,80 @@ namespace ArgusTV.Common.Recorders
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.ToString());
-                EventLogger.WriteEntry(ex);
+                if (logError)
+                {
+                    Logger.Error(ex.ToString());
+                    EventLogger.WriteEntry(ex);
+                }
+                throw new ApplicationException("An unexpected error occured.");
+            }
+            finally
+            {
+                request.Dispose();
+            }
+        }
+
+        /// <exclude/>
+        protected async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequestMessage request, bool logError = true)
+        {
+            try
+            {
+                if (request.Method != HttpMethod.Get && request.Content == null)
+                {
+                    // Work around current Mono bug.
+                    request.Content = new ByteArrayContent(new byte[0]);
+                }
+                var response = await _client.SendAsync(request).ConfigureAwait(false);
+                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                {
+                    var error = SimpleJson.DeserializeObject<RestError>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    throw new ApplicationException(error.detail);
+                }
+                if (response.StatusCode >= HttpStatusCode.BadRequest)
+                {
+                    throw new ApplicationException(response.ReasonPhrase);
+                }
+                return response;
+            }
+            catch (AggregateException ex)
+            {
+                if (IsConnectionError(ex.InnerException))
+                {
+                    throw new RecorderNotFoundException(ex.InnerException.InnerException.Message);
+                }
+                throw;
+            }
+            catch (ApplicationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                if (logError)
+                {
+                    Logger.Error(ex.ToString());
+                    EventLogger.WriteEntry(ex);
+                }
                 throw new ApplicationException("An unexpected error occured.");
             }
         }
 
-        protected T ExecuteResult<T>(RestRequest request)
+        /// <exclude />
+        protected async static Task<T> DeserializeResponseContentAsync<T>(HttpResponseMessage response)
+            where T : new()
         {
-            var data = Execute<SimpleResult<T>>(request);
+            string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (String.IsNullOrEmpty(content))
+            {
+                return default(T);
+            }
+            return SimpleJson.DeserializeObject<T>(content, new RecorderJsonSerializerStrategy());
+        }
+
+        /// <exclude />
+        protected async Task<T> ExecuteResult<T>(HttpRequestMessage request)
+        {
+            var data = await ExecuteAsync<SimpleResult<T>>(request);
             return data.result;
         }
 
@@ -111,6 +231,25 @@ namespace ArgusTV.Common.Recorders
         private class RestError
         {
             public string detail { get; set; }
+        }
+    }
+
+    /// <exclude />
+    public static class HttpRequestMessageExtensions
+    {
+        /// <exclude />
+        public static void AddBody(this HttpRequestMessage request, object body)
+        {
+            request.Content = new StringContent(
+                SimpleJson.SerializeObject(body, new RecorderJsonSerializerStrategy()), Encoding.UTF8, "application/json");
+        }
+
+        /// <exclude />
+        public static void AddParameter(this HttpRequestMessage request, string name, object value)
+        {
+            string url = request.RequestUri.OriginalString;
+            url += (url.Contains("?") ? "&" : "?") + name + "=" + HttpUtility.UrlEncode(value.ToString());
+            request.RequestUri = new Uri(url, UriKind.Relative);
         }
     }
 }

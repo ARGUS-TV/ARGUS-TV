@@ -36,8 +36,7 @@ using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process.Guide;
 using ArgusTV.UI.Process;
 
@@ -104,48 +103,6 @@ namespace ArgusTV.UI.MediaPortal
             _recordingIntervalValues.Add(90);
         }
 
-        #region Service Agents
-        private SchedulerServiceAgent _tvSchedulerAgent;
-        public ISchedulerService SchedulerAgent
-        {
-            get
-            {
-                if (_tvSchedulerAgent == null)
-                {
-                    _tvSchedulerAgent = new SchedulerServiceAgent();
-                }
-                return _tvSchedulerAgent;
-            }
-        }
-
-        private GuideServiceAgent _tvGuideAgent;
-        public IGuideService GuideAgent
-        {
-            get
-            {
-                if (_tvGuideAgent == null)
-                {
-                    _tvGuideAgent = new GuideServiceAgent();
-                }
-                return _tvGuideAgent;
-            }
-        }
-
-        private ControlServiceAgent _tvControlAgent;
-        public IControlService ControlAgent
-        {
-            get
-            {
-                if (_tvControlAgent == null)
-                {
-                    _tvControlAgent = new ControlServiceAgent();
-                }
-                return _tvControlAgent;
-            }
-        }
-
-        #endregion
-
         #region Overrides
 
         public override bool IsTv
@@ -188,18 +145,6 @@ namespace ArgusTV.UI.MediaPortal
 
         protected override void OnPageDestroy(int newWindowId)
         {
-            if (_tvSchedulerAgent != null)
-            {
-                _tvSchedulerAgent.Dispose();
-            }
-            if (_tvGuideAgent != null)
-            {
-                _tvGuideAgent.Dispose();
-            }
-            if (_tvControlAgent != null)
-            {
-                _tvControlAgent.Dispose();
-            }
             base.OnPageDestroy(newWindowId);
         }
 
@@ -306,7 +251,7 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     return;
                 }
-                _ProgramToShow = GuideAgent.GetProgramById(program.GuideProgramId.Value);
+                _ProgramToShow = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value).Result;
                 _channel = program.Channel;
             }
             else
@@ -425,14 +370,14 @@ namespace ArgusTV.UI.MediaPortal
 
             if (upcomingRecording != null)
             {
-                UpcomingRecording[] upcomingRecordings = ControlAgent.GetUpcomingRecordings(upcomingRecording.Program.ScheduleId, true);
+                var upcomingRecordings = Proxies.ControlService.GetUpcomingRecordings(upcomingRecording.Program.ScheduleId, true).Result;
                 foreach (UpcomingRecording recording in upcomingRecordings)
                 {
                     GUIListItem item = new GUIListItem();
                     string title = recording.Program.CreateProgramTitle();
                     item.Label = title;
                     
-                    string logoImagePath = Utility.GetLogoImage(recording.Program.Channel, SchedulerAgent);
+                    string logoImagePath = Utility.GetLogoImage(recording.Program.Channel);
                     if (logoImagePath == null
                         || !System.IO.File.Exists(logoImagePath))
                     {
@@ -462,14 +407,13 @@ namespace ArgusTV.UI.MediaPortal
             }
             else if (upcomingProgram != null)
             {
-                List<UpcomingProgram> upcomingPrograms = new List<UpcomingProgram>(
-                        this.SchedulerAgent.GetUpcomingPrograms(scheduleProgram, true));
+                List<UpcomingProgram> upcomingPrograms = Proxies.SchedulerService.GetUpcomingPrograms(scheduleProgram, true).Result;
                 foreach (UpcomingProgram program in upcomingPrograms)
                 {
                     GUIListItem item = new GUIListItem();
                     string title = program.CreateProgramTitle();
                     item.Label = title;
-                    string logoImagePath = Utility.GetLogoImage(program.Channel, SchedulerAgent);
+                    string logoImagePath = Utility.GetLogoImage(program.Channel);
                     if (logoImagePath == null
                         || !System.IO.File.Exists(logoImagePath))
                     {
@@ -515,7 +459,7 @@ namespace ArgusTV.UI.MediaPortal
             if (program != null && program.IsPartOfSeries
                 && program.GuideProgramId.HasValue)
             {
-                GuideProgram prog = GuideAgent.GetProgramById(program.GuideProgramId.Value);
+                GuideProgram prog = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value).Result;
                 if (prog != null)
                 {
                     GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
@@ -531,8 +475,7 @@ namespace ArgusTV.UI.MediaPortal
                             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
                             if (dlgYesNo.IsConfirmed)
                             {
-                                SchedulerAgent.CancelUpcomingProgram(program.ScheduleId,
-                                prog.GuideProgramId, program.Channel.ChannelId, prog.StartTime);
+                                Proxies.SchedulerService.CancelUpcomingProgram(program.ScheduleId, prog.GuideProgramId, program.Channel.ChannelId, prog.StartTime).Wait();
                             }
                         }
                         else
@@ -545,8 +488,7 @@ namespace ArgusTV.UI.MediaPortal
                             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
                             if (dlgYesNo.IsConfirmed)
                             {
-                                SchedulerAgent.UncancelUpcomingProgram(program.ScheduleId,
-                                prog.GuideProgramId, program.Channel.ChannelId, prog.StartTime);
+                                Proxies.SchedulerService.UncancelUpcomingProgram(program.ScheduleId, prog.GuideProgramId, program.Channel.ChannelId, prog.StartTime).Wait();
                             }
                         }
                     }
@@ -610,7 +552,7 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     schedule.Rules.Add(new ScheduleRule(ScheduleRuleType.NewEpisodesOnly, newState));
                 }
-                SchedulerAgent.SaveSchedule(schedule);
+                Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                 Update();
             }
         }
@@ -638,7 +580,7 @@ namespace ArgusTV.UI.MediaPortal
                     if (dlg.SelectedLabel >= 0)
                     {
                         schedule.SchedulePriority = (SchedulePriority)(dlg.SelectedLabel - 2);
-                        SchedulerAgent.SaveSchedule(schedule);
+                        Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                         Update();
                     }
                 }
@@ -671,7 +613,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (GetPrePostRecordValue(Utility.GetLocalizedText(TextId.PreRecord), schedule.PreRecordSeconds, out newSeconds))
                 {
                     schedule.PreRecordSeconds = newSeconds;
-                    SchedulerAgent.SaveSchedule(schedule);
+                    Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                     Update();
                 }
             }
@@ -687,7 +629,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (GetPrePostRecordValue(Utility.GetLocalizedText(TextId.PostRecord), schedule.PostRecordSeconds, out newSeconds))
                 {
                     schedule.PostRecordSeconds = newSeconds;
-                    SchedulerAgent.SaveSchedule(schedule);
+                    Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                     Update();
                 }
             }
@@ -756,7 +698,7 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     schedule.KeepUntilMode = newMode;
                     schedule.KeepUntilValue = newValue;
-                    SchedulerAgent.SaveSchedule(schedule);
+                    Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                     Update();
                 }
             }
@@ -922,7 +864,7 @@ namespace ArgusTV.UI.MediaPortal
                     if (keyboard.IsConfirmed)
                     {
                         schedule.Name = keyboard.Text;
-                        SchedulerAgent.SaveSchedule(schedule);
+                        Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                         Update();
                     }
                 }
@@ -948,357 +890,352 @@ namespace ArgusTV.UI.MediaPortal
         internal static bool RecordProgram(Channel channel, GuideProgram guideProgram, ScheduleType scheduleType, bool NeedConfirm)
         {
             Log.Debug("TVProgammInfo.RecordProgram - channel = {0}, program = {1}", channel.DisplayName, guideProgram.CreateProgramTitle());
-            using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-            {
-                bool hasUpcomingRecording = false;
-                bool hasUpcomingAlert = false;
+
+            bool hasUpcomingRecording = false;
+            bool hasUpcomingAlert = false;
                 
-                if (scheduleType == ScheduleType.Recording)
+            if (scheduleType == ScheduleType.Recording)
+            {
+                UpcomingRecording upcomingRecording;
+                if (HasUpcomingRecording(channel.ChannelId, guideProgram, out upcomingRecording))
                 {
-                    UpcomingRecording upcomingRecording;
-                    if (HasUpcomingRecording(channel.ChannelId, guideProgram, out upcomingRecording))
+                    hasUpcomingRecording = true;
+                    if (upcomingRecording.Program.IsCancelled)
                     {
-                        hasUpcomingRecording = true;
-                        if (upcomingRecording.Program.IsCancelled)
+                        switch (upcomingRecording.Program.CancellationReason)
                         {
-                            switch (upcomingRecording.Program.CancellationReason)
-                            {
-                                case UpcomingCancellationReason.Manual:
-                                    tvSchedulerAgent.UncancelUpcomingProgram(upcomingRecording.Program.ScheduleId, guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime);
-                                    return true;
-
-                                case UpcomingCancellationReason.AlreadyQueued:
-                                    {
-                                        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                                        dlg.Reset();
-                                        dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
-                                        dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramIsAlreadyQueued));
-                                        dlg.SetLine(2, Utility.GetLocalizedText(TextId.ForRecordingAtAnEarlierTime));
-                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                    }
-                                    break;
-
-                                case UpcomingCancellationReason.PreviouslyRecorded:
-                                    {
-                                        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                                        dlg.Reset();
-                                        dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
-                                        dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramWasPreviouslyRecorded));
-                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                    }
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            if (upcomingRecording.Program.IsPartOfSeries)
-                            {
-                                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                                if (dlg != null)
-                                {
-                                    dlg.Reset();
-                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.DeleteProgram));
-                                    dlg.Add(Utility.GetLocalizedText(TextId.CancelThisShow));
-                                    dlg.Add(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
-                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-
-                                    if (dlg.SelectedId > 0)
-                                    {
-                                        switch (dlg.SelectedLabel)
-                                        {
-                                            case 0: // Cancel
-                                                tvSchedulerAgent.CancelUpcomingProgram(upcomingRecording.Program.ScheduleId,
-                                                    guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime);
-                                                return true;
-
-                                            case 1: // Delete
-                                                Schedule schedule = tvSchedulerAgent.GetScheduleById(upcomingRecording.Program.ScheduleId);
-                                                if (schedule != null)
-                                                {
-                                                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                                                    if (dlgYesNo != null)
-                                                    {
-                                                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
-                                                        dlgYesNo.SetLine(1, "\"" + schedule.Name + "\"");
-                                                        dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
-                                                        dlgYesNo.SetLine(3, String.Empty);
-                                                        dlgYesNo.SetDefaultToYes(false);
-                                                        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                                                        if (dlgYesNo.IsConfirmed)
-                                                        {
-                                                            tvSchedulerAgent.DeleteSchedule(upcomingRecording.Program.ScheduleId);
-                                                            return true;
-                                                        }
-                                                    }
-                                                }
-                                                break;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (PluginMain.IsActiveRecording(channel.ChannelId, guideProgram))
-                                {
-                                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                                    if (dlgYesNo != null)
-                                    {
-                                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.StopRecording));
-                                        dlgYesNo.SetLine(1, channel.DisplayName);
-                                        dlgYesNo.SetLine(2, guideProgram.Title);
-                                        dlgYesNo.SetLine(3, string.Empty);
-                                        dlgYesNo.SetDefaultToYes(false);
-                                        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                                        if (!dlgYesNo.IsConfirmed)
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-                                else if (PluginMain.IsActiveRecording(channel.ChannelId, guideProgram) == false && NeedConfirm)
-                                {
-                                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                                    if (dlgYesNo != null)
-                                    {
-                                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DontRecord));
-                                        dlgYesNo.SetLine(1, channel.DisplayName);
-                                        dlgYesNo.SetLine(2, guideProgram.Title);
-                                        dlgYesNo.SetLine(3, string.Empty);
-                                        dlgYesNo.SetDefaultToYes(true);
-                                        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                                        if (!dlgYesNo.IsConfirmed)
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-
-                                tvSchedulerAgent.DeleteSchedule(upcomingRecording.Program.ScheduleId);
+                            case UpcomingCancellationReason.Manual:
+                                Proxies.SchedulerService.UncancelUpcomingProgram(upcomingRecording.Program.ScheduleId, guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime).Wait();
                                 return true;
-                            }
+
+                            case UpcomingCancellationReason.AlreadyQueued:
+                                {
+                                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                                    dlg.Reset();
+                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
+                                    dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramIsAlreadyQueued));
+                                    dlg.SetLine(2, Utility.GetLocalizedText(TextId.ForRecordingAtAnEarlierTime));
+                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                }
+                                break;
+
+                            case UpcomingCancellationReason.PreviouslyRecorded:
+                                {
+                                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                                    dlg.Reset();
+                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
+                                    dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramWasPreviouslyRecorded));
+                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                }
+                                break;
                         }
                     }
-                }
-                else if (scheduleType == ScheduleType.Alert)
-                {
-                    UpcomingProgram upcomingProgram;
-                    if (HasUpcomingProgram(channel.ChannelId, guideProgram, out upcomingProgram, scheduleType))
+                    else
                     {
-                        hasUpcomingAlert = true;
-                        if (upcomingProgram.IsCancelled)
+                        if (upcomingRecording.Program.IsPartOfSeries)
                         {
-                            switch (upcomingProgram.CancellationReason)
+                            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                            if (dlg != null)
                             {
-                                case UpcomingCancellationReason.Manual:
-                                    tvSchedulerAgent.UncancelUpcomingProgram(upcomingProgram.ScheduleId, guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime);
-                                    return true;
+                                dlg.Reset();
+                                dlg.SetHeading(Utility.GetLocalizedText(TextId.DeleteProgram));
+                                dlg.Add(Utility.GetLocalizedText(TextId.CancelThisShow));
+                                dlg.Add(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
+                                dlg.DoModal(GUIWindowManager.ActiveWindow);
 
-                                case UpcomingCancellationReason.AlreadyQueued:
-                                    {
-                                        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                                        dlg.Reset();
-                                        dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
-                                        dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramIsAlreadyQueued));
-                                        dlg.SetLine(2, Utility.GetLocalizedText(TextId.ForRecordingAtAnEarlierTime));
-                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                    }
-                                    break;
-
-                                case UpcomingCancellationReason.PreviouslyRecorded:
-                                    {
-                                        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                                        dlg.Reset();
-                                        dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
-                                        dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramWasPreviouslyRecorded));
-                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                    }
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            if (upcomingProgram.IsPartOfSeries)
-                            {
-                                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                                if (dlg != null)
+                                if (dlg.SelectedId > 0)
                                 {
-                                    dlg.Reset();
-                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.DeleteProgram));
-                                    dlg.Add(Utility.GetLocalizedText(TextId.CancelThisShow));
-                                    dlg.Add(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
-                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-
-                                    if (dlg.SelectedId > 0)
+                                    switch (dlg.SelectedLabel)
                                     {
-                                        switch (dlg.SelectedLabel)
-                                        {
-                                            case 0: // Cancel
-                                                tvSchedulerAgent.CancelUpcomingProgram(upcomingProgram.ScheduleId,
-                                                    guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime);
-                                                return true;
+                                        case 0: // Cancel
+                                            Proxies.SchedulerService.CancelUpcomingProgram(upcomingRecording.Program.ScheduleId,
+                                                guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime).Wait();
+                                            return true;
 
-                                            case 1: // Delete
-                                                Schedule schedule = tvSchedulerAgent.GetScheduleById(upcomingProgram.ScheduleId);//GetScheduleById(upcomingRecording.Program.ScheduleId);
-                                                if (schedule != null)
+                                        case 1: // Delete
+                                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(upcomingRecording.Program.ScheduleId).Result;
+                                            if (schedule != null)
+                                            {
+                                                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                                                if (dlgYesNo != null)
                                                 {
-                                                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                                                    if (dlgYesNo != null)
+                                                    dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
+                                                    dlgYesNo.SetLine(1, "\"" + schedule.Name + "\"");
+                                                    dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
+                                                    dlgYesNo.SetLine(3, String.Empty);
+                                                    dlgYesNo.SetDefaultToYes(false);
+                                                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                                                    if (dlgYesNo.IsConfirmed)
                                                     {
-                                                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
-                                                        dlgYesNo.SetLine(1, "\"" + schedule.Name + "\"");
-                                                        dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
-                                                        dlgYesNo.SetLine(3, String.Empty);
-                                                        dlgYesNo.SetDefaultToYes(false);
-                                                        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                                                        if (dlgYesNo.IsConfirmed)
-                                                        {
-                                                            tvSchedulerAgent.DeleteSchedule(upcomingProgram.ScheduleId);
-                                                            return true;
-                                                        }
+                                                        Proxies.SchedulerService.DeleteSchedule(upcomingRecording.Program.ScheduleId).Wait();
+                                                        return true;
                                                     }
                                                 }
-                                                break;
-                                        }
+                                            }
+                                            break;
                                     }
                                 }
                             }
-                            else
-                            {
-                                if (NeedConfirm)
-                                {
-                                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                                    if (dlgYesNo != null)
-                                    {
-                                        dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DontRecord));
-                                        dlgYesNo.SetLine(1, channel.DisplayName);
-                                        dlgYesNo.SetLine(2, guideProgram.Title);
-                                        dlgYesNo.SetLine(3, string.Empty);
-                                        dlgYesNo.SetDefaultToYes(true);
-                                        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                                        if (!dlgYesNo.IsConfirmed)
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-                                tvSchedulerAgent.DeleteSchedule(upcomingProgram.ScheduleId);
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                if (!hasUpcomingRecording && !hasUpcomingAlert)
-                {
-                    GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                    if (dlg != null)
-                    {
-                        Schedule newSchedule = null;
-                        GuideController.RepeatingType dayRepeatingType;
-
-                        dlg.Reset();
-                        dlg.SetHeading(Utility.GetLocalizedText(TextId.SelectScheduleType));
-                        dlg.Add(Utility.GetLocalizedText(TextId.Once));
-                        dlg.Add(Utility.GetLocalizedText(TextId.EverytimeOnThisChannel));
-                        dlg.Add(Utility.GetLocalizedText(TextId.EverytimeOnEveryChannel));
-                        dlg.Add(Utility.GetLocalizedText(TextId.EveryWeekAtThisTime));
-                        dlg.Add(Utility.GetLocalizedText(TextId.EveryDayAtThisTime));
-                        if (guideProgram.StartTime.DayOfWeek == DayOfWeek.Saturday
-                            || guideProgram.StartTime.DayOfWeek == DayOfWeek.Sunday)
-                        {
-                            dayRepeatingType = GuideController.RepeatingType.SatSun;
-                            dlg.Add(Utility.GetLocalizedText(TextId.SatSun));
                         }
                         else
                         {
-                            dayRepeatingType = GuideController.RepeatingType.MonFri;
-                            dlg.Add(Utility.GetLocalizedText(TextId.MonFri));
-                        }
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-
-                        switch (dlg.SelectedLabel)
-                        {
-                            case 0: //once
-                                newSchedule = GuideController.CreateRecordOnceSchedule(tvSchedulerAgent, channel.ChannelType, channel.ChannelId,
-                                    guideProgram.Title, guideProgram.SubTitle, guideProgram.EpisodeNumberDisplay, guideProgram.StartTime);
-                                break;
-
-                            case 1: //everytime, this channel
-                                newSchedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.AnyTimeThisChannel,
-                                    channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.AlwaysThisChannel) + ")");
-                                ScheduleRule newEpisodesRule = FindNewEpisodesOnlyRule(newSchedule);
-                                if (newEpisodesRule != null)
+                            if (PluginMain.IsActiveRecording(channel.ChannelId, guideProgram))
+                            {
+                                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                                if (dlgYesNo != null)
                                 {
-                                    newEpisodesRule.Arguments[0] = false;
+                                    dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.StopRecording));
+                                    dlgYesNo.SetLine(1, channel.DisplayName);
+                                    dlgYesNo.SetLine(2, guideProgram.Title);
+                                    dlgYesNo.SetLine(3, string.Empty);
+                                    dlgYesNo.SetDefaultToYes(false);
+                                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                                    if (!dlgYesNo.IsConfirmed)
+                                    {
+                                        return false;
+                                    }
                                 }
-                                break;
-
-                            case 2: //everytime, any channel
-                                newSchedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.AnyTime,
-                                    channel.ChannelType, null, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.AlwaysEveryChannel) + ")");
-                                ScheduleRule newEpisodesRule2 = FindNewEpisodesOnlyRule(newSchedule);
-                                if (newEpisodesRule2 != null)
+                            }
+                            else if (PluginMain.IsActiveRecording(channel.ChannelId, guideProgram) == false && NeedConfirm)
+                            {
+                                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                                if (dlgYesNo != null)
                                 {
-                                    newEpisodesRule2.Arguments[0] = false;
+                                    dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DontRecord));
+                                    dlgYesNo.SetLine(1, channel.DisplayName);
+                                    dlgYesNo.SetLine(2, guideProgram.Title);
+                                    dlgYesNo.SetLine(3, string.Empty);
+                                    dlgYesNo.SetDefaultToYes(true);
+                                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                                    if (!dlgYesNo.IsConfirmed)
+                                    {
+                                        return false;
+                                    }
                                 }
-                                break;
+                            }
 
-                            case 3: //weekly
-                                newSchedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.Weekly,
-                                    channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.Weekly) + ")");
-                                break;
-
-                            case 4: //daily
-                                newSchedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, GuideController.RepeatingType.Daily,
-                                    channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.Daily) + ")");
-                                break;
-
-                            case 5: //Mon-Fri or Sat-Sun
-                                string repeatingTime = string.Empty;
-                                if (dayRepeatingType == GuideController.RepeatingType.MonFri)
-                                {
-                                    repeatingTime = "(" + Utility.GetLocalizedText(TextId.MonFri) + ")";
-                                }
-                                else if (dayRepeatingType == GuideController.RepeatingType.SatSun)
-                                {
-                                    repeatingTime = "(" + Utility.GetLocalizedText(TextId.SatSun) + ")";
-                                }
-
-                                newSchedule = GuideController.CreateRecordRepeatingSchedule(tvSchedulerAgent, dayRepeatingType,
-                                    channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, repeatingTime);
-                                break;
-                        }
-
-                        if (newSchedule != null)
-                        {
-                            newSchedule.ScheduleType = scheduleType;
-                            tvSchedulerAgent.SaveSchedule(newSchedule);
+                            Proxies.SchedulerService.DeleteSchedule(upcomingRecording.Program.ScheduleId).Wait();
                             return true;
                         }
                     }
                 }
-                return false;
             }
+            else if (scheduleType == ScheduleType.Alert)
+            {
+                UpcomingProgram upcomingProgram;
+                if (HasUpcomingProgram(channel.ChannelId, guideProgram, out upcomingProgram, scheduleType))
+                {
+                    hasUpcomingAlert = true;
+                    if (upcomingProgram.IsCancelled)
+                    {
+                        switch (upcomingProgram.CancellationReason)
+                        {
+                            case UpcomingCancellationReason.Manual:
+                                Proxies.SchedulerService.UncancelUpcomingProgram(upcomingProgram.ScheduleId, guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime).Wait();
+                                return true;
+
+                            case UpcomingCancellationReason.AlreadyQueued:
+                                {
+                                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                                    dlg.Reset();
+                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
+                                    dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramIsAlreadyQueued));
+                                    dlg.SetLine(2, Utility.GetLocalizedText(TextId.ForRecordingAtAnEarlierTime));
+                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                }
+                                break;
+
+                            case UpcomingCancellationReason.PreviouslyRecorded:
+                                {
+                                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                                    dlg.Reset();
+                                    dlg.SetHeading(Utility.GetLocalizedText(TextId.Record));
+                                    dlg.SetLine(1, Utility.GetLocalizedText(TextId.ThisProgramWasPreviouslyRecorded));
+                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (upcomingProgram.IsPartOfSeries)
+                        {
+                            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                            if (dlg != null)
+                            {
+                                dlg.Reset();
+                                dlg.SetHeading(Utility.GetLocalizedText(TextId.DeleteProgram));
+                                dlg.Add(Utility.GetLocalizedText(TextId.CancelThisShow));
+                                dlg.Add(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
+                                dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+                                if (dlg.SelectedId > 0)
+                                {
+                                    switch (dlg.SelectedLabel)
+                                    {
+                                        case 0: // Cancel
+                                            Proxies.SchedulerService.CancelUpcomingProgram(upcomingProgram.ScheduleId,
+                                                guideProgram.GuideProgramId, channel.ChannelId, guideProgram.StartTime).Wait();
+                                            return true;
+
+                                        case 1: // Delete
+                                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(upcomingProgram.ScheduleId).Result;
+                                            if (schedule != null)
+                                            {
+                                                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                                                if (dlgYesNo != null)
+                                                {
+                                                    dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DeleteEntireSchedule));
+                                                    dlgYesNo.SetLine(1, "\"" + schedule.Name + "\"");
+                                                    dlgYesNo.SetLine(2, Utility.GetLocalizedText(TextId.AreYouSure));
+                                                    dlgYesNo.SetLine(3, String.Empty);
+                                                    dlgYesNo.SetDefaultToYes(false);
+                                                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                                                    if (dlgYesNo.IsConfirmed)
+                                                    {
+                                                        Proxies.SchedulerService.DeleteSchedule(upcomingProgram.ScheduleId).Wait();
+                                                        return true;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (NeedConfirm)
+                            {
+                                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                                if (dlgYesNo != null)
+                                {
+                                    dlgYesNo.SetHeading(Utility.GetLocalizedText(TextId.DontRecord));
+                                    dlgYesNo.SetLine(1, channel.DisplayName);
+                                    dlgYesNo.SetLine(2, guideProgram.Title);
+                                    dlgYesNo.SetLine(3, string.Empty);
+                                    dlgYesNo.SetDefaultToYes(true);
+                                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                                    if (!dlgYesNo.IsConfirmed)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            Proxies.SchedulerService.DeleteSchedule(upcomingProgram.ScheduleId).Wait();
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (!hasUpcomingRecording && !hasUpcomingAlert)
+            {
+                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                if (dlg != null)
+                {
+                    Schedule newSchedule = null;
+                    GuideController.RepeatingType dayRepeatingType;
+
+                    dlg.Reset();
+                    dlg.SetHeading(Utility.GetLocalizedText(TextId.SelectScheduleType));
+                    dlg.Add(Utility.GetLocalizedText(TextId.Once));
+                    dlg.Add(Utility.GetLocalizedText(TextId.EverytimeOnThisChannel));
+                    dlg.Add(Utility.GetLocalizedText(TextId.EverytimeOnEveryChannel));
+                    dlg.Add(Utility.GetLocalizedText(TextId.EveryWeekAtThisTime));
+                    dlg.Add(Utility.GetLocalizedText(TextId.EveryDayAtThisTime));
+                    if (guideProgram.StartTime.DayOfWeek == DayOfWeek.Saturday
+                        || guideProgram.StartTime.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        dayRepeatingType = GuideController.RepeatingType.SatSun;
+                        dlg.Add(Utility.GetLocalizedText(TextId.SatSun));
+                    }
+                    else
+                    {
+                        dayRepeatingType = GuideController.RepeatingType.MonFri;
+                        dlg.Add(Utility.GetLocalizedText(TextId.MonFri));
+                    }
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+                    switch (dlg.SelectedLabel)
+                    {
+                        case 0: //once
+                            newSchedule = GuideController.CreateRecordOnceSchedule(channel.ChannelType, channel.ChannelId,
+                                guideProgram.Title, guideProgram.SubTitle, guideProgram.EpisodeNumberDisplay, guideProgram.StartTime);
+                            break;
+
+                        case 1: //everytime, this channel
+                            newSchedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.AnyTimeThisChannel,
+                                channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.AlwaysThisChannel) + ")");
+                            ScheduleRule newEpisodesRule = FindNewEpisodesOnlyRule(newSchedule);
+                            if (newEpisodesRule != null)
+                            {
+                                newEpisodesRule.Arguments[0] = false;
+                            }
+                            break;
+
+                        case 2: //everytime, any channel
+                            newSchedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.AnyTime,
+                                channel.ChannelType, null, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.AlwaysEveryChannel) + ")");
+                            ScheduleRule newEpisodesRule2 = FindNewEpisodesOnlyRule(newSchedule);
+                            if (newEpisodesRule2 != null)
+                            {
+                                newEpisodesRule2.Arguments[0] = false;
+                            }
+                            break;
+
+                        case 3: //weekly
+                            newSchedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.Weekly,
+                                channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.Weekly) + ")");
+                            break;
+
+                        case 4: //daily
+                            newSchedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.Daily,
+                                channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, "(" + Utility.GetLocalizedText(TextId.Daily) + ")");
+                            break;
+
+                        case 5: //Mon-Fri or Sat-Sun
+                            string repeatingTime = string.Empty;
+                            if (dayRepeatingType == GuideController.RepeatingType.MonFri)
+                            {
+                                repeatingTime = "(" + Utility.GetLocalizedText(TextId.MonFri) + ")";
+                            }
+                            else if (dayRepeatingType == GuideController.RepeatingType.SatSun)
+                            {
+                                repeatingTime = "(" + Utility.GetLocalizedText(TextId.SatSun) + ")";
+                            }
+
+                            newSchedule = GuideController.CreateRecordRepeatingSchedule(dayRepeatingType,
+                                channel.ChannelType, channel.ChannelId, guideProgram.Title, guideProgram.StartTime, repeatingTime);
+                            break;
+                    }
+
+                    if (newSchedule != null)
+                    {
+                        newSchedule.ScheduleType = scheduleType;
+                        Proxies.SchedulerService.SaveSchedule(newSchedule).Wait();
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         internal static bool HasUpcomingRecording(Guid channelId, GuideProgram program, out UpcomingRecording upcomingRecording)
         {
-            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-            {
-                upcomingRecording = null;
-                Guid upcomingProgramId = program.GetUniqueUpcomingProgramId(channelId);
+            upcomingRecording = null;
+            Guid upcomingProgramId = program.GetUniqueUpcomingProgramId(channelId);
 
-                UpcomingRecording[] upcomingRecordings = tvControlAgent.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-                foreach (UpcomingRecording recording in upcomingRecordings)
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result;
+            foreach (UpcomingRecording recording in upcomingRecordings)
+            {
+                if (recording.Program.UpcomingProgramId == upcomingProgramId)
                 {
-                    if (recording.Program.UpcomingProgramId == upcomingProgramId)
-                    {
-                        upcomingRecording = recording;
-                        return true;
-                    }
+                    upcomingRecording = recording;
+                    return true;
                 }
-                return false;
             }
+            return false;
         }
 
         internal static bool GetUpcomingRecordingAndSchedule(Guid channelId, GuideProgram program, out UpcomingRecording upcomingRecording, out Schedule schedule)
@@ -1306,34 +1243,27 @@ namespace ArgusTV.UI.MediaPortal
             schedule = null;
             if (HasUpcomingRecording(channelId, program, out upcomingRecording))
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    schedule = tvSchedulerAgent.GetScheduleById(upcomingRecording.Program.ScheduleId);
-                    return (schedule != null);
-                }
+                schedule = Proxies.SchedulerService.GetScheduleById(upcomingRecording.Program.ScheduleId).Result;
+                return (schedule != null);
             }
             return false;
         }
 
         internal static bool HasUpcomingProgram(Guid channelId, GuideProgram program, out UpcomingProgram upcomingProgram, ScheduleType scheduleType)
         {
-            using (SchedulerServiceAgent SchedulerAgent = new SchedulerServiceAgent())
-            {
-                upcomingProgram = null;
-                Guid upcomingProgramId = program.GetUniqueUpcomingProgramId(channelId);
+            upcomingProgram = null;
+            Guid upcomingProgramId = program.GetUniqueUpcomingProgramId(channelId);
 
-                List<UpcomingProgram> upcomingPrograms = new List<UpcomingProgram>(
-                    SchedulerAgent.GetAllUpcomingPrograms(scheduleType, true));
-                foreach (UpcomingProgram upcoming in upcomingPrograms)
+            List<UpcomingProgram> upcomingPrograms = Proxies.SchedulerService.GetAllUpcomingPrograms(scheduleType, true).Result;
+            foreach (UpcomingProgram upcoming in upcomingPrograms)
+            {
+                if (upcoming.UpcomingProgramId == upcomingProgramId)
                 {
-                    if (upcoming.UpcomingProgramId == upcomingProgramId)
-                    {
-                        upcomingProgram = upcoming;
-                        return true;
-                    }
+                    upcomingProgram = upcoming;
+                    return true;
                 }
-                return false;
             }
+            return false;
         }
 
         internal static bool GetUpcomingProgramAndSchedule(Guid channelId, GuideProgram program, out UpcomingProgram upcomingProgram, out Schedule schedule, ScheduleType scheduleType)
@@ -1341,11 +1271,8 @@ namespace ArgusTV.UI.MediaPortal
             schedule = null;
             if (HasUpcomingProgram(channelId, program, out upcomingProgram, scheduleType))
             {
-                using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                {
-                    schedule = tvSchedulerAgent.GetScheduleById(upcomingProgram.ScheduleId);
-                    return (schedule != null);
-                }
+                schedule = Proxies.SchedulerService.GetScheduleById(upcomingProgram.ScheduleId).Result;
+                return (schedule != null);
             }
             return false;
         }

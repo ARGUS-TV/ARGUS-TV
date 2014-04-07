@@ -30,10 +30,10 @@ using TvEngine.Events;
 using TvLibrary.Log;
 using Gentle.Framework;
 
-using ArgusTV.ServiceAgents;
 using ArgusTV.DataContracts;
 using ArgusTV.Common.Threading;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
@@ -101,19 +101,18 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                         List<GuideProgram> guidePrograms = GetProgramsToImport();
                         while (guidePrograms != null)
                         {
-                            using (GuideServiceAgent tvGuideAgent = new GuideServiceAgent())
+                            Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: ArgusTVDvbEpg: importing {0} programs into ARGUS TV", guidePrograms.Count);
+
+                            foreach (GuideProgram guideProgram in guidePrograms)
                             {
-                                Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: ArgusTVDvbEpg: importing {0} programs into ARGUS TV", guidePrograms.Count);
-                                foreach (GuideProgram guideProgram in guidePrograms)
+                                Proxies.GuideService.ImportProgram(guideProgram, GuideSource.DvbEpg).Wait();
+                                aborted = this.StopThreadEvent.WaitOne(0, false);
+                                if (aborted)
                                 {
-                                    tvGuideAgent.ImportProgram(guideProgram, GuideSource.DvbEpg);
-                                    aborted = this.StopThreadEvent.WaitOne(0, false);
-                                    if (aborted)
-                                    {
-                                        break;
-                                    }
+                                    break;
                                 }
                             }
+ 
                             aborted = this.StopThreadEvent.WaitOne(0);
                             if (aborted)
                             {

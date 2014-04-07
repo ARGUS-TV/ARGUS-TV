@@ -590,7 +590,7 @@ namespace ArgusTV.GuideImporter.SchedulesDirect
             int year = dateTime / 10000;
             int month = (dateTime % (year * 10000)) / 100;
             int day = (dateTime % (year * 10000)) - (month * 100);
-            return new DateTime(year, month, day);
+            return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Local);
         }
 
         private string TrimAndCutString(string content, int trimLength)

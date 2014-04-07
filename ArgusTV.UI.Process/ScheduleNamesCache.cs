@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Process
 {
@@ -84,13 +84,10 @@ namespace ArgusTV.UI.Process
                 {
                     try
                     {
-                        using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-                        {
-                            _scheduleNames.Clear();
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Recording);
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Alert);
-                            GetScheduleNames(tvSchedulerAgent, ScheduleType.Suggestion);
-                        }
+                        _scheduleNames.Clear();
+                        GetScheduleNames(ScheduleType.Recording);
+                        GetScheduleNames(ScheduleType.Alert);
+                        GetScheduleNames(ScheduleType.Suggestion);
                     }
                     catch { }
                 }
@@ -102,14 +99,14 @@ namespace ArgusTV.UI.Process
             }
         }
 
-        private void GetScheduleNames(SchedulerServiceAgent tvSchedulerAgent, ScheduleType type)
+        private void GetScheduleNames(ScheduleType type)
         {
-            ScheduleSummary[] schedules = tvSchedulerAgent.GetAllSchedules(ChannelType.Television, type, false);
+            var schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, type, false).Result;
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);
             }
-            schedules = tvSchedulerAgent.GetAllSchedules(ChannelType.Radio, type, false);
+            schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Radio, type, false).Result;
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);

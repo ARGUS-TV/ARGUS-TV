@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml.XPath;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.Client.Common
 {

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>ArgusTV.SchedulerProxy</id>
+        <version>2.3.0-beta-6</version>
+        <title>ArgusTV Scheduler proxy</title>
+        <authors>Nico Francois</authors>
+        <owners>https://www.nuget.org/profiles/dot-i</owners>
+        <licenseUrl>http://www.gnu.org/copyleft/gpl.html</licenseUrl>
+        <projectUrl>http://www.argus-tv.com/</projectUrl>
+        <iconUrl>http://www.argus-tv.com/images/argustv-128x128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>These client assemblies allow you to easily connect to the ARGUS TV scheduler on a server, using its REST api.</description>
+        <copyright>Copyright © 2014 ARGUS TV</copyright>
+        <language>en-US</language>
+        <tags>argus argustv htpc pvr</tags>
+    </metadata>
+    <files>
+        <file src="_NET40\ArgusTV.DataContracts\bin\Release\ArgusTV.DataContracts.dll" target="lib\net40\ArgusTV.DataContracts.dll" />
+        <file src="_NET40\ArgusTV.DataContracts\bin\Release\ArgusTV.DataContracts.xml" target="lib\net40\ArgusTV.DataContracts.xml" />
+        <file src="_NET40\ArgusTV.ServiceProxy\bin\Release\merged\ArgusTV.ServiceProxy.dll" target="lib\net40\ArgusTV.ServiceProxy.dll" />
+        <file src="_NET40\ArgusTV.ServiceProxy\bin\Release\ArgusTV.ServiceProxy.xml" target="lib\net40\ArgusTV.ServiceProxy.xml" />
+        <file src="ArgusTV.DataContracts\bin\Release\ArgusTV.DataContracts.dll" target="lib\net45\ArgusTV.DataContracts.dll" />
+        <file src="ArgusTV.DataContracts\bin\Release\ArgusTV.DataContracts.xml" target="lib\net45\ArgusTV.DataContracts.xml" />
+        <file src="ArgusTV.ServiceProxy\bin\Release\merged\ArgusTV.ServiceProxy.dll" target="lib\net45\ArgusTV.ServiceProxy.dll" />
+        <file src="ArgusTV.ServiceProxy\bin\Release\ArgusTV.ServiceProxy.xml" target="lib\net45\ArgusTV.ServiceProxy.xml" />
+    </files>
+</package>

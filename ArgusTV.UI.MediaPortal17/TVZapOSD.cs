@@ -26,7 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.UI.MediaPortal
@@ -266,10 +266,7 @@ namespace ArgusTV.UI.MediaPortal
       string strLogo = string.Empty;
       if (channelId != Guid.Empty && channelName != string.Empty)
       {
-          using (SchedulerServiceAgent tvSchedulerAgent = new SchedulerServiceAgent())
-          {
-              strLogo = Utility.GetLogoImage(channelId, channelName, tvSchedulerAgent);
-          }
+            strLogo = Utility.GetLogoImage(channelId, channelName);
       }
 
       if (string.IsNullOrEmpty(strLogo))                         
