@@ -296,6 +296,7 @@ namespace ArgusTV.ServiceProxy
         public void SetChannelGroupMembers(Guid channelGroupId, IEnumerable<Guid> channelIds)
         {
             var request = NewRequest("/SetChannelGroupMembers/{channelGroupId}", Method.POST);
+            request.AddParameter("channelGroupId", channelGroupId, ParameterType.UrlSegment);
             request.AddBody(channelIds);
             Execute(request);
         }
