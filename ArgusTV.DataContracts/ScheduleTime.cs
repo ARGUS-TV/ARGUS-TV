@@ -48,7 +48,7 @@ namespace ArgusTV.DataContracts
         /// <param name="seconds">The seconds, from 0 to 59.</param>
         public ScheduleTime(int hours, int minutes, int seconds)
         {
-            _dateTime = new DateTime(1900, 1, 1, hours, minutes, seconds);
+            _dateTime = new DateTime(1900, 1, 1, hours, minutes, seconds, DateTimeKind.Local);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace ArgusTV.DataContracts
         public long Ticks
         {
             get { return _dateTime.TimeOfDay.Ticks; }
-            set { _dateTime = new DateTime(1900, 1, 1).AddTicks(value); }
+            set { _dateTime = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Local).AddTicks(value); }
         }
 
         /// <summary>

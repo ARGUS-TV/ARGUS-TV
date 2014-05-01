@@ -306,7 +306,7 @@ namespace ArgusTV.DataContracts
 
                     case ScheduleRuleType.AroundTime:
                     case ScheduleRuleType.StartingBetween:
-                        from.Arguments.ForEach(a => result.Arguments.Add(new DateTime(((ScheduleTime)a).Ticks).ToString("HH:mm:ss")));
+                        from.Arguments.ForEach(a => result.Arguments.Add(new DateTime(((ScheduleTime)a).Ticks, DateTimeKind.Local).ToString("HH:mm:ss")));
                         break;
 
                     case ScheduleRuleType.ManualSchedule:
@@ -316,7 +316,7 @@ namespace ArgusTV.DataContracts
                         }
                         if (from.Arguments.Count > 1)
                         {
-                            result.Arguments.Add(new DateTime(((ScheduleTime)from.Arguments[1]).Ticks).ToString("HH:mm:ss"));
+                            result.Arguments.Add(new DateTime(((ScheduleTime)from.Arguments[1]).Ticks, DateTimeKind.Local).ToString("HH:mm:ss"));
                         }
                         break;
 

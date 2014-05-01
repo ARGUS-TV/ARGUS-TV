@@ -56,7 +56,7 @@ namespace ArgusTV.UI.Console.Panels
         private bool _autoCombineConsecutiveRecordings;
         private bool _combineRecordingsOnlyOnSameChannel;
         private bool _swapRecorderdTunerPriority;
-        private DateTime _timePickerReferenceDate = new DateTime(2100, 1, 1);
+        private DateTime _timePickerReferenceDate = new DateTime(2100, 1, 1, 0, 0, 0, DateTimeKind.Local);
         private int _allowedTimeFrame = 1 * 3600;
         private bool _includeBetaVersionsInUpdateCheck;
         private bool _createThumbnails;

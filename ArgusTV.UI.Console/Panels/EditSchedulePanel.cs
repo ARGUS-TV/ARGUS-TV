@@ -45,7 +45,7 @@ namespace ArgusTV.UI.Console.Panels
         private int _standardGeneralHeight;
         private const int _generalHeightNoCommandsDelta = 26;
         
-        private DateTime _timePickerReferenceDate = new DateTime(2100, 1, 1);
+        private DateTime _timePickerReferenceDate = new DateTime(2100, 1, 1, 0, 0, 0, DateTimeKind.Local);
         private int _allowedTimeFrame = 3 * 3600;
  
         public EditSchedulePanel()
