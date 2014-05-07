@@ -103,5 +103,10 @@ namespace ArgusTV.DataContracts
         /// Set to true when at least one program in the group is still recording.
         /// </summary>
         public bool IsRecording { get; set; }
+
+        /// <summary>
+        /// Optionally set, and only when the group only contains one recording.
+        /// </summary>
+        public RecordingSummary SingleRecording { get; set; }
     }
 }

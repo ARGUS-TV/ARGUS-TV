@@ -295,16 +295,12 @@ namespace ArgusTV.ServiceProxy
         protected static T DeserializeResponseContent<T>(IRestResponse response)
             where T : new()
         {
-            T result;
-            if (response.ContentLength == 0)
+            string content = response.ContentLength == 0 ? String.Empty : response.Content;
+            if (String.IsNullOrEmpty(content))
             {
-                result = default(T);
+                return default(T);
             }
-            else
-            {
-                result = SimpleJson.DeserializeObject<T>(response.Content, new SchedulerJsonSerializerStrategy());
-            }
-            return result;
+            return SimpleJson.DeserializeObject<T>(content, new SchedulerJsonSerializerStrategy());
         }
 
         protected string ToIso8601(DateTime time)

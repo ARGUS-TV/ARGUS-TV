@@ -48,7 +48,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelType">The channel type of the channels in the group.</param>
         /// <param name="visibleOnly">Set to true to only receive groups that are marked visible.</param>
         /// <returns>A list containing zero or more channel groups.</returns>
-        public List<ChannelGroup> GetAllChannelGroups(ChannelType channelType, bool visibleOnly)
+        public List<ChannelGroup> GetAllChannelGroups(ChannelType channelType, bool visibleOnly = true)
         {
             var request = NewRequest("/ChannelGroups/{channelType}", Method.GET);
             request.AddParameter("channelType", channelType, ParameterType.UrlSegment);
@@ -65,7 +65,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelType">The channel type of the channels to retrieve.</param>
         /// <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
         /// <returns>A list containing zero or more channels.</returns>
-        public List<Channel> GetAllChannels(ChannelType channelType, bool visibleOnly)
+        public List<Channel> GetAllChannels(ChannelType channelType, bool visibleOnly = true)
         {
             var request = NewRequest("/Channels/{channelType}", Method.GET);
             request.AddParameter("channelType", channelType, ParameterType.UrlSegment);
@@ -125,10 +125,14 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelGroupId">The ID of the channel group.</param>
         /// <param name="visibleOnly">Set to true to only receive channels that are marked visible.</param>
         /// <returns>A list containing zero or more channels.</returns>
-        public List<Channel> GetChannelsInGroup(Guid channelGroupId, bool visibleOnly)
+        public List<Channel> GetChannelsInGroup(Guid channelGroupId, bool visibleOnly = true)
         {
             var request = NewRequest("/ChannelsInGroup/{channelGroupId}", Method.GET);
             request.AddParameter("channelGroupId", channelGroupId, ParameterType.UrlSegment);
+            if (!visibleOnly)
+            {
+                request.AddParameter("visibleOnly", false, ParameterType.QueryString);
+            }
             return Execute<List<Channel>>(request);
         }
 
@@ -259,7 +263,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channels">A list of channels to save.</param>
         public void SaveChannels(IEnumerable<Channel> channels)
         {
-            var request = NewRequest("/SaveChannel", Method.POST);
+            var request = NewRequest("/SaveChannels", Method.POST);
             request.AddBody(channels);
             Execute(request);
         }

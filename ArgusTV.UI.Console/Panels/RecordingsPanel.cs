@@ -800,7 +800,11 @@ namespace ArgusTV.UI.Console.Panels
         private static List<RecordingSummary> GetRecordingsInGroup(ControlServiceProxy controlProxy, RecordingGroup group, BackgroundWorkerArgs args)
         {
             List<RecordingSummary> recordings = null;
-            switch (group.RecordingGroupMode)
+            if (group.SingleRecording != null)
+            {
+                recordings = new List<RecordingSummary>() { group.SingleRecording };
+            }
+            else switch (group.RecordingGroupMode)
             {
                 case RecordingGroupMode.GroupBySchedule:
                     recordings = controlProxy.GetRecordingsForSchedule(group.ScheduleId, args.IncludeNonExisting);

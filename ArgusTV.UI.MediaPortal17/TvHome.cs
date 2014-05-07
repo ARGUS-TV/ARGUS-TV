@@ -1049,11 +1049,14 @@ namespace ArgusTV.UI.MediaPortal
         private bool _eventListenerSubscribed;
         private Task _eventListenerTask;
         private CancellationTokenSource _connectionCancellationTokenSource;
+        private SynchronizationContext _uiSyncContext;
 
         private void EnsureEventListenerTaskStarted()
         {
             if (_eventListenerTask == null)
             {
+                _uiSyncContext = SynchronizationContext.Current;
+
                 _connectionCancellationTokenSource = new CancellationTokenSource();
                 _eventListenerTask = new Task(() => HandleServiceEvents(_connectionCancellationTokenSource.Token),
                     _connectionCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
@@ -1159,46 +1162,67 @@ namespace ArgusTV.UI.MediaPortal
             {
                 if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingRecordingsChanged()");
-                    PluginMain.UpcomingRecordingsChanged = true;
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingRecordingsChanged()");
+                        PluginMain.UpcomingRecordingsChanged = true;
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.UpcomingAlertsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingAlertsChanged()");
-                    PluginMain.UpcomingAlertsChanged = true;
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingAlertsChanged()");
+                        PluginMain.UpcomingAlertsChanged = true;
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.UpcomingSuggestionsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingSuggestionsChanged()");
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingSuggestionsChanged()");
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.RecordingStarted)
                 {
-                    Recording recording = (Recording)@event.Arguments[0];
-                    Log.Debug("EventListener: recording started: {0}", recording.Title);
-                    OnRecordingStarted(recording);
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording started: {0}", recording.Title);
+                        OnRecordingStarted(recording);
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.RecordingEnded)
                 {
-                    Recording recording = (Recording)@event.Arguments[0];
-                    Log.Debug("EventListener: recording ended: {0}", recording.Title);
-                    PluginMain.ActiveRecordingsChanged = true;
-                    OnRecordingEnded(recording);
-                    UpdateRecordings();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording ended: {0}", recording.Title);
+                        PluginMain.ActiveRecordingsChanged = true;
+                        OnRecordingEnded(recording);
+                        UpdateRecordings();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.LiveStreamEnded)
                 {
-                    Log.Debug("EventListener: LiveStreamEnded()");
-                    OnLiveStreamEnded((LiveStream)@event.Arguments[0], LiveStreamAbortReason.Unknown, null);
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: LiveStreamEnded()");
+                        OnLiveStreamEnded((LiveStream)@event.Arguments[0], LiveStreamAbortReason.Unknown, null);
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.LiveStreamAborted)
                 {
-                    LiveStream stream = (LiveStream)@event.Arguments[0];
-                    LiveStreamAbortReason reason = (LiveStreamAbortReason)@event.Arguments[1];
-                    Log.Debug("Eventlistener: Livestreamaborted, stream = {0}, reason = {1}", stream.RtspUrl, reason.ToString());
-                    OnLiveStreamEnded(stream, reason, (UpcomingProgram)@event.Arguments[2]);
+                    _uiSyncContext.Post(s =>
+                    {
+                        LiveStream stream = (LiveStream)@event.Arguments[0];
+                        LiveStreamAbortReason reason = (LiveStreamAbortReason)@event.Arguments[1];
+                        Log.Debug("Eventlistener: Livestreamaborted, stream = {0}, reason = {1}", stream.RtspUrl, reason.ToString());
+                        OnLiveStreamEnded(stream, reason, (UpcomingProgram)@event.Arguments[2]);
+                    }, null);
                 }
             }
         }

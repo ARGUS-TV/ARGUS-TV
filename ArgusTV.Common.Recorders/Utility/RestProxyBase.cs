@@ -108,7 +108,7 @@ namespace ArgusTV.Common.Recorders.Utility
             try
             {
                 var response = Execute(request);
-                return SimpleJson.DeserializeObject<T>(response.Content, new RecorderJsonSerializerStrategy());
+                return DeserializeResponseContent<T>(response);
             }
             catch (ApplicationException)
             {
@@ -126,6 +126,17 @@ namespace ArgusTV.Common.Recorders.Utility
         {
             var data = Execute<SimpleResult<T>>(request);
             return data.result;
+        }
+
+        protected static T DeserializeResponseContent<T>(IRestResponse response)
+            where T : new()
+        {
+            string content = response.ContentLength == 0 ? String.Empty : response.Content;
+            if (String.IsNullOrEmpty(content))
+            {
+                return default(T);
+            }
+            return SimpleJson.DeserializeObject<T>(content, new RecorderJsonSerializerStrategy());
         }
 
         protected class SimpleResult<T>

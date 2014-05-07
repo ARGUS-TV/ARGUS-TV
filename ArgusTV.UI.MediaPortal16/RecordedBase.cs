@@ -1779,6 +1779,9 @@ namespace ArgusTV.UI.MediaPortal
                     }
                 }
             }
+            catch (ThreadAbortException)
+            {
+            }
             catch (Exception ex)
             {
                 Log.Error("RecordedBase: error loading recording thumbs, ex = {0}",ex.Message);

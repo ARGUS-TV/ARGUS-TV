@@ -42,7 +42,7 @@ namespace ArgusTV.DataContracts
         /// <summary>
         /// The API version of the main REST services.
         /// </summary>
-        public const int RestApiVersion = 65;
+        public const int RestApiVersion = 66;
 
         /// <summary>
         /// The minimal API version of the main services still supported for older REST clients.
@@ -62,6 +62,6 @@ namespace ArgusTV.DataContracts
         /// <summary>
         /// The version of ARGUS TV.
         /// </summary>
-        public const string ProductVersion = "2.3 BETA 3";
+        public const string ProductVersion = "2.3 BETA 4";
     }
 }

@@ -52,6 +52,16 @@ namespace ArgusTV.UI.Process.Recordings
         {
             _model.RecordingGroups = new List<RecordingGroup>(controlProxy.GetAllRecordingGroups(_model.ChannelType, groupMode));
             _model.RecordingsByGroup.Clear();
+
+            int index = 0;
+            _model.RecordingGroups.ForEach(g =>
+            {
+                if (g.SingleRecording != null)
+                {
+                    _model.RecordingsByGroup[index] = new List<RecordingSummary>() { g.SingleRecording };
+                }
+                index++;
+            });
         }
 
         public RecordingSummary GetRecordingById(Guid recordingId)

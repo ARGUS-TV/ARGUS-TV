@@ -182,6 +182,28 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
+        /// Get all recordings for the given program titles.
+        /// </summary>
+        /// <param name="channelType">The channel-type of the recordings.</param>
+        /// <param name="programTitles">A list of program titles.</param>
+        /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+        /// <returns>A list of a list of zero or more recordings, so a list per given title.</returns>
+        public List<List<RecordingSummary>> GetRecordingsForProgramTitles(ChannelType channelType, List<string> programTitles, bool includeNonExisting = false)
+        {
+            var request = NewRequest("/RecordingsForProgramTitles/{channelType}", Method.POST);
+            request.AddParameter("channelType", channelType, ParameterType.UrlSegment);
+            if (includeNonExisting)
+            {
+                request.AddParameter("includeNonExisting", true, ParameterType.QueryString);
+            }
+            request.AddBody(new
+            {
+                ProgramTitles = programTitles
+            });
+            return Execute<List<List<RecordingSummary>>>(request);
+        }
+
+        /// <summary>
         /// Get all recordings for the given program category.
         /// </summary>
         /// <param name="channelType">The channel-type of the recordings.</param>
