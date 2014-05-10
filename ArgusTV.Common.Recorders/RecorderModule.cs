@@ -37,7 +37,7 @@ namespace ArgusTV.Common.Recorders
 
         public static TService Service { get; set; }
 
-        static RecorderModule()
+        private static void InitializeModule()
         {
             Service = new TService();
             _staContext = new StaSynchronizationContext("Recorder");
@@ -51,9 +51,25 @@ namespace ArgusTV.Common.Recorders
             Service = null;
         }
 
+        private void EnsureModuleInitialized()
+        {
+            if (_staContext == null)
+            {
+                lock (this)
+                {
+                    if (_staContext == null)
+                    {
+                        InitializeModule();
+                    }
+                }
+            }
+        }
+
         public RecorderModule()
             : base("Recorder")
         {
+            EnsureModuleInitialized();
+
             this.OnError.AddItemToStartOfPipeline((context, ex) =>
             {
                 EventLogger.WriteEntry(ex);

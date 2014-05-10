@@ -972,7 +972,11 @@ namespace ArgusTV.UI.MediaPortal
             {
                 if (!this.ControlServiceProxy.KeepLiveStreamAlive(_liveStream))
                 {
-                    if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio)) g_Player.Stop();
+                    if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio))
+                    {
+                        g_Player.Stop();
+                        Log.Warn("ChannelNavigator: stopped unknown live stream: {0}", _liveStream.RtspUrl);
+                    }
                 }
             }
         }

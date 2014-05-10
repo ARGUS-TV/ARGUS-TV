@@ -69,6 +69,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.DataContracts", "Ar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.DataContracts.NET40", "_NET40\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj", "{CDB911A5-A3E1-46B3-98F3-DD1EE63F64B1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1DE67D4B-6EBF-46FC-B392-93DC834EAD1E}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -249,7 +249,10 @@ namespace ArgusTV.UI.MediaPortal
                     PluginMain.Navigator.SendLiveStreamKeepAlive();
                 }
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Log.Error("DoKeepAlive: failed to keep live stream alive: {0}", ex.ToString());
+            }
             return 0;
         }
 

@@ -43,7 +43,7 @@ namespace ArgusTV.UI.MediaPortal
     public class TvHome : HomeBase, ISetupForm, IShowPlugin, IPluginReceiver
     {
         public TvHome()
-            : base(ChannelType.Television){}
+            : base(ChannelType.Television) { }
 
         private const int _keepAliveIntervalSeconds = 10;
         private const string _settingSection = "argustv";
@@ -249,7 +249,10 @@ namespace ArgusTV.UI.MediaPortal
                     PluginMain.Navigator.SendLiveStreamKeepAlive();
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Log.Error("DoKeepAlive: failed to keep live stream alive: {0}", ex.ToString());
+            }
             return 0;
         }
 
@@ -346,7 +349,7 @@ namespace ArgusTV.UI.MediaPortal
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
             NetworkChange.NetworkAvailabilityChanged += OnNetworkStateChanged;
             PluginMain.NetworkAvailable = NetworkInterface.GetIsNetworkAvailable();
-            
+
             bool result = Load(GUIGraphicsContext.Skin + @"\ARGUS_Home.xml");
             if (result)
             {
@@ -518,10 +521,10 @@ namespace ArgusTV.UI.MediaPortal
                     StartKeepAliveThread();
                     StartCacheMiniGuideChannelsThread();
                     EnsureEventListenerTaskStarted();
-                    
+
                     if (PluginMain.IsConnected())
                     {
-					    //TODO
+                        //TODO
                         if (_showlastactivemodule && _lastActivemoduleWasFullscreen)
                         {
                             Channel previousChannel = PluginMain.Navigator.GetPreviousChannel(ChannelType.Television);
@@ -529,7 +532,7 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 //PluginMain.Navigator.ZapToChannel(previousChannel, false);
                             }
-                       }
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -570,31 +573,31 @@ namespace ArgusTV.UI.MediaPortal
 
                 //if (!PluginMain.IsSingleSeat)
                 //{
-                    /*if (g_Player.Playing && (g_Player.IsRadio || g_Player.IsTV || g_Player.IsTVRecording))
+                /*if (g_Player.Playing && (g_Player.IsRadio || g_Player.IsTV || g_Player.IsTVRecording))
+                {
+                    //g_Player.Stop();
+                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL, 0, 0, 0, 0, 0, null);
+                    msg.Param1 = 1111;
+                    //msg.Object = recording;
+                    GUIGraphicsContext.SendMessage(msg);
+                    msg = null;
+                }*/
+
+                /*using (Settings xmlreader = new MPSettings())
+                {
+                    bool _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+                    if (_startWithBasicHome && System.IO.File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
                     {
-                        //g_Player.Stop();
-                        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL, 0, 0, 0, 0, 0, null);
-                        msg.Param1 = 1111;
-                        //msg.Object = recording;
-                        GUIGraphicsContext.SendMessage(msg);
-                        msg = null;
-                    }*/
-                    
-                    /*using (Settings xmlreader = new MPSettings())
+                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+                    }
+                    else
                     {
-                        bool _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
-                        if (_startWithBasicHome && System.IO.File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
-                        {
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-                        }
-                        else
-                        {
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-                        }
-                    }*/
+                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+                    }
+                }*/
                 //}
 
-                
+
 
                 /*GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (pDlgNotify != null)
@@ -633,7 +636,7 @@ namespace ArgusTV.UI.MediaPortal
                 /// </summary>
                 case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
                     {
-                        Log.Debug("TvHome: GUI_MSG_STOP_SERVER_TIMESHIFTING, param1 = {0}",message.Param1);
+                        Log.Debug("TvHome: GUI_MSG_STOP_SERVER_TIMESHIFTING, param1 = {0}", message.Param1);
                         if (PluginMain.Navigator.IsLiveStreamOn)
                         {
                             if (message.Param1 == 4321)//fired by eventlistener
@@ -642,7 +645,7 @@ namespace ArgusTV.UI.MediaPortal
                                 LiveStream navigatorLiveStream = PluginMain.Navigator.LiveStream;
                                 Channel channel = PluginMain.Navigator.CurrentChannel;
 
-                                if (liveStream != null && channel != null 
+                                if (liveStream != null && channel != null
                                     && navigatorLiveStream.TimeshiftFile == liveStream.TimeshiftFile
                                     && liveStream.StreamStartedTime == navigatorLiveStream.StreamStartedTime)
                                 {
@@ -880,12 +883,12 @@ namespace ArgusTV.UI.MediaPortal
             if (PluginMain.Navigator.IsLiveStreamOn)
             {
                 if (type == g_Player.MediaType.TV || type == g_Player.MediaType.Radio)
-                {   
+                {
                     // set audio track based on user prefs. 
                     g_Player.CurrentAudioStream = HomeBase.GetPreferedAudioStreamIndex();
                 }
                 else
-                {   
+                {
                     // Playback of another type has started while live TV was still on, so let's end the live TV stream.
                     PluginMain.Navigator.StopLiveStream();
                 }
@@ -973,7 +976,7 @@ namespace ArgusTV.UI.MediaPortal
             ES_AWAYMODE_REQUIRED = 0x00000040,
             ES_CONTINUOUS = 0x80000000
         }
-        
+
         [System.Runtime.InteropServices.DllImport("Kernel32.DLL", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
         private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
@@ -1027,10 +1030,10 @@ namespace ArgusTV.UI.MediaPortal
         }
 
         public void Start()
-        {}
+        { }
 
         public void Stop()
-        {}
+        { }
 
         #endregion
 
@@ -1049,11 +1052,14 @@ namespace ArgusTV.UI.MediaPortal
         private bool _eventListenerSubscribed;
         private Task _eventListenerTask;
         private CancellationTokenSource _connectionCancellationTokenSource;
+        private SynchronizationContext _uiSyncContext;
 
         private void EnsureEventListenerTaskStarted()
         {
             if (_eventListenerTask == null)
             {
+                _uiSyncContext = SynchronizationContext.Current;
+
                 _connectionCancellationTokenSource = new CancellationTokenSource();
                 _eventListenerTask = new Task(() => HandleServiceEvents(_connectionCancellationTokenSource.Token),
                     _connectionCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
@@ -1159,46 +1165,67 @@ namespace ArgusTV.UI.MediaPortal
             {
                 if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingRecordingsChanged()");
-                    PluginMain.UpcomingRecordingsChanged = true;
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingRecordingsChanged()");
+                        PluginMain.UpcomingRecordingsChanged = true;
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.UpcomingAlertsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingAlertsChanged()");
-                    PluginMain.UpcomingAlertsChanged = true;
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingAlertsChanged()");
+                        PluginMain.UpcomingAlertsChanged = true;
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.UpcomingSuggestionsChanged)
                 {
-                    Log.Debug("EventListener: UpcomingSuggestionsChanged()");
-                    UpdateGuide();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: UpcomingSuggestionsChanged()");
+                        UpdateGuide();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.RecordingStarted)
                 {
-                    Recording recording = (Recording)@event.Arguments[0];
-                    Log.Debug("EventListener: recording started: {0}", recording.Title);
-                    OnRecordingStarted(recording);
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording started: {0}", recording.Title);
+                        OnRecordingStarted(recording);
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.RecordingEnded)
                 {
-                    Recording recording = (Recording)@event.Arguments[0];
-                    Log.Debug("EventListener: recording ended: {0}", recording.Title);
-                    PluginMain.ActiveRecordingsChanged = true;
-                    OnRecordingEnded(recording);
-                    UpdateRecordings();
+                    _uiSyncContext.Post(s =>
+                    {
+                        Recording recording = (Recording)@event.Arguments[0];
+                        Log.Debug("EventListener: recording ended: {0}", recording.Title);
+                        PluginMain.ActiveRecordingsChanged = true;
+                        OnRecordingEnded(recording);
+                        UpdateRecordings();
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.LiveStreamEnded)
                 {
-                    Log.Debug("EventListener: LiveStreamEnded()");
-                    OnLiveStreamEnded((LiveStream)@event.Arguments[0], LiveStreamAbortReason.Unknown, null);
+                    _uiSyncContext.Post(s =>
+                    {
+                        Log.Debug("EventListener: LiveStreamEnded()");
+                        OnLiveStreamEnded((LiveStream)@event.Arguments[0], LiveStreamAbortReason.Unknown, null);
+                    }, null);
                 }
                 else if (@event.Name == ServiceEventNames.LiveStreamAborted)
                 {
-                    LiveStream stream = (LiveStream)@event.Arguments[0];
-                    LiveStreamAbortReason reason = (LiveStreamAbortReason)@event.Arguments[1];
-                    Log.Debug("Eventlistener: Livestreamaborted, stream = {0}, reason = {1}", stream.RtspUrl, reason.ToString());
-                    OnLiveStreamEnded(stream, reason, (UpcomingProgram)@event.Arguments[2]);
+                    _uiSyncContext.Post(s =>
+                    {
+                        LiveStream stream = (LiveStream)@event.Arguments[0];
+                        LiveStreamAbortReason reason = (LiveStreamAbortReason)@event.Arguments[1];
+                        Log.Debug("Eventlistener: Livestreamaborted, stream = {0}, reason = {1}", stream.RtspUrl, reason.ToString());
+                        OnLiveStreamEnded(stream, reason, (UpcomingProgram)@event.Arguments[2]);
+                    }, null);
                 }
             }
         }

@@ -234,10 +234,13 @@ namespace ArgusTV.UI.Console.Panels
                         sequence++;
                     }
                 }
+                bool hasChanged = channelGroup.VisibleInGuide != groupNode.Checked
+                    || channelGroup.Sequence != sequence
+                    || channelGroup.ChannelGroupId == Guid.Empty
+                    || _changedGroupIds.Contains(channelGroup.ChannelGroupId);
                 channelGroup.VisibleInGuide = groupNode.Checked;
                 channelGroup.Sequence = sequence;
-                if (channelGroup.ChannelGroupId == Guid.Empty
-                    || _changedGroupIds.Contains(channelGroup.ChannelGroupId))
+                if (hasChanged)
                 {
                     changedGroups.Add(channelGroup);
                 }
