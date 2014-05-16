@@ -9,6 +9,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 {
     public class RestBootstrapper : DefaultNancyBootstrapper
     {
+        protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
+        {
+            base.ConfigureRequestContainer(container, context);
+            container.Register(typeof(INancyModule), typeof(TvServerRecorderModule), typeof(TvServerRecorderModule).FullName).AsSingleton();
+        }
+
         protected override void ApplicationStartup(TinyIoCContainer container, Nancy.Bootstrapper.IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);

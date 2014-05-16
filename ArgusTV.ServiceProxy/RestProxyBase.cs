@@ -5,10 +5,13 @@ using ArgusTV.DataContracts;
 
 namespace ArgusTV.ServiceProxy
 {
+    /// <exclude />
     public abstract class RestProxyBase
     {
+        /// <exclude />
         protected RestClient _client;
 
+        /// <exclude />
         public RestProxyBase(string module)
         {
             var url = (ProxyFactory.ServerSettings.Transport == ServiceTransport.Https ? "https://" : "http://")
@@ -39,11 +42,13 @@ namespace ArgusTV.ServiceProxy
             public string ContentType { get; set; }
         }
 
+        /// <exclude />
         protected class SchedulerJsonSerializerStrategy : PocoJsonSerializerStrategy
         {
             private static readonly long _initialJavaScriptDateTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
             private static readonly DateTime _minimumJavaScriptDate = new DateTime(100, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+            /// <exclude />
             public override object DeserializeObject(object value, Type type)
             {
                 bool isString = value is string;
@@ -130,6 +135,7 @@ namespace ArgusTV.ServiceProxy
                 return base.DeserializeObject(value, type);
             }
 
+            /// <exclude />
             protected override bool TrySerializeKnownTypes(object input, out object output)
             {
                 if (input is DateTime)
@@ -178,6 +184,7 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
+        /// <exclude />
         protected RestRequest NewRequest(string url, Method method)
         {
             return new RestRequest(url, method)
@@ -187,6 +194,7 @@ namespace ArgusTV.ServiceProxy
             };
         }
 
+        /// <exclude />
         protected void ExecuteAsync(RestRequest request)
         {
             try
@@ -215,7 +223,8 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
-        private bool IsConnectionError(Exception ex)
+        /// <exclude />
+        protected bool IsConnectionError(Exception ex)
         {
             System.Net.WebException webException = ex as System.Net.WebException;
             if (ex != null)
@@ -234,6 +243,7 @@ namespace ArgusTV.ServiceProxy
             return false;
         }
 
+        /// <exclude />
         protected IRestResponse Execute(RestRequest request, bool logError = true)
         {
             try
@@ -269,6 +279,7 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
+        /// <exclude />
         protected T Execute<T>(RestRequest request, bool logError = true)
             where T : new()
         {
@@ -292,6 +303,7 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
+        /// <exclude />
         protected static T DeserializeResponseContent<T>(IRestResponse response)
             where T : new()
         {
@@ -303,6 +315,7 @@ namespace ArgusTV.ServiceProxy
             return SimpleJson.DeserializeObject<T>(content, new SchedulerJsonSerializerStrategy());
         }
 
+        /// <exclude />
         protected string ToIso8601(DateTime time)
         {
             if (time.Kind == DateTimeKind.Unspecified)

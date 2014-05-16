@@ -111,6 +111,8 @@ namespace ArgusTV.ServiceProxy
         /// Get all queued ARGUS TV events for your client. Call this every X seconds to get informed at a regular interval about what happened.
         /// </summary>
         /// <param name="uniqueClientId">The unique ID (e.g. your DNS hostname combined with a constant GUID) to identify your client.</param>
+        /// <param name="cancellationWaitHandle">The wait handle that may be set when the request needs to be aborted (optional).</param>
+        /// <param name="timeoutSeconds">The maximum timeout of the request (default is 5 minutes).</param>
         /// <returns>Zero or more service events, or null in case your subscription has expired.</returns>
         public List<ServiceEvent> GetServiceEvents(string uniqueClientId, WaitHandle cancellationWaitHandle = null, int timeoutSeconds = 300)
         {
@@ -118,7 +120,7 @@ namespace ArgusTV.ServiceProxy
             request.AddParameter("uniqueClientId", uniqueClientId, ParameterType.UrlSegment);
             request.AddParameter("timeout", timeoutSeconds, ParameterType.UrlSegment);
 
-            request.Timeout = Math.Min(timeoutSeconds, 30) * 1000;
+            request.Timeout = Math.Max(timeoutSeconds, 30) * 1000;
 
             // By default return an empty list (e.g. in case of a timeout or abort), the client will simply need to call this again.
             GetServiceEventsResult result = new GetServiceEventsResult()
@@ -128,9 +130,15 @@ namespace ArgusTV.ServiceProxy
 
             using (ManualResetEvent doneEvent = new ManualResetEvent(false))
             {
+                Exception exception = null;
+
                 var asyncHandle = _client.ExecuteAsync(request, r =>
                 {
-                    if (r != null
+                    if (r == null || r.StatusCode == 0 && IsConnectionError(r.ErrorException))
+                    {
+                        exception = new ArgusTVNotFoundException(r.ErrorMessage ?? r.StatusDescription);
+                    }
+                    else if (r != null
                         && r.ResponseStatus == ResponseStatus.Completed)
                     {
                         result = DeserializeResponseContent<GetServiceEventsResult>(r);
@@ -149,6 +157,11 @@ namespace ArgusTV.ServiceProxy
                 {
                     asyncHandle.Abort();
                     return new List<ServiceEvent>();
+                }
+
+                if (exception != null)
+                {
+                    throw exception;
                 }
             }
 

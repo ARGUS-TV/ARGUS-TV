@@ -179,7 +179,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 EnableClientCertificates = false
             };
             string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/", _recorderTunerTcpPort);
-            _recorderRestHost = new NancyHost(configuration, new Uri(recorderUrl));
+            _recorderRestHost = new NancyHost(new RestBootstrapper(), configuration, new Uri(recorderUrl));
             _recorderRestHost.Start();
             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl + "Recorder/");
 

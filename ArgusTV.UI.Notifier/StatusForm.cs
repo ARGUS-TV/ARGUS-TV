@@ -77,7 +77,6 @@ namespace ArgusTV.UI.Notifier
             _upcomingProgramsControl.Sortable = true;
             _upcomingProgramsControl.ShowScheduleName = true;
             this.Text += " " + Constants.ProductVersion;
-            InitializeConnectionToArgusTV();
         }
 
         /// <summary>
@@ -579,9 +578,10 @@ namespace ArgusTV.UI.Notifier
                                 ProcessEvents(events);
                             }
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            if (++_eventsErrorCount > 5)
+                            if (ex is ArgusTVNotFoundException
+                                || ++_eventsErrorCount > 5)
                             {
                                 _eventListenerSubscribed = false;
                                 this.IsConnected = false;
@@ -590,7 +590,11 @@ namespace ArgusTV.UI.Notifier
                         }
                     }
                 }
-                if (cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(_eventListenerSubscribed ? 0 : 2)))
+                else
+                {
+                    _uiSyncContext.Send(s => InitializeConnectionToArgusTV(), null);
+                }
+                if (cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(_eventListenerSubscribed ? 0 : 10)))
                 {
                     break;
                 }
@@ -655,10 +659,14 @@ namespace ArgusTV.UI.Notifier
                 serverSettings.UserName = Config.Current.UserName;
                 serverSettings.Password = Config.Current.Password;
                 serverSettings.Transport = ServiceTransport.Https;
-                if (ProxyFactory.Initialize(serverSettings, false))
-                {
-                    this.IsConnected = true;
+                this.IsConnected = ProxyFactory.Initialize(serverSettings, false);
+                if (this.IsConnected)
+                { 
                     SetStatusIcon(ServerStatus.Idle);
+                }
+                else
+                {
+                    SetStatusIcon(ServerStatus.NotConnected);
                 }
             }
         }

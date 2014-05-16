@@ -28,7 +28,7 @@ IF NOT EXIST %pluginDir% goto reallyEnd
 :mergePlugin
   CD "%~1"
   IF NOT EXIST merged MKDIR merged
-  ..\..\..\packages\ILRepack.1.25.0\tools\ILRepack.exe /verbose /internalize /out:merged\ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Common.dll ArgusTV.Common.Recorders.dll Nancy.dll Nancy.Hosting.Self.dll
+  ..\..\..\packages\ILRepack.1.25.0\tools\ILRepack.exe /out:merged\ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Common.dll ArgusTV.Common.Recorders.dll Nancy.dll Nancy.Hosting.Self.dll
 
 :reallyEnd
   exit 0
