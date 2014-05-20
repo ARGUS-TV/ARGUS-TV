@@ -95,20 +95,19 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
             SynchronizeRecordingsContext context = e.Argument as SynchronizeRecordingsContext;
             context.ClearRecordings();
             context.MissingRecordings.Clear();
-            var controlProxy = new ControlServiceProxy();
-            GetAndProcessRecordings(controlProxy, context, ChannelType.Television);
-            GetAndProcessRecordings(controlProxy, context, ChannelType.Radio);
+            GetAndProcessRecordings(context, ChannelType.Television);
+            GetAndProcessRecordings(context, ChannelType.Radio);
 
             Utility.EnsureMinimumTime(startTime, 250);
         }
 
-        private void GetAndProcessRecordings(ControlServiceProxy controlProxy, SynchronizeRecordingsContext context, ChannelType channelType)
+        private void GetAndProcessRecordings(SynchronizeRecordingsContext context, ChannelType channelType)
         {
-            var groups = controlProxy.GetAllRecordingGroups(channelType, RecordingGroupMode.GroupBySchedule);
+            var groups = Proxies.ControlService.GetAllRecordingGroups(channelType, RecordingGroupMode.GroupBySchedule);
 
             foreach (RecordingGroup group in groups)
             {
-                var recordings = controlProxy.GetRecordingsForSchedule(group.ScheduleId, includeNonExisting: true);
+                var recordings = Proxies.ControlService.GetRecordingsForSchedule(group.ScheduleId, includeNonExisting: true);
                 foreach (RecordingSummary recording in recordings)
                 {
                     if (!context.ContainsRecording(recording))

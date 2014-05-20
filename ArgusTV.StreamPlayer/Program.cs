@@ -53,8 +53,8 @@ namespace ArgusTV.StreamPlayer
                     serverSettings.UserName = args[4];
                     serverSettings.Password = args[5];
 
-                    ProxyFactory.Initialize(serverSettings, false);
-                    if (ProxyFactory.IsInitialized)
+                    Proxies.Initialize(serverSettings, false);
+                    if (Proxies.IsInitialized)
                     {
                         if (isLiveStream)
                         {
@@ -94,9 +94,7 @@ namespace ArgusTV.StreamPlayer
 
         private static void PlayLiveStream(string rtspUrl, Process liveStreamPlayerProcess)
         {
-            var controlProxy = new ControlServiceProxy();
-
-            LiveStream liveStream = controlProxy.GetLiveStreamByRtspUrl(rtspUrl);
+            LiveStream liveStream = Proxies.ControlService.GetLiveStreamByRtspUrl(rtspUrl);
             if (liveStream != null)
             {
                 if (liveStreamPlayerProcess == null)
@@ -117,7 +115,7 @@ namespace ArgusTV.StreamPlayer
                     bool exited = false;
                     while (!exited)
                     {
-                        if (!controlProxy.KeepLiveStreamAlive(liveStream))
+                        if (!Proxies.ControlService.KeepLiveStreamAlive(liveStream))
                         {
                             break;
                         }
@@ -125,7 +123,7 @@ namespace ArgusTV.StreamPlayer
                     }
                 }
 
-                controlProxy.StopLiveStream(liveStream);
+                Proxies.ControlService.StopLiveStream(liveStream);
             }
             else
             {
@@ -135,8 +133,6 @@ namespace ArgusTV.StreamPlayer
 
         private static void PlayRecordingStream(string rtspUrl, Process liveStreamPlayerProcess)
         {
-            var controlProxy = new ControlServiceProxy();
-
             if (liveStreamPlayerProcess == null)
             {
                 MessageBox.Show("Can't play stream " + rtspUrl + " in VLC." + Environment.NewLine + Environment.NewLine
@@ -146,7 +142,7 @@ namespace ArgusTV.StreamPlayer
             {
                 _playerExitedEvent.WaitOne(Timeout.Infinite, false);
             }
-            controlProxy.StopRecordingStream(rtspUrl);
+            Proxies.ControlService.StopRecordingStream(rtspUrl);
         }
 
         #region Private Methods

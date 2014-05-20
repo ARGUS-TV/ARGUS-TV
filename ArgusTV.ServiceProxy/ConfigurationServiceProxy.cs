@@ -20,10 +20,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 
 using ArgusTV.DataContracts;
-using RestSharp;
-using RestSharp.Extensions;
 
 namespace ArgusTV.ServiceProxy
 {
@@ -35,7 +35,7 @@ namespace ArgusTV.ServiceProxy
         /// <summary>
         /// Constructs a channel to the service.
         /// </summary>
-        public ConfigurationServiceProxy()
+        internal ConfigurationServiceProxy()
             : base("Configuration")
         {
         }
@@ -48,9 +48,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The integer setting value, or null if no setting was found.</returns>
         public int? GetIntValue(string module, string key)
         {
-            var request = NewRequest("/IntegerValue/{module}/{key}", Method.GET);
-            request.AddParameter("module", module, ParameterType.UrlSegment);
-            request.AddParameter("key", key, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "IntegerValue/{0}/{1}", module, key);
             var result = Execute<GetValueResult<int?>>(request);
             return result.Value;
         }
@@ -63,9 +61,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The string setting value, or null if no setting was found.</returns>
         public string GetStringValue(string module, string key)
         {
-            var request = NewRequest("/Value/{module}/{key}", Method.GET);
-            request.AddParameter("module", module, ParameterType.UrlSegment);
-            request.AddParameter("key", key, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Value/{0}/{1}", module, key);
             var result = Execute<GetValueResult<string>>(request);
             return result.Value;
         }
@@ -78,9 +74,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The boolean setting value, or null if no setting was found.</returns>
         public bool? GetBooleanValue(string module, string key)
         {
-            var request = NewRequest("/BooleanValue/{module}/{key}", Method.GET);
-            request.AddParameter("module", module, ParameterType.UrlSegment);
-            request.AddParameter("key", key, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "BooleanValue/{0}/{1}", module, key);
             var result = Execute<GetValueResult<bool?>>(request);
             return result.Value;
         }
@@ -93,7 +87,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="value">The new value of the setting.</param>
         public void SetIntValue(string module, string key, int? value)
         {
-            var request = NewRequest("/SetIntegerValue", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "SetIntegerValue");
             request.AddBody(new
             {
                 Module = module,
@@ -111,7 +105,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="value">The new value of the setting.</param>
         public void SetStringValue(string module, string key, string value)
         {
-            var request = NewRequest("/SetValue", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "SetValue");
             request.AddBody(new
             {
                 Module = module,
@@ -129,7 +123,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="value">The new value of the setting.</param>
         public void SetBooleanValue(string module, string key, bool? value)
         {
-            var request = NewRequest("/SetBooleanValue", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "SetBooleanValue");
             request.AddBody(new
             {
                 Module = module,

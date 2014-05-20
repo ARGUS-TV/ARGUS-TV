@@ -342,14 +342,14 @@ namespace ArgusTV.UI.MediaPortal
             string errorMessage = string.Empty;
 
             PluginMain.ForceNoConnection = true;
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 wasConnected = true;
-                if (_serverNameButton.Label != ProxyFactory.ServerSettings.ServerName)
+                if (_serverNameButton.Label != Proxies.ServerSettings.ServerName)
                 {
                     serverChanged = true;
                 }
-                if (Int32.Parse(_tcpPortButton.Label) != ProxyFactory.ServerSettings.Port)
+                if (Int32.Parse(_tcpPortButton.Label) != Proxies.ServerSettings.Port)
                 {
                     portChanged = true;
                 }

@@ -32,6 +32,7 @@ using ArgusTV.UI.Process.Guide;
 using ArgusTV.UI.Process.SearchGuide;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -92,7 +93,7 @@ namespace ArgusTV.UI.Console.Panels
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                _controller.SearchTitles(MainForm.SchedulerProxy, _searchTextBox.Text);
+                _controller.SearchTitles(_searchTextBox.Text);
                 ShowFoundTitles();
             }
             catch (Exception ex)
@@ -146,7 +147,7 @@ namespace ArgusTV.UI.Console.Panels
 
         private void RefreshAllUpcomingPrograms()
         {
-            _controller.RefreshAllUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+            _controller.RefreshAllUpcomingPrograms();
             _tvChannelProgramsControl.AllUpcomingPrograms = _model.AllUpcomingGuidePrograms;
             _tvChannelProgramsControl.RefreshIcons();
         }
@@ -219,7 +220,7 @@ namespace ArgusTV.UI.Console.Panels
                     Cursor.Current = Cursors.WaitCursor;
 
                     string title = ((ProgramTitle)_titlesGridView.SelectedRows[0].DataBoundItem).Title;
-                    _controller.GetProgramsForTitle(MainForm.SchedulerProxy, MainForm.ControlProxy, title);
+                    _controller.GetProgramsForTitle(title);
                     _tvChannelProgramsControl.AllUpcomingPrograms = _model.AllUpcomingGuidePrograms;
                     _tvChannelProgramsControl.TvChannelPrograms = _model.CurrentTitlePrograms;
                     _titlesPanel.Visible = false;

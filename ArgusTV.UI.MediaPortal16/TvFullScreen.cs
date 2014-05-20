@@ -906,25 +906,24 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (_dlgYesNo.IsConfirmed)
                         {
-                            var schedulerProxy = new SchedulerServiceProxy();
-                            Schedule schedule = schedulerProxy.GetScheduleById(activeRecording.Program.ScheduleId);
+                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(activeRecording.Program.ScheduleId);
                             if (schedule != null)
                             {
                                 if (activeRecording.Program.IsPartOfSeries)
                                 {
-                                    schedulerProxy.CancelUpcomingProgram(schedule.ScheduleId,
+                                    Proxies.SchedulerService.CancelUpcomingProgram(schedule.ScheduleId,
                                         currentProgram == null ? null : (Guid?)currentProgram.GuideProgramId,
                                         currentChannel.ChannelId, activeRecording.Program.StartTime);
                                 }
                                 else
                                 {
-                                    schedulerProxy.DeleteSchedule(schedule.ScheduleId);
+                                    Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId);
                                 }
                                 string text = String.Format("{0} {1}-{2}",
                                         activeRecording.Program.Title,
                                         activeRecording.Program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                         activeRecording.Program.StopTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-                                ShowRecordingNotifyDialog(schedulerProxy, currentChannel, text, TextId.RecordingStopped);
+                                ShowRecordingNotifyDialog(currentChannel, text, TextId.RecordingStopped);
                             }
                         }
                     }
@@ -933,8 +932,6 @@ namespace ArgusTV.UI.MediaPortal
                         _dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                         if (_dialogMenu != null)
                         {
-                            var schedulerProxy = new SchedulerServiceProxy();
-
                             _dialogMenu.Reset();
                             _dialogMenu.SetHeading(Utility.GetLocalizedText(TextId.Record));
                             if (currentProgram != null)
@@ -963,8 +960,7 @@ namespace ArgusTV.UI.MediaPortal
                             switch (selectedLabel)
                             {
                                 case 0:
-                                    schedule = GuideController.CreateRecordOnceSchedule(schedulerProxy,
-                                        PluginMain.Navigator.CurrentChannel.ChannelType,
+                                    schedule = GuideController.CreateRecordOnceSchedule(PluginMain.Navigator.CurrentChannel.ChannelType,
                                         PluginMain.Navigator.CurrentChannel.ChannelId, currentProgram.Title, currentProgram.SubTitle,
                                         currentProgram.EpisodeNumberDisplay, currentProgram.StartTime);
                                     notifyText = String.Format("{0} {1}-{2}",
@@ -996,8 +992,8 @@ namespace ArgusTV.UI.MediaPortal
 
                             if (schedule != null)
                             {
-                                schedulerProxy.SaveSchedule(schedule);
-                                ShowRecordingNotifyDialog(schedulerProxy, currentChannel, notifyText, TextId.RecordingStarted);
+                                Proxies.SchedulerService.SaveSchedule(schedule);
+                                ShowRecordingNotifyDialog(currentChannel, notifyText, TextId.RecordingStarted);
                             }
                         }
                     }
@@ -1307,14 +1303,14 @@ namespace ArgusTV.UI.MediaPortal
             return base.OnMessage(message);
         }
 
-        private void ShowRecordingNotifyDialog(SchedulerServiceProxy schedulerProxy, Channel currentChannel, string text, TextId headingTextId)
+        private void ShowRecordingNotifyDialog(Channel currentChannel, string text, TextId headingTextId)
         {
             if (!_enableRecNotification)
             {
                 GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlgNotify != null)
                 {
-                    string logo = Utility.GetLogoImage(currentChannel, schedulerProxy);
+                    string logo = Utility.GetLogoImage(currentChannel);
                     dlgNotify.Reset();
                     dlgNotify.ClearAll();
                     dlgNotify.SetImage(logo);
@@ -1330,9 +1326,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private Schedule CreateManualSchedule(Channel channel, int durationMinutes, out string notifyText)
         {
-            var schedulerProxy = new SchedulerServiceProxy();
-
-            Schedule schedule = schedulerProxy.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording);
             DateTime startTime = DateTime.Now;
             TimeSpan duration = new TimeSpan(0, durationMinutes, 0);
             schedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);

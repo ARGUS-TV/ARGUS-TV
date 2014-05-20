@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -99,13 +100,13 @@ namespace ArgusTV.UI.Console.Panels
 
                 if (_clearHistory)
                 {
-                    MainForm.ControlProxy.ClearPreviouslyRecordedHistory(_schedule.ScheduleId);
+                    Proxies.ControlService.ClearPreviouslyRecordedHistory(_schedule.ScheduleId);
                 }
                 else
                 {
                     foreach (ScheduleRecordedProgram recordedProgram in _deletedPrograms)
                     {
-                        MainForm.ControlProxy.DeleteFromPreviouslyRecordedHistory(recordedProgram.ScheduleRecordedProgramId);
+                        Proxies.ControlService.DeleteFromPreviouslyRecordedHistory(recordedProgram.ScheduleRecordedProgramId);
                     }
                 }
 
@@ -128,7 +129,7 @@ namespace ArgusTV.UI.Console.Panels
                 _deletedPrograms = new List<ScheduleRecordedProgram>();
                 _clearHistory = false;
                 _recordedPrograms = new SortableBindingList<ScheduleRecordedProgram>(
-                    MainForm.ControlProxy.GetPreviouslyRecordedHistory(_schedule.ScheduleId));
+                    Proxies.ControlService.GetPreviouslyRecordedHistory(_schedule.ScheduleId));
                 _historyBindingSource.DataSource = _recordedPrograms;
                 _historyBindingSource.ResetBindings(false);
             }

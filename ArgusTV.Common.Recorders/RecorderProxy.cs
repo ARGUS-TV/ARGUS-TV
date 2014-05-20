@@ -20,7 +20,9 @@
  */
 using System;
 using System.Collections.Generic;
-using RestSharp;
+using System.Net;
+using System.Net.Http;
+
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
 using ArgusTV.Common.Recorders.Utility;
@@ -40,7 +42,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>Returns true if the API on the recorder is correct, and a list of the MAC addresses of the Recorder machine.</returns>
         public bool Ping(out List<string> macAddresses)
         {
-            var request = NewRequest("/Ping", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "Ping");
             var data = Execute<PingResult>(request);
             macAddresses = data.macAddresses;
             return data.result == ArgusTV.DataContracts.Constants.RecorderApiVersion;
@@ -57,7 +59,7 @@ namespace ArgusTV.Common.Recorders
         /// </summary>
         public void KeepAlive()
         {
-            var request = NewRequest("/KeepAlive", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "KeepAlive");
             ExecuteAsync(request);
         }
 
@@ -68,8 +70,7 @@ namespace ArgusTV.Common.Recorders
         /// <param name="schedulerBaseUrl">The callback URL for the Recorder to communicate with the Scheduler.</param>
         public void Initialize(Guid recorderId, string schedulerBaseUrl)
         {
-            var request = NewRequest("/Initialize/{recorderId}", Method.PUT);
-            request.AddParameter("recorderId", recorderId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Put, "Initialize/{0}", recorderId);
             request.AddBody(new
             {
                 schedulerBaseUrl = schedulerBaseUrl
@@ -90,7 +91,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>The unique card ID of the card that can record this channel, or null if no free card was found.</returns>
         public string AllocateCard(Channel channel, IList<CardChannelAllocation> alreadyAllocated, bool useReversePriority)
         {
-            var request = NewRequest("/AllocateCard", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "AllocateCard");
             request.AddBody(new
             {
                 channel = channel,
@@ -117,7 +118,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>A boolean indicating the recording was initiated succesfully.</returns>
         public bool StartRecording(string schedulerBaseUrl, CardChannelAllocation channelAllocation, DateTime startTimeUtc, DateTime stopTimeUtc, UpcomingProgram recordingProgram, string suggestedBaseFileName)
         {
-            var request = NewRequest("/Recording/Start", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Recording/Start");
             request.AddBody(new
             {
                 schedulerBaseUrl = schedulerBaseUrl,
@@ -139,7 +140,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>True if the recording was still running (and its stop time was succesfully updated), false if there was a problem or the recording is not running.</returns>
         public bool ValidateAndUpdateRecording(CardChannelAllocation channelAllocation, UpcomingProgram recordingProgram, DateTime stopTimeUtc)
         {
-            var request = NewRequest("/Recording/ValidateAndUpdate", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Recording/ValidateAndUpdate");
             request.AddBody(new
             {
                 channelAllocation = channelAllocation,
@@ -158,7 +159,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>True if the recording was found and aborted.</returns>
         public bool AbortRecording(string schedulerBaseUrl, UpcomingProgram recordingProgram)
         {
-            var request = NewRequest("/Recording/Abort", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Recording/Abort");
             request.AddBody(new
             {
                 schedulerBaseUrl = schedulerBaseUrl,
@@ -172,7 +173,7 @@ namespace ArgusTV.Common.Recorders
         /// </summary>
         public List<string> GetRecordingShares()
         {
-            var request = NewRequest("/RecordingShares", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "RecordingShares");
             return ExecuteResult<List<string>>(request);
         }
 
@@ -181,7 +182,7 @@ namespace ArgusTV.Common.Recorders
         /// </summary>
         public List<string> GetTimeshiftShares()
         {
-            var request = NewRequest("/TimeshiftShares", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "TimeshiftShares");
             return ExecuteResult<List<string>>(request);
         }
 
@@ -196,7 +197,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>A LiveStreamResult value to indicate success or failure.</returns>
         public LiveStreamResult TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, ref LiveStream liveStream)
         {
-            var request = NewRequest("/Live/Tune", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Live/Tune");
             request.AddBody(new
             {
                 channel = channel,
@@ -215,7 +216,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>True if the live stream is still running, false otherwise.</returns>
         public bool KeepLiveStreamAlive(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/KeepAlive", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/KeepAlive");
             request.AddBody(liveStream);
             return ExecuteResult<bool>(request);
         }
@@ -226,7 +227,7 @@ namespace ArgusTV.Common.Recorders
         /// <param name="liveStream">The live stream to stop.</param>
         public void StopLiveStream(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/Stop", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/Stop");
             request.AddBody(liveStream);
             Execute(request);
         }
@@ -237,7 +238,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>An array containing zero or more live streams.</returns>
         public List<LiveStream> GetLiveStreams()
         {
-            var request = NewRequest("/LiveStreams", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "LiveStreams");
             return ExecuteResult<List<LiveStream>>(request);
         }
 
@@ -249,7 +250,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>An array with all the live states for the given channels.</returns>
         public List<ChannelLiveState> GetChannelsLiveState(IList<Channel> channels, LiveStream liveStream)
         {
-            var request = NewRequest("/ChannelsLiveState", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "ChannelsLiveState");
             request.AddBody(new
             {
                 channels = ChannelsAsArgument(channels),
@@ -265,7 +266,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>The service tuning details, or null if none are available.</returns>
         public ServiceTuning GetLiveStreamTuningDetails(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/TuningDetails", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/TuningDetails");
             request.AddBody(liveStream);
             return ExecuteResult<ServiceTuning>(request);
         }
@@ -281,7 +282,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>True if teletext is present.</returns>
         public bool HasTeletext(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/HasTeletext", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/HasTeletext");
             request.AddBody(liveStream);
             return ExecuteResult<bool>(request);
         }
@@ -292,7 +293,7 @@ namespace ArgusTV.Common.Recorders
         /// <param name="liveStream">The live stream.</param>
         public void StartGrabbingTeletext(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/Teletext/StartGrabbing", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/Teletext/StartGrabbing");
             request.AddBody(liveStream);
             Execute(request);
         }
@@ -303,7 +304,7 @@ namespace ArgusTV.Common.Recorders
         /// <param name="liveStream">The live stream.</param>
         public void StopGrabbingTeletext(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/Teletext/StopGrabbing", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/Teletext/StopGrabbing");
             request.AddBody(liveStream);
             Execute(request);
         }
@@ -315,7 +316,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>True if the recorder is grabbing teletext.</returns>
         public bool IsGrabbingTeletext(LiveStream liveStream)
         {
-            var request = NewRequest("/Live/Teletext/IsGrabbing", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "Live/Teletext/IsGrabbing");
             request.AddBody(liveStream);
             return ExecuteResult<bool>(request);
         }
@@ -330,9 +331,7 @@ namespace ArgusTV.Common.Recorders
         /// <returns>The requested page content, or null if the page was not ready yet.</returns>
         public byte[] GetTeletextPageBytes(LiveStream liveStream, int pageNumber, int subPageNumber, out int subPageCount)
         {
-            var request = NewRequest("/Live/Teletext/GetPage/{pageNumber}/{subPageNumber}", Method.PUT);
-            request.AddParameter("pageNumber", pageNumber, ParameterType.UrlSegment);
-            request.AddParameter("subPageNumber", subPageNumber, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Put, "Live/Teletext/GetPage/{0}/{1}", pageNumber, subPageNumber);
             request.AddBody(liveStream);
             var data = Execute<GetTeletextPageBytesResult>(request);
             subPageCount = data.subPageCount;

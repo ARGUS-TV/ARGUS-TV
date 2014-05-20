@@ -30,6 +30,7 @@ using System.Globalization;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -80,7 +81,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedCommands = new List<ProcessingCommand>();
-                _processingCommands = new SortableBindingList<ProcessingCommand>(MainForm.SchedulerProxy.GetAllProcessingCommands());
+                _processingCommands = new SortableBindingList<ProcessingCommand>(Proxies.SchedulerService.GetAllProcessingCommands());
                 _commandsBindingSource.DataSource = _processingCommands;
                 _commandsBindingSource.ResetBindings(false);
                 UpdateSelectedCommand();
@@ -228,7 +229,7 @@ namespace ArgusTV.UI.Console.Panels
                             && !String.IsNullOrEmpty(command.Name)
                             && !String.IsNullOrEmpty(command.CommandPath))
                         {
-                            MainForm.SchedulerProxy.SaveProcessingCommand(command);
+                            Proxies.SchedulerService.SaveProcessingCommand(command);
                         }
                     }
 
@@ -236,7 +237,7 @@ namespace ArgusTV.UI.Console.Panels
                     {
                         if (command.ProcessingCommandId != Guid.Empty)
                         {
-                            MainForm.SchedulerProxy.DeleteProcessingCommand(command.ProcessingCommandId);
+                            Proxies.SchedulerService.DeleteProcessingCommand(command.ProcessingCommandId);
                         }
                     }
 

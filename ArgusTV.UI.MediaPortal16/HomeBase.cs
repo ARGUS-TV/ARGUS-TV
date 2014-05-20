@@ -78,24 +78,6 @@ namespace ArgusTV.UI.MediaPortal
         [SkinControlAttribute(24)] protected GUIImage _recordImage;
         [SkinControlAttribute(420)] protected GUILabelControl _settingsLabel;
 
-        #region Service Proxies
-
-        private CoreServiceProxy _coreServiceProxy;
-
-        public CoreServiceProxy CoreServiceProxy
-        {
-            get
-            {
-                if (_coreServiceProxy == null)
-                {
-                    _coreServiceProxy = new CoreServiceProxy();
-                }
-                return _coreServiceProxy;
-            }
-        }
-
-        #endregion
-
         #region overrides
 
         public override bool Init()
@@ -942,7 +924,7 @@ namespace ArgusTV.UI.MediaPortal
             string logo = String.Empty;
             if (channelId != Guid.Empty)
             {
-                logo = Utility.GetLogoImage(channelId, channelName, new SchedulerServiceProxy());
+                logo = Utility.GetLogoImage(channelId, channelName);
                 if (String.IsNullOrEmpty(logo))
                 {
                     logo = "defaultVideoBig.png";
@@ -964,9 +946,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private void OnActiveRecordings(List<Guid> ignoreActiveRecordings)
         {
-            var controlProxy = new ControlServiceProxy();
-
-            List<ActiveRecording> activeRecordings = controlProxy.GetActiveRecordings();
+            List<ActiveRecording> activeRecordings = Proxies.ControlService.GetActiveRecordings();
 
             if (activeRecordings != null && activeRecordings.Count > 0)
             {
@@ -994,7 +974,7 @@ namespace ArgusTV.UI.MediaPortal
                         item.Label = channelName;
                         item.Label2 = programTitle + "  " + time;
 
-                        string strLogo = Utility.GetLogoImage(activeRecording.Program.Channel, new SchedulerServiceProxy());
+                        string strLogo = Utility.GetLogoImage(activeRecording.Program.Channel);
                         if (string.IsNullOrEmpty(strLogo))
                         {
                             strLogo = "defaultVideoBig.png";
@@ -1044,8 +1024,6 @@ namespace ArgusTV.UI.MediaPortal
 
         private bool OnAbortActiveRecording(ActiveRecording rec)
         {
-            var controlProxy = new ControlServiceProxy();
-
             if (rec == null) return false;
             bool aborted = false;
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -1056,7 +1034,7 @@ namespace ArgusTV.UI.MediaPortal
             dlg.AddLocalizedString(979);  //Play recorded from beginning
             dlg.AddLocalizedString(980);  //Play recorded from live point
 
-            Recording recording = controlProxy.GetRecordingById(rec.RecordingId);
+            Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId);
             if (recording != null && recording.LastWatchedPosition.HasValue)
             {
                 dlg.AddLocalizedString(900);//play from last point
@@ -1097,7 +1075,7 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (dlgYesNo.IsConfirmed)
                         {
-                            controlProxy.AbortActiveRecording(rec);
+                            Proxies.ControlService.AbortActiveRecording(rec);
                             aborted = true;
                         }
                     }

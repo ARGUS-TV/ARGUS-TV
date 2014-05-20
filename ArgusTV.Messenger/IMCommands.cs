@@ -74,7 +74,7 @@ namespace ArgusTV.Messenger
         public IMBotMessage ProcessIMCommand(IMBotConversation conversation, string commandLine)
         {
             IMBotMessage reply = new IMBotMessage();
-            if (!ProxyFactory.IsInitialized)
+            if (!Proxies.IsInitialized)
             {
                 reply.BodyText = "Not connected to ARGUS TV, check configuration.";
                 reply.TextColor = IMBotMessage.ErrorColor;
@@ -156,11 +156,10 @@ namespace ArgusTV.Messenger
 
         private IMBotMessage DoStatusCommand(IMBotConversation conversation, IList<string> arguments)
         {
-            var controlProxy = new ControlServiceProxy();
-
             bool fixedWidth = false;
 
             // Check if currently recording :
+            var controlProxy = Proxies.ControlService;
             var activeRecordings = controlProxy.GetActiveRecordings();
             var liveStreams = controlProxy.GetLiveStreams();
             UpcomingRecording upcomingRecording = controlProxy.GetNextUpcomingRecording(false);
@@ -242,9 +241,7 @@ namespace ArgusTV.Messenger
         {
             if (type == ScheduleType.Recording)
             {
-                var controlProxy = new ControlServiceProxy();
-
-                var upcomingRecordings = controlProxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, false);
+                var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, false);
 
                 StringBuilder replyText = new StringBuilder();
 
@@ -280,7 +277,7 @@ namespace ArgusTV.Messenger
             }
             else
             {
-                var upcomingPrograms = new SchedulerServiceProxy().GetAllUpcomingPrograms(type, false);
+                var upcomingPrograms = Proxies.SchedulerService.GetAllUpcomingPrograms(type, false);
 
                 StringBuilder replyText = new StringBuilder();
 
@@ -310,7 +307,7 @@ namespace ArgusTV.Messenger
 
         private IMBotMessage DoShowChannelGroupsCommand(IMBotConversation conversation, IList<string> arguments)
         {
-            List<ChannelGroup> groups = GetAllGroups(new SchedulerServiceProxy(), GetChannelType(conversation));
+            List<ChannelGroup> groups = GetAllGroups(GetChannelType(conversation));
 
             StringBuilder replyText = new StringBuilder();
 
@@ -337,9 +334,7 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Group name or number missing.", IMBotMessage.ErrorColor);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-
-            List<ChannelGroup> groups = GetAllGroups(schedulerProxy, GetChannelType(conversation));
+            List<ChannelGroup> groups = GetAllGroups(GetChannelType(conversation));
 
             ChannelGroup group = null;
 
@@ -368,7 +363,7 @@ namespace ArgusTV.Messenger
                 }
             }
 
-            var channels = schedulerProxy.GetChannelsInGroup(group.ChannelGroupId, true);
+            var channels = Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, true);
 
             StringBuilder replyText = new StringBuilder();
             replyText.AppendFormat("Channels in {0}:", group.GroupName);
@@ -394,16 +389,13 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Channel name or number missing.", IMBotMessage.ErrorColor);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-            var guideProxy = new GuideServiceProxy();
-
             Channel selectedChannel = null;
             ChannelType channelType = GetChannelType(conversation);
 
             int lcn;
             if (int.TryParse(arguments[0], out lcn))
             {
-                selectedChannel = schedulerProxy.GetChannelByLogicalChannelNumber(channelType, lcn);
+                selectedChannel = Proxies.SchedulerService.GetChannelByLogicalChannelNumber(channelType, lcn);
                 if (selectedChannel == null)
                 {
                     return new IMBotMessage("Unknown channel number.", IMBotMessage.ErrorColor);
@@ -411,7 +403,7 @@ namespace ArgusTV.Messenger
             }
             else
             {
-                selectedChannel = schedulerProxy.GetChannelByDisplayName(channelType, arguments[0]);
+                selectedChannel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, arguments[0]);
                 if (selectedChannel == null)
                 {
                     return new IMBotMessage("Unknown channel name.", IMBotMessage.ErrorColor);
@@ -438,13 +430,13 @@ namespace ArgusTV.Messenger
                 }
 
                 Dictionary<Guid, UpcomingGuideProgram> upcomingRecordingsById = BuildUpcomingDictionary(
-                    schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Recording, true));
+                    Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Recording, true));
                 Dictionary<Guid, UpcomingGuideProgram> upcomingAlertsById = BuildUpcomingDictionary(
-                    schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Alert, false));
+                    Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, false));
                 Dictionary<Guid, UpcomingGuideProgram> upcomingSuggestionsById = BuildUpcomingDictionary(
-                    schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Suggestion, false));
+                    Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, false));
 
-                var programs = guideProxy.GetChannelProgramsBetween(selectedChannel.GuideChannelId.Value, lowerTime, upperTime);
+                var programs = Proxies.GuideService.GetChannelProgramsBetween(selectedChannel.GuideChannelId.Value, lowerTime, upperTime);
                 if (programs.Count == 0)
                 {
                     return new IMBotMessage(String.Format(CultureInfo.CurrentCulture, "No guide data for {0} on {1}.", selectedChannel.DisplayName, lowerTime.ToLongDateString()),
@@ -498,8 +490,6 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Program number missing.", IMBotMessage.ErrorColor);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-
             RepeatingType repeatingType = RepeatingType.None;
             if (arguments.Count > 1)
             {
@@ -543,7 +533,7 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("No programs.", IMBotMessage.ErrorColor);
             }
 
-            Schedule schedule = schedulerProxy.CreateNewSchedule(GetChannelType(conversation), ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(GetChannelType(conversation), ScheduleType.Recording);
 
             bool newEpisodesOnly = arguments.Count > 2 && arguments[2].Equals("new", StringComparison.CurrentCultureIgnoreCase);
             string repeatingText = String.Empty;
@@ -608,7 +598,7 @@ namespace ArgusTV.Messenger
             }
             schedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);
             schedule.Rules.Add(ScheduleRuleType.TitleEquals, program.Title);
-            schedulerProxy.SaveSchedule(schedule);
+            Proxies.SchedulerService.SaveSchedule(schedule);
 
             StringBuilder replyText = new StringBuilder();
             replyText.Append("Created schedule to record ");
@@ -636,15 +626,13 @@ namespace ArgusTV.Messenger
                 return DoSearchResults(conversation, resultNumber);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-
             string searchText = arguments[0];
             if (searchText.StartsWith(@"\"))
             {
                 searchText = searchText.Substring(1);
             }
 
-            var titles = schedulerProxy.GetTitlesByPartialTitle(GetChannelType(conversation), searchText, false);
+            var titles = Proxies.SchedulerService.GetTitlesByPartialTitle(GetChannelType(conversation), searchText, false);
 
             StringBuilder replyText = new StringBuilder();
             replyText.AppendFormat("Found {0} in the following titles:", searchText);
@@ -679,16 +667,14 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Bad search result number.", IMBotMessage.ErrorColor);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-
             Dictionary<Guid, UpcomingGuideProgram> upcomingRecordingsById = BuildUpcomingDictionary(
-                    schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Recording, true));
+                Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Recording, true));
             Dictionary<Guid, UpcomingGuideProgram> upcomingAlertsById = BuildUpcomingDictionary(
-                schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Alert, false));
+                Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, false));
             Dictionary<Guid, UpcomingGuideProgram> upcomingSuggestionsById = BuildUpcomingDictionary(
-                schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Suggestion, false));
+                Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, false));
 
-            var programs = schedulerProxy.SearchGuideByTitle(GetChannelType(conversation), titles[resultNumber - 1], false);
+            var programs = Proxies.SchedulerService.SearchGuideByTitle(GetChannelType(conversation), titles[resultNumber - 1], false);
 
             StringBuilder replyText = new StringBuilder();
             int index = 0;
@@ -720,10 +706,8 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Program number is missing.", IMBotMessage.ErrorColor);
             }
 
-            var tvSchedulerAgent = new SchedulerServiceProxy();
-
             UpcomingProgram upcomingRecording;
-            IMBotMessage result = FindUpcomingRecording(tvSchedulerAgent, conversation, arguments, out upcomingRecording);
+            IMBotMessage result = FindUpcomingRecording(conversation, arguments, out upcomingRecording);
             if (result == null)
             {
                 StringBuilder replyText = new StringBuilder();
@@ -731,19 +715,19 @@ namespace ArgusTV.Messenger
                 {
                     if (upcomingRecording.IsPartOfSeries)
                     {
-                        tvSchedulerAgent.CancelUpcomingProgram(upcomingRecording.ScheduleId, upcomingRecording.GuideProgramId,
+                        Proxies.SchedulerService.CancelUpcomingProgram(upcomingRecording.ScheduleId, upcomingRecording.GuideProgramId,
                             upcomingRecording.Channel.ChannelId, upcomingRecording.StartTime);
                         replyText.Append("Cancelled ");
                     }
                     else
                     {
-                        tvSchedulerAgent.DeleteSchedule(upcomingRecording.ScheduleId);
+                        Proxies.SchedulerService.DeleteSchedule(upcomingRecording.ScheduleId);
                         replyText.Append("Deleted schedule for ");
                     }
                 }
                 else
                 {
-                    tvSchedulerAgent.UncancelUpcomingProgram(upcomingRecording.ScheduleId, upcomingRecording.GuideProgramId,
+                    Proxies.SchedulerService.UncancelUpcomingProgram(upcomingRecording.ScheduleId, upcomingRecording.GuideProgramId,
                         upcomingRecording.Channel.ChannelId, upcomingRecording.StartTime);
                     replyText.Append("Uncancelled ");
                 }
@@ -763,14 +747,12 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("Program number is missing.", IMBotMessage.ErrorColor);
             }
 
-            var schedulerProxy = new SchedulerServiceProxy();
-
             UpcomingProgram upcomingRecording;
-            IMBotMessage result = FindUpcomingRecording(schedulerProxy, conversation, arguments, out upcomingRecording);
+            IMBotMessage result = FindUpcomingRecording(conversation, arguments, out upcomingRecording);
             if (result == null)
             {
                 StringBuilder replyText = new StringBuilder();
-                schedulerProxy.DeleteSchedule(upcomingRecording.ScheduleId);
+                Proxies.SchedulerService.DeleteSchedule(upcomingRecording.ScheduleId);
                 replyText.Append("Deleted schedule for ");
                 Utility.AppendProgramDetails(replyText, upcomingRecording.Channel, upcomingRecording);
                 replyText.Append(".");
@@ -868,7 +850,7 @@ namespace ArgusTV.Messenger
 
         #region Miscellanous
 
-        private static IMBotMessage FindUpcomingRecording(SchedulerServiceProxy schedulerProxy, IMBotConversation conversation, IList<string> arguments, out UpcomingProgram upcomingRecording)
+        private static IMBotMessage FindUpcomingRecording(IMBotConversation conversation, IList<string> arguments, out UpcomingProgram upcomingRecording)
         {
             upcomingRecording = null;
 
@@ -900,7 +882,7 @@ namespace ArgusTV.Messenger
                 return new IMBotMessage("No programs.", IMBotMessage.ErrorColor);
             }
 
-            var upcomingPrograms = schedulerProxy.GetAllUpcomingPrograms(ScheduleType.Recording, true);
+            var upcomingPrograms = Proxies.SchedulerService.GetAllUpcomingPrograms(ScheduleType.Recording, true);
             foreach (UpcomingProgram upcomingProgram in upcomingPrograms)
             {
                 bool idMatches = upcomingProgramId.HasValue
@@ -917,11 +899,10 @@ namespace ArgusTV.Messenger
             return new IMBotMessage("Program not found in upcoming recordings.", IMBotMessage.ErrorColor);
         }
 
-        private static List<ChannelGroup> GetAllGroups(SchedulerServiceProxy schedulerProxy, ChannelType channelType)
+        private static List<ChannelGroup> GetAllGroups(ChannelType channelType)
         {
-            List<ChannelGroup> groups = schedulerProxy.GetAllChannelGroups(channelType, true);
-            Guid allChannelsGroupId = (channelType == ChannelType.Television)
-                ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId;
+            List<ChannelGroup> groups = Proxies.SchedulerService.GetAllChannelGroups(channelType, true);
+            Guid allChannelsGroupId = (channelType == ChannelType.Television) ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId;
             groups.Add(new ChannelGroup()
             {
                 ChannelGroupId = allChannelsGroupId,

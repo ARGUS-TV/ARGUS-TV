@@ -32,6 +32,7 @@ using ArgusTV.UI.Console.Properties;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
 using ArgusTV.UI.Process.Guide;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -101,7 +102,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 ChannelType channelType = (ChannelType)_channelTypeComboBox.SelectedIndex;
-                List<ChannelGroup> channelGroups = new List<ChannelGroup>(MainForm.SchedulerProxy.GetAllChannelGroups(channelType, true));
+                List<ChannelGroup> channelGroups = new List<ChannelGroup>(Proxies.SchedulerService.GetAllChannelGroups(channelType, true));
                 channelGroups.Add(new ChannelGroup()
                 {
                     ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
@@ -123,7 +124,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             try
             {
-                _streamsBindingSource.DataSource = new LiveStreamsList(MainForm.ControlProxy.GetLiveStreams());
+                _streamsBindingSource.DataSource = new LiveStreamsList(Proxies.ControlService.GetLiveStreams());
                 RefreshSelectedGroupChannels();
             }
             catch (Exception ex)
@@ -191,7 +192,7 @@ namespace ArgusTV.UI.Console.Panels
                 RefreshAllUpcomingPrograms();
                 ChannelGroup channelGroup = _channelGroupsComboBox.SelectedItem as ChannelGroup;
                 _channelsBindingSource.DataSource = new CurrentAndNextProgramsList(
-                    MainForm.SchedulerProxy.GetCurrentAndNextForGroup(channelGroup.ChannelGroupId, true, null));
+                    Proxies.SchedulerService.GetCurrentAndNextForGroup(channelGroup.ChannelGroupId, true, null));
             }
             catch (Exception ex)
             {
@@ -225,7 +226,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     _channelsGridView.ClearSelection();
                     string lastRtspUrl = liveStream.RtspUrl;
-                    LiveStreamResult result = MainForm.ControlProxy.TuneLiveStream(channel, ref liveStream);
+                    LiveStreamResult result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
                     if (result == LiveStreamResult.Succeeded)
                     {
                         LoadAllActiveStreams();
@@ -259,7 +260,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     Cursor.Current = Cursors.WaitCursor;
 
-                    MainForm.ControlProxy.StopLiveStream(stream);
+                    Proxies.ControlService.StopLiveStream(stream);
                     LoadAllActiveStreams();
                     _streamsDataGridView.ClearSelection();
                 }
@@ -322,7 +323,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     _channelsGridView.ClearSelection();
                     LiveStream liveStream = null;
-                    LiveStreamResult result = MainForm.ControlProxy.TuneLiveStream(channel, ref liveStream);
+                    LiveStreamResult result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
                     if (result == LiveStreamResult.Succeeded)
                     {
                         LoadAllActiveStreams();
@@ -366,9 +367,9 @@ namespace ArgusTV.UI.Console.Panels
 
         private void RefreshAllUpcomingPrograms()
         {
-            var upcomingRecordings = MainForm.ControlProxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            var upcomingAlerts = MainForm.SchedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            var upcomingSuggestions = MainForm.SchedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
+            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
+            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
             _allUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
         }
 
@@ -505,7 +506,7 @@ namespace ArgusTV.UI.Console.Panels
                     ? programView.CurrentAndNextProgram.Current : programView.CurrentAndNextProgram.Next;
                 if (programSummary != null)
                 {
-                    GuideProgram guideProgram = MainForm.GuideProxy.GetProgramById(programSummary.GuideProgramId);
+                    GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programSummary.GuideProgramId);
                     using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                     {
                         popup.Channel = programView.CurrentAndNextProgram.Channel;

@@ -38,74 +38,6 @@ namespace ArgusTV.UI.Console
         private string _baseFormTitle;
         private string _formTitle;
 
-        #region Service Agents
-
-        private SchedulerServiceProxy _schedulerProxy;
-
-        public SchedulerServiceProxy SchedulerProxy
-        {
-            get 
-            {
-                if (_schedulerProxy == null)
-                {
-                    _schedulerProxy = new SchedulerServiceProxy();
-                }
-                return _schedulerProxy; 
-            }
-        }
-
-        private GuideServiceProxy _guideProxy;
-
-        public GuideServiceProxy GuideProxy
-        {
-            get
-            {
-                if (_guideProxy == null)
-                {
-                    _guideProxy = new GuideServiceProxy();
-                }
-                return _guideProxy;
-            }
-        }
-
-        private ControlServiceProxy _controlProxy;
-
-        public ControlServiceProxy ControlProxy
-        {
-            get
-            {
-                if (_controlProxy == null)
-                {
-                    _controlProxy = new ControlServiceProxy();
-                }
-                return _controlProxy;
-            }
-        }
-
-        private ConfigurationServiceProxy _configurationProxy;
-
-        public ConfigurationServiceProxy ConfigurationProxy
-        {
-            get
-            {
-                if (_configurationProxy == null)
-                {
-                    _configurationProxy = new ConfigurationServiceProxy();
-                }
-                return _configurationProxy;
-            }
-        }
-
-        public void ClearServiceProxies()
-        {
-            _schedulerProxy = null;
-            _guideProxy = null;
-            _controlProxy = null;
-            _configurationProxy = null;
-        }
-
-        #endregion
-
         public System.Collections.ObjectModel.ReadOnlyCollection<string> CommandLineArgs { set; get; }
 
         private List<PluginServiceSetting> _pluginServiceSettings = new List<PluginServiceSetting>();
@@ -172,9 +104,7 @@ namespace ArgusTV.UI.Console
                 {
                     if (DateTime.Now >= Properties.Settings.Default.NextVersionCheck)
                     {
-                        var proxy = new ArgusTV.ServiceProxy.CoreServiceProxy();
-
-                        NewVersionInfo versionInfo = proxy.IsNewerVersionAvailable();
+                        NewVersionInfo versionInfo = Proxies.CoreService.IsNewerVersionAvailable();
                         if (versionInfo != null)
                         {
                             Program.App.HideSplash();
@@ -222,8 +152,6 @@ namespace ArgusTV.UI.Console
                 Properties.Settings.Default.ConsoleWindowSize = this.Size;
                 Properties.Settings.Default.Save();
             }
-
-            ClearServiceProxies();
         }
 
         public bool ConnectToArgusTVService(string currentProfileName, bool reconnect)
@@ -314,9 +242,7 @@ namespace ArgusTV.UI.Console
                         string macAddresses = _connectionProfile.ServerSettings.WakeOnLan.MacAddresses;
                         string ipAddress = _connectionProfile.ServerSettings.WakeOnLan.IPAddress;
 
-                        ClearServiceProxies();
-
-                        if (!ProxyFactory.Initialize(_connectionProfile.ServerSettings, false))
+                        if (!Proxies.Initialize(_connectionProfile.ServerSettings, false))
                         {
                             Program.App.HideSplash();
                             result = ConnectWithForm();
@@ -389,7 +315,6 @@ namespace ArgusTV.UI.Console
             }
             if (form.ShowDialog(this) == DialogResult.OK)
             {
-                ClearServiceProxies();
                 _connectionProfile = new ConnectionProfile()
                 {
                     ServerSettings = form.ServerSettings,

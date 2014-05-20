@@ -330,8 +330,6 @@ namespace ArgusTV.UI.MediaPortal
         /// </summary>
         private void FillChannelList()
         {
-            var schedulerProxy = new SchedulerServiceProxy();
-
             _channelsListControl.Clear();
 
             int i = 0;
@@ -340,7 +338,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_currentGroup != null)
             {
-                _currentAndNextPrograms = schedulerProxy.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, PluginMain.Navigator.LiveStream);
+                _currentAndNextPrograms = Proxies.SchedulerService.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, PluginMain.Navigator.LiveStream);
             }
             else
             {
@@ -358,7 +356,7 @@ namespace ArgusTV.UI.MediaPortal
                 item.TVTag = currentAndNext.Channel;
 
                 sb.Append(currentAndNext.Channel.DisplayName);
-                ChannelLogo = Utility.GetLogoImage(currentAndNext.Channel, schedulerProxy);
+                ChannelLogo = Utility.GetLogoImage(currentAndNext.Channel);
 
                 if (!string.IsNullOrEmpty(ChannelLogo))
                 {

@@ -59,52 +59,6 @@ namespace ArgusTV.UI.MediaPortal
             GetID = WindowId.ChannelManagment;
         }
 
-        #region Service Proxies
-
-        private SchedulerServiceProxy _schedulerServiceProxy;
-
-        public SchedulerServiceProxy SchedulerServiceProxy
-        {
-            get
-            {
-                if (_schedulerServiceProxy == null)
-                {
-                    _schedulerServiceProxy = new SchedulerServiceProxy();
-                }
-                return _schedulerServiceProxy;
-            }
-        }
-
-        private GuideServiceProxy _guideServiceProxy;
-
-        public GuideServiceProxy GuideServiceProxy
-        {
-            get
-            {
-                if (_guideServiceProxy == null)
-                {
-                    _guideServiceProxy = new GuideServiceProxy();
-                }
-                return _guideServiceProxy;
-            }
-        }
-
-        private ControlServiceProxy _controlServiceProxy;
-
-        public ControlServiceProxy ControlServiceProxy
-        {
-            get
-            {
-                if (_controlServiceProxy == null)
-                {
-                    _controlServiceProxy = new ControlServiceProxy();
-                }
-                return _controlServiceProxy;
-            }
-        }
-
-        #endregion
-
         #region Overrides
 
         protected override void OnWindowLoaded()
@@ -255,7 +209,7 @@ namespace ArgusTV.UI.MediaPortal
                         case 1:
                             {
                                 //_channelGroupsList.RemoveItem(iItem);
-                                SchedulerServiceProxy.DeleteChannelGroup(group.ChannelGroupId, true, true);
+                                Proxies.SchedulerService.DeleteChannelGroup(group.ChannelGroupId, true, true);
                                 LoadAll(null);
                             }
                             break;
@@ -272,7 +226,7 @@ namespace ArgusTV.UI.MediaPortal
                                     item.IsPlayed = false;
                                     group.VisibleInGuide = true;
                                 }
-                                SchedulerServiceProxy.SaveChannelGroup(group);
+                                Proxies.SchedulerService.SaveChannelGroup(group);
                             }
                             break;
                     }
@@ -337,7 +291,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (group != null)
             {
-                var channels = SchedulerServiceProxy.GetChannelsInGroup(group.ChannelGroupId, false);
+                var channels = Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, false);
                 if (channels != null && channels.Count > 0)
                 {
                     foreach (Channel channel in channels)
@@ -347,7 +301,7 @@ namespace ArgusTV.UI.MediaPortal
                         item.Label = channel.DisplayName;
                         item.TVTag = channel;
 
-                        string logo = Utility.GetLogoImage(channel, SchedulerServiceProxy);
+                        string logo = Utility.GetLogoImage(channel);
                         if (!string.IsNullOrEmpty(logo))
                         {
                             item.IconImage = logo;
@@ -366,7 +320,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             _allChannelsList.Clear();
 
-            var channels = SchedulerServiceProxy.GetAllChannels(_currentChannelType, false);
+            var channels = Proxies.SchedulerService.GetAllChannels(_currentChannelType, false);
             foreach (Channel channel in channels)
             {
                 if (!_channelIdsInList.Contains(channel.ChannelId))
@@ -375,7 +329,7 @@ namespace ArgusTV.UI.MediaPortal
                     item.Label = channel.DisplayName;
                     item.TVTag = channel;
 
-                    string logo = Utility.GetLogoImage(channel, SchedulerServiceProxy);
+                    string logo = Utility.GetLogoImage(channel);
                     if (!string.IsNullOrEmpty(logo))
                     {
                         item.IconImage = logo;
@@ -450,14 +404,14 @@ namespace ArgusTV.UI.MediaPortal
                                         item.IsPlayed = false;
                                         channel.VisibleInGuide = true;
                                     }
-                                    SchedulerServiceProxy.SaveChannel(channel);
+                                    Proxies.SchedulerService.SaveChannel(channel);
                                 }
                                 break;
 
                             case 2:
                                 {
                                     OnChangeGuideChannel(channel);
-                                    item.TVTag = SchedulerServiceProxy.GetChannelById(channel.ChannelId);
+                                    item.TVTag = Proxies.SchedulerService.GetChannelById(channel.ChannelId);
                                 }
                                 break;
 
@@ -536,14 +490,14 @@ namespace ArgusTV.UI.MediaPortal
                                             item.IsPlayed = false;
                                             channel.VisibleInGuide = true;
                                         }
-                                        SchedulerServiceProxy.SaveChannel(channel);
+                                        Proxies.SchedulerService.SaveChannel(channel);
                                     }
                                     break;
 
                                 case 3:
                                     {
                                         OnChangeGuideChannel(channel);
-                                        item.TVTag = SchedulerServiceProxy.GetChannelById(channel.ChannelId);
+                                        item.TVTag = Proxies.SchedulerService.GetChannelById(channel.ChannelId);
                                     }
                                     break;
 
@@ -568,7 +522,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private void OnChangeGuideChannel(Channel channel)
         {
-            var guideChannels = GuideServiceProxy.GetAllChannels(_currentChannelType);
+            var guideChannels = Proxies.GuideService.GetAllChannels(_currentChannelType);
             if (guideChannels != null && guideChannels.Count > 0)
             {
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -598,12 +552,12 @@ namespace ArgusTV.UI.MediaPortal
                         if (dlg.SelectedLabel <= 0)
                         {
                             channel.GuideChannelId = null;
-                            SchedulerServiceProxy.SaveChannel(channel);
+                            Proxies.SchedulerService.SaveChannel(channel);
                         }
                         else
                         {
                             GuideChannel guideChannel = guideChannels[dlg.SelectedLabel - 1];
-                            SchedulerServiceProxy.AttachChannelToGuide(channel.ChannelId, guideChannel.GuideChannelId);
+                            Proxies.SchedulerService.AttachChannelToGuide(channel.ChannelId, guideChannel.GuideChannelId);
                         }
                     }
                 }
@@ -613,7 +567,7 @@ namespace ArgusTV.UI.MediaPortal
         private GuideChannel GetGuideChannelForChannel(Channel channel)
         {
             GuideChannel guideChannel = null;
-            var guideChannels = GuideServiceProxy.GetAllChannels(_currentChannelType);
+            var guideChannels = Proxies.GuideService.GetAllChannels(_currentChannelType);
             foreach (GuideChannel gChannel in guideChannels)
             {
                 if (gChannel.GuideChannelId == channel.GuideChannelId.Value)
@@ -639,7 +593,7 @@ namespace ArgusTV.UI.MediaPortal
 
                 if (dlgYesNo.IsConfirmed)
                 {
-                    SchedulerServiceProxy.DeleteChannel(channel.ChannelId, true);
+                    Proxies.SchedulerService.DeleteChannel(channel.ChannelId, true);
                     return true;
                 }
             }
@@ -669,7 +623,7 @@ namespace ArgusTV.UI.MediaPortal
 
                 if (_currentGroup != null)
                 {
-                    SchedulerServiceProxy.SetChannelGroupMembers(_currentGroup.ChannelGroupId, channelIds);
+                    Proxies.SchedulerService.SetChannelGroupMembers(_currentGroup.ChannelGroupId, channelIds);
                 }
             }
         }
@@ -693,7 +647,7 @@ namespace ArgusTV.UI.MediaPortal
                         GroupName = keyboard.Text
                     };
 
-                    SchedulerServiceProxy.SaveChannelGroup(group);
+                    Proxies.SchedulerService.SaveChannelGroup(group);
                 }
             }
         }
@@ -702,13 +656,13 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (group != null)
             {
-                SchedulerServiceProxy.DeleteChannelGroup(group.ChannelGroupId, true, true);
+                Proxies.SchedulerService.DeleteChannelGroup(group.ChannelGroupId, true, true);
             }
         }
 
         private List<ChannelGroup> GetAllChannelGroups()
         {
-            return SchedulerServiceProxy.GetAllChannelGroups(_currentChannelType, true);
+            return Proxies.SchedulerService.GetAllChannelGroups(_currentChannelType, true);
         }
 
         private void ChangeChannelType()

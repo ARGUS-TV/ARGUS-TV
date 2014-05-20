@@ -20,9 +20,9 @@
  */
 using System;
 using System.Collections.Generic;
-using RestSharp;
 using ArgusTV.DataContracts;
 using ArgusTV.Common.Recorders.Utility;
+using System.Net.Http;
 
 namespace ArgusTV.Common.Recorders
 {
@@ -35,8 +35,7 @@ namespace ArgusTV.Common.Recorders
 
         public void RegisterRecorder(Guid recorderId, string name, string version)
         {
-            var request = NewRequest("/RecorderCallback/RegisterRecorder/{recorderId}", Method.POST);
-            request.AddParameter("recorderId", recorderId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Post, "RecorderCallback/RegisterRecorder/{0}", recorderId);
             request.AddBody(new
             {
                 Name = name,
@@ -47,7 +46,7 @@ namespace ArgusTV.Common.Recorders
 
         public void LogMessage(Guid recorderId, LogSeverity severity, string message)
         {
-            var request = NewRequest("/RecorderCallback/LogMessage", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "RecorderCallback/LogMessage");
             request.AddBody(new
             {
                 RecorderId = recorderId,
@@ -59,7 +58,7 @@ namespace ArgusTV.Common.Recorders
 
         public void AddNewRecording(UpcomingProgram recordingProgram, DateTime recordingStartTimeUtc, string recordingFileName)
         {
-            var request = NewRequest("/RecorderCallback/Recording/New", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "RecorderCallback/Recording/New");
             request.AddBody(new
             {
                 RecordingProgram = recordingProgram,
@@ -71,7 +70,7 @@ namespace ArgusTV.Common.Recorders
 
         public void EndRecording(string recordingFileName, DateTime recordingStopTimeUtc, bool isPartialRecording, bool okToMoveFile)
         {
-            var request = NewRequest("/RecorderCallback/Recording/End", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "RecorderCallback/Recording/End");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName,
@@ -84,7 +83,7 @@ namespace ArgusTV.Common.Recorders
 
         public void StartRecordingFailed(CardChannelAllocation channelAllocation, UpcomingProgram recordingProgram, string reason)
         {
-            var request = NewRequest("/RecorderCallback/Recording/StartFailed", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "RecorderCallback/Recording/StartFailed");
             request.AddBody(new
             {
                 Allocation = channelAllocation,
@@ -96,7 +95,7 @@ namespace ArgusTV.Common.Recorders
 
         public void LiveStreamAborted(LiveStream abortedStream, LiveStreamAbortReason reason, UpcomingProgram program)
         {
-            var request = NewRequest("/RecorderCallback/LiveStream/Aborted", Method.PUT);
+            var request = NewRequest(HttpMethod.Put, "RecorderCallback/LiveStream/Aborted");
             request.AddBody(new
             {
                 AbortedStream = abortedStream,
@@ -108,14 +107,13 @@ namespace ArgusTV.Common.Recorders
 
         public GuideProgram GetGuideProgramById(Guid guideProgramId)
         {
-            var request = NewRequest("/Guide/Program/{guideProgramId}", Method.GET);
-            request.AddParameter("guideProgramId", guideProgramId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Guide/Program/{0}", guideProgramId);
             return Execute<GuideProgram>(request);
         }
 
         public Recording GetRecordingByFileName(string recordingFileName)
         {
-            var request = NewRequest("/Control/RecordingByFile", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Control/RecordingByFile");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
@@ -125,8 +123,8 @@ namespace ArgusTV.Common.Recorders
 
         public void DeleteRecording(string recordingFileName, bool deleteRecordingFile)
         {
-            var request = NewRequest("/Control/RecordingByFile", Method.DELETE);
-            request.AddParameter("deleteRecordingFile", deleteRecordingFile, ParameterType.QueryString);
+            var request = NewRequest(HttpMethod.Delete, "Control/RecordingByFile");
+            request.AddParameter("deleteRecordingFile", deleteRecordingFile);
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName

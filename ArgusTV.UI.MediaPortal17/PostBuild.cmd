@@ -7,7 +7,6 @@ IF NOT EXIST %mpDir% goto end
   copy %1ArgusTV.DataContracts.dll %mpDir%
   copy %1ArgusTV.UI.Process.dll %mpDir%
   copy %1ArgusTV.Client.Common.* %mpDir%
-  copy %1RestSharp.dll %mpDir%
   xcopy /S /Y /I %1..\..\skin %progDir%\skin
   xcopy /S /Y /I %1..\..\language %progDir%\language
 :end
@@ -18,7 +17,6 @@ IF NOT EXIST %mpDir% goto reallyEnd
   copy %1ArgusTV.DataContracts.dll %mpDir%
   copy %1ArgusTV.UI.Process.dll %mpDir%
   copy %1ArgusTV.Client.Common.* %mpDir%
-  copy %1RestSharp.dll %mpDir%
   xcopy /S /Y /I %1..\..\skin %progDir%\skin
   xcopy /S /Y /I %1..\..\language %progDir%\language
   goto reallyEnd

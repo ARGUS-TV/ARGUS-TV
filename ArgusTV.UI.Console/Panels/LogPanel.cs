@@ -54,8 +54,7 @@ namespace ArgusTV.UI.Console.Panels
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\Logs");
                 _openLogsButton.Visible = Directory.Exists(_logsFolderPath);
 
-                var proxy = new LogServiceProxy();
-                FillModulesComboBox(proxy.GetAllModules());
+                FillModulesComboBox(Proxies.LogService.GetAllModules());
                 FillSeverityComboBox();
                 SetDefaultSearchCriteria();
             }
@@ -109,8 +108,6 @@ namespace ArgusTV.UI.Console.Panels
 
                 string module = _moduleComboBox.Text.Length > 0 ? _moduleComboBox.Text : null;
 
-                var proxy = new LogServiceProxy();
-
                 LogSeverity? logSeverity = null;
                 if (!String.IsNullOrEmpty(_severityComboBox.Text))
                 {
@@ -118,7 +115,7 @@ namespace ArgusTV.UI.Console.Panels
                 }
 
                 bool maxEntriesReached;
-                var logEntries = proxy.GetLogEntries(_startDatePicker.Value.Date, _endDatePicker.Value.Date.AddDays(1), _maxLogEntries,
+                var logEntries = Proxies.LogService.GetLogEntries(_startDatePicker.Value.Date, _endDatePicker.Value.Date.AddDays(1), _maxLogEntries,
                     module, logSeverity, out maxEntriesReached);
 
                 _maxEntriesReachedLabel.Visible = maxEntriesReached;

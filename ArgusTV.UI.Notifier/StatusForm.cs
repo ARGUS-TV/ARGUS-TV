@@ -489,7 +489,7 @@ namespace ArgusTV.UI.Notifier
 
         public bool OnUpcomingRecordingsChanged()
         {
-            if (ProxyFactory.IsInitialized
+            if (Proxies.IsInitialized
                 && this.Visible
                 && this.WindowState == FormWindowState.Normal)
             {
@@ -501,7 +501,7 @@ namespace ArgusTV.UI.Notifier
 
         public void OnActiveRecordingsChanged()
         {
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 if (!OnUpcomingRecordingsChanged())
                 {
@@ -546,14 +546,14 @@ namespace ArgusTV.UI.Notifier
         {
             for (; ; )
             {
-                if (ProxyFactory.IsInitialized)
+                if (Proxies.IsInitialized)
                 {
                     IList<ServiceEvent> events = null;
                     if (!_eventListenerSubscribed)
                     {
                         try
                         {
-                            new CoreServiceProxy().SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents);
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents);
                             _eventListenerSubscribed = true;
                             _eventsErrorCount = 0;
 
@@ -568,7 +568,7 @@ namespace ArgusTV.UI.Notifier
                     {
                         try
                         {
-                            events = new CoreServiceProxy().GetServiceEvents(_eventsClientId, cancellationToken.WaitHandle);
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
@@ -600,12 +600,12 @@ namespace ArgusTV.UI.Notifier
                 }
             }
 
-            if (ProxyFactory.IsInitialized
+            if (Proxies.IsInitialized
                 && _eventListenerSubscribed)
             {
                 try
                 {
-                    new CoreServiceProxy().UnsubscribeServiceEvents(_eventsClientId);
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
                 }
                 catch
                 {
@@ -659,7 +659,7 @@ namespace ArgusTV.UI.Notifier
                 serverSettings.UserName = Config.Current.UserName;
                 serverSettings.Password = Config.Current.Password;
                 serverSettings.Transport = ServiceTransport.Https;
-                this.IsConnected = ProxyFactory.Initialize(serverSettings, false);
+                this.IsConnected = Proxies.Initialize(serverSettings, false);
                 if (this.IsConnected)
                 { 
                     SetStatusIcon(ServerStatus.Idle);
@@ -696,7 +696,7 @@ namespace ArgusTV.UI.Notifier
                 serverSettings.WakeOnLan.IPAddress = args.IpAddress;
                 serverSettings.WakeOnLan.MacAddresses = args.MacAddresses;
                 serverSettings.WakeOnLan.Enabled = true;
-                ProxyFactory.Initialize(serverSettings, false);
+                Proxies.Initialize(serverSettings, false);
             }
         }
 
@@ -716,11 +716,11 @@ namespace ArgusTV.UI.Notifier
         public async void RefreshStatus()
         {
             RefreshStatusResult result = null;
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 await Task.Run(() =>
                 {
-                    var proxy = new ControlServiceProxy();
+                    var proxy = Proxies.ControlService;
                     try
                     {
                         result = new RefreshStatusResult()
@@ -780,11 +780,11 @@ namespace ArgusTV.UI.Notifier
         private async void RefreshActiveAndUpcomingRecordings()
         {
             RefreshProgramsResult result = null;
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 await Task.Run(() =>
                 {
-                    var proxy = new ControlServiceProxy();
+                    var proxy = Proxies.ControlService;
                     try
                     {
                         result = new RefreshProgramsResult()

@@ -73,8 +73,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (DateTime.Now >= _activeRecordingsUpdateTime || ActiveRecordingsChanged)
                         {
                             ActiveRecordingsChanged = false;
-                            var controlProxy = new ControlServiceProxy();
-                            _activeRecordings = controlProxy.GetActiveRecordings();
+                            _activeRecordings = Proxies.ControlService.GetActiveRecordings();
                             _activeRecordingsUpdateTime = DateTime.Now.AddSeconds(15);
                         }
                     }
@@ -272,15 +271,12 @@ namespace ArgusTV.UI.MediaPortal
 
             lock (_refreshCurrAndNextLock)
             {
-                var guideProxy = new GuideServiceProxy();
-                var schedulerProxy = new SchedulerServiceProxy();
-
-                CurrentAndNextProgram currentAndNext = schedulerProxy.GetCurrentAndNextForChannel(channel.ChannelId, false, null);
+                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, false, null);
                 if (currentAndNext != null)
                 {
                     if (currentAndNext.Current != null)
                     {
-                        _currentProgram = guideProxy.GetProgramById(currentAndNext.Current.GuideProgramId);
+                        _currentProgram = Proxies.GuideService.GetProgramById(currentAndNext.Current.GuideProgramId);
                     }
                     else
                     {
@@ -288,7 +284,7 @@ namespace ArgusTV.UI.MediaPortal
                     }
                     if (currentAndNext.Next != null)
                     {
-                        _nextProgram = guideProxy.GetProgramById(currentAndNext.Next.GuideProgramId);
+                        _nextProgram = Proxies.GuideService.GetProgramById(currentAndNext.Next.GuideProgramId);
                     }
                     else
                     {
@@ -308,12 +304,10 @@ namespace ArgusTV.UI.MediaPortal
             if (channel != null
                 && channel.GuideChannelId.HasValue)
             {
-                var guideProxy = new GuideServiceProxy();
-
-                var programs = guideProxy.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time);
+                var programs = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time);
                 if (programs.Count > 0)
                 {
-                    return guideProxy.GetProgramById(programs[0].GuideProgramId);
+                    return Proxies.GuideService.GetProgramById(programs[0].GuideProgramId);
                 }
             }
             return null;
@@ -357,7 +351,7 @@ namespace ArgusTV.UI.MediaPortal
         /// <returns></returns>
         internal static bool EnsureConnection(bool showHomeOnError, bool schowError)
         {
-            if (!ProxyFactory.IsInitialized)
+            if (!Proxies.IsInitialized)
             {
                 bool succeeded = false;
                 string errorMessage = string.Empty;
@@ -413,7 +407,7 @@ namespace ArgusTV.UI.MediaPortal
                 }
             }
 
-            if (!ProxyFactory.IsInitialized)
+            if (!Proxies.IsInitialized)
             {
                 if (showHomeOnError && GUIWindowManager.ActiveWindow != 0)
                 {

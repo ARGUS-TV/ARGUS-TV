@@ -266,7 +266,7 @@ namespace ArgusTV.UI.MediaPortal
       string strLogo = string.Empty;
       if (channelId != Guid.Empty && channelName != string.Empty)
       {
-            strLogo = Utility.GetLogoImage(channelId, channelName, new SchedulerServiceProxy());
+            strLogo = Utility.GetLogoImage(channelId, channelName);
       }
 
       if (string.IsNullOrEmpty(strLogo))                         

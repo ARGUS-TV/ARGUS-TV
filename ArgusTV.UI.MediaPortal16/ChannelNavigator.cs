@@ -144,24 +144,6 @@ namespace ArgusTV.UI.MediaPortal
 
         #endregion
 
-        #region Service Proxies
-
-        private ControlServiceProxy _controlServiceProxy;
-
-        public ControlServiceProxy ControlServiceProxy
-        {
-            get
-            {
-                if (_controlServiceProxy == null)
-                {
-                    _controlServiceProxy = new ControlServiceProxy();
-                }
-                return _controlServiceProxy;
-            }
-        }
-
-        #endregion
-
         #region Public properties
 
         /// <summary>
@@ -286,9 +268,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             try
             {
-                var schedulerProxy = new SchedulerServiceProxy();
-
-                List<ChannelGroup> groups = schedulerProxy.GetAllChannelGroups(channelType, true);
+                List<ChannelGroup> groups = Proxies.SchedulerService.GetAllChannelGroups(channelType, true);
                 if (_currentChannelGroup != null
                     && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllTvChannelsGroupId
                     && _currentChannelGroup.ChannelGroupId != ChannelGroup.AllRadioChannelsGroupId)
@@ -331,7 +311,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (_currentChannelGroup == null && _navigatorChannels[channelType].Groups.Count > 0)
                 {
                     _currentChannelGroup = _navigatorChannels[channelType].Groups[0];
-                    RefreshChannelsInGroup(schedulerProxy, channelType);
+                    RefreshChannelsInGroup(channelType);
                 }
             }
             catch (Exception ex)
@@ -373,13 +353,11 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     try
                     {
-                        var schedulerProxy = new SchedulerServiceProxy();
-
                         foreach (ChannelGroup group in _navigatorChannels[channelType].Groups)
                         {
                             if (group != _currentChannelGroup)
                             {
-                                channel = FindChannelInGroupByNumber(schedulerProxy, group.ChannelGroupId, channelNr);
+                                channel = FindChannelInGroupByNumber(group.ChannelGroupId, channelNr);
                                 if (channel != null)
                                 {
                                     channelGroup = group;
@@ -412,9 +390,9 @@ namespace ArgusTV.UI.MediaPortal
             return null;
         }
 
-        private Channel FindChannelInGroupByNumber(SchedulerServiceProxy schedulerProxy, Guid channelGroupId, int channelNr)
+        private Channel FindChannelInGroupByNumber(Guid channelGroupId, int channelNr)
         {
-            return FindChannelByNumber(new List<Channel>(schedulerProxy.GetChannelsInGroup(channelGroupId, true)), channelNr);
+            return FindChannelByNumber(new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(channelGroupId, true)), channelNr);
         }
 
         public void ZapNow()
@@ -648,10 +626,8 @@ namespace ArgusTV.UI.MediaPortal
             Log.Debug("ChannelNavigator: TuneLiveStream(), channel = {0}", channel.DisplayName);
             if (channel != null)
             {
-                var schedulerProxy = new SchedulerServiceProxy();
-
                 LiveStream liveStream = _liveStream;
-                CurrentAndNextProgram currentAndNext = schedulerProxy.GetCurrentAndNextForChannel(channel.ChannelId, true, _liveStream);//null);
+                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, true, _liveStream);//null);
 
                 _currentChannel = channel;
                 _doingChannelChange = true;
@@ -664,7 +640,7 @@ namespace ArgusTV.UI.MediaPortal
                         g_Player.PauseGraph();
                         g_Player.OnZapping(0x80);
 
-                        result = this.ControlServiceProxy.TuneLiveStream(channel, ref liveStream);
+                        result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
                         Log.Debug("ChannelNavigator: First try to re-tune the existing TV stream (staying on the same card), result = {0}", result);
 
                         if (result == LiveStreamResult.Succeeded)
@@ -717,7 +693,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private LiveStreamResult StartAndPlayNewLiveStream(Channel channel,LiveStream liveStream)
         {
-            LiveStreamResult result = this.ControlServiceProxy.TuneLiveStream(channel, ref liveStream);
+            LiveStreamResult result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
             Log.Debug("ChannelNavigator: start a new live stream, result = {0}", result);
 
             if (result == LiveStreamResult.Succeeded)
@@ -783,7 +759,7 @@ namespace ArgusTV.UI.MediaPortal
                     _navigatorChannels[_currentChannel.ChannelType].PreviousChannel = channel;
                     _currentChannel = null;
 
-                    tvlogo = Utility.GetLogoImage(channel, new SchedulerServiceProxy());
+                    tvlogo = Utility.GetLogoImage(channel);
 
                     if (channel.ChannelType == ChannelType.Television)
                         caption = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName;
@@ -817,7 +793,7 @@ namespace ArgusTV.UI.MediaPortal
             GetPlayerFileNameAndOffset(liveStream, out fileName, out isRTSP);
 
             if (liveStream != null)
-                _isAnalog = (ControlServiceProxy.GetLiveStreamTuningDetails(liveStream).CardType == CardType.Analog);
+                _isAnalog = (Proxies.ControlService.GetLiveStreamTuningDetails(liveStream).CardType == CardType.Analog);
 
             if (!isRTSP)
             {
@@ -904,7 +880,7 @@ namespace ArgusTV.UI.MediaPortal
             Log.Debug("ChannelNavigator: StopLiveStream()");
             if (_liveStream != null)
             {
-                this.ControlServiceProxy.StopLiveStream(_liveStream);
+                Proxies.ControlService.StopLiveStream(_liveStream);
                 _liveStream = null;
 
                 if (_currentChannel != null)
@@ -955,7 +931,7 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     try
                     {
-                        this.ControlServiceProxy.StopLiveStream(_streamToStopAsync);
+                        Proxies.ControlService.StopLiveStream(_streamToStopAsync);
                     }
                     catch
                     {
@@ -970,7 +946,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                if (!this.ControlServiceProxy.KeepLiveStreamAlive(_liveStream))
+                if (!Proxies.ControlService.KeepLiveStreamAlive(_liveStream))
                 {
                     if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio)) g_Player.Stop();
                 }
@@ -983,17 +959,12 @@ namespace ArgusTV.UI.MediaPortal
 
         private void RefreshChannelsInGroup(ChannelType channelType)
         {
-            RefreshChannelsInGroup(new SchedulerServiceProxy(), channelType);
-        }
-
-        private void RefreshChannelsInGroup(SchedulerServiceProxy schedulerProxy, ChannelType channelType)
-        {
             try
             {
                 if (_currentChannelGroup != null)
                 {
                     _navigatorChannels[channelType].Channels = new List<Channel>(
-                        schedulerProxy.GetChannelsInGroup(_currentChannelGroup.ChannelGroupId, true));
+                        Proxies.SchedulerService.GetChannelsInGroup(_currentChannelGroup.ChannelGroupId, true));
                 }
                 else
                 {
@@ -1017,7 +988,7 @@ namespace ArgusTV.UI.MediaPortal
             bool hasTeletext = false;
             if (_liveStream != null)
             {
-                hasTeletext = this.ControlServiceProxy.HasTeletext(_liveStream);
+                hasTeletext = Proxies.ControlService.HasTeletext(_liveStream);
             }
             return hasTeletext;
         }
@@ -1026,7 +997,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                new ControlServiceProxy().StartGrabbingTeletext(_liveStream);
+                Proxies.ControlService.StartGrabbingTeletext(_liveStream);
             }
         }
 
@@ -1034,7 +1005,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                this.ControlServiceProxy.StopGrabbingTeletext(_liveStream);
+                Proxies.ControlService.StopGrabbingTeletext(_liveStream);
             }
         }
 
@@ -1043,7 +1014,7 @@ namespace ArgusTV.UI.MediaPortal
             bool isGrabbingTeletext = false;
             if (_liveStream != null)
             {
-                isGrabbingTeletext = this.ControlServiceProxy.IsGrabbingTeletext(_liveStream);
+                isGrabbingTeletext = Proxies.ControlService.IsGrabbingTeletext(_liveStream);
             }
             return isGrabbingTeletext;
         }
@@ -1052,7 +1023,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_liveStream != null)
             {
-                return this.ControlServiceProxy.GetTeletextPage(_liveStream, pageNumber, subPageNumber);
+                return Proxies.ControlService.GetTeletextPage(_liveStream, pageNumber, subPageNumber);
             }
             return null;
         }

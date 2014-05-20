@@ -20,9 +20,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 
 using ArgusTV.DataContracts;
-using RestSharp;
 
 namespace ArgusTV.ServiceProxy
 {
@@ -34,7 +35,7 @@ namespace ArgusTV.ServiceProxy
         /// <summary>
         /// Constructs a channel to the service.
         /// </summary>
-        public GuideServiceProxy()
+        internal GuideServiceProxy()
             : base("Guide")
         {
         }
@@ -48,7 +49,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The ID of the new channel.</returns>
         public Guid AddChannel(string xmltvId, string name, ChannelType channelType)
         {
-            var request = NewRequest("/NewChannel", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "NewChannel");
             request.AddBody(new
             {
                 XmltvId = xmltvId,
@@ -66,8 +67,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="guideChannelId">The ID of the guide channel to delete.</param>
         public void DeleteChannel(Guid guideChannelId)
         {
-            var request = NewRequest("/DeleteChannel/{guideChannelId}", Method.POST);
-            request.AddParameter("guideChannelId", guideChannelId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Post, "DeleteChannel/{0}", guideChannelId);
             Execute(request);
         }
 
@@ -78,7 +78,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The saved guide channel.</returns>
         public GuideChannel SaveChannel(GuideChannel channel)
         {
-            var request = NewRequest("/SaveChannel", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "SaveChannel");
             request.AddBody(channel);
             return Execute<GuideChannel>(request);
         }
@@ -92,7 +92,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The ID of the guide channel.</returns>
         public Guid EnsureChannelExists(string xmltvId, string name, ChannelType channelType)
         {
-            var request = NewRequest("/EnsureChannelExists", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "EnsureChannelExists");
             request.AddBody(new
             {
                 XmltvId = xmltvId,
@@ -110,8 +110,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more guide channels.</returns>
         public List<GuideChannel> GetAllChannels(ChannelType channelType)
         {
-            var request = NewRequest("/Channels/{channelType}", Method.POST);
-            request.AddParameter("channelType", channelType, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Post, "Channels/{0}", channelType);
             return Execute<List<GuideChannel>>(request);
         }
 
@@ -122,7 +121,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The guide channel, or null if not found.</returns>
         public GuideChannel GetChannelByXmlTvId(string xmlTvId)
         {
-            var request = NewRequest("/Channel/ByXmlTvId", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Channel/ByXmlTvId");
             request.AddBody(new
             {
                 XmltvId = xmlTvId
@@ -137,7 +136,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The guide channel, or null if not found.</returns>
         public GuideChannel GetChannelByName(string name)
         {
-            var request = NewRequest("/Channel/ChannelByName", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Channel/ChannelByName");
             request.AddBody(new
             {
                 Name = name
@@ -153,7 +152,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The ID of the imported program.</returns>
         public Guid ImportProgram(GuideProgram guideProgram, GuideSource source)
         {
-            var request = NewRequest("/ImportNewProgram", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "ImportNewProgram");
             request.AddBody(new
             {
                 Program = guideProgram,
@@ -170,7 +169,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="source">The source of the programs.</param>
         public void ImportPrograms(IEnumerable<GuideProgram> guidePrograms, GuideSource source)
         {
-            var request = NewRequest("/ImportPrograms", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "ImportPrograms");
             request.AddBody(new
             {
                 Programs = guidePrograms,
@@ -186,8 +185,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>The requested guide program, or null if it wasn't found.</returns>
         public GuideProgram GetProgramById(Guid guideProgramId)
         {
-            var request = NewRequest("/Program/{guideProgramId}", Method.GET);
-            request.AddParameter("guideProgramId", guideProgramId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Program/{0}", guideProgramId);
             return Execute<GuideProgram>(request);
         }
 
@@ -200,7 +198,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more guide programs.</returns>
         public List<GuideProgramSummary> GetChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime)
         {
-            var request = NewRequest("/ChannelsPrograms", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "ChannelsPrograms");
             request.AddBody(new
             {
                 GuideChannelIds = guideChannelIds,
@@ -219,10 +217,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more guide programs.</returns>
         public List<GuideProgramSummary> GetChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime)
         {
-            var request = NewRequest("/Programs/{guideChannelId}/{lowerTime}/{upperTime}", Method.GET);
-            request.AddParameter("guideChannelId", guideChannelId, ParameterType.UrlSegment);
-            request.AddParameter("lowerTime", ToIso8601(lowerTime), ParameterType.UrlSegment);
-            request.AddParameter("upperTime", ToIso8601(upperTime), ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Programs/{0}/{1}/{2}", guideChannelId, lowerTime, upperTime);
             return Execute<List<GuideProgramSummary>>(request);
         }
 
@@ -232,7 +227,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more categories.</returns>
         public List<string> GetAllCategories()
         {
-            var request = NewRequest("/Categories", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "Categories");
             return Execute<List<string>>(request);
         }
 
@@ -241,7 +236,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void DeleteOldPrograms()
         {
-            var request = NewRequest("/DeleteOldPrograms", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "DeleteOldPrograms");
             Execute(request);
         }
 
@@ -250,7 +245,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void DeleteAllPrograms()
         {
-            var request = NewRequest("/DeleteAllPrograms", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "DeleteAllPrograms");
             Execute(request);
         }
 
@@ -259,7 +254,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void StartGuideImport()
         {
-            var request = NewRequest("/StartGuideImport", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "StartGuideImport");
             Execute(request);
         }
 
@@ -268,7 +263,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void EndGuideImport()
         {
-            var request = NewRequest("/EndGuideImport", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "EndGuideImport");
             Execute(request);
         }
 

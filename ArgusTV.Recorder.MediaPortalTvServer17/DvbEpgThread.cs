@@ -101,13 +101,11 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                         List<GuideProgram> guidePrograms = GetProgramsToImport();
                         while (guidePrograms != null)
                         {
-                            var guideProxy = new GuideServiceProxy();
-
                             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: ArgusTVDvbEpg: importing {0} programs into ARGUS TV", guidePrograms.Count);
 
                             foreach (GuideProgram guideProgram in guidePrograms)
                             {
-                                guideProxy.ImportProgram(guideProgram, GuideSource.DvbEpg);
+                                Proxies.GuideService.ImportProgram(guideProgram, GuideSource.DvbEpg);
                                 aborted = this.StopThreadEvent.WaitOne(0, false);
                                 if (aborted)
                                 {

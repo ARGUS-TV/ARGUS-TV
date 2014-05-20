@@ -30,6 +30,7 @@ using System.Globalization;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -84,14 +85,14 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _recOneTimeFormatTextBox.Text =
-                    MainForm.ConfigurationProxy.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.OneTimeRecordingsFileFormat);
+                    Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.OneTimeRecordingsFileFormat);
                 _recSeriesFormatTextBox.Text =
-                    MainForm.ConfigurationProxy.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SeriesRecordingsFileFormat);
+                    Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SeriesRecordingsFileFormat);
                 _recRadioFormatTextBox.Text =
-                    MainForm.ConfigurationProxy.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.RadioRecordingsFileFormat);
+                    Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.RadioRecordingsFileFormat);
 
                 _deletedFormats = new List<RecordingFileFormat>();
-                _recordingFormats = new SortableBindingList<RecordingFileFormat>(MainForm.SchedulerProxy.GetAllRecordingFileFormats());
+                _recordingFormats = new SortableBindingList<RecordingFileFormat>(Proxies.SchedulerService.GetAllRecordingFileFormats());
                 _formatsBindingSource.DataSource = _recordingFormats;
                 _formatsBindingSource.ResetBindings(false);
                 UpdateSelectedFormat();
@@ -188,11 +189,11 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     Cursor.Current = Cursors.WaitCursor;
 
-                    MainForm.ConfigurationProxy.SetStringValue(
+                    Proxies.ConfigurationService.SetStringValue(
                         ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.OneTimeRecordingsFileFormat, _recOneTimeFormatTextBox.Text);
-                    MainForm.ConfigurationProxy.SetStringValue(
+                    Proxies.ConfigurationService.SetStringValue(
                         ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SeriesRecordingsFileFormat, _recSeriesFormatTextBox.Text);
-                    MainForm.ConfigurationProxy.SetStringValue(
+                    Proxies.ConfigurationService.SetStringValue(
                         ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.RadioRecordingsFileFormat, _recRadioFormatTextBox.Text);
 
                     foreach (RecordingFileFormat format in _recordingFormats)
@@ -201,7 +202,7 @@ namespace ArgusTV.UI.Console.Panels
                             && !String.IsNullOrEmpty(format.Name)
                             && !String.IsNullOrEmpty(format.Format))
                         {
-                            MainForm.SchedulerProxy.SaveRecordingFileFormat(format);
+                            Proxies.SchedulerService.SaveRecordingFileFormat(format);
                         }
                     }
 
@@ -209,7 +210,7 @@ namespace ArgusTV.UI.Console.Panels
                     {
                         if (format.RecordingFileFormatId != Guid.Empty)
                         {
-                            MainForm.SchedulerProxy.DeleteRecordingFileFormat(format.RecordingFileFormatId);
+                            Proxies.SchedulerService.DeleteRecordingFileFormat(format.RecordingFileFormatId);
                         }
                     }
 

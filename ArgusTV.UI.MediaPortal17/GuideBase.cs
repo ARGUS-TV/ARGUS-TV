@@ -316,7 +316,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 _model = new GuideModel();
                 _controller = new GuideController(_model);
-                _controller.Initialize(new SchedulerServiceProxy(), _channelType, 3, Utility.GetLocalizedText(TextId.AllChannels));
+                _controller.Initialize(_channelType, 3, Utility.GetLocalizedText(TextId.AllChannels));
             }
 
             if (PluginMain.Navigator.CurrentGroup != null
@@ -1394,7 +1394,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     Channel channel = (Channel)_channelList[_singleChannelNumber].channel;
                     setGuideHeadingVisibility(false);
-                    RenderSingleChannel(new SchedulerServiceProxy(), new GuideServiceProxy(), channel);
+                    RenderSingleChannel(channel);
                 }
                 else
                 {
@@ -1414,10 +1414,7 @@ namespace ArgusTV.UI.MediaPortal
                         }
                     }
 
-                    var guideProxy = new GuideServiceProxy();
-                    var schedulerProxy = new SchedulerServiceProxy();
-
-                    _controller.RefreshChannelsEpgData(guideProxy, visibleChannels, Utils.longtodate(iStart), Utils.longtodate(iEnd));
+                    _controller.RefreshChannelsEpgData(visibleChannels, Utils.longtodate(iStart), Utils.longtodate(iEnd));
 
                     // make sure the TV Guide heading is visiable and the single channel labels are not.
                     setGuideHeadingVisibility(true);
@@ -1432,7 +1429,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (chan < _channelList.Count)
                         {
                             GuideBaseChannel tvGuideChannel = _channelList[chan];
-                            RenderChannel(schedulerProxy, guideProxy, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
+                            RenderChannel(iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
                             // remember bottom y position from last visible button
                             GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
                             if (imgBut != null)
@@ -1484,7 +1481,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private string GetChannelLogo(Channel channel)
         {
-            string logoImagePath = Utility.GetLogoImage(channel, new SchedulerServiceProxy());
+            string logoImagePath = Utility.GetLogoImage(channel);
             if (!System.IO.File.Exists(logoImagePath))
             {
                 logoImagePath = "defaultVideoBig.png";
@@ -1608,7 +1605,7 @@ namespace ArgusTV.UI.MediaPortal
             _currentRecOrNotify = _currentProgram != null && PluginMain.IsActiveRecording(_currentChannel.ChannelId, _currentProgram);
         }
 
-        private void RenderSingleChannel(SchedulerServiceProxy schedulerProxy, GuideServiceProxy guideProxy, Channel channel)
+        private void RenderSingleChannel(Channel channel)
         {
             string strLogo;
             int chan = _channelOffset;
@@ -1644,7 +1641,7 @@ namespace ArgusTV.UI.MediaPortal
             if (channel.GuideChannelId.HasValue)
             {
                 programs = new List<GuideProgramSummary>(
-                    guideProxy.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)));
+                    Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)));
             }
 
             _totalProgramCount = programs.Count;
@@ -2129,8 +2126,7 @@ namespace ArgusTV.UI.MediaPortal
             }
         }
 
-        private void RenderChannel(SchedulerServiceProxy schedulerProxy, GuideServiceProxy guideProxy,
-            int iChannel, GuideBaseChannel tvGuideChannel, long iStart, long iEnd, bool selectCurrentShow)
+        private void RenderChannel(int iChannel, GuideBaseChannel tvGuideChannel, long iStart, long iEnd, bool selectCurrentShow)
         {
             Channel channel = tvGuideChannel.channel;
             int channelNum = 0;
@@ -2631,7 +2627,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (selectCurrentShow && iChannel == _cursorX)
                         {
                             _cursorY = iProgram + 1;
-                            _currentProgram = guideProxy.GetProgramById(program.GuideProgramId);
+                            _currentProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId);
                             m_dtStartTime = program.StartTime;
                             SetProperties();
                         }
@@ -3170,7 +3166,7 @@ namespace ArgusTV.UI.MediaPortal
             if (null != img)
             {
                 SetFocus();
-                _currentProgram = new GuideServiceProxy().GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
+                _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
                 if (updateIcon)
                 {
                     bool isRecording;
@@ -3329,8 +3325,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (null != img && img.IsVisible)
                 {
                     img.ColourDiffuse = 0xffffffff;
-                    var guideProxy = new GuideServiceProxy();
-                    _currentProgram = guideProxy.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
+                    _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
                     SetProperties();
                 }
                 GUIControl.FocusControl(GetID, iControlId);
@@ -3513,7 +3508,7 @@ namespace ArgusTV.UI.MediaPortal
 
                             if (dlgYesNo.IsConfirmed && activeRecording != null)
                             {
-                                new ControlServiceProxy().AbortActiveRecording(activeRecording);
+                                Proxies.ControlService.AbortActiveRecording(activeRecording);
                             }
                         }
                         break;
@@ -3664,7 +3659,7 @@ namespace ArgusTV.UI.MediaPortal
                     switch (dlg.SelectedId)
                     {
                         case 979: // Play recording from beginning 
-                            Recording recording = new ControlServiceProxy().GetRecordingById(activeRecording.RecordingId);
+                            Recording recording = Proxies.ControlService.GetRecordingById(activeRecording.RecordingId);
                             if (recording != null)
                             {
                                 RecordedBase.PlayFromPreRecPoint(recording);
@@ -3997,7 +3992,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (refresh)
             {
-                _controller.RefreshUpcomingPrograms(new SchedulerServiceProxy(), new ControlServiceProxy());
+                _controller.RefreshUpcomingPrograms();
             }
         }
 
@@ -4012,8 +4007,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 try
                 {
-                    var schedulerProxy = new SchedulerServiceProxy();
-                    foreach (Channel chan in schedulerProxy.GetChannelsInGroup(_model.CurrentChannelGroupId, true))
+                    foreach (Channel chan in Proxies.SchedulerService.GetChannelsInGroup(_model.CurrentChannelGroupId, true))
                     {
                         GuideBaseChannel tvGuidChannel = new GuideBaseChannel();
                         tvGuidChannel.channel = chan;

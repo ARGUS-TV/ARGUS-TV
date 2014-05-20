@@ -22,12 +22,10 @@ namespace ArgusTV.StreamPlayer
 
         protected override void Run()
         {
-            var controlProxy = new ControlServiceProxy();
-
             bool exited = false;
             while (!exited)
             {
-                if (!controlProxy.KeepLiveStreamAlive(this.LiveStream))
+                if (!Proxies.ControlService.KeepLiveStreamAlive(this.LiveStream))
                 {
                     break;
                 }

@@ -58,7 +58,7 @@ namespace ArgusTV.GuideImporter
 
             string initErrorMessage;
             InitializeArgusTVServiceChannelFactories(out initErrorMessage);
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 try
                 {
@@ -123,7 +123,7 @@ namespace ArgusTV.GuideImporter
                 serverSettings.ServerName = Properties.Settings.Default.ArgusTVServerName;
                 serverSettings.Transport = ServiceTransport.Http;
                 serverSettings.Port = Properties.Settings.Default.ArgusTVPort;
-                ProxyFactory.Initialize(serverSettings, true);
+                Proxies.Initialize(serverSettings, true);
             }
             catch (Exception ex)
             {

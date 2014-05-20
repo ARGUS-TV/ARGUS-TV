@@ -535,8 +535,6 @@ namespace ArgusTV.WinForms.Controls
 
         private void item_Click(object sender, EventArgs e)
         {
-            var schedulerProxy = new SchedulerServiceProxy();
-
             Schedule schedule = null;
             if (sender == _editScheduleItem)
             {
@@ -577,19 +575,19 @@ namespace ArgusTV.WinForms.Controls
             }
             else if (sender == _recordItem)
             {
-                schedule = GuideController.CreateRecordOnceSchedule(schedulerProxy, _channel.ChannelType, _channel.ChannelId, _title, _subTitle, _episodeNumberDisplay, _startTime);
+                schedule = GuideController.CreateRecordOnceSchedule(_channel.ChannelType, _channel.ChannelId, _title, _subTitle, _episodeNumberDisplay, _startTime);
             }
             else if (sender == _recordDailyItem)
             {
-                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.Daily, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                schedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.Daily, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
             }
             else if (sender == _recordWeeklyItem)
             {
-                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.Weekly, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                schedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.Weekly, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
             }
             else if (sender == _recordAnyTimeItem)
             {
-                schedule = GuideController.CreateRecordRepeatingSchedule(schedulerProxy, GuideController.RepeatingType.AnyTime, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
+                schedule = GuideController.CreateRecordRepeatingSchedule(GuideController.RepeatingType.AnyTime, _channel.ChannelType, _channel.ChannelId, _title, _startTime);
             }
             else if (sender == _playWithVlcItem)
             {

@@ -20,8 +20,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
-using RestSharp;
+using System.Threading.Tasks;
+
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.ServiceProxy
@@ -34,9 +36,11 @@ namespace ArgusTV.ServiceProxy
         /// <summary>
         /// Constructs a channel to the service.
         /// </summary>
-        public CoreServiceProxy()
+        internal CoreServiceProxy()
             : base("Core")
         {
+            _listenerClient = CreateHttpClient();
+            _listenerClient.Timeout = TimeSpan.FromDays(1);
         }
 
         #region Initialization
@@ -48,8 +52,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>0 if client and server are compatible, -1 if the client is too old and +1 if the client is newer than the server.</returns>
         public int Ping(int requestedApiVersion)
         {
-            var request = NewRequest("/Ping/{requestedApiVersion}", Method.GET);
-            request.AddParameter("requestedApiVersion", requestedApiVersion, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Ping/{0}", requestedApiVersion);
             return Execute<PingResult>(request).Result;
         }
 
@@ -65,7 +68,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").</returns>
         public IEnumerable<string> GetMacAddresses()
         {
-            var request = NewRequest("/GetMacAddresses", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "GetMacAddresses");
             return Execute<List<string>>(request);
         }
 
@@ -75,13 +78,30 @@ namespace ArgusTV.ServiceProxy
         /// <returns>A NewVersionInfo object if there is a newer version available, null if the current installation is up-to-date.</returns>
         public NewVersionInfo IsNewerVersionAvailable()
         {
-            var request = NewRequest("/IsNewerVersionAvailable", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "IsNewerVersionAvailable");
             return Execute<NewVersionInfo>(request);
+        }
+
+        /// <summary>
+        /// Get the server's version as a string.
+        /// </summary>
+        /// <returns>Returns the ARGUS TV product version, for display purposes. Don't use this to do version checking!</returns>
+        public string GetServerVersion()
+        {
+            var request = NewRequest(HttpMethod.Get, "Version");
+            return Execute<GetVersionResult>(request).Version;
+        }
+
+        private class GetVersionResult
+        {
+            public string Version { get; set; }
         }
 
         #endregion
 
         #region Event Listeners
+
+        private HttpClient _listenerClient;
 
         /// <summary>
         /// Subscribe your client to a group of ARGUS TV events using a polling mechanism.
@@ -90,9 +110,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="eventGroups">The event group(s) to subscribe to (flags can be OR'd).</param>
         public void SubscribeServiceEvents(string uniqueClientId, EventGroup eventGroups)
         {
-            var request = NewRequest("/ServiceEvents/{uniqueClientId}/Subscribe/{eventGroups}", Method.POST);
-            request.AddParameter("uniqueClientId", uniqueClientId, ParameterType.UrlSegment);
-            request.AddParameter("eventGroups", (int)eventGroups, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Post, "ServiceEvents/{0}/Subscribe/{1}", uniqueClientId, eventGroups);
             Execute(request);
         }
 
@@ -102,8 +120,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="uniqueClientId">The unique ID (e.g. your DNS hostname combined with a constant GUID) to identify your client.</param>
         public void UnsubscribeServiceEvents(string uniqueClientId)
         {
-            var request = NewRequest("/ServiceEvents/{uniqueClientId}/Unsubscribe", Method.POST);
-            request.AddParameter("uniqueClientId", uniqueClientId, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Post, "ServiceEvents/{0}/Unsubscribe", uniqueClientId);
             Execute(request);
         }
 
@@ -111,16 +128,12 @@ namespace ArgusTV.ServiceProxy
         /// Get all queued ARGUS TV events for your client. Call this every X seconds to get informed at a regular interval about what happened.
         /// </summary>
         /// <param name="uniqueClientId">The unique ID (e.g. your DNS hostname combined with a constant GUID) to identify your client.</param>
-        /// <param name="cancellationWaitHandle">The wait handle that may be set when the request needs to be aborted (optional).</param>
+        /// <param name="cancellationToken">The cancellation token to potentially abort the request (or CancellationToken.None).</param>
         /// <param name="timeoutSeconds">The maximum timeout of the request (default is 5 minutes).</param>
         /// <returns>Zero or more service events, or null in case your subscription has expired.</returns>
-        public List<ServiceEvent> GetServiceEvents(string uniqueClientId, WaitHandle cancellationWaitHandle = null, int timeoutSeconds = 300)
+        public List<ServiceEvent> GetServiceEvents(string uniqueClientId, CancellationToken cancellationToken, int timeoutSeconds = 300)
         {
-            var request = NewRequest("/ServiceEvents/{uniqueClientId}/{timeout}", Method.GET);
-            request.AddParameter("uniqueClientId", uniqueClientId, ParameterType.UrlSegment);
-            request.AddParameter("timeout", timeoutSeconds, ParameterType.UrlSegment);
-
-            request.Timeout = Math.Max(timeoutSeconds, 30) * 1000;
+            var request = NewRequest(HttpMethod.Get, "ServiceEvents/{0}/{1}", uniqueClientId, timeoutSeconds);
 
             // By default return an empty list (e.g. in case of a timeout or abort), the client will simply need to call this again.
             GetServiceEventsResult result = new GetServiceEventsResult()
@@ -128,40 +141,35 @@ namespace ArgusTV.ServiceProxy
                 Events = new List<ServiceEvent>()
             };
 
-            using (ManualResetEvent doneEvent = new ManualResetEvent(false))
+#if DOTNET4
+            using (var timeoutCancellationSource = new CancellationTokenSource())
+#else
+            using (var timeoutCancellationSource = new CancellationTokenSource(TimeSpan.FromSeconds(Math.Max(timeoutSeconds, 30))))
+#endif
+            using (var linkedCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCancellationSource.Token))
             {
-                Exception exception = null;
-
-                var asyncHandle = _client.ExecuteAsync(request, r =>
+#if DOTNET4
+                Task.Factory.StartNew(() =>
                 {
-                    if (r == null || r.StatusCode == 0 && IsConnectionError(r.ErrorException))
-                    {
-                        exception = new ArgusTVNotFoundException(r.ErrorMessage ?? r.StatusDescription);
-                    }
-                    else if (r != null
-                        && r.ResponseStatus == ResponseStatus.Completed)
-                    {
-                        result = DeserializeResponseContent<GetServiceEventsResult>(r);
-                    }
-                    doneEvent.Set();
+                    cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(Math.Max(timeoutSeconds, 30)));
+                    timeoutCancellationSource.Cancel();
                 });
+#endif
 
-                List<WaitHandle> waitHandles = new List<WaitHandle>();
-                waitHandles.Add(doneEvent);
-                if (cancellationWaitHandle != null)
+                try
                 {
-                    waitHandles.Add(cancellationWaitHandle);
+                    using (var response = _listenerClient.SendAsync(request, linkedCancellationSource.Token).Result)
+                    {
+                        result = DeserializeResponseContent<GetServiceEventsResult>(response);
+                    }
                 }
-
-                if (WaitHandle.WaitAny(waitHandles.ToArray()) == 1)
+                catch (AggregateException ex)
                 {
-                    asyncHandle.Abort();
-                    return new List<ServiceEvent>();
-                }
-
-                if (exception != null)
-                {
-                    throw exception;
+                    // Check if we're dealing with either a timeout or an explicit cancellation (same exception in both cases).
+                    if (!(ex.InnerException is TaskCanceledException))
+                    {
+                        throw;
+                    }
                 }
             }
 
@@ -190,7 +198,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void KeepServerAlive()
         {
-            var request = NewRequest("/KeepServerAlive", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "KeepServerAlive");
             ExecuteAsync(request);
         }
 

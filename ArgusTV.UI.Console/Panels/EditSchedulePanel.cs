@@ -31,6 +31,7 @@ using System.Collections;
 using ArgusTV.UI.Process;
 using ArgusTV.UI.Process.EditSchedule;
 using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -96,7 +97,7 @@ namespace ArgusTV.UI.Console.Panels
 
                 _model = new EditScheduleModel();
                 _controller = new EditScheduleController(_model);
-                _controller.Initialize(MainForm.GuideProxy, MainForm.SchedulerProxy, _schedule, _forceManualSchedule, "All Channels", "Default");
+                _controller.Initialize(_schedule, _forceManualSchedule, "All Channels", "Default");
 
                 if (_schedule.ScheduleType == ScheduleType.Recording)
                 {
@@ -415,7 +416,7 @@ namespace ArgusTV.UI.Console.Panels
             {
                 foreach (ChannelGroup channelGroup in groupComboBox.Items)
                 {
-                    _controller.EnsureChannelsByGroup(MainForm.SchedulerProxy, channelGroup.ChannelGroupId);
+                    _controller.EnsureChannelsByGroup(channelGroup.ChannelGroupId);
                     foreach (Channel channel in _model.ChannelsByGroup[channelGroup.ChannelGroupId])
                     {
                         if (channel.ChannelId == channelId)
@@ -501,7 +502,7 @@ namespace ArgusTV.UI.Console.Panels
                 try
                 {
                     Cursor.Current = Cursors.WaitCursor;
-                    _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy);
+                    _controller.RefreshUpcomingPrograms();
                     RefreshPrograms(_model.UpcomingPrograms);
                 }
                 catch (Exception ex)
@@ -564,7 +565,7 @@ namespace ArgusTV.UI.Console.Panels
 
                 try
                 {
-                    _controller.SaveSchedule(MainForm.SchedulerProxy);
+                    _controller.SaveSchedule();
                     ClosePanel(DialogResult.OK);
                 }
                 catch (Exception ex)
@@ -670,7 +671,7 @@ namespace ArgusTV.UI.Console.Panels
             {
                 ChannelGroup channelGroup = channelGroupCombobox.SelectedItem as ChannelGroup;
                 Guid channelGroupId = channelGroup.ChannelGroupId;
-                _controller.EnsureChannelsByGroup(MainForm.SchedulerProxy, channelGroupId);
+                _controller.EnsureChannelsByGroup(channelGroupId);
                 channelComboBox.Items.Clear();
                 if (addEmptyItem)
                 {

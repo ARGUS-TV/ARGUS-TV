@@ -32,6 +32,7 @@ using System.Xml.Serialization;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -116,7 +117,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 EditSchedulePanel editPanel = new EditSchedulePanel();
-                editPanel.Schedule = MainForm.SchedulerProxy.CreateNewSchedule(this.ChannelType, _scheduleType);
+                editPanel.Schedule = Proxies.SchedulerService.CreateNewSchedule(this.ChannelType, _scheduleType);
                 editPanel.OpenPanel(this);
             }
             catch (Exception ex)
@@ -131,7 +132,7 @@ namespace ArgusTV.UI.Console.Panels
             {
                 EditSchedulePanel editPanel = new EditSchedulePanel();
                 editPanel.ForceManualSchedule = true;
-                editPanel.Schedule = MainForm.SchedulerProxy.CreateNewSchedule(this.ChannelType, _scheduleType);
+                editPanel.Schedule = Proxies.SchedulerService.CreateNewSchedule(this.ChannelType, _scheduleType);
                 editPanel.OpenPanel(this);
             }
             catch (Exception ex)
@@ -144,7 +145,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             try
             {
-                var schedules = MainForm.SchedulerProxy.GetAllSchedules(this.ChannelType, _scheduleType, deleteObsolete);
+                var schedules = Proxies.SchedulerService.GetAllSchedules(this.ChannelType, _scheduleType, deleteObsolete);
                 _schedulesBindingSource.DataSource = new SortableBindingList<ScheduleSummary>(schedules);
                 _schedulesBindingSource.ResetBindings(false);
                 EnableButtons();
@@ -188,7 +189,7 @@ namespace ArgusTV.UI.Console.Panels
                     foreach (DataGridViewRow row in _schedulesDataGridView.Rows)
                     {
                         ScheduleSummary scheduleSummary = row.DataBoundItem as ScheduleSummary;
-                        schedules.Add(MainForm.SchedulerProxy.GetScheduleById(scheduleSummary.ScheduleId));
+                        schedules.Add(Proxies.SchedulerService.GetScheduleById(scheduleSummary.ScheduleId));
                     }
                 }
                 else if (result == DialogResult.No)
@@ -196,12 +197,12 @@ namespace ArgusTV.UI.Console.Panels
                     foreach (DataGridViewRow selectedRow in _schedulesDataGridView.SelectedRows)
                     {
                         ScheduleSummary scheduleSummary = selectedRow.DataBoundItem as ScheduleSummary;
-                        schedules.Add(MainForm.SchedulerProxy.GetScheduleById(scheduleSummary.ScheduleId));
+                        schedules.Add(Proxies.SchedulerService.GetScheduleById(scheduleSummary.ScheduleId));
                     }
                 }
                 if (schedules.Count > 0)
                 {
-                    ExportScheduleList exportList = new ExportScheduleList(MainForm.SchedulerProxy, MainForm.ControlProxy, schedules);
+                    ExportScheduleList exportList = new ExportScheduleList(Proxies.SchedulerService, Proxies.ControlService, schedules);
 
                     _saveFileDialog.FileName = _scheduleType.ToString() + "Schedules_" + DateTime.Today.ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("HHmmss") + ".xml";
                     if (_saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -233,7 +234,7 @@ namespace ArgusTV.UI.Console.Panels
                         ExportScheduleList scheduleList = ExportScheduleList.Deserialize(_openFileDialog.FileName);
 
                         List<string> errors;
-                        schedules = scheduleList.Convert(MainForm.SchedulerProxy, out errors);
+                        schedules = scheduleList.Convert(Proxies.SchedulerService, out errors);
 
                         if (errors.Count > 0)
                         {
@@ -265,11 +266,11 @@ namespace ArgusTV.UI.Console.Panels
 
                         foreach (ImportSchedule schedule in schedules)
                         {
-                            Schedule importedSchedule = MainForm.SchedulerProxy.SaveSchedule(schedule.Schedule);
+                            Schedule importedSchedule = Proxies.SchedulerService.SaveSchedule(schedule.Schedule);
                             if (importHistory
                                 && schedule.History.Length > 0)
                             {
-                                MainForm.ControlProxy.ImportPreviouslyRecordedHistory(importedSchedule.ScheduleId, schedule.History);
+                                Proxies.ControlService.ImportPreviouslyRecordedHistory(importedSchedule.ScheduleId, schedule.History);
                             }
                         }
                         LoadAllSchedules(false);
@@ -307,7 +308,7 @@ namespace ArgusTV.UI.Console.Panels
                     foreach (DataGridViewRow selectedRow in _schedulesDataGridView.SelectedRows)
                     {
                         ScheduleSummary scheduleSummary = selectedRow.DataBoundItem as ScheduleSummary;
-                        MainForm.SchedulerProxy.DeleteSchedule(scheduleSummary.ScheduleId);
+                        Proxies.SchedulerService.DeleteSchedule(scheduleSummary.ScheduleId);
                     }
                 }
                 catch (Exception ex)
@@ -332,7 +333,7 @@ namespace ArgusTV.UI.Console.Panels
                 try
                 {
                     EditSchedulePanel editPanel = new EditSchedulePanel();
-                    editPanel.Schedule = MainForm.SchedulerProxy.GetScheduleById(schedule.ScheduleId);
+                    editPanel.Schedule = Proxies.SchedulerService.GetScheduleById(schedule.ScheduleId);
                     editPanel.OpenPanel(this);
                 }
                 catch (Exception ex)
@@ -365,7 +366,7 @@ namespace ArgusTV.UI.Console.Panels
                     {
                         ScheduleSummary schedule = row.DataBoundItem as ScheduleSummary;
                         schedule.IsActive = (bool)row.Cells[0].EditedFormattedValue;
-                        ScheduleSummary modifiedSchedule = MainForm.SchedulerProxy.SaveScheduleSummary(schedule);
+                        ScheduleSummary modifiedSchedule = Proxies.SchedulerService.SaveScheduleSummary(schedule);
                         SortableBindingList<ScheduleSummary> schedulesList = (SortableBindingList<ScheduleSummary>)_schedulesBindingSource.DataSource;
                         int index = schedulesList.IndexOf(schedule);
                         schedulesList[index] = modifiedSchedule;

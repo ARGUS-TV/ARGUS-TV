@@ -20,10 +20,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 
 using ArgusTV.DataContracts;
-using RestSharp;
-using RestSharp.Extensions;
 
 namespace ArgusTV.ServiceProxy
 {
@@ -35,7 +35,7 @@ namespace ArgusTV.ServiceProxy
         /// <summary>
         /// Constructs a channel to the service.
         /// </summary>
-        public LogServiceProxy()
+        internal LogServiceProxy()
             : base("Log")
         {
         }
@@ -48,7 +48,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="message">The message text.</param>
         public void LogMessage(string module, LogSeverity logSeverity, string message)
         {
-            var request = NewRequest("/Message", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "Message");
             request.AddBody(new
             {
                 Module = module,
@@ -70,17 +70,14 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more log message.</returns>
         public List<LogEntry> GetLogEntries(DateTime lowerDate, DateTime upperDate, int maxEntries, string module, LogSeverity? severity, out bool maxEntriesReached)
         {
-            var request = NewRequest("/Entries/{lowerDate}/{upperDate}/{maxEntries}", Method.POST);
-            request.AddParameter("lowerDate", ToIso8601(lowerDate), ParameterType.UrlSegment);
-            request.AddParameter("upperDate", ToIso8601(upperDate), ParameterType.UrlSegment);
-            request.AddParameter("maxEntries", maxEntries, ParameterType.UrlSegment);
+            var request = NewRequest(HttpMethod.Get, "Entries/{0}/{1}/{2}", lowerDate, upperDate, maxEntries);
             if (module != null)
             {
-                request.AddParameter("module", module, ParameterType.QueryString);
+                request.AddParameter("module", module);
             }
             if (severity.HasValue)
             {
-                request.AddParameter("severity", severity.Value, ParameterType.QueryString);
+                request.AddParameter("severity", severity.Value);
             }
             var result = Execute<LogEntriesResult>(request);
             maxEntriesReached = result.MaxEntriesReached;
@@ -99,7 +96,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>An array containing zero or more module names.</returns>
         public List<string> GetAllModules()
         {
-            var request = NewRequest("/Modules", Method.GET);
+            var request = NewRequest(HttpMethod.Get, "Modules");
             return Execute<List<string>>(request);
         }
 
@@ -108,7 +105,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public void SendTestMail()
         {
-            var request = NewRequest("/TestMail", Method.POST);
+            var request = NewRequest(HttpMethod.Post, "TestMail");
             Execute(request);
         }
     }

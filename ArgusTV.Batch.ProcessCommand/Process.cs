@@ -48,13 +48,11 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, "Creating MP xml");
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        var controlProxy = new ControlServiceProxy();
-
                         string recordedFileName = args[1];
 
-                        Recording recording = controlProxy.GetRecordingByFileName(recordedFileName);
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
                         if (recording != null)
                         {
                             Tags tags = new Tags();
@@ -100,12 +98,11 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, string.Format("Deleting {0} from ARGUS TV {1} the actual recording", args[1], (args[2] == "1" ? "and" : "but not")));
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        var controlProxy = new ControlServiceProxy();
                         string recordedFileName = args[1];
                         Boolean keepGile = (args[2] == "1" ? true : false);
-                        controlProxy.DeleteRecording(recordedFileName, keepGile);
+                        Proxies.ControlService.DeleteRecording(recordedFileName, keepGile);
                     }
                 }
                 else if (args.Length == 4 && String.Equals(args[0], "description", StringComparison.InvariantCultureIgnoreCase))
@@ -115,11 +112,9 @@ namespace ArgusTV.Batch.ProcessCommand
                     string outputFileName = Path.ChangeExtension(args[1], args[2]);
                     string fileString = args[3].ToLower();
                     Log(LogSeverity.Information, string.Format("Creating description file for {0} called {1}", args[1], outputFileName));
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        var controlServiceProxy = new ControlServiceProxy();
-
-                        Recording tvRecording = controlServiceProxy.GetRecordingByFileName(recordedFileName);
+                        Recording tvRecording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
                         fileString = fileString.Replace("{description}", tvRecording.Description);
                         fileString = fileString.Replace("{starttime}", tvRecording.StartTime.ToString());
                         fileString = fileString.Replace("{stoptime}", tvRecording.StopTime.ToString());
@@ -136,13 +131,11 @@ namespace ArgusTV.Batch.ProcessCommand
                 {
                     InitializeServiceChannelFactories();
                     Log(LogSeverity.Information, string.Format("Renaming {0} to {1}", args[1], args[2]));
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
-                        var controlProxy = new ControlServiceProxy();
-
                         string recordedFileName = args[1];
                         string newFileName = args[2];
-                        Recording recording = controlProxy.GetRecordingByFileName(newFileName);
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(newFileName);
 
                         if (recording == null)
                         {
@@ -163,12 +156,12 @@ namespace ArgusTV.Batch.ProcessCommand
                                     return -2;
                                 }
                             }
-                            controlProxy.ChangeRecordingFile(recordedFileName, lUncPath, null, null);
+                            Proxies.ControlService.ChangeRecordingFile(recordedFileName, lUncPath, null, null);
                         }
                         else
                         {
-                            Console.Error.WriteLine("Could not move recording as another one with same name allready exsist");
-                            Log(LogSeverity.Warning, string.Format("Could not rename as a recording with the name {0} allready exist in database", newFileName));
+                            Console.Error.WriteLine("Could not move recording as another one with same name already exists");
+                            Log(LogSeverity.Warning, string.Format("Could not rename as a recording with the name {0} already exists in database", newFileName));
                             LogArgs(LogSeverity.Information, args);
                             return -2;
                         }
@@ -177,16 +170,17 @@ namespace ArgusTV.Batch.ProcessCommand
                 else if (args.Length >= 2 && String.Equals(args[0], "IsPartial", StringComparison.InvariantCultureIgnoreCase))
                 {
                     InitializeServiceChannelFactories();
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
                         string recordedFileName = args[1];
                         Recording recording;
 
-                        var controlProxy = new ControlServiceProxy();
-                        recording = controlProxy.GetRecordingByFileName(recordedFileName);
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
 
                         if (recording != null)
+                        {
                             return (recording.IsPartialRecording ? -1 : 0);
+                        }
                         else
                         {
                             Console.Error.WriteLine("Could not check recording as it could not be found in the database");
@@ -203,13 +197,12 @@ namespace ArgusTV.Batch.ProcessCommand
                 else if (args.Length >= 2 && String.Equals(args[0], "Exist", StringComparison.InvariantCultureIgnoreCase))
                 {
                     InitializeServiceChannelFactories();
-                    if (ProxyFactory.IsInitialized)
+                    if (Proxies.IsInitialized)
                     {
                         string recordedFileName = args[1];
                         Recording recording;
 
-                        var controlProxy = new ControlServiceProxy();
-                        recording = controlProxy.GetRecordingByFileName(recordedFileName);
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
 
                         if (recording != null)
                             return 0;
@@ -235,7 +228,7 @@ namespace ArgusTV.Batch.ProcessCommand
             {
                 return -2;
             }
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
                 return 0;
             else
                 return -3;
@@ -246,7 +239,7 @@ namespace ArgusTV.Batch.ProcessCommand
             ServerSettings serverSettings = new ServerSettings();
             serverSettings.ServerName = Properties.Settings.Default.ArgusTVServerName;
             serverSettings.Port = Properties.Settings.Default.ArgusTVPort;
-            ProxyFactory.Initialize(serverSettings, false);
+            Proxies.Initialize(serverSettings, false);
         }
 
         private static void ShowHelp()
@@ -293,28 +286,28 @@ namespace ArgusTV.Batch.ProcessCommand
 
         private static void Log(LogSeverity severity, string message)
         {
-            if (!ProxyFactory.IsInitialized)
+            if (!Proxies.IsInitialized)
                 InitializeServiceChannelFactories();
 
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
-                new LogServiceProxy().LogMessage(_moduleName, severity, message);
+                Proxies.LogService.LogMessage(_moduleName, severity, message);
             }
         }
 
         private static void LogArgs(LogSeverity severity, string[] args)
         {
-            if (!ProxyFactory.IsInitialized)
+            if (!Proxies.IsInitialized)
                 InitializeServiceChannelFactories();
 
-            if (ProxyFactory.IsInitialized)
+            if (Proxies.IsInitialized)
             {
                 StringBuilder message = new StringBuilder(String.Format("BatchProcessor called with {0} args :", args.Length));
                 foreach (string arg in args)
                 {
                     message.AppendFormat(" {0},", arg);
                 }
-                new LogServiceProxy().LogMessage(_moduleName, severity, message.ToString(0, message.Length - 1));
+                Proxies.LogService.LogMessage(_moduleName, severity, message.ToString(0, message.Length - 1));
             }
         }
     }

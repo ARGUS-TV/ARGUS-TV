@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -90,7 +91,7 @@ namespace ArgusTV.UI.Console.Panels
                 if (group != null)
                 {
                     _channels = new List<Channel>(
-                        MainForm.SchedulerProxy.GetChannelsInGroup(group.ChannelGroupId, false));
+                        Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, false));
                     _isAllChannels = (group.ChannelGroupId == ChannelGroup.AllTvChannelsGroupId
                         || group.ChannelGroupId == ChannelGroup.AllRadioChannelsGroupId);
                 }
@@ -110,7 +111,7 @@ namespace ArgusTV.UI.Console.Panels
 
         private void RefreshGuideChannels()
         {
-            _guideChannels = new SortableBindingList<GuideChannel>(MainForm.GuideProxy.GetAllChannels(_channelGroupControl.ChannelType));
+            _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(_channelGroupControl.ChannelType));
             _guideChannels.Insert(0, new GuideChannel()
             {
                 Name = String.Empty,
@@ -176,21 +177,21 @@ namespace ArgusTV.UI.Console.Panels
                         changedChannels.Add(channel);
                         if (changedChannels.Count >= _saveBatchSize)
                         {
-                            MainForm.SchedulerProxy.SaveChannels(changedChannels.ToArray());
+                            Proxies.SchedulerService.SaveChannels(changedChannels.ToArray());
                             changedChannels.Clear();
                         }
                     }
                 }
                 if (changedChannels.Count > 0)
                 {
-                    MainForm.SchedulerProxy.SaveChannels(changedChannels.ToArray());
+                    Proxies.SchedulerService.SaveChannels(changedChannels.ToArray());
                 }
 
                 foreach (Channel channel in _deletedChannels)
                 {
                     if (channel.ChannelId != Guid.Empty)
                     {
-                        MainForm.SchedulerProxy.DeleteChannel(channel.ChannelId, true);
+                        Proxies.SchedulerService.DeleteChannel(channel.ChannelId, true);
                     }
                 }
             }

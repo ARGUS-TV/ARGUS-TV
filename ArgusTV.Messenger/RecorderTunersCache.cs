@@ -69,10 +69,8 @@ namespace ArgusTV.Messenger
             {
                 if (!_pluginServices.ContainsKey(recorderTunerId))
                 {
-                    var controlProxy = new ControlServiceProxy();
-
                     _pluginServices.Clear();
-                    var pluginServices = controlProxy.GetAllPluginServices(false);
+                    var pluginServices = Proxies.ControlService.GetAllPluginServices(false);
                     foreach (PluginService pluginService in pluginServices)
                     {
                         _pluginServices.Add(pluginService.PluginServiceId, pluginService);

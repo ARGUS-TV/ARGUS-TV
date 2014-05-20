@@ -84,19 +84,17 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                var controlProxy = new ControlServiceProxy();
-
                 foreach (RecordingSummary recording in this.Context.DeleteRecordings)
                 {
-                    controlProxy.DeleteRecording(recording.RecordingFileName, false);
+                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, false);
                 }
                 foreach (MoveRecording moveRecording in this.Context.MoveRecordings)
                 {
-                    controlProxy.ChangeRecordingFile(moveRecording.PreviousRecordingFileName, moveRecording.Recording.RecordingFileName, null, null);
+                    Proxies.ControlService.ChangeRecordingFile(moveRecording.PreviousRecordingFileName, moveRecording.Recording.RecordingFileName, null, null);
                 }
                 foreach (Recording recording in this.Context.ImportRecordings)
                 {
-                    controlProxy.ImportRecording(recording);
+                    Proxies.ControlService.ImportRecording(recording);
                 }
             }
             catch (Exception ex)

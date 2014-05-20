@@ -230,7 +230,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (PluginMain.IsConnected())
                         {
                             // Tell the server we need it.
-                            this.CoreServiceProxy.KeepServerAlive();
+                            Proxies.CoreService.KeepServerAlive();
                         }
 
                         if (displayNeeded)
@@ -309,21 +309,19 @@ namespace ArgusTV.UI.MediaPortal
                 }
                 Log.Debug("CacheChannelsThread: started");
 
-                var schedulerProxy = new SchedulerServiceProxy();
-
                 List<CurrentAndNextProgram> _currentAndNextPrograms = new List<CurrentAndNextProgram>();
                 try
                 {
                     ChannelGroup currgroup = PluginMain.Navigator.CurrentGroup;
                     if (currgroup != null)
                     {
-                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(schedulerProxy.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, null));
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, null));
                     }
 
                     List<ChannelGroup> groups = PluginMain.Navigator.GetGroups(ChannelType.Television);
                     foreach (ChannelGroup group in groups)
                     {
-                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(schedulerProxy.GetCurrentAndNextForGroup(group.ChannelGroupId, true, null));
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(group.ChannelGroupId, true, null));
                     }
                 }
                 catch { Log.Error("CacheChannelsThread: error"); }
@@ -668,7 +666,7 @@ namespace ArgusTV.UI.MediaPortal
                                     else
                                         heading = GUILocalizeStrings.Get(665) + " - " + channel.DisplayName; //my radio
 
-                                    string tvlogo = Utility.GetLogoImage(channel, new SchedulerServiceProxy());
+                                    string tvlogo = Utility.GetLogoImage(channel);
 
                                     GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                                     if (pDlgNotify != null)
@@ -709,9 +707,8 @@ namespace ArgusTV.UI.MediaPortal
                             else
                                 head = GUILocalizeStrings.Get(1447);
 
-                            var schedulerProxy = new SchedulerServiceProxy();
-                            Channel chan = schedulerProxy.GetChannelById(recording.ChannelId);
-                            logo = Utility.GetLogoImage(chan, schedulerProxy);
+                            Channel chan = Proxies.SchedulerService.GetChannelById(recording.ChannelId);
+                            logo = Utility.GetLogoImage(chan);
 
                             string _text = String.Format("{0} {1}-{2}",
                                                   recording.Title,
@@ -774,7 +771,7 @@ namespace ArgusTV.UI.MediaPortal
                         {
                             if (prog.GuideProgramId.HasValue)
                             {
-                                GuideProgram Program = new GuideServiceProxy().GetProgramById(prog.GuideProgramId.Value);
+                                GuideProgram Program = Proxies.GuideService.GetProgramById(prog.GuideProgramId.Value);
                                 description = Program.CreateCombinedDescription(false);
                             }
                         }
@@ -783,7 +780,7 @@ namespace ArgusTV.UI.MediaPortal
                         tvNotifyDlg.SetLine(1, prog.Title);
                         tvNotifyDlg.SetLine(2, description);
                         tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), prog.Channel.DisplayName));
-                        string strLogo = Utility.GetLogoImage(prog.Channel, new SchedulerServiceProxy());
+                        string strLogo = Utility.GetLogoImage(prog.Channel);
 
                         tvNotifyDlg.SetImage(strLogo);
                         tvNotifyDlg.TimeOut = _notifyTVTimeout;
@@ -1101,14 +1098,14 @@ namespace ArgusTV.UI.MediaPortal
         {
             for (;;)
             {
-                if (ProxyFactory.IsInitialized)
+                if (Proxies.IsInitialized)
                 {
                     IList<ServiceEvent> events = null;
                     if (!_eventListenerSubscribed)
                     {
                         try
                         {
-                            new CoreServiceProxy().SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents | EventGroup.ScheduleEvents);
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents | EventGroup.ScheduleEvents);
                             _eventListenerSubscribed = true;
                             _eventsErrorCount = 0;
                         }
@@ -1120,7 +1117,7 @@ namespace ArgusTV.UI.MediaPortal
                     {
                         try
                         {
-                            events = new CoreServiceProxy().GetServiceEvents(_eventsClientId, cancellationToken.WaitHandle);
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
@@ -1145,12 +1142,12 @@ namespace ArgusTV.UI.MediaPortal
                 }
             }
 
-            if (ProxyFactory.IsInitialized
+            if (Proxies.IsInitialized
                 && _eventListenerSubscribed)
             {
                 try
                 {
-                    new CoreServiceProxy().UnsubscribeServiceEvents(_eventsClientId);
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
                 }
                 catch
                 {

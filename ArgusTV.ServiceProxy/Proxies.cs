@@ -34,13 +34,13 @@ using ArgusTV.DataContracts;
 namespace ArgusTV.ServiceProxy
 {
     /// <summary>
-    /// All factories for the service channels to the ARGUS TV Scheduler service.
+    /// The service proxies to the ARGUS TV Scheduler service.
     /// </summary>
-    public sealed class ProxyFactory
+    public sealed class Proxies
     {
         private object _syncLock = new object();
 
-        private ProxyFactory()
+        private Proxies()
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
         }
@@ -50,7 +50,7 @@ namespace ArgusTV.ServiceProxy
         /// <summary>
         /// The factories singleton.
         /// </summary>
-        internal static ProxyFactory Instance
+        internal static Proxies Instance
         {
             get
             {
@@ -66,7 +66,159 @@ namespace ArgusTV.ServiceProxy
             {
             }
 
-            internal static readonly ProxyFactory instance = new ProxyFactory();
+            internal static readonly Proxies instance = new Proxies();
+        }
+
+        #endregion
+
+        #region Proxies
+
+        private static ConfigurationServiceProxy _configurationServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Configuration service.
+        /// </summary>
+        public static ConfigurationServiceProxy ConfigurationService
+        {
+            get
+            {
+                if (_configurationServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_configurationServiceProxy == null)
+                        {
+                            _configurationServiceProxy = new ConfigurationServiceProxy();
+                        }
+                    }
+                }
+                return _configurationServiceProxy;
+            }
+        }
+
+        private static ControlServiceProxy _controlServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Control service.
+        /// </summary>
+        public static ControlServiceProxy ControlService
+        {
+            get
+            {
+                if (_controlServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_controlServiceProxy == null)
+                        {
+                            _controlServiceProxy = new ControlServiceProxy();
+                        }
+                    }
+                }
+                return _controlServiceProxy;
+            }
+        }
+
+        private static CoreServiceProxy _coreServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Core service.
+        /// </summary>
+        public static CoreServiceProxy CoreService
+        {
+            get
+            {
+                if (_coreServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_coreServiceProxy == null)
+                        {
+                            _coreServiceProxy = new CoreServiceProxy();
+                        }
+                    }
+                }
+                return _coreServiceProxy;
+            }
+        }
+
+        private static GuideServiceProxy _guideServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Guide service.
+        /// </summary>
+        public static GuideServiceProxy GuideService
+        {
+            get
+            {
+                if (_guideServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_guideServiceProxy == null)
+                        {
+                            _guideServiceProxy = new GuideServiceProxy();
+                        }
+                    }
+                }
+                return _guideServiceProxy;
+            }
+        }
+
+        private static LogServiceProxy _logServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Log service.
+        /// </summary>
+        public static LogServiceProxy LogService
+        {
+            get
+            {
+                if (_logServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_logServiceProxy == null)
+                        {
+                            _logServiceProxy = new LogServiceProxy();
+                        }
+                    }
+                }
+                return _logServiceProxy;
+            }
+        }
+
+        private static SchedulerServiceProxy _schedulerServiceProxy;
+
+        /// <summary>
+        /// The (thread-safe) proxy to the Scheduler service.
+        /// </summary>
+        public static SchedulerServiceProxy SchedulerService
+        {
+            get
+            {
+                if (_schedulerServiceProxy == null)
+                {
+                    lock (Instance._syncLock)
+                    {
+                        if (_schedulerServiceProxy == null)
+                        {
+                            _schedulerServiceProxy = new SchedulerServiceProxy();
+                        }
+                    }
+                }
+                return _schedulerServiceProxy;
+            }
+        }
+
+        private static void ResetProxies()
+        {
+            _configurationServiceProxy = null;
+            _controlServiceProxy = null;
+            _coreServiceProxy = null;
+            _guideServiceProxy = null;
+            _logServiceProxy = null;
+            _schedulerServiceProxy = null;
         }
 
         #endregion
@@ -81,7 +233,7 @@ namespace ArgusTV.ServiceProxy
         /// <returns>If throwError was false, a boolean indicating success or failure.</returns>
         public static bool Initialize(ServerSettings serverSettings, bool throwError)
         {
-            return ProxyFactory.Instance.InternalInitialize(serverSettings, throwError);
+            return Proxies.Instance.InternalInitialize(serverSettings, throwError);
         }
 
         private bool _isInitialized;
@@ -91,7 +243,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public static bool IsInitialized
         {
-            get { return ProxyFactory.Instance._isInitialized; }
+            get { return Proxies.Instance._isInitialized; }
         }
 
         private ServerSettings _serverSettings;
@@ -101,7 +253,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         public static ServerSettings ServerSettings
         {
-            get { return ProxyFactory.Instance._serverSettings; }
+            get { return Proxies.Instance._serverSettings; }
         }
 
         private bool InternalInitialize(ServerSettings serverSettings, bool throwError)
@@ -145,6 +297,8 @@ namespace ArgusTV.ServiceProxy
                     }
                     throw;
                 }
+
+                ResetProxies();
                 _isInitialized = true;
                 return true;
             }

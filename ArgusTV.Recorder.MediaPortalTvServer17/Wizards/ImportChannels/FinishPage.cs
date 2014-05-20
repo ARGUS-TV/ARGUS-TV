@@ -90,12 +90,9 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 _exportProgressBar.Visible = true;
                 Application.DoEvents();
 
-                var schedulerProxy = new SchedulerServiceProxy();
-                var guideProxy = new GuideServiceProxy();
- 
                 _channelMembersByName.Clear();
                 _channelGroupsByName.Clear();
-                var allGroups = schedulerProxy.GetAllChannelGroups(this.Context.ChannelType, false);
+                var allGroups = Proxies.SchedulerService.GetAllChannelGroups(this.Context.ChannelType, false);
                 foreach (ChannelGroup channelGroup in allGroups)
                 {
                     _channelGroupsByName[channelGroup.GroupName] = channelGroup;
@@ -106,7 +103,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 {
                     _exportingFileLabel.Text = importChannel.Channel.DisplayName;
                     Application.DoEvents();
-                    ImportChannel(guideProxy, schedulerProxy, importChannel);
+                    ImportChannel(importChannel);
                     _exportProgressBar.Value = ++count;
                 }
 
@@ -114,7 +111,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 {
                     if (_channelMembersByName.ContainsKey(groupName))
                     {
-                        schedulerProxy.SetChannelGroupMembers(
+                        Proxies.SchedulerService.SetChannelGroupMembers(
                             _channelGroupsByName[groupName].ChannelGroupId, _channelMembersByName[groupName].ToArray());
                     }
                 }
@@ -141,7 +138,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
         private Dictionary<string, ChannelGroup> _channelGroupsByName = new Dictionary<string, ChannelGroup>();
         private Dictionary<string, List<Guid>> _channelMembersByName = new Dictionary<string, List<Guid>>();
 
-        private void ImportChannel(GuideServiceProxy guideProxy, SchedulerServiceProxy schedulerProxy, ImportChannelsContext.ImportChannel importChannel)
+        private void ImportChannel(ImportChannelsContext.ImportChannel importChannel)
         {
             Guid channelId;
 
@@ -154,7 +151,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                 channel.DisplayName = importChannel.Channel.DisplayName;
                 channel.LogicalChannelNumber = importChannel.LogicalChannelNumber;
                 channel.Sequence = importChannel.Channel.SortOrder;
-                channel = schedulerProxy.SaveChannel(channel);
+                channel = Proxies.SchedulerService.SaveChannel(channel);
                 Channels.ChannelLinks.SetLinkedMediaPortalChannel(channel, importChannel.Channel);
 
                 channelId = channel.ChannelId;
@@ -187,7 +184,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                         channelGroup.VisibleInGuide = true;
                         channelGroup.ChannelType = this.Context.ChannelType;
                         channelGroup.Sequence = groupSequence;
-                        channelGroup = schedulerProxy.SaveChannelGroup(channelGroup);
+                        channelGroup = Proxies.SchedulerService.SaveChannelGroup(channelGroup);
                         _channelGroupsByName[groupName] = channelGroup;
                         _channelMembersByName[groupName] = new List<Guid>();
                     }
@@ -195,7 +192,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer.Wizards.ImportChannels
                     if (!_channelMembersByName.ContainsKey(groupName))
                     {
                         _channelMembersByName[groupName] = new List<Guid>(
-                            schedulerProxy.GetChannelGroupMembers(_channelGroupsByName[groupName].ChannelGroupId));
+                            Proxies.SchedulerService.GetChannelGroupMembers(_channelGroupsByName[groupName].ChannelGroupId));
                     }
 
                     _channelMembersByName[groupName].Add(channelId);

@@ -122,9 +122,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private void ProcessAlerts(DateTime preNotifySecs)
         {
-            var schedulerProxy = new SchedulerServiceProxy();
-
-            List<UpcomingProgram> upcomingPrograms = schedulerProxy.GetAllUpcomingPrograms(ScheduleType.Alert, false);
+            List<UpcomingProgram> upcomingPrograms = Proxies.SchedulerService.GetAllUpcomingPrograms(ScheduleType.Alert, false);
             if (upcomingPrograms.Count > 0)
             {
                 DateTime _now = DateTime.Now;

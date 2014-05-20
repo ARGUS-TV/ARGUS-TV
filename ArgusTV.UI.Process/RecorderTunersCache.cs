@@ -71,10 +71,8 @@ namespace ArgusTV.UI.Process
                 {
                     try
                     {
-                        var controlProxy = new ControlServiceProxy();
-
                         _pluginServices.Clear();
-                        foreach (PluginService pluginService in controlProxy.GetAllPluginServices(false))
+                        foreach (PluginService pluginService in Proxies.ControlService.GetAllPluginServices(false))
                         {
                             _pluginServices.Add(pluginService.PluginServiceId, pluginService);
                         }

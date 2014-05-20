@@ -140,7 +140,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
         public bool IsArgusTVConnectionInitialized
         {
-            get { return ProxyFactory.IsInitialized; }
+            get { return Proxies.IsInitialized; }
         }
 
         #endregion Properties
@@ -305,7 +305,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         {
             try
             {
-                ProxyFactory.Initialize(_serverSettings, true);
+                Proxies.Initialize(_serverSettings, true);
             }
             catch (Exception ex)
             {
@@ -421,18 +421,14 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                         {
                             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: ImportEpgPrograms(): received {0} programs on {1}", epgChannel.Programs.Count, mpChannel.DisplayName);
 
-                            var coreProxy = new CoreServiceProxy();
-                            var schedulerProxy = new SchedulerServiceProxy();
-                            var guideProxy = new GuideServiceProxy();
-
                             bool epgSyncAutoCreateChannels = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannels, false.ToString()).Value);
                             bool epgSyncAutoCreateChannelsWithGroup = Convert.ToBoolean(layer.GetSetting(SettingName.EpgSyncAutoCreateChannelsWithGroup, false.ToString()).Value);
                             string epgLanguages = layer.GetSetting("epgLanguages").Value;
 
-                            Channel channel = EnsureChannelForDvbEpg(schedulerProxy, mpChannel, epgSyncAutoCreateChannels, epgSyncAutoCreateChannelsWithGroup);
+                            Channel channel = EnsureChannelForDvbEpg(mpChannel, epgSyncAutoCreateChannels, epgSyncAutoCreateChannelsWithGroup);
                             if (channel != null)
                             {
-                                EnsureGuideChannelForDvbEpg(schedulerProxy, guideProxy, channel, mpChannel);
+                                EnsureGuideChannelForDvbEpg(channel, mpChannel);
 
                                 List<GuideProgram> guidePrograms = new List<GuideProgram>();
 
@@ -481,7 +477,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
         }
 
-        private static void EnsureGuideChannelForDvbEpg(SchedulerServiceProxy schedulerProxy, GuideServiceProxy guideProxy, Channel channel, TvDatabase.Channel mpChannel)
+        private static void EnsureGuideChannelForDvbEpg(Channel channel, TvDatabase.Channel mpChannel)
         {
             if (!channel.GuideChannelId.HasValue)
             {
@@ -490,28 +486,27 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 {
                     externalId = mpChannel.DisplayName;
                 }
-                channel.GuideChannelId = guideProxy.EnsureChannelExists(externalId, mpChannel.DisplayName, channel.ChannelType);
-                schedulerProxy.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value);
+                channel.GuideChannelId = Proxies.GuideService.EnsureChannelExists(externalId, mpChannel.DisplayName, channel.ChannelType);
+                Proxies.SchedulerService.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value);
             }
         }
 
-        private static Channel EnsureChannelForDvbEpg(SchedulerServiceProxy schedulerProxy, TvDatabase.Channel mpChannel,
-            bool epgSyncAutoCreateChannels, bool epgSyncAutoCreateChannelsWithGroup)
+        private static Channel EnsureChannelForDvbEpg(TvDatabase.Channel mpChannel, bool epgSyncAutoCreateChannels, bool epgSyncAutoCreateChannelsWithGroup)
         {
             ChannelLink channelLink = ChannelLinks.GetChannelLinkForMediaPortalChannel(mpChannel);
             ChannelType channelType = mpChannel.IsTv ? ChannelType.Television : ChannelType.Radio;
             Channel channel = null;
             if (channelLink != null)
             {
-                channel = schedulerProxy.GetChannelById(channelLink.ChannelId);
+                channel = Proxies.SchedulerService.GetChannelById(channelLink.ChannelId);
                 if (channel == null)
                 {
-                    channel = schedulerProxy.GetChannelByDisplayName(channelType, channelLink.ChannelName);
+                    channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channelLink.ChannelName);
                 }
             }
             if (channel == null)
             {
-                channel = schedulerProxy.GetChannelByDisplayName(channelType, mpChannel.DisplayName);
+                channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, mpChannel.DisplayName);
             }
             if (channel == null
                 && (epgSyncAutoCreateChannels || epgSyncAutoCreateChannelsWithGroup))
@@ -531,14 +526,14 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                     }
                 }
 
-                Guid channelId = schedulerProxy.EnsureChannel(channelType, mpChannel.DisplayName, groupName);
-                channel = schedulerProxy.GetChannelById(channelId);
+                Guid channelId = Proxies.SchedulerService.EnsureChannel(channelType, mpChannel.DisplayName, groupName);
+                channel = Proxies.SchedulerService.GetChannelById(channelId);
 
                 if (!channel.LogicalChannelNumber.HasValue
                     && mpChannel.ChannelNumber > 0)
                 {
                     channel.LogicalChannelNumber = mpChannel.ChannelNumber;
-                    schedulerProxy.SaveChannel(channel);
+                    Proxies.SchedulerService.SaveChannel(channel);
                 }
             }
             return channel;

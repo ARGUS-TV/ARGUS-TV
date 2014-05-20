@@ -2,7 +2,7 @@
 
 ; Constants
 !define PRODUCT_NAME "ARGUS TV Guide Importer"
-!define PRODUCT_VERSION "2.3 BETA 6"
+!define PRODUCT_VERSION "2.3 BETA 7"
 !define PRODUCT_PUBLISHER "ARGUS TV"
 !define PRODUCT_WEB_SITE "http://www.argus-tv.com"
 !define PRODUCT_DIR_REGKEY "Software\ARGUS TV\Install"
@@ -79,7 +79,6 @@ Section "Plugin Hoster" GuideImporterSection
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.Common.dll"
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.DataContracts.dll"
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.ServiceProxy.dll"
-  File "..\ArgusTV.GuideImporter\bin\${TARGET}\RestSharp.dll"
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.Interfaces.dll"  
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.exe"
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.exe.config"
@@ -162,7 +161,6 @@ Section Uninstall
   Delete "$INSTDIR\Guide Importer\ArgusTV.Common.dll"
   Delete "$INSTDIR\Guide Importer\ArgusTV.DataContracts.dll"
   Delete "$INSTDIR\Guide Importer\ArgusTV.ServiceProxy.dll"
-  Delete "$INSTDIR\Guide Importer\RestSharp.dll"
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.Interfaces.dll"
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.exe"  
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.exe.config"

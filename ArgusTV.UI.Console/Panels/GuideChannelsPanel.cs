@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -81,7 +82,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedChannels = new List<GuideChannel>();
-                _guideChannels = new SortableBindingList<GuideChannel>(MainForm.GuideProxy.GetAllChannels(this.ChannelType));
+                _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(this.ChannelType));
                 _channelsBindingSource.DataSource = _guideChannels;
                 _channelsBindingSource.ResetBindings(false);
             }
@@ -126,7 +127,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     if (guideChannel.GuideChannelId != Guid.Empty)
                     {
-                        MainForm.GuideProxy.DeleteChannel(guideChannel.GuideChannelId);
+                        Proxies.GuideService.DeleteChannel(guideChannel.GuideChannelId);
                     }
                 }
             }

@@ -139,7 +139,7 @@ namespace ArgusTV.Messenger
                 // Inform the local system we need it.
                 SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
                 // Tell the server we need it.
-                new CoreServiceProxy().KeepServerAlive();
+                Proxies.CoreService.KeepServerAlive();
             }
             catch { }
         }

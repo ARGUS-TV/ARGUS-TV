@@ -1628,7 +1628,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_channelId != Guid.Empty && strChannel != string.Empty)
             {
-                strLogo = Utility.GetLogoImage(_channelId, strChannel, new SchedulerServiceProxy());
+                strLogo = Utility.GetLogoImage(_channelId, strChannel);
             }
 
             if (imgTvChannelLogo != null)
@@ -1781,7 +1781,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     if (_channelId != Guid.Empty && channelName != string.Empty)
                     {
-                        string strLogo = Utility.GetLogoImage(_channelId, channelName, new SchedulerServiceProxy());
+                        string strLogo = Utility.GetLogoImage(_channelId, channelName);
                         if (string.IsNullOrEmpty(strLogo))
                         {
                             strLogo = "defaultVideoBig.png";

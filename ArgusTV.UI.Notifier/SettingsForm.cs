@@ -126,7 +126,7 @@ namespace ArgusTV.UI.Notifier
                         serverSettings.Transport = ServiceTransport.Http;
                     }
 #endif
-                    ProxyFactory.Initialize(serverSettings, true);
+                    Proxies.Initialize(serverSettings, true);
                     
                     Config.Current.ServerName = serverSettings.ServerName;
                     Config.Current.Port = serverSettings.Port;

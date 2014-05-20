@@ -84,11 +84,10 @@ namespace ArgusTV.UI.Process
                 {
                     try
                     {
-                        var schedulerProxy = new SchedulerServiceProxy();
                         _scheduleNames.Clear();
-                        GetScheduleNames(schedulerProxy, ScheduleType.Recording);
-                        GetScheduleNames(schedulerProxy, ScheduleType.Alert);
-                        GetScheduleNames(schedulerProxy, ScheduleType.Suggestion);
+                        GetScheduleNames(ScheduleType.Recording);
+                        GetScheduleNames(ScheduleType.Alert);
+                        GetScheduleNames(ScheduleType.Suggestion);
                     }
                     catch { }
                 }
@@ -100,14 +99,14 @@ namespace ArgusTV.UI.Process
             }
         }
 
-        private void GetScheduleNames(SchedulerServiceProxy schedulerProxy, ScheduleType type)
+        private void GetScheduleNames(ScheduleType type)
         {
-            var schedules = schedulerProxy.GetAllSchedules(ChannelType.Television, type, false);
+            var schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, type, false);
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);
             }
-            schedules = schedulerProxy.GetAllSchedules(ChannelType.Radio, type, false);
+            schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Radio, type, false);
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);

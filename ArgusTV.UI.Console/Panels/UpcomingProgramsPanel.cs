@@ -30,6 +30,7 @@ using ArgusTV.UI.Console.Properties;
 using ArgusTV.UI.Process;
 using ArgusTV.DataContracts;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -99,7 +100,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 List<ScheduleSummary> schedules = new List<ScheduleSummary>();
-                var allSchedules = MainForm.SchedulerProxy.GetAllSchedules(ChannelType.Television, _scheduleType, false);
+                var allSchedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, _scheduleType, false);
                 foreach (ScheduleSummary schedule in allSchedules)
                 {
                     if (schedule.IsActive)
@@ -135,15 +136,15 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     UpcomingRecordingsFilter filter = _showSkippedRecordings.Checked ?
                         UpcomingRecordingsFilter.All : UpcomingRecordingsFilter.Recordings|UpcomingRecordingsFilter.CancelledByUser;
-                    var allUpcomingRecordings = MainForm.ControlProxy.GetAllUpcomingRecordings(filter, true);
+                    var allUpcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(filter, true);
                     _upcomingProgramsControl.UnfilteredUpcomingRecordings = new UpcomingOrActiveProgramsList(allUpcomingRecordings);
                     upcomingPrograms = new UpcomingOrActiveProgramsList(allUpcomingRecordings);
-                    upcomingPrograms.RemoveActiveRecordings(MainForm.ControlProxy.GetActiveRecordings());
+                    upcomingPrograms.RemoveActiveRecordings(Proxies.ControlService.GetActiveRecordings());
                 }
                 else
                 {
                     _upcomingProgramsControl.UnfilteredUpcomingRecordings = null;
-                    upcomingPrograms = new UpcomingOrActiveProgramsList(MainForm.SchedulerProxy.GetAllUpcomingPrograms(_scheduleType, true));
+                    upcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.SchedulerService.GetAllUpcomingPrograms(_scheduleType, true));
                 }
 
                 ScheduleSummary schedule = _schedulesComboBox.SelectedItem as ScheduleSummary;

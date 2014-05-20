@@ -128,7 +128,7 @@ namespace ArgusTV.UI.Console
                     try
                     {
                         Cursor.Current = Cursors.WaitCursor;
-                        ProxyFactory.Initialize(_serverSettings, true);
+                        Proxies.Initialize(_serverSettings, true);
 
                         if (_saveAsProfileCheckBox.Checked)
                         {

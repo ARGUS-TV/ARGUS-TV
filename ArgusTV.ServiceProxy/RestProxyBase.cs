@@ -1,6 +1,31 @@
+/*
+ *	Copyright (C) 2007-2014 ARGUS TV
+ *	http://www.argus-tv.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections.Generic;
-using RestSharp;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Web;
+
 using ArgusTV.DataContracts;
 
 namespace ArgusTV.ServiceProxy
@@ -8,42 +33,40 @@ namespace ArgusTV.ServiceProxy
     /// <exclude />
     public abstract class RestProxyBase
     {
+        private string _module;
+
         /// <exclude />
-        protected RestClient _client;
+        protected HttpClient _client;
 
         /// <exclude />
         public RestProxyBase(string module)
         {
-            var url = (ProxyFactory.ServerSettings.Transport == ServiceTransport.Https ? "https://" : "http://")
-                + ProxyFactory.ServerSettings.ServerName + ":" + ProxyFactory.ServerSettings.Port
-                + "/ArgusTV/" + module;
-            _client = new RestClient(url);
-            if (ProxyFactory.ServerSettings.Transport == ServiceTransport.Https)
-            {
-                _client.Authenticator = new HttpBasicAuthenticator(ProxyFactory.ServerSettings.UserName, ProxyFactory.ServerSettings.Password);
-            }
-        }
-
-        private class SchedulerJsonSerializer : RestSharp.Serializers.ISerializer
-        {
-            public SchedulerJsonSerializer()
-            {
-                ContentType = "application/json";
-            }
-
-            public string Serialize(object obj)
-            {
-                return SimpleJson.SerializeObject(obj, new SchedulerJsonSerializerStrategy());
-            }
-
-            public string DateFormat { get; set; }
-            public string RootElement { get; set; }
-            public string Namespace { get; set; }
-            public string ContentType { get; set; }
+            _module = module;
+            _client = CreateHttpClient();
         }
 
         /// <exclude />
-        protected class SchedulerJsonSerializerStrategy : PocoJsonSerializerStrategy
+        protected HttpClient CreateHttpClient()
+        {
+            var url = (Proxies.ServerSettings.Transport == ServiceTransport.Https ? "https://" : "http://")
+                + Proxies.ServerSettings.ServerName + ":" + Proxies.ServerSettings.Port
+                + "/ArgusTV/" + _module + "/";
+            HttpClient client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true)
+            {
+                BaseAddress = new Uri(url)
+            };
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            if (Proxies.ServerSettings.Transport == ServiceTransport.Https)
+            {
+                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(Proxies.ServerSettings.UserName + ":" + Proxies.ServerSettings.Password);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            }
+            return client;
+        }
+
+        /// <exclude />
+        internal class SchedulerJsonSerializerStrategy : PocoJsonSerializerStrategy
         {
             private static readonly long _initialJavaScriptDateTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
             private static readonly DateTime _minimumJavaScriptDate = new DateTime(100, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -185,37 +208,66 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude />
-        protected RestRequest NewRequest(string url, Method method)
+        protected HttpRequestMessage NewRequest(HttpMethod method, string url, params object[] args)
         {
-            return new RestRequest(url, method)
+            if (url.StartsWith("/"))
             {
-                RequestFormat = DataFormat.Json,
-                JsonSerializer = new SchedulerJsonSerializer()
-            };
+                url = url.Substring(1);
+            }
+            if (args != null && args.Length > 0)
+            {
+                List<object> encodedArgs = new List<object>();
+                foreach (var arg in args)
+                {
+                    string urlArg;
+                    if (arg is DateTime)
+                    {
+                        DateTime time = (DateTime)arg;
+                        if (time.Kind == DateTimeKind.Unspecified)
+                        {
+                            urlArg = new DateTime(time.Ticks, DateTimeKind.Local).ToString("o");
+                        }
+                        urlArg = time.ToString("o");
+                    }
+                    else
+                    {
+                        urlArg = arg.ToString();
+                    }
+                    encodedArgs.Add(HttpUtility.UrlEncode(urlArg));
+                }
+                return new HttpRequestMessage(method, String.Format(url, encodedArgs.ToArray()));
+            }
+            return new HttpRequestMessage(method, url);
         }
 
         /// <exclude />
-        protected void ExecuteAsync(RestRequest request)
+        protected void ExecuteAsync(HttpRequestMessage request)
         {
             try
             {
-                var response = _client.ExecuteAsync(request, r =>
+                var task = _client.SendAsync(request);
+                task.ContinueWith(t =>
                 {
-                    if (r.StatusCode != System.Net.HttpStatusCode.OK)
+                    if (t.Exception != null)
                     {
+                        //Logger.Error(r.Exception.ToString());
+                    }
+                    else if (t.IsCompleted)
+                    {
+                        var r = t.Result;
                         if (r.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                         {
-                            var error = SimpleJson.DeserializeObject<RestError>(r.Content);
+                            var error = SimpleJson.DeserializeObject<RestError>(r.Content.ReadAsStringAsync().Result);
                             //Logger.Error(error.detail);
                         }
                         else
                         {
-                            //Logger.Error(r.ErrorMessage ?? r.StatusDescription);
+                            //Logger.Error(r.ReasonPhrase);
                         }
                     }
                 });
             }
-            catch (Exception ex)
+            catch
             {
                 //Logger.Error(ex.ToString());
                 //EventLogger.WriteEntry(ex);
@@ -226,49 +278,101 @@ namespace ArgusTV.ServiceProxy
         /// <exclude />
         protected bool IsConnectionError(Exception ex)
         {
-            System.Net.WebException webException = ex as System.Net.WebException;
-            if (ex != null)
+            var requestException = ex as HttpRequestException;
+            if (requestException != null)
             {
-                switch (webException.Status)
+                var webException = requestException.InnerException as WebException;
+                if (webException != null)
                 {
-                    case System.Net.WebExceptionStatus.ConnectFailure:
-                    case System.Net.WebExceptionStatus.NameResolutionFailure:
-                    case System.Net.WebExceptionStatus.ProxyNameResolutionFailure:
-                    case System.Net.WebExceptionStatus.RequestProhibitedByProxy:
-                    case System.Net.WebExceptionStatus.SecureChannelFailure:
-                    case System.Net.WebExceptionStatus.TrustFailure:
-                        return true;
+                    switch (webException.Status)
+                    {
+                        case System.Net.WebExceptionStatus.ConnectFailure:
+                        case System.Net.WebExceptionStatus.NameResolutionFailure:
+                        case System.Net.WebExceptionStatus.ProxyNameResolutionFailure:
+                        case System.Net.WebExceptionStatus.RequestProhibitedByProxy:
+                        case System.Net.WebExceptionStatus.SecureChannelFailure:
+                        case System.Net.WebExceptionStatus.TrustFailure:
+                            return true;
+                    }
                 }
             }
             return false;
         }
 
         /// <exclude />
-        protected IRestResponse Execute(RestRequest request, bool logError = true)
+        protected void Execute(HttpRequestMessage request, bool logError = true)
         {
             try
             {
-                var response = _client.Execute(request);
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                using (var response = ExecuteRequest(request, logError))
                 {
-                    if (response.StatusCode == 0 && IsConnectionError(response.ErrorException))
+                }
+            }
+            finally
+            {
+                request.Dispose();
+            }
+        }
+
+        /// <exclude />
+        protected T Execute<T>(HttpRequestMessage request, bool logError = true)
+            where T : new()
+        {
+            try
+            {
+                using (var response = ExecuteRequest(request, logError))
+                {
+                    return DeserializeResponseContent<T>(response);
+                }
+            }
+            catch (ArgusTVException)
+            {
+                throw;
+            }
+            catch
+            {
+                if (logError)
+                {
+                    //Logger.Error(ex.ToString());
+                    //EventLogger.WriteEntry(ex);
+                }
+                throw new ArgusTVUnexpectedErrorException("An unexpected error occured.");
+            }
+            finally
+            {
+                request.Dispose();
+            }
+        }
+
+        private HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError)
+        {
+            try
+            {
+                var response = _client.SendAsync(request).Result;
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                     {
-                        throw new ArgusTVNotFoundException(response.ErrorMessage ?? response.StatusDescription);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                    {
-                        var error = SimpleJson.DeserializeObject<RestError>(response.Content);
+                        var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
                         throw new ArgusTVException(error.detail);
                     }
-                    throw new ArgusTVException(response.ErrorMessage ?? response.StatusDescription);
+                    throw new ArgusTVException(response.ReasonPhrase);
                 }
                 return response;
             }
+            catch (AggregateException ex)
+            {
+                if (IsConnectionError(ex.InnerException))
+                {
+                    throw new ArgusTVNotFoundException(ex.InnerException.InnerException.Message);
+                }
+                throw;
+            }
             catch (ArgusTVException)
             {
                 throw;
             }
-            catch (Exception ex)
+            catch
             {
                 if (logError)
                 {
@@ -280,34 +384,10 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude />
-        protected T Execute<T>(RestRequest request, bool logError = true)
+        protected static T DeserializeResponseContent<T>(HttpResponseMessage response)
             where T : new()
         {
-            try
-            {
-                var response = Execute(request, logError);
-                return DeserializeResponseContent<T>(response);
-            }
-            catch (ArgusTVException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                if (logError)
-                {
-                    //Logger.Error(ex.ToString());
-                    //EventLogger.WriteEntry(ex);
-                }
-                throw new ArgusTVUnexpectedErrorException("An unexpected error occured.");
-            }
-        }
-
-        /// <exclude />
-        protected static T DeserializeResponseContent<T>(IRestResponse response)
-            where T : new()
-        {
-            string content = response.ContentLength == 0 ? String.Empty : response.Content;
+            string content = response.Content.ReadAsStringAsync().Result;
             if (String.IsNullOrEmpty(content))
             {
                 return default(T);
@@ -315,19 +395,28 @@ namespace ArgusTV.ServiceProxy
             return SimpleJson.DeserializeObject<T>(content, new SchedulerJsonSerializerStrategy());
         }
 
-        /// <exclude />
-        protected string ToIso8601(DateTime time)
-        {
-            if (time.Kind == DateTimeKind.Unspecified)
-            {
-                return new DateTime(time.Ticks, DateTimeKind.Local).ToString("o");
-            }
-            return time.ToString("o");
-        }
-
         private class RestError
         {
             public string detail { get; set; }
+        }
+    }
+
+    /// <exclude />
+    public static class HttpRequestMessageExtensions
+    {
+        /// <exclude />
+        public static void AddBody(this HttpRequestMessage request, object body)
+        {
+            request.Content = new StringContent(
+                SimpleJson.SerializeObject(body, new RestProxyBase.SchedulerJsonSerializerStrategy()), Encoding.UTF8, "application/json");
+        }
+
+        /// <exclude />
+        public static void AddParameter(this HttpRequestMessage request, string name, object value)
+        {
+            string url = request.RequestUri.OriginalString;
+            url += (url.Contains("?") ? "&" : "?") + name + "=" + HttpUtility.UrlEncode(value.ToString());
+            request.RequestUri = new Uri(url, UriKind.Relative);
         }
     }
 }

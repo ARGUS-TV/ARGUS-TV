@@ -30,6 +30,7 @@ using ArgusTV.DataContracts;
 using ArgusTV.UI.Process.Guide;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.UserControls
 {
@@ -141,8 +142,7 @@ namespace ArgusTV.UI.Console.UserControls
                 && e.RowIndex < _programsDataGridView.Rows.Count)
             {
                 ChannelProgramView programView = _programsDataGridView.Rows[e.RowIndex].DataBoundItem as ChannelProgramView;
-                GuideProgram guideProgram =
-                    ((ContentPanel)this.Parent.Parent).MainForm.GuideProxy.GetProgramById(programView.Program.GuideProgramId);
+                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programView.Program.GuideProgramId);
                 using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                 {
                     popup.Channel = programView.Program.Channel;

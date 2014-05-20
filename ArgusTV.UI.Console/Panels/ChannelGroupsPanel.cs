@@ -31,6 +31,7 @@ using ArgusTV.DataContracts;
 using ArgusTV.UI.Console.Properties;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -108,9 +109,9 @@ namespace ArgusTV.UI.Console.Panels
                 _groupsWithDirtyChannels = new Dictionary<Guid, bool>();
                 _availableChannels = new SortableBindingList<Channel>();
                 List<ChannelGroup> channelGroups = new List<ChannelGroup>(
-                    MainForm.SchedulerProxy.GetAllChannelGroups(this.ChannelType, false));
+                    Proxies.SchedulerService.GetAllChannelGroups(this.ChannelType, false));
                 _allChannels = new List<Channel>(
-                    MainForm.SchedulerProxy.GetAllChannels(this.ChannelType, false));
+                    Proxies.SchedulerService.GetAllChannels(this.ChannelType, false));
                 _channelsBindingSource.DataSource = _availableChannels;
                 _channelsBindingSource.ResetBindings(false);
 
@@ -181,7 +182,7 @@ namespace ArgusTV.UI.Console.Panels
                 List<ChannelGroup> changedGroups = GetChangedGroups();
                 foreach (ChannelGroup channelGroup in changedGroups)
                 {
-                    ChannelGroup savedGroup = MainForm.SchedulerProxy.SaveChannelGroup(channelGroup);
+                    ChannelGroup savedGroup = Proxies.SchedulerService.SaveChannelGroup(channelGroup);
                     channelGroup.ChannelGroupId = savedGroup.ChannelGroupId;
                     _groupsWithDirtyChannels[channelGroup.ChannelGroupId] = true;
                 }
@@ -192,13 +193,13 @@ namespace ArgusTV.UI.Console.Panels
                     if (_groupsWithDirtyChannels.ContainsKey(channelGroup.ChannelGroupId))
                     {
                         List<Guid> channelIds = GetChildChannelIds(groupNode);
-                        MainForm.SchedulerProxy.SetChannelGroupMembers(channelGroup.ChannelGroupId, channelIds.ToArray());
+                        Proxies.SchedulerService.SetChannelGroupMembers(channelGroup.ChannelGroupId, channelIds.ToArray());
                     }
                 }
 
                 foreach (ChannelGroup channelGroup in _deletedGroups)
                 {
-                    MainForm.SchedulerProxy.DeleteChannelGroup(channelGroup.ChannelGroupId, false, false);
+                    Proxies.SchedulerService.DeleteChannelGroup(channelGroup.ChannelGroupId, false, false);
                 }
             }
             catch (Exception ex)
@@ -554,7 +555,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     try
                     {
-                        var channels = MainForm.SchedulerProxy.GetChannelsInGroup(group.ChannelGroupId, false);
+                        var channels = Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, false);
 
                         groupNode.Nodes.Clear();
                         foreach (Channel channel in channels)

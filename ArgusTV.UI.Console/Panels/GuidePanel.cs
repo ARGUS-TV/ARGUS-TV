@@ -77,7 +77,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     channelType = (ChannelType)MainForm.Session[SessionKey.ChannelType];
                 }
-                _controller.Initialize(MainForm.SchedulerProxy, channelType, 24, ArgusTV.WinForms.Controls.EpgControl.EpgHoursOffset, "All Channels");
+                _controller.Initialize(channelType, 24, ArgusTV.WinForms.Controls.EpgControl.EpgHoursOffset, "All Channels");
 
                 _channelTypeComboBox.SelectedIndex = (int)_model.ChannelType;
 
@@ -174,7 +174,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (childPanel.DialogResult == DialogResult.OK)
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -183,7 +183,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (!_inLoad)
             {
-                _controller.ChangeChannelType(MainForm.SchedulerProxy, (ChannelType)_channelTypeComboBox.SelectedIndex);
+                _controller.ChangeChannelType((ChannelType)_channelTypeComboBox.SelectedIndex);
                 _groupsBindingSource.DataSource = _model.ChannelGroups;
                 _groupsBindingSource.ResetBindings(false);
                 if (_channelGroupsComboBox.SelectedIndex == 0)
@@ -243,7 +243,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             try
             {
-                GuideProgram guideProgram = MainForm.GuideProxy.GetProgramById(e.GuideProgram.GuideProgramId);
+                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(e.GuideProgram.GuideProgramId);
                 using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                 {
                     popup.Channel = e.Channel;
@@ -299,7 +299,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (Utility.ContextDeleteSchedule(this, e))
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -308,7 +308,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (Utility.ContextCancelProgram(this, e))
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -317,7 +317,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (Utility.ContextAddRemoveProgramHistory(this, e))
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -326,7 +326,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (Utility.ContextSetProgramPriority(this, e))
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -335,7 +335,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (Utility.ContextSetProgramPrePostRecord(this, e))
             {
-                _controller.RefreshUpcomingPrograms(MainForm.SchedulerProxy, MainForm.ControlProxy);
+                _controller.RefreshUpcomingPrograms();
                 RefreshEpg(false);
             }
         }
@@ -359,8 +359,7 @@ namespace ArgusTV.UI.Console.Panels
         private void _epgBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             RefreshEpgArgs args = e.Argument as RefreshEpgArgs;
-            _controller.RefreshEpgData(MainForm.SchedulerProxy, MainForm.GuideProxy, MainForm.ControlProxy, args.ReloadEpg, args.ChannelGroupId, args.GuideDateTime,
-                this.EpgCancellationPending);
+            _controller.RefreshEpgData(args.ReloadEpg, args.ChannelGroupId, args.GuideDateTime, this.EpgCancellationPending);
             e.Cancel = _backgroundWorker.CancellationPending;
         }
 

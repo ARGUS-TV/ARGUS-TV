@@ -30,6 +30,7 @@ using System.Globalization;
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Process;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -79,7 +80,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedServices = new List<PluginService>();
-                _pluginServices = new SortableBindingList<PluginService>(MainForm.ControlProxy.GetAllPluginServices(false));
+                _pluginServices = new SortableBindingList<PluginService>(Proxies.ControlService.GetAllPluginServices(false));
                 _servicesBindingSource.DataSource = _pluginServices;
                 _servicesBindingSource.Sort = priorityDataGridViewTextBoxColumn.DataPropertyName +  " DESC";
                 _servicesBindingSource.ResetBindings(false);
@@ -130,7 +131,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     if (_changedServiceIds.Contains(pluginService.PluginServiceId))
                     {
-                        MainForm.ControlProxy.SavePluginService(pluginService);
+                        Proxies.ControlService.SavePluginService(pluginService);
                     }
                 }
 
@@ -138,7 +139,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     if (pluginService.PluginServiceId != Guid.Empty)
                     {
-                        MainForm.ControlProxy.DeletePluginService(pluginService.PluginServiceId);
+                        Proxies.ControlService.DeletePluginService(pluginService.PluginServiceId);
                     }
                 }
 
@@ -209,7 +210,7 @@ namespace ArgusTV.UI.Console.Panels
             {
                 try
                 {
-                    MainForm.ControlProxy.PingPluginService(pluginService);
+                    Proxies.ControlService.PingPluginService(pluginService);
                     MessageBox.Show(this, String.Format(CultureInfo.InvariantCulture, "Server succesfully connected to {0}.", pluginService.Name),
                         _pingButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -234,7 +235,7 @@ namespace ArgusTV.UI.Console.Panels
                 try
                 {
                     string message;
-                    var recordingShareAccessibilityInfo = MainForm.ControlProxy.AreRecordingSharesAccessible(pluginService);
+                    var recordingShareAccessibilityInfo = Proxies.ControlService.AreRecordingSharesAccessible(pluginService);
                     if (recordingShareAccessibilityInfo.Count == 0)
                     {
                         message = String.Format("No shares defined on recorder {0}.", pluginService.Name);

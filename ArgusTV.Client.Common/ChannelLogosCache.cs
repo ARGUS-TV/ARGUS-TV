@@ -41,23 +41,23 @@ namespace ArgusTV.Client.Common
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\LogosCache");
         }
 
-        public static Image GetLogoImage(SchedulerServiceProxy schedulerProxy, Channel channel, int width, int height)
+        public static Image GetLogoImage(Channel channel, int width, int height)
         {
-            return GetLogoImage(schedulerProxy, channel.ChannelId, channel.DisplayName, width, height);
+            return GetLogoImage(channel.ChannelId, channel.DisplayName, width, height);
         }
 
-        public static Image GetLogoImage(SchedulerServiceProxy schedulerProxy, Guid channelId, string channelDisplayName, int width, int height)
+        public static Image GetLogoImage(Guid channelId, string channelDisplayName, int width, int height)
         {
-            string fileName = GetLogoPath(schedulerProxy, channelId, channelDisplayName, width, height);
+            string fileName = GetLogoPath(channelId, channelDisplayName, width, height);
             return fileName == null ? null : Image.FromFile(fileName);
         }
 
-        public static string GetLogoPath(SchedulerServiceProxy schedulerProxy, Channel channel, int width, int height)
+        public static string GetLogoPath(Channel channel, int width, int height)
         {
-            return GetLogoPath(schedulerProxy, channel.ChannelId, channel.DisplayName, width, height);
+            return GetLogoPath(channel.ChannelId, channel.DisplayName, width, height);
         }
 
-        public static string GetLogoPath(SchedulerServiceProxy schedulerProxy, Guid channelId, string channelDisplayName, int width, int height)
+        public static string GetLogoPath(Guid channelId, string channelDisplayName, int width, int height)
         {
             string cachePath = Path.Combine(_cacheBasePath, width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture));
             Directory.CreateDirectory(cachePath);
@@ -70,6 +70,7 @@ namespace ArgusTV.Client.Common
                 modifiedDateTime = File.GetLastWriteTime(logoImagePath);
             }
 
+            var schedulerProxy = Proxies.SchedulerService;
             byte[] imageBytes = schedulerProxy.GetChannelLogo(channelId, width, height, modifiedDateTime);
             if (imageBytes == null)
             {

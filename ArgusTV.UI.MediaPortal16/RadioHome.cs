@@ -144,7 +144,7 @@ namespace ArgusTV.UI.MediaPortal
             string logo = string.Empty;
             if (channelId != Guid.Empty && chanName != string.Empty)
             {
-                logo = Utility.GetLogoImage(channelId, chanName, new SchedulerServiceProxy());
+                logo = Utility.GetLogoImage(channelId, chanName);
             }
             else
             {

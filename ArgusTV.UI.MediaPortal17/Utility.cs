@@ -161,17 +161,17 @@ namespace ArgusTV.UI.MediaPortal
             return GUIGraphicsContext.Skin + @"\Media\ARGUS_" + scheduleType.ToString() + suffix + ".png";
         }
 
-        public static string GetLogoImage(Channel channel, SchedulerServiceProxy schedulerProxy)
+        public static string GetLogoImage(Channel channel)
         {
-            return GetLogoImage(channel.ChannelId, channel.DisplayName, schedulerProxy);
+            return GetLogoImage(channel.ChannelId, channel.DisplayName);
         }
 
-        public static string GetLogoImage(Guid channelId, string channelDisplayName, SchedulerServiceProxy schedulerProxy)
+        public static string GetLogoImage(Guid channelId, string channelDisplayName)
         {
-            return ChannelLogosCache.GetLogoPath(schedulerProxy, channelId, channelDisplayName, HomeBase.LogoIconWidth, HomeBase.LogoIconHeight);
+            return ChannelLogosCache.GetLogoPath(channelId, channelDisplayName, HomeBase.LogoIconWidth, HomeBase.LogoIconHeight);
         }
 
-        public static string GetRecordingThumb(RecordingSummary recording,bool createNewThumbIfNotFound, int size, ControlServiceProxy tvControlAgent)
+        public static string GetRecordingThumb(RecordingSummary recording,bool createNewThumbIfNotFound, int size)
         {
             string thumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,recording.RecordingId,".jpg");
             if (Utils.FileExistsInCache(thumb))
@@ -187,7 +187,7 @@ namespace ArgusTV.UI.MediaPortal
                     size = 0;
                 }
 
-                byte[] jpegData = tvControlAgent.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime);
+                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime);
                 if (jpegData != null)
                 {
                     try
@@ -312,7 +312,7 @@ namespace ArgusTV.UI.MediaPortal
 
             try
             {
-                ProxyFactory.Initialize(serverSettings, true);
+                Proxies.Initialize(serverSettings, true);
                 using (Settings xmlwriter = new MPSettings())
                 {
                     xmlwriter.SetValue(_settingSection, TvHome.SettingName.MacAddresses, serverSettings.WakeOnLan.MacAddresses);

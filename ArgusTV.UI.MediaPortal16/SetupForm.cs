@@ -141,7 +141,7 @@ namespace ArgusTV.UI.MediaPortal
                 _serverSettings.Port = (int)_portNumericUpDown.Value;
                 _serverSettings.WakeOnLan.Enabled = _useWolCheckBox.Checked;
                 _serverSettings.WakeOnLan.TimeoutSeconds = (int)_wolSecondsNumericUpDown.Value;
-                ProxyFactory.Initialize(_serverSettings, true);
+                Proxies.Initialize(_serverSettings, true);
                 _isSingleSeat = Utility.IsThisASingleSeatSetup(_serverSettings.ServerName);
                 return true;
             }

@@ -104,17 +104,15 @@ namespace ArgusTV.UI.Console.Wizards.ExportRecordings
                 _exportProgressBar.Visible = true;
                 Application.DoEvents();
 
-                var controlProxy = new ControlServiceProxy();
-
                 int count = 0;
                 foreach (RecordingSummary recording in this.Context.ExportRecordings)
                 {
                     _exportingFileLabel.Text = recording.CreateProgramTitle();
                     Application.DoEvents();
-                    ExportRecording(controlProxy, recording);
+                    ExportRecording(recording);
                     if (_deleteRecordingsCheckBox.Checked)
                     {
-                        controlProxy.DeleteRecording(recording.RecordingFileName, true);
+                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
                     }
                     _exportProgressBar.Value = ++count;
                 }
@@ -136,7 +134,7 @@ namespace ArgusTV.UI.Console.Wizards.ExportRecordings
             return false;
         }
 
-        private void ExportRecording(ControlServiceProxy controlProxy, RecordingSummary recording)
+        private void ExportRecording(RecordingSummary recording)
         {
             Recording metadata = Utility.GetRecordingMetadataFromAds(recording.RecordingFileName);
 
@@ -207,7 +205,7 @@ namespace ArgusTV.UI.Console.Wizards.ExportRecordings
                 metadata = Utility.GetRecordingMetadata(recording.RecordingFileName);
                 if (metadata == null)
                 {
-                    metadata = controlProxy.GetRecordingById(recording.RecordingId);
+                    metadata = Proxies.ControlService.GetRecordingById(recording.RecordingId);
                 }
                 if (metadata != null)
                 {

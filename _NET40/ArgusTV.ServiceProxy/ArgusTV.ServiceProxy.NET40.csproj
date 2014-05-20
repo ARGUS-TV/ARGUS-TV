@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET4</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOTNET4,SIMPLE_JSON_OBJARRAYINTERNAL,SIMPLE_JSON_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -25,18 +25,39 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DOTNET4</DefineConstants>
+    <DefineConstants>TRACE;DOTNET4,SIMPLE_JSON_OBJARRAYINTERNAL,SIMPLE_JSON_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\ArgusTV.ServiceProxy.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RestSharp">
-      <HintPath>..\..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
+    </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http, Version=2.2.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.2.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,8 +83,8 @@
     <Compile Include="..\..\ArgusTV.ServiceProxy\LogServiceProxy.cs">
       <Link>LogServiceProxy.cs</Link>
     </Compile>
-    <Compile Include="..\..\ArgusTV.ServiceProxy\ProxyFactory.cs">
-      <Link>ProxyFactory.cs</Link>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\Proxies.cs">
+      <Link>Proxies.cs</Link>
     </Compile>
     <Compile Include="..\..\ArgusTV.ServiceProxy\RestProxyBase.cs">
       <Link>RestProxyBase.cs</Link>
@@ -76,6 +97,9 @@
     </Compile>
     <Compile Include="..\..\ArgusTV.ServiceProxy\ServiceTransport.cs">
       <Link>ServiceTransport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\SimpleJson.cs">
+      <Link>SimpleJson.cs</Link>
     </Compile>
     <Compile Include="..\..\ArgusTV.ServiceProxy\WakeOnLan.cs">
       <Link>WakeOnLan.cs</Link>
@@ -99,6 +123,11 @@
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)PostBuild.cmd" $(ConfigurationName) "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -42,8 +42,6 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 {
     public partial class SetupForm : SetupTv.SectionSettings
     {
-        private SchedulerServiceProxy _schedulerProxy;
-
         public SetupForm()
         {
             InitializeComponent();
@@ -202,16 +200,10 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             _channelsPanel.Visible = _plugin.IsArgusTVConnectionInitialized;
 
             LoadUncPaths();
-
-            if (_plugin.IsArgusTVConnectionInitialized)
-            {
-                _schedulerProxy = new SchedulerServiceProxy();
-            }
         }
 
         private void DisconnectFromArgusTV()
         {
-            _schedulerProxy = null;
         }
 
         private void _connectButton_Click(object sender, EventArgs e)
@@ -304,7 +296,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 Cursor.Current = Cursors.WaitCursor;
 
                 ChannelType channelType = (ChannelType)_channelTypeComboBox.SelectedIndex;
-                List<Channel> channels = new List<Channel>(_schedulerProxy.GetAllChannels(channelType, false));
+                List<Channel> channels = new List<Channel>(Proxies.SchedulerService.GetAllChannels(channelType, false));
 
                 ChannelLinks.RemoveObsoleteLinks(channelType, channels);
 

@@ -124,7 +124,6 @@ namespace ArgusTV.WinForms.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Region clippingRegion = e.Graphics.Clip;
-            var proxy = new SchedulerServiceProxy();
 
             foreach (var cell in _channelCells)
             {
@@ -150,7 +149,7 @@ namespace ArgusTV.WinForms.Controls
                     Image logoImage = null;
                     try
                     {
-                        logoImage = ChannelLogosCache.GetLogoImage(proxy, cell.Channel, (int)(64 * _widthFactor), (int)(64 * _heightFactor));
+                        logoImage = ChannelLogosCache.GetLogoImage(cell.Channel, (int)(64 * _widthFactor), (int)(64 * _heightFactor));
                     }
                     catch
                     {

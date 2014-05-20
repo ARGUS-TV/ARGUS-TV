@@ -54,7 +54,7 @@ namespace ArgusTV.UI.Process.SearchGuide
             ClearCurrentTitle();
         }
 
-        public void SearchTitles(SchedulerServiceProxy schedulerProxy, string searchText)
+        public void SearchTitles(string searchText)
         {
             _model.SearchText = searchText.Trim();
             if (String.IsNullOrEmpty(_model.SearchText))
@@ -63,7 +63,7 @@ namespace ArgusTV.UI.Process.SearchGuide
             }
             else
             {
-                _model.Titles = schedulerProxy.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText);
+                _model.Titles = Proxies.SchedulerService.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText);
                 ClearCurrentTitle();
             }
         }
@@ -75,18 +75,18 @@ namespace ArgusTV.UI.Process.SearchGuide
             _model.CurrentTitlePrograms = new ChannelProgramsList(new List<ChannelProgram>());
         }
 
-        public void GetProgramsForTitle(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy, string title)
+        public void GetProgramsForTitle(string title)
         {
             _model.CurrentTitle = title;
-            RefreshAllUpcomingPrograms(schedulerProxy, controlProxy);
-            _model.CurrentTitlePrograms = new ChannelProgramsList(schedulerProxy.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false));
+            RefreshAllUpcomingPrograms();
+            _model.CurrentTitlePrograms = new ChannelProgramsList(Proxies.SchedulerService.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false));
         }
 
-        public void RefreshAllUpcomingPrograms(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy)
+        public void RefreshAllUpcomingPrograms()
         {
-            var upcomingRecordings = controlProxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            var upcomingAlerts = schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            var upcomingSuggestions = schedulerProxy.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
+            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
+            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
             _model.AllUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
         }
     }

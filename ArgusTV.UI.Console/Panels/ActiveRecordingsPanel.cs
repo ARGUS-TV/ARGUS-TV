@@ -30,6 +30,7 @@ using ArgusTV.UI.Console.Properties;
 using ArgusTV.UI.Process;
 using ArgusTV.DataContracts;
 using ArgusTV.WinForms;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console.Panels
 {
@@ -82,8 +83,8 @@ namespace ArgusTV.UI.Console.Panels
         private void RefreshActiveRecordings()
         {
             _upcomingProgramsControl.UnfilteredUpcomingRecordings =
-                new UpcomingOrActiveProgramsList(MainForm.ControlProxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true));
-            _upcomingProgramsControl.UpcomingPrograms = new UpcomingOrActiveProgramsList(MainForm.ControlProxy.GetActiveRecordings());
+                new UpcomingOrActiveProgramsList(Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true));
+            _upcomingProgramsControl.UpcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.ControlService.GetActiveRecordings());
         }
 
         private void _upcomingProgramsControl_MouseUp(object sender, MouseEventArgs e)
