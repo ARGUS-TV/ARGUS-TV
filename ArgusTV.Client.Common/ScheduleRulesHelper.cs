@@ -239,7 +239,10 @@ namespace ArgusTV.Client.Common
                     {
                         expression.Append(arg).Append(" OR ");
                     }
-                    expression.Remove(expression.Length - 4, 4);
+                    if (expression.Length >= 4)
+                    {
+                        expression.Remove(expression.Length - 4, 4);
+                    }
                 }
                 else if (rule.Type == doesNotContainRule)
                 {

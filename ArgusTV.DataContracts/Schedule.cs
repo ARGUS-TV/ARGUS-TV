@@ -340,15 +340,18 @@ namespace ArgusTV.DataContracts
 
                     case ScheduleRuleType.TitleDoesNotContain:
                     case ScheduleRuleType.SubTitleDoesNotContain:
+                    case ScheduleRuleType.EpisodeNumberDoesNotContain:
                     case ScheduleRuleType.DescriptionDoesNotContain:
                     case ScheduleRuleType.ProgramInfoDoesNotContain:
                     case ScheduleRuleType.TitleStartsWith:
                     case ScheduleRuleType.SubTitleStartsWith:
+                    case ScheduleRuleType.EpisodeNumberStartsWith:
                     case ScheduleRuleType.TitleEquals:
                     case ScheduleRuleType.SubTitleEquals:
                     case ScheduleRuleType.EpisodeNumberEquals:
                     case ScheduleRuleType.TitleContains:
                     case ScheduleRuleType.SubTitleContains:
+                    case ScheduleRuleType.EpisodeNumberContains:
                     case ScheduleRuleType.DescriptionContains:
                     case ScheduleRuleType.ProgramInfoContains:
                     case ScheduleRuleType.CategoryEquals:
@@ -425,15 +428,18 @@ namespace ArgusTV.DataContracts
 
                     case ScheduleRuleType.TitleDoesNotContain:
                     case ScheduleRuleType.SubTitleDoesNotContain:
+                    case ScheduleRuleType.EpisodeNumberDoesNotContain:
                     case ScheduleRuleType.DescriptionDoesNotContain:
                     case ScheduleRuleType.ProgramInfoDoesNotContain:
                     case ScheduleRuleType.TitleStartsWith:
                     case ScheduleRuleType.SubTitleStartsWith:
+                    case ScheduleRuleType.EpisodeNumberStartsWith:
                     case ScheduleRuleType.TitleEquals:
                     case ScheduleRuleType.SubTitleEquals:
                     case ScheduleRuleType.EpisodeNumberEquals:
                     case ScheduleRuleType.TitleContains:
                     case ScheduleRuleType.SubTitleContains:
+                    case ScheduleRuleType.EpisodeNumberContains:
                     case ScheduleRuleType.DescriptionContains:
                     case ScheduleRuleType.ProgramInfoContains:
                     case ScheduleRuleType.CategoryEquals:
