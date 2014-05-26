@@ -260,7 +260,7 @@ namespace ArgusTV.ServiceProxy
                             var error = SimpleJson.DeserializeObject<RestError>(r.Content.ReadAsStringAsync().Result);
                             //Logger.Error(error.detail);
                         }
-                        else
+                        else if (r.StatusCode != System.Net.HttpStatusCode.OK)
                         {
                             //Logger.Error(r.ReasonPhrase);
                         }

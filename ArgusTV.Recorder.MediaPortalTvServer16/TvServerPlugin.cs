@@ -41,8 +41,8 @@ using SetupTv;
 using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
-using System.Web.Http.SelfHost;
-using System.Web.Http;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
@@ -149,8 +149,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         #region IPlugin Methods
 
         private static IController _controller;
-        private HttpSelfHostConfiguration _recorderRestConfig;
-        private HttpSelfHostServer _recorderRestHost;
+        private ServiceHost _recorderRestHost;
         private DvbEpgThread _dvbEpgThread;
         private PowerEventHandler _powerEventHandler;
 
@@ -179,11 +178,10 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
             string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/Recorder", _recorderTunerTcpPort);
 
-            _recorderRestConfig = new HttpSelfHostConfiguration(recorderUrl);
-            RecorderApiController.MapHttpRoutes(_recorderRestConfig.Routes);
-
-            _recorderRestHost = new HttpSelfHostServer(_recorderRestConfig);
-            _recorderRestHost.OpenAsync().Wait();
+            _recorderRestHost = new ServiceHost(typeof(RecorderApiService), new Uri(recorderUrl));
+            _recorderRestHost.AddServiceEndpoint(typeof(IRecorderApi), GetRestBinding(), "").Behaviors.Add(new WebHttpBehavior());
+            _recorderRestHost.Open();
+            
             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl);
 
             _dvbEpgThread = new DvbEpgThread();
@@ -230,10 +228,8 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
             if (_recorderRestHost != null)
             {
-                _recorderRestHost.CloseAsync().Wait();
-                RecorderApiController.DisposeModule();
-                _recorderRestHost.Dispose();
-                _recorderRestConfig.Dispose();
+                _recorderRestHost.Close(TimeSpan.FromSeconds(5));
+                RecorderApiService.DisposeModule();
                 _recorderRestHost = null;
             }
         }
@@ -352,7 +348,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 _serverSettings.ServerName = layer.GetSetting(SettingName.ServerName, _defaultServerName).Value;
                 _serverSettings.Transport = ServiceTransport.Http;
                 _serverSettings.Port = Convert.ToInt32(layer.GetSetting(SettingName.Port, _defaultPort.ToString()).Value);
-                if (_serverSettings.Port == 49942)
+                if (_serverSettings.Port == 49942)               
                 {
                     // Auto-adjust old net.tcp port to HTTP.
                     _serverSettings.Port = 49943;
@@ -810,6 +806,26 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             {
                 return _controller.SignalQuality(cardId);
             }
+        }
+
+        #endregion
+
+        #region WCF WebContentTypeMapper
+
+        public class RawWebContentTypeMapper : System.ServiceModel.Channels.WebContentTypeMapper
+        {
+            public override System.ServiceModel.Channels.WebContentFormat GetMessageFormatForContentType(string contentType)
+            {
+                return System.ServiceModel.Channels.WebContentFormat.Raw; // always
+            }
+        }
+
+        static System.ServiceModel.Channels.Binding GetRestBinding()
+        {
+            var result = new System.ServiceModel.Channels.CustomBinding(new WebHttpBinding());
+            var webMEBE = result.Elements.Find<System.ServiceModel.Channels.WebMessageEncodingBindingElement>();
+            webMEBE.ContentTypeMapper = new RawWebContentTypeMapper();
+            return result;
         }
 
         #endregion

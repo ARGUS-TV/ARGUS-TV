@@ -62,6 +62,6 @@ namespace ArgusTV.DataContracts
         /// <summary>
         /// The version of ARGUS TV.
         /// </summary>
-        public const string ProductVersion = "2.3 BETA 7";
+        public const string ProductVersion = "2.3 BETA 8";
     }
 }

@@ -69,7 +69,8 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
                     this.Context.RecordingFolders.Clear();
                     foreach (string share in Proxies.ControlService.GetRecordingShares())
                     {
-                        if (!ContainsFolder(this.Context.RecordingFolders, share))
+                        if (!String.IsNullOrWhiteSpace(share)
+                            && !ContainsFolder(this.Context.RecordingFolders, share))
                         {
                             this.Context.RecordingFolders.Add(share);
                         }

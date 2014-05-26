@@ -20,37 +20,38 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.ServiceModel;
+using System.ServiceModel.Web;
 using ArgusTV.Common.Logging;
 using ArgusTV.Common.Recorders;
 using ArgusTV.Common.StaThreadSyncronizer;
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using System.Web.Http;
-using System.Net.Http;
-using System.Net;
 using Newtonsoft.Json;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
-    public class RecorderApiController : ApiController
+    [ServiceBehavior(
+#if DEBUG
+        IncludeExceptionDetailInFaults = true,
+#endif
+        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        InstanceContextMode = InstanceContextMode.Single)]
+    public class RecorderApiService : IRecorderApi
     {
-        private static StaSynchronizationContext _staContext;
-
         public static MediaPortalRecorderTunerService Service { get; set; }
 
         private static void InitializeModule()
         {
             Service = new MediaPortalRecorderTunerService();
-            _staContext = new StaSynchronizationContext("Recorder");
         }
 
         public static void DisposeModule() 
         {
-            if (_staContext != null)
+            if (Service != null)
             {
-                _staContext.Dispose();
-                _staContext = null;
                 Service.Dispose();
                 Service = null;
             }
@@ -58,11 +59,11 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
         private void EnsureModuleInitialized()
         {
-            if (_staContext == null)
+            if (Service == null)
             {
                 lock (this)
                 {
-                    if (_staContext == null)
+                    if (Service == null)
                     {
                         InitializeModule();
                     }
@@ -70,31 +71,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
         }
 
-        public static void MapHttpRoutes(HttpRouteCollection routes)
-        {
-            routes.MapHttpRoute("Ping", "Ping", new { controller = "RecorderApi", action = "Ping" });
-            routes.MapHttpRoute("KeepAlive", "KeepAlive", new { controller = "RecorderApi", action = "KeepAlive" });
-            routes.MapHttpRoute("Initialize", "Initialize/{recorderId}", new { controller = "RecorderApi", action = "Initialize" });
-            routes.MapHttpRoute("AllocateCard", "AllocateCard", new { controller = "RecorderApi", action = "AllocateCard" });
-            routes.MapHttpRoute("RecordingStart", "Recording/Start", new { controller = "RecorderApi", action = "RecordingStart" });
-            routes.MapHttpRoute("RecordingValidateAndUpdate", "Recording/ValidateAndUpdate", new { controller = "RecorderApi", action = "RecordingValidateAndUpdate" });
-            routes.MapHttpRoute("RecordingAbort", "Recording/Abort", new { controller = "RecorderApi", action = "RecordingAbort" });
-            routes.MapHttpRoute("RecordingShares", "RecordingShares", new { controller = "RecorderApi", action = "RecordingShares" });
-            routes.MapHttpRoute("TimeshiftShares", "TimeshiftShares", new { controller = "RecorderApi", action = "TimeshiftShares" });
-            routes.MapHttpRoute("LiveTune", "Live/Tune", new { controller = "RecorderApi", action = "LiveTune" });
-            routes.MapHttpRoute("LiveKeepAlive", "Live/KeepAlive", new { controller = "RecorderApi", action = "LiveKeepAlive" });
-            routes.MapHttpRoute("LiveStop", "Live/Stop", new { controller = "RecorderApi", action = "LiveStop" });
-            routes.MapHttpRoute("LiveStreams", "LiveStreams", new { controller = "RecorderApi", action = "LiveStreams" });
-            routes.MapHttpRoute("ChannelsLiveState", "ChannelsLiveState", new { controller = "RecorderApi", action = "ChannelsLiveState" });
-            routes.MapHttpRoute("LiveTuningDetails", "Live/TuningDetails", new { controller = "RecorderApi", action = "LiveTuningDetails" });
-            routes.MapHttpRoute("LiveHasTeletext", "Live/HasTeletext", new { controller = "RecorderApi", action = "LiveHasTeletext" });
-            routes.MapHttpRoute("LiveTeletextStartGrabbing", "Live/Teletext/StartGrabbing", new { controller = "RecorderApi", action = "LiveTeletextStartGrabbing" });
-            routes.MapHttpRoute("LiveTeletextStopGrabbing", "Live/Teletext/StopGrabbing", new { controller = "RecorderApi", action = "LiveTeletextStopGrabbing" });
-            routes.MapHttpRoute("LiveTeletextIsGrabbing", "Live/Teletext/IsGrabbing", new { controller = "RecorderApi", action = "LiveTeletextIsGrabbing" });
-            routes.MapHttpRoute("LiveTeletextGetPage", "Live/Teletext/GetPage/{pageNumber}/{subPageNumber}", new { controller = "RecorderApi", action = "LiveTeletextGetPage" });
-        }
-
-        public RecorderApiController()
+        public RecorderApiService()
         {
             EnsureModuleInitialized();
 
@@ -110,29 +87,19 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Ping Recorder service.
         //
         // Returns the version of the API on the recorder, which should be Constants.RecorderApiVersion.
-        [HttpGet]
-        public HttpResponseMessage Ping()
+        public Stream Ping()
         {
-            int result = -1;
-            List<string> macAddresses = null;
-            _staContext.Send((s) =>
-            {
-                result = Service.Ping();
-                macAddresses = Service.GetMacAddresses();
-            }, null);
             return AsJson(new
             {
-                result = Constants.RecorderApiVersion,
-                macAddresses = macAddresses
+                result = Service.Ping(),
+                macAddresses = Service.GetMacAddresses()
             });
         }
 
         // Ask the recorder to keep its machine awake.
-        [HttpPut]
-        public HttpResponseMessage KeepAlive()
+        public void KeepAlive()
         {
-            _staContext.Send((s) => { Service.KeepAlive(); }, null);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            Service.KeepAlive();
         }
 
         // Ask the recorder to initialize by registering itself over the Recorder callback's
@@ -142,11 +109,10 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //
         // Post-data is an object with:
         //   schedulerBaseUrl - The callback URL for the Recorder to communicate with the Scheduler.
-        [HttpPut]
-        public HttpResponseMessage Initialize(Guid recorderId, InitializeArguments args)
+        public void Initialize(string recorderId, Stream body)
         {
-            _staContext.Send((s) => { Service.Initialize(recorderId, args.schedulerBaseUrl); }, null);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            var args = Bind<InitializeArguments>(body);
+            Service.Initialize(new Guid(recorderId), args.schedulerBaseUrl);
         }
 
         // Ask the recorder to allocate a (virtual) card for a channel.  The previously allocated
@@ -160,14 +126,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   useReversePriority - Use reverse cards priority to avoid conflicts with live streaming.
         //
         // Returns the unique card ID of the card that can record this channel, or null if no free card was found.
-        [HttpPut]
-        public HttpResponseMessage AllocateCard(AllocateCardArguments args)
+        public Stream AllocateCard(Stream body)
         {
-            string result = null;
-            _staContext.Send((s) => { result = Service.AllocateCard(args.channel, args.alreadyAllocated, args.useReversePriority); }, null);
+            var args = Bind<AllocateCardArguments>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.AllocateCard(args.channel, args.alreadyAllocated, args.useReversePriority)
             });
         }
 
@@ -187,14 +151,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   suggestedBaseFileName - The suggested relative path and filename (without extension) of the recording file.
         //
         // Returns a boolean indicating the recording was initiated succesfully.
-        [HttpPost]
-        public HttpResponseMessage RecordingStart(StartRecordingArguments args)
+        public Stream RecordingStart(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.StartRecording(args.schedulerBaseUrl, args.channelAllocation, args.startTimeUtc, args.stopTimeUtc, args.recordingProgram, args.suggestedBaseFileName); }, null);
+            var args = Bind<StartRecordingArguments>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.StartRecording(args.schedulerBaseUrl, args.channelAllocation, args.startTimeUtc, args.stopTimeUtc, args.recordingProgram, args.suggestedBaseFileName)
             });
         }
 
@@ -206,14 +168,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   stopTimeUtc - The up-to-date stop time (UTC).
         //
         // Returns true if the recording was still running (and its stop time was succesfully updated), false if there was a problem or the recording is not running.
-        [HttpPut]
-        public HttpResponseMessage RecordingValidateAndUpdate(ValidateAndUpdateRecordingArguments args)
+        public Stream RecordingValidateAndUpdate(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.ValidateAndUpdateRecording(args.channelAllocation, args.recordingProgram, args.stopTimeUtc); }, null);
+            var args = Bind<ValidateAndUpdateRecordingArguments>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.ValidateAndUpdateRecording(args.channelAllocation, args.recordingProgram, args.stopTimeUtc)
             });
         }
 
@@ -225,38 +185,30 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   recordingProgram - The program being recorded.
         //
         // Returns true if the recording was found and aborted.
-        [HttpPut]
-        public HttpResponseMessage RecordingAbort(AbortRecordingArguments args)
+        public Stream RecordingAbort(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.AbortRecording(args.schedulerBaseUrl, args.recordingProgram); }, null);
+            var args = Bind<AbortRecordingArguments>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.AbortRecording(args.schedulerBaseUrl, args.recordingProgram)
             });
         }
 
         // Retrieves the recording shares of the recorder.
-        [HttpGet]
-        public HttpResponseMessage RecordingShares()
+        public Stream RecordingShares()
         {
-            List<string> result = null;
-            _staContext.Send((s) => { result = Service.GetRecordingShares(); }, null);
             return AsJson(new
             {
-                result = result
+                result = Service.GetRecordingShares()
             });
         }
 
         // Retrieves the timeshift shares of the recorder.
-        [HttpGet]
-        public HttpResponseMessage TimeshiftShares()
+        public Stream TimeshiftShares()
         {
-            List<string> result = null;
-            _staContext.Send((s) => { result = Service.GetTimeshiftShares(); }, null);
             return AsJson(new
             {
-                result = result
+                result = Service.GetTimeshiftShares()
             });
         }
 
@@ -270,13 +222,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   stream - The live stream in case of retuning an existing stream, or null for a new one.
         //
         // Returns a LiveStreamResult value to indicate success or failure.
-        [HttpPost]
-        public HttpResponseMessage LiveTune(TuneLiveStreamArguments args)
+        public Stream LiveTune(Stream body)
         {
+            var args = Bind<TuneLiveStreamArguments>(body);
             var stream = args.stream;
 
-            LiveStreamResult result = LiveStreamResult.UnknownError;
-            _staContext.Send((s) => { result = Service.TuneLiveStream(args.channel, args.upcomingRecordingAllocation, ref stream); }, null);
+            LiveStreamResult result = Service.TuneLiveStream(args.channel, args.upcomingRecordingAllocation, ref stream);
             return AsJson(new
             {
                 result = result,
@@ -289,39 +240,31 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Post-data is the live stream that is stil in use.
         //
         // Returns true if the live stream is still running, false otherwise.
-        [HttpPut]
-        public HttpResponseMessage LiveKeepAlive(LiveStream stream)
+        public Stream LiveKeepAlive(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.KeepLiveStreamAlive(stream); }, null);
+            var stream = Bind<LiveStream>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.KeepLiveStreamAlive(stream)
             });
         }
 
         // Stop the live stream (if it is found and belongs to the recorder).
         //
         // Post-data is the live stream to stop.
-        [HttpPut]
-        public HttpResponseMessage LiveStop(LiveStream stream)
+        public void LiveStop(Stream body)
         {
-            _staContext.Send((s) => { Service.StopLiveStream(stream); }, null);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = Bind<LiveStream>(body);
+            Service.StopLiveStream(stream);
         }
 
         // Get all live streams.
-        [HttpGet]
-        public HttpResponseMessage LiveStreams()
+        public Stream LiveStreams()
         {
-            JsonSerializerSettings microsoftDateFormatSettings = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
-            return new HttpResponseMessage(HttpStatusCode.OK)
+            return AsJson(new
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new
-                {
-                    result = Service.GetLiveStreams()
-                }, microsoftDateFormatSettings), System.Text.Encoding.UTF8, "application/json")
-            };
+                result = Service.GetLiveStreams()
+            });
         }
 
         // Get the live tuning state of a number of channels.
@@ -331,9 +274,9 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         //   stream - The live stream you want to be ignored (since it's yours), or null.
         //
         // Returns an array with all the live states for the given channels.
-        [HttpPut]
-        public HttpResponseMessage ChannelsLiveState(GetChannelsLiveStateArguments args)
+        public Stream ChannelsLiveState(Stream body)
         {
+            var args = Bind<GetChannelsLiveStateArguments>(body);
             return AsJson(new
             {
                 result = Service.GetChannelsLiveState(args.channels, args.stream)
@@ -345,14 +288,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Post-data is the active live stream.
         //
         // Returns the service tuning details, or null if none are available.
-        [HttpPut]
-        public HttpResponseMessage LiveTuningDetails(LiveStream stream)
+        public Stream LiveTuningDetails(Stream body)
         {
-            ServiceTuning result = null;
-            _staContext.Send((s) => { result = Service.GetLiveStreamTuningDetails(stream); }, null);
+            var stream = Bind<LiveStream>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.GetLiveStreamTuningDetails(stream)
             });
         }
 
@@ -365,35 +306,31 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Post-data is the live stream.
         //
         // Returns true if teletext is present.
-        [HttpPut]
-        public HttpResponseMessage LiveHasTeletext(LiveStream stream)
+        public Stream LiveHasTeletext(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.HasTeletext(stream); }, null);
+            var stream = Bind<LiveStream>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.HasTeletext(stream)
             });
         }
 
         // Tell the recorder to start grabbing teletext for the given live stream.
         //
         // Post-data is the live stream.
-        [HttpPut]
-        public HttpResponseMessage LiveTeletextStartGrabbing(LiveStream stream)
+        public void LiveTeletextStartGrabbing(Stream body)
         {
-            _staContext.Send((s) => { Service.StartGrabbingTeletext(stream); }, null);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = Bind<LiveStream>(body);
+            Service.StartGrabbingTeletext(stream);
         }
 
         // Tell the recorder to stop grabbing teletext for the given live stream.
         //
         // Post-data is the live stream.
-        [HttpPut]
-        public HttpResponseMessage LiveTeletextStopGrabbing(LiveStream stream)
+        public void LiveTeletextStopGrabbing(Stream body)
         {
-            _staContext.Send((s) => { Service.StopGrabbingTeletext(stream); }, null);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = Bind<LiveStream>(body);
+            Service.StopGrabbingTeletext(stream);
         }
 
         // Tell the recorder to start grabbing teletext for the given live stream.
@@ -401,14 +338,12 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Post-data is the live stream.
         //
         // Returns true if the recorder is grabbing teletext.
-        [HttpPut]
-        public HttpResponseMessage LiveTeletextIsGrabbing(LiveStream stream)
+        public Stream LiveTeletextIsGrabbing(Stream body)
         {
-            bool result = false;
-            _staContext.Send((s) => { result = Service.IsGrabbingTeletext(stream); }, null);
+            var stream = Bind<LiveStream>(body);
             return AsJson(new
             {
-                result = result
+                result = Service.IsGrabbingTeletext(stream)
             });
         }
 
@@ -422,12 +357,11 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         // Returns an object with:
         //   result - The requested page content (base64-encoded), or null if the page was not ready yet.
         //   subPageCount - The total number of subpages of this page.
-        [HttpPut]
-        public HttpResponseMessage LiveTeletextGetPage(int pageNumber, int subPageNumber, LiveStream stream)
+        public Stream LiveTeletextGetPage(string pageNumber, string subPageNumber, Stream body)
         {
+            var stream = Bind<LiveStream>(body);
             int subPageCount = 0;
-            byte[] result = null;
-            _staContext.Send((s) => { result = Service.GetTeletextPageBytes(stream, pageNumber, subPageNumber, out subPageCount); }, null);
+            byte[] result = Service.GetTeletextPageBytes(stream, int.Parse(pageNumber), int.Parse(subPageNumber), out subPageCount);
             return AsJson(new
             {
                 result = result == null ? null : Convert.ToBase64String(result, Base64FormattingOptions.None),
@@ -437,31 +371,39 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
         #endregion
 
-        private HttpResponseMessage AsJson(object obj)
+        private T Bind<T>(Stream body)
+        {
+            using (var reader = new StreamReader(body, System.Text.Encoding.UTF8))
+            {
+                string value = reader.ReadToEnd();
+                JsonSerializerSettings microsoftDateFormatSettings = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
+                return JsonConvert.DeserializeObject<T>(value, microsoftDateFormatSettings);
+            }
+        }
+
+        private Stream AsJson(object obj)
         {
             JsonSerializerSettings microsoftDateFormatSettings = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
-            return new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(JsonConvert.SerializeObject(obj, microsoftDateFormatSettings), System.Text.Encoding.UTF8, "application/json")
-            };
-
+            byte[] resultBytes = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, microsoftDateFormatSettings));
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
+            return new MemoryStream(resultBytes);
         }
 
         #region Arguments
 
-        public class InitializeArguments
+        private class InitializeArguments
         {
             public string schedulerBaseUrl { get; set; }
         }
 
-        public class AllocateCardArguments
+        private class AllocateCardArguments
         {
             public Channel channel { get; set; }
             public List<CardChannelAllocation> alreadyAllocated { get; set; }
             public bool useReversePriority { get; set; }
         }
 
-        public class StartRecordingArguments
+        private class StartRecordingArguments
         {
             public string schedulerBaseUrl { get; set; }
             public CardChannelAllocation channelAllocation { get; set; }
@@ -471,27 +413,27 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             public string suggestedBaseFileName { get; set; }
         }
 
-        public class ValidateAndUpdateRecordingArguments
+        private class ValidateAndUpdateRecordingArguments
         {
             public CardChannelAllocation channelAllocation { get; set; }
             public UpcomingProgram recordingProgram { get; set; }
             public DateTime stopTimeUtc { get; set; }
         }
 
-        public class AbortRecordingArguments
+        private class AbortRecordingArguments
         {
             public string schedulerBaseUrl { get; set; }
             public UpcomingProgram recordingProgram { get; set; }
         }
 
-        public class TuneLiveStreamArguments
+        private class TuneLiveStreamArguments
         {
             public Channel channel { get; set; }
             public CardChannelAllocation upcomingRecordingAllocation { get; set; }
             public LiveStream stream { get; set; }
         }
 
-        public class GetChannelsLiveStateArguments
+        private class GetChannelsLiveStateArguments
         {
             public List<Channel> channels { get; set; }
             public LiveStream stream { get; set; }
