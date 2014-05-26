@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nancy, Version=0.22.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO">
@@ -61,6 +57,7 @@
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,9 +67,6 @@
   <ItemGroup>
     <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderCallbackProxy.cs">
       <Link>RecorderCallbackProxy.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderModule.cs">
-      <Link>RecorderModule.cs</Link>
     </Compile>
     <Compile Include="..\..\ArgusTV.Common.Recorders\RecorderNotFoundException.cs">
       <Link>RecorderNotFoundException.cs</Link>

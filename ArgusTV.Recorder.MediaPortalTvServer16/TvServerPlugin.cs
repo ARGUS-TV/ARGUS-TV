@@ -37,11 +37,12 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Log;
 using SetupTv;
-using Nancy.Hosting.Self;
 
 using ArgusTV.ServiceProxy;
 using ArgusTV.DataContracts;
 using ArgusTV.Recorder.MediaPortalTvServer.Channels;
+using System.Web.Http.SelfHost;
+using System.Web.Http;
 
 namespace ArgusTV.Recorder.MediaPortalTvServer
 {
@@ -148,13 +149,16 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         #region IPlugin Methods
 
         private static IController _controller;
-        private NancyHost _recorderRestHost;
+        private HttpSelfHostConfiguration _recorderRestConfig;
+        private HttpSelfHostServer _recorderRestHost;
         private DvbEpgThread _dvbEpgThread;
         private PowerEventHandler _powerEventHandler;
 
         public void Start(IController controller)
         {
             Log.Info("ArgusTV.Recorder.MediaPortalTvServer: Start");
+
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             _controller = controller;
             LoadSettings();
@@ -173,18 +177,35 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += events_OnTvServerEvent;
             Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Registered OnTvServerEvent with TV Server");
 
-            HostConfiguration configuration = new HostConfiguration()
-            {
-                AllowChunkedEncoding = true,
-                EnableClientCertificates = false
-            };
-            string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/", _recorderTunerTcpPort);
-            _recorderRestHost = new NancyHost(new RestBootstrapper(), configuration, new Uri(recorderUrl));
-            _recorderRestHost.Start();
-            Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl + "Recorder/");
+            string recorderUrl = String.Format("http://localhost:{0}/ArgusTV/Recorder", _recorderTunerTcpPort);
+
+            _recorderRestConfig = new HttpSelfHostConfiguration(recorderUrl);
+            RecorderApiController.MapHttpRoutes(_recorderRestConfig.Routes);
+
+            _recorderRestHost = new HttpSelfHostServer(_recorderRestConfig);
+            _recorderRestHost.OpenAsync().Wait();
+            Log.Debug("ArgusTV.Recorder.MediaPortalTvServer: Listening on " + recorderUrl);
 
             _dvbEpgThread = new DvbEpgThread();
             _dvbEpgThread.Start();
+        }
+
+        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var name = new System.Reflection.AssemblyName(args.Name);
+            if (name.Name == "log4net")
+            {
+                return System.Reflection.Assembly.Load("log4net");
+            }
+            else if (name.Name == "System.Net.Http")
+            {
+                return System.Reflection.Assembly.Load("System.Net.Http");
+            }
+            else if (name.Name == "Newtonsoft.Json")
+            {
+                return System.Reflection.Assembly.Load("Newtonsoft.Json");
+            }
+            return null;
         }
 
         public void Stop()
@@ -209,9 +230,10 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             }
             if (_recorderRestHost != null)
             {
-                _recorderRestHost.Stop();
-                TvServerRecorderModule.DisposeModule();
+                _recorderRestHost.CloseAsync().Wait();
+                RecorderApiController.DisposeModule();
                 _recorderRestHost.Dispose();
+                _recorderRestConfig.Dispose();
                 _recorderRestHost = null;
             }
         }
@@ -330,7 +352,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 _serverSettings.ServerName = layer.GetSetting(SettingName.ServerName, _defaultServerName).Value;
                 _serverSettings.Transport = ServiceTransport.Http;
                 _serverSettings.Port = Convert.ToInt32(layer.GetSetting(SettingName.Port, _defaultPort.ToString()).Value);
-                if (_serverSettings.Port == 49942)               
+                if (_serverSettings.Port == 49942)
                 {
                     // Auto-adjust old net.tcp port to HTTP.
                     _serverSettings.Port = 49943;

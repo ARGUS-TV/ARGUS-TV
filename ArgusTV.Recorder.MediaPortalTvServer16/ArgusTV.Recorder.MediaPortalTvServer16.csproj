@@ -76,11 +76,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\MediaPortalAssemblies16\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy">
-      <HintPath>..\ReferencedAssemblies\Nancy\Nancy.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\ReferencedAssemblies\Nancy\Nancy.Hosting.Self.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PluginBase, Version=1.2.300.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -106,6 +108,10 @@
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
@@ -118,6 +124,14 @@
     </Reference>
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.AspNet.WebApi.SelfHost.4.0.30506.0\lib\net40\System.Web.Http.SelfHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -157,8 +171,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RecorderApiController.cs" />
     <Compile Include="RecordingThread.cs" />
-    <Compile Include="RestBootstrapper.cs" />
     <Compile Include="SettingName.cs" />
     <Compile Include="Channels\ChannelLink.cs" />
     <Compile Include="Channels\ChannelLinks.cs" />
@@ -175,7 +189,6 @@
     </Compile>
     <Compile Include="TvServerPlugin.cs" />
     <Compile Include="DvbEpgThread.cs" />
-    <Compile Include="TvServerRecorderModule.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Wizards\ImportChannels\ImportChannelsContext.cs" />
     <Compile Include="Wizards\ImportChannels\ImportChannelsPage.cs">

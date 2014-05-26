@@ -24,8 +24,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using Nancy.Helpers;
 using ArgusTV.Common.Logging;
+using System.Web;
 
 namespace ArgusTV.Common.Recorders.Utility
 {

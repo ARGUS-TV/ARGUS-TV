@@ -25,8 +25,6 @@ using ArgusTV.Common.Logging;
 using ArgusTV.Common.StaThreadSyncronizer;
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
-using Nancy;
-using Nancy.ModelBinding;
 using System.Management;
 
 namespace ArgusTV.Common.Recorders
