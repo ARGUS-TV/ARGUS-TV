@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using ArgusTV.UI.Console.Properties;
@@ -79,6 +80,7 @@ namespace ArgusTV.UI.Console.Panels
             _upcomingProgramsControl.Sortable = true;
             _upcomingProgramsControl.ShowScheduleName = true;
             RefreshUpcomingPrograms();
+            StartListenerTask(EventGroup.RecordingEvents|EventGroup.ScheduleEvents);
         }
 
         public override void OnChildClosed(ContentPanel childPanel)
@@ -194,6 +196,16 @@ namespace ArgusTV.UI.Console.Panels
         private void _schedulesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             RefreshUpcomingPrograms();
+        }
+
+        protected override void OnArgusTVEvent(SynchronizationContext uiSyncContext, ServiceEvent @event)
+        {
+            if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged
+                || @event.Name == ServiceEventNames.UpcomingAlertsChanged
+                || @event.Name == ServiceEventNames.UpcomingSuggestionsChanged)
+            {
+                uiSyncContext.Post(s => RefreshUpcomingPrograms(), null);
+            }
         }
 
         #region Program Context Menu

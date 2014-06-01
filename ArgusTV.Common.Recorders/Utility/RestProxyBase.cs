@@ -32,7 +32,7 @@ namespace ArgusTV.Common.Recorders.Utility
     public abstract class RestProxyBase
     {
         /// <exclude />
-        protected HttpClient _client;
+        private HttpClient _client;
 
         /// <exclude />
         public RestProxyBase(string baseUrl)
@@ -193,18 +193,18 @@ namespace ArgusTV.Common.Recorders.Utility
             return data.result;
         }
 
-        private HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError)
+        protected HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError)
         {
             try
             {
                 var response = _client.SendAsync(request).Result;
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                    {
-                        var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
-                        throw new ApplicationException(error.detail);
-                    }
+                    var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
+                    throw new ApplicationException(error.detail);
+                }
+                if (response.StatusCode >= HttpStatusCode.BadRequest)
+                {
                     throw new ApplicationException(response.ReasonPhrase);
                 }
                 return response;

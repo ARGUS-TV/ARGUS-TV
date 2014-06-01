@@ -331,7 +331,7 @@ namespace ArgusTV.ServiceProxy
             {
                 request.AddParameter("argbBackground", argbBackground.Value);
             }
-            using (var response = _client.SendAsync(request).Result)
+            using (var response = ExecuteRequest(request))
             {
                 switch (response.StatusCode)
                 {

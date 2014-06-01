@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using ArgusTV.UI.Console.Properties;
@@ -63,6 +64,7 @@ namespace ArgusTV.UI.Console.Panels
                 Cursor.Current = Cursors.WaitCursor;
                 _upcomingProgramsControl.ScheduleType = ScheduleType.Recording;
                 RefreshActiveRecordings();
+                StartListenerTask(EventGroup.RecordingEvents);
             }
             catch (Exception ex)
             {
@@ -122,6 +124,16 @@ namespace ArgusTV.UI.Console.Panels
                 && upcomingProgramView.ActiveRecording != null)
             {
                 WinFormsUtility.RunVlc(upcomingProgramView.ActiveRecording.RecordingFileName);
+            }
+        }
+
+        protected override void OnArgusTVEvent(SynchronizationContext uiSyncContext, ServiceEvent @event)
+        {
+            if (@event.Name == ServiceEventNames.RecordingStarted
+                || @event.Name == ServiceEventNames.RecordingEnded
+                || @event.Name == ServiceEventNames.ActiveRecordingsChanged)
+            {
+                uiSyncContext.Post(s => RefreshActiveRecordings(), null);
             }
         }
 

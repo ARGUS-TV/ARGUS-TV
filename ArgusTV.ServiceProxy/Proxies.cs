@@ -267,6 +267,9 @@ namespace ArgusTV.ServiceProxy
                 {
                     _isInitialized = false;
                     _serverSettings = serverSettings;
+
+                    WakeOnLan.EnsureServerAwake(serverSettings);
+
                     DateTime firstTryTime = DateTime.Now;
                     for (; ; )
                     {

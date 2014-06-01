@@ -36,7 +36,7 @@ namespace ArgusTV.ServiceProxy
         private string _module;
 
         /// <exclude />
-        protected HttpClient _client;
+        private HttpClient _client;
 
         /// <exclude />
         public RestProxyBase(string module)
@@ -344,18 +344,18 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
-        private HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError)
+        protected HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError = true)
         {
             try
             {
                 var response = _client.SendAsync(request).Result;
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                    {
-                        var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
-                        throw new ArgusTVException(error.detail);
-                    }
+                    var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
+                    throw new ArgusTVException(error.detail);
+                }
+                if (response.StatusCode >= HttpStatusCode.BadRequest)
+                {
                     throw new ArgusTVException(response.ReasonPhrase);
                 }
                 return response;
@@ -364,6 +364,8 @@ namespace ArgusTV.ServiceProxy
             {
                 if (IsConnectionError(ex.InnerException))
                 {
+                    WakeOnLan.EnsureServerAwake(Proxies.ServerSettings);
+
                     throw new ArgusTVNotFoundException(ex.InnerException.InnerException.Message);
                 }
                 throw;

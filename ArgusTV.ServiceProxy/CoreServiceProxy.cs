@@ -165,6 +165,10 @@ namespace ArgusTV.ServiceProxy
                 }
                 catch (AggregateException ex)
                 {
+                    if (IsConnectionError(ex.InnerException))
+                    {
+                        throw new ArgusTVNotFoundException(ex.InnerException.InnerException.Message);
+                    }
                     // Check if we're dealing with either a timeout or an explicit cancellation (same exception in both cases).
                     if (!(ex.InnerException is TaskCanceledException))
                     {

@@ -20,8 +20,14 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
 
 namespace ArgusTV.UI.Console
 {
@@ -121,5 +127,130 @@ namespace ArgusTV.UI.Console
                 this.ClosePanel(DialogResult.Abort);
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            CancelListenerTask();
+            base.Dispose(disposing);
+        }
+
+        #region Event Listener
+
+        private readonly string _eventsClientId = Dns.GetHostName() + "-d92663a4156c43b2ba5af09d38daf198"; // Unique for the UI Console!
+
+        private SynchronizationContext _uiSyncContext;
+        private bool _eventListenerSubscribed;
+        private Task _listenerTask;
+        private CancellationTokenSource _listenerCancellationTokenSource;
+
+        protected void StartListenerTask(EventGroup eventGroups)
+        {
+            _uiSyncContext = SynchronizationContext.Current;
+
+            _listenerCancellationTokenSource = new CancellationTokenSource();
+            _listenerTask = new Task(() => HandleArgusTVEvents(_listenerCancellationTokenSource.Token),
+                _listenerCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            _listenerTask.Start();
+        }
+
+        private void CancelListenerTask()
+        {
+            try
+            {
+                if (_listenerCancellationTokenSource != null)
+                {
+                    _listenerCancellationTokenSource.Cancel();
+                    _listenerTask.Wait();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (_listenerTask != null)
+                {
+                    _listenerTask.Dispose();
+                    _listenerTask = null;
+                }
+                if (_listenerCancellationTokenSource != null)
+                {
+                    _listenerCancellationTokenSource.Dispose();
+                    _listenerCancellationTokenSource = null;
+                }
+            }
+        }
+
+        private void HandleArgusTVEvents(CancellationToken cancellationToken)
+        {
+            for (; ; )
+            {
+                if (Proxies.IsInitialized)
+                {
+                    IList<ServiceEvent> events = null;
+                    if (!_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents);
+                            _eventListenerSubscribed = true;
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    if (_eventListenerSubscribed)
+                    {
+                        try
+                        {
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
+                            if (events == null)
+                            {
+                                _eventListenerSubscribed = false;
+                            }
+                            else
+                            {
+                                ProcessEvents(events);
+                            }
+                        }
+                        catch
+                        {
+                            _eventListenerSubscribed = false;
+                        }
+                    }
+                }
+                if (cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(_eventListenerSubscribed ? 0 : 10)))
+                {
+                    break;
+                }
+            }
+
+            if (Proxies.IsInitialized
+                && _eventListenerSubscribed)
+            {
+                try
+                {
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
+                }
+                catch
+                {
+                }
+                _eventListenerSubscribed = false;
+            }
+        }
+
+        private void ProcessEvents(IList<ServiceEvent> events)
+        {
+            foreach(var @event in events)
+            {
+                OnArgusTVEvent(_uiSyncContext, @event);
+            }
+        }
+
+        protected virtual void OnArgusTVEvent(SynchronizationContext uiSyncContext, ServiceEvent @event)
+        {
+        }
+
+        #endregion
     }
 }

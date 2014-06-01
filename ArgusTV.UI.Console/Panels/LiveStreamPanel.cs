@@ -23,9 +23,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Threading;
 
 using ArgusTV.DataContracts;
 using ArgusTV.UI.Console.Properties;
@@ -68,11 +72,13 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _inLoad = true;
+
                 Cursor.Current = Cursors.WaitCursor;
                 _channelTypeComboBox.SelectedIndex = (int)ChannelType.Television;
                 LoadAllGroups();
                 LoadAllActiveStreams();
                 EnableButtons();
+                StartListenerTask(EventGroup.RecordingEvents|EventGroup.ScheduleEvents);
             }
             finally
             {
@@ -570,6 +576,26 @@ namespace ArgusTV.UI.Console.Panels
             }
         }
 
+        protected override void OnArgusTVEvent(SynchronizationContext uiSyncContext, ServiceEvent @event)
+        {
+            if (@event.Name == ServiceEventNames.LiveStreamStarted
+                || @event.Name == ServiceEventNames.LiveStreamTuned
+                || @event.Name == ServiceEventNames.LiveStreamEnded
+                || @event.Name == ServiceEventNames.LiveStreamAborted)
+            {
+                uiSyncContext.Post(s => LoadAllActiveStreams(), null);
+            }
+            else if (@event.Name == ServiceEventNames.UpcomingRecordingsChanged
+                || @event.Name == ServiceEventNames.UpcomingAlertsChanged
+                || @event.Name == ServiceEventNames.UpcomingSuggestionsChanged
+                || @event.Name == ServiceEventNames.RecordingStarted
+                || @event.Name == ServiceEventNames.RecordingEnded
+                || @event.Name == ServiceEventNames.ActiveRecordingsChanged)
+            {
+                uiSyncContext.Post(s => RefreshSelectedGroupChannels(), null);
+            }
+        }
+
         #region Program Context Menu
 
         private void _programContextMenuStrip_CreateNewSchedule(object sender, ArgusTV.WinForms.Controls.ProgramContextMenuStrip.CreateNewScheduleEventArgs e)
@@ -623,6 +649,5 @@ namespace ArgusTV.UI.Console.Panels
         }
 
         #endregion
-
     }
 }
