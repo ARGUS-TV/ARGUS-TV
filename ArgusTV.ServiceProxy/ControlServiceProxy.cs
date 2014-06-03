@@ -95,7 +95,7 @@ namespace ArgusTV.ServiceProxy
         /// Check if the ARGUS TV service has the needed access rights on the recording shares of the given pluginService.
         /// </summary>
         /// <param name="pluginService">The pluginService.</param>
-        /// <returns></returns>
+        /// <returns>A list of RecordingShareAccessibilityInfos.</returns>
         public List<RecordingShareAccessibilityInfo> AreRecordingSharesAccessible(PluginService pluginService)
         {
             var request = NewRequest(HttpMethod.Post, "AreRecordingSharesAccessible");
@@ -516,7 +516,7 @@ namespace ArgusTV.ServiceProxy
         /// the requested size, or centered on a background.  If both width and height are set to 0, the full
         /// size thumbnail will be returned.
         /// </summary>
-        /// <param name="recordingId"></param>
+        /// <param name="recordingId">The unique ID of the recording.</param>
         /// <param name="width">The requested width, 0 to get the width according to the aspect.</param>
         /// <param name="height">The requested height, 0 to get the height according to the aspect.</param>
         /// <param name="argbBackground">The optional RGB color of the background, null to return the scaled image as is.</param>

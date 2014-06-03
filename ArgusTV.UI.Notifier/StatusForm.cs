@@ -41,14 +41,13 @@ namespace ArgusTV.UI.Notifier
 
         private string _eventsServiceBaseUrl;
         private readonly string _eventsClientId = Dns.GetHostName() + "-99b8cd44d1ab459cb16f199a48086588"; // Unique for the Notifier!
-        private bool _eventListenerSubscribed;
         private SynchronizationContext _uiSyncContext;
 
         private ServerStatus _serverStatus = ServerStatus.NotConnected;
         private SettingsForm _settingsForm;
 
-        private Task _connectionTask;
-        private CancellationTokenSource _connectionCancellationTokenSource;
+        private Task _eventListenerTask;
+        private CancellationTokenSource _listenerCancellationTokenSource;
         
         private Point _toolTipMousePosition;
         private StatusToolTipForm _toolTipForm;
@@ -62,7 +61,7 @@ namespace ArgusTV.UI.Notifier
             _notifyIcon.MouseMove += new MouseEventHandler(_notifyIcon_MouseMove);
             _uiSyncContext = SynchronizationContext.Current;
 
-            StartConnectionTask();
+            StartEventListenerTask();
         }
 
         internal string EventsServiceBaseUrl
@@ -87,28 +86,28 @@ namespace ArgusTV.UI.Notifier
         {
             if (disposing && (components != null))
             {
-                CancelConnectionTask();
+                CancelEventListenerTask();
                 components.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private void StartConnectionTask()
+        private void StartEventListenerTask()
         {
-            _connectionCancellationTokenSource = new CancellationTokenSource();
-            _connectionTask = new Task(() => EnsureConnection(_connectionCancellationTokenSource.Token),
-                _connectionCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
-            _connectionTask.Start();
+            _listenerCancellationTokenSource = new CancellationTokenSource();
+            _eventListenerTask = new Task(() => ConnectAndHandleEvents(_listenerCancellationTokenSource.Token),
+                _listenerCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            _eventListenerTask.Start();
         }
 
-        private void CancelConnectionTask()
+        private void CancelEventListenerTask()
         {
             try
             {
-                if (_connectionCancellationTokenSource != null)
+                if (_listenerCancellationTokenSource != null)
                 {
-                    _connectionCancellationTokenSource.Cancel();
-                    _connectionTask.Wait();
+                    _listenerCancellationTokenSource.Cancel();
+                    _eventListenerTask.Wait();
                 }
             }
             catch
@@ -116,15 +115,15 @@ namespace ArgusTV.UI.Notifier
             }
             finally
             {
-                if (_connectionTask != null)
+                if (_eventListenerTask != null)
                 {
-                    _connectionTask.Dispose();
-                    _connectionTask = null;
+                    _eventListenerTask.Dispose();
+                    _eventListenerTask = null;
                 }
-                if (_connectionCancellationTokenSource != null)
+                if (_listenerCancellationTokenSource != null)
                 {
-                    _connectionCancellationTokenSource.Dispose();
-                    _connectionCancellationTokenSource = null;
+                    _listenerCancellationTokenSource.Dispose();
+                    _listenerCancellationTokenSource = null;
                 }
             }
         }
@@ -318,6 +317,7 @@ namespace ArgusTV.UI.Notifier
             }
             this.Activate();
             RefreshActiveAndUpcomingRecordings();
+            RefreshStatus();
         }
 
         #endregion
@@ -401,8 +401,8 @@ namespace ArgusTV.UI.Notifier
                     if (_settingsForm.ShowDialog(this) == DialogResult.OK)
                     {
                         this.IsConnected = false;
-                        CancelConnectionTask();
-                        StartConnectionTask();
+                        CancelEventListenerTask();
+                        StartEventListenerTask();
                     }
                 }
                 _settingsForm = null;
@@ -411,7 +411,7 @@ namespace ArgusTV.UI.Notifier
 
         private void _exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CancelConnectionTask();
+            CancelEventListenerTask();
             Application.Exit();
         }
 
@@ -537,12 +537,12 @@ namespace ArgusTV.UI.Notifier
 
         #region Connection
 
-        private object _connectionLock = new object();
+        private bool _eventListenerSubscribed;
         private int _eventsErrorCount = 0;
 
         public bool IsConnected { get; set; }
 
-        private void EnsureConnection(CancellationToken cancellationToken)
+        private void ConnectAndHandleEvents(CancellationToken cancellationToken)
         {
             for (; ; )
             {
@@ -572,9 +572,15 @@ namespace ArgusTV.UI.Notifier
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
+                                _uiSyncContext.Post(s => RefreshStatus(), null);
                             }
                             else
                             {
+                                if (events.Count == 0)
+                                {
+                                    // In case of a timeout, let's refresh the general status -- to make sure we don't miss any events.
+                                    _uiSyncContext.Post(s => RefreshStatus(), null);
+                                }
                                 ProcessEvents(events);
                             }
                         }

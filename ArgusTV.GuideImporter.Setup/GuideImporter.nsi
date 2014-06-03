@@ -2,7 +2,7 @@
 
 ; Constants
 !define PRODUCT_NAME "ARGUS TV Guide Importer"
-!define PRODUCT_VERSION "2.3 BETA 10"
+!define PRODUCT_VERSION "2.3 BETA 11"
 !define PRODUCT_PUBLISHER "ARGUS TV"
 !define PRODUCT_WEB_SITE "http://www.argus-tv.com"
 !define PRODUCT_DIR_REGKEY "Software\ARGUS TV\Install"

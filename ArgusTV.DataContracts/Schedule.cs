@@ -81,8 +81,9 @@ namespace ArgusTV.DataContracts
     }
 
     /// <summary>
-    /// Base schedule class
+    /// Base schedule class.
     /// </summary>
+    /// <typeparam name="TRule">The type of a schedule rule.</typeparam>
     public abstract class ScheduleBase<TRule>
         where TRule: class
     {

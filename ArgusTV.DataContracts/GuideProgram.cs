@@ -245,7 +245,7 @@ namespace ArgusTV.DataContracts
         /// </summary>
         /// <param name="subTitle">The episode title, or null.</param>
         /// <param name="episodeNumberDisplay">The episode number, or null.</param>
-        /// <returns></returns>
+        /// <returns>All episode information combined in a single string.</returns>
         public static string CreateEpisodeTitle(string subTitle, string episodeNumberDisplay)
         {
             string episodeTitle = String.Empty;
