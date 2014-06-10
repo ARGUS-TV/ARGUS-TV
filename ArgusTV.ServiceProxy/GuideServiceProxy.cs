@@ -190,12 +190,39 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
-        /// Get all guide programs on the given channels, between the given lower and upper time.
+        /// Get all guide programs (summaries) on the given channel, between the given lower and upper time.
+        /// </summary>
+        /// <param name="guideChannelId">The guide channel ID.</param>
+        /// <param name="lowerTime">Return programs that end after this time.</param>
+        /// <param name="upperTime">Return programs that start before this time.</param>
+        /// <returns>An array containing zero or more guide programs (summaries).</returns>
+        public List<GuideProgramSummary> GetChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime)
+        {
+            var request = NewRequest(HttpMethod.Get, "Programs/{0}/{1}/{2}", guideChannelId, lowerTime, upperTime);
+            return Execute<List<GuideProgramSummary>>(request);
+        }
+
+        /// <summary>
+        /// Get all guide programs on the given channel, between the given lower and upper time.
+        /// </summary>
+        /// <param name="guideChannelId">The guide channel ID.</param>
+        /// <param name="lowerTime">Return programs that end after this time.</param>
+        /// <param name="upperTime">Return programs that start before this time.</param>
+        /// <param name="includeCredits">Set to true to also receive all program credits.</param>
+        /// <returns>An array containing zero or more guide programs.</returns>
+        public List<GuideProgram> GetFullChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
+        {
+            var request = NewRequest(HttpMethod.Get, "FullPrograms/{0}/{1}/{2}/{3}", guideChannelId, lowerTime, upperTime, includeCredits);
+            return Execute<List<GuideProgram>>(request);
+        }
+
+        /// <summary>
+        /// Get all guide programs (summaries) on the given channels, between the given lower and upper time.
         /// </summary>
         /// <param name="guideChannelIds">An array containing all guide channel IDs.</param>
         /// <param name="lowerTime">Return programs that end after this time.</param>
         /// <param name="upperTime">Return programs that start before this time.</param>
-        /// <returns>An array containing zero or more guide programs.</returns>
+        /// <returns>A list of zero or more guide programs (summaries).</returns>
         public List<GuideProgramSummary> GetChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime)
         {
             var request = NewRequest(HttpMethod.Post, "ChannelsPrograms");
@@ -209,16 +236,23 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
-        /// Get all guide programs on the given channel, between the given lower and upper time.
+        /// Get all guide programs on the given channels, between the given lower and upper time.
         /// </summary>
-        /// <param name="guideChannelId">The guide channel ID.</param>
+        /// <param name="guideChannelIds">An array containing all guide channel IDs.</param>
         /// <param name="lowerTime">Return programs that end after this time.</param>
         /// <param name="upperTime">Return programs that start before this time.</param>
-        /// <returns>An array containing zero or more guide programs.</returns>
-        public List<GuideProgramSummary> GetChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime)
+        /// <param name="includeCredits">Set to true to also receive all program credits.</param>
+        /// <returns>A list of zero or more guide programs.</returns>
+        public List<GuideProgram> GetFullChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
         {
-            var request = NewRequest(HttpMethod.Get, "Programs/{0}/{1}/{2}", guideChannelId, lowerTime, upperTime);
-            return Execute<List<GuideProgramSummary>>(request);
+            var request = NewRequest(HttpMethod.Post, "FullChannelsPrograms/{0}", includeCredits);
+            request.AddBody(new
+            {
+                GuideChannelIds = guideChannelIds,
+                LowerTime = lowerTime,
+                UpperTime = upperTime
+            });
+            return Execute<List<GuideProgram>>(request);
         }
 
         /// <summary>

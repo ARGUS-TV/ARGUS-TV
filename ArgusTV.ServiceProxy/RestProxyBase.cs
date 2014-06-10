@@ -344,6 +344,7 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
+        /// <exclude/>
         protected HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError = true)
         {
             try

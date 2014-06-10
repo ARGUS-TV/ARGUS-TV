@@ -47,30 +47,7 @@ namespace ArgusTV.UI.Notifier
                     {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
-
-                        int port = GetFreeTcpPort(Properties.Settings.Default.EventsNetTcpPort);
-
-                        string eventsServiceBaseUrl = String.Format(CultureInfo.InvariantCulture, "net.tcp://{0}:{1}/ArgusTV.UI.Notifier/",
-                            Dns.GetHostName(), port);
-
-                        //
-                        // Create the form *before* opening the host for the WCF thread synchronization context!
-                        //
-                        StatusForm form = new StatusForm();
-                        form.EventsServiceBaseUrl = eventsServiceBaseUrl;
-
-                        //ServiceHost recordingEventsHost = EventsListenerService.CreateServiceHost(eventsServiceBaseUrl);
-                        //EventsListenerService.StatusForm = form;
-                        //recordingEventsHost.Open();
-
-                        try
-                        {
-                            Application.Run(form);
-                        }
-                        finally
-                        {
-                            //recordingEventsHost.Close();
-                        }
+                        Application.Run(new StatusForm());
                     }
                 }
             }
@@ -78,25 +55,6 @@ namespace ArgusTV.UI.Notifier
             {
                 MessageBox.Show(ex.Message, "ArgusTV.UI.Notifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private static int GetFreeTcpPort(int port)
-        {
-            for (; ; )
-            {
-                try
-                {
-                    System.Net.Sockets.TcpListener tcpListener = new System.Net.Sockets.TcpListener(IPAddress.Any, port);
-                    tcpListener.Start();
-                    tcpListener.Stop();
-                    break;
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    port--;
-                }
-            }
-            return port;
         }
     }
 }

@@ -179,6 +179,26 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
+        /// Get all recordings for the given original schedules.
+        /// </summary>
+        /// <param name="scheduleIds">A list of schedule IDs.</param>
+        /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+        /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given schedule ID.</returns>
+        public List<List<RecordingSummary>> GetRecordingsForSchedules(IEnumerable<Guid> scheduleIds, bool includeNonExisting = false)
+        {
+            var request = NewRequest(HttpMethod.Post, "RecordingsForSchedules");
+            if (includeNonExisting)
+            {
+                request.AddParameter("includeNonExisting", true);
+            }
+            request.AddBody(new
+            {
+                Ids = scheduleIds
+            });
+            return Execute<List<List<RecordingSummary>>>(request);
+        }
+
+        /// <summary>
         /// Get all recordings for the given program title.
         /// </summary>
         /// <param name="channelType">The channel-type of the recordings.</param>
@@ -205,8 +225,8 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelType">The channel-type of the recordings.</param>
         /// <param name="programTitles">A list of program titles.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
-        /// <returns>A list of a list of zero or more recordings, so a list per given title.</returns>
-        public List<List<RecordingSummary>> GetRecordingsForProgramTitles(ChannelType channelType, List<string> programTitles, bool includeNonExisting = false)
+        /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given program title.</returns>  
+        public List<List<RecordingSummary>> GetRecordingsForProgramTitles(ChannelType channelType, IEnumerable<string> programTitles, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForProgramTitles/{0}", channelType);
             if (includeNonExisting)
@@ -242,6 +262,27 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
+        /// Get all recordings for the given program category.
+        /// </summary>
+        /// <param name="channelType">The channel-type of the recordings.</param>
+        /// <param name="categories">A list of program categories.</param>
+        /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+        /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given category.</returns>  
+        public List<List<RecordingSummary>> GetRecordingsForCategories(ChannelType channelType, IEnumerable<string> categories, bool includeNonExisting = false)
+        {
+            var request = NewRequest(HttpMethod.Post, "RecordingsForCategories/{0}", channelType);
+            if (includeNonExisting)
+            {
+                request.AddParameter("includeNonExisting", true);
+            }
+            request.AddBody(new
+            {
+                Categories = categories
+            });
+            return Execute<List<List<RecordingSummary>>>(request);
+        }
+
+        /// <summary>
         /// Get all recordings on the given channel.
         /// </summary>
         /// <param name="channelId">The ID of the channel.</param>
@@ -255,6 +296,26 @@ namespace ArgusTV.ServiceProxy
                 request.AddParameter("includeNonExisting", true);
             }
             return Execute<List<RecordingSummary>>(request);
+        }
+
+        /// <summary>
+        /// Get all recordings on the given channels.
+        /// </summary>
+        /// <param name="channelIds">A list of channel IDs.</param>
+        /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
+        /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given channel.</returns>
+        public List<List<RecordingSummary>> GetRecordingsOnChannels(IEnumerable<Guid> channelIds, bool includeNonExisting = false)
+        {
+            var request = NewRequest(HttpMethod.Post, "RecordingsOnChannels");
+            if (includeNonExisting)
+            {
+                request.AddParameter("includeNonExisting", true);
+            }
+            request.AddBody(new
+            {
+                Ids = channelIds
+            });
+            return Execute<List<List<RecordingSummary>>>(request);
         }
 
         /// <summary>

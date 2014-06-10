@@ -64,12 +64,6 @@ namespace ArgusTV.UI.Notifier
             StartEventListenerTask();
         }
 
-        internal string EventsServiceBaseUrl
-        {
-            get { return _eventsServiceBaseUrl; }
-            set { _eventsServiceBaseUrl = value; }
-        }
-
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             _activeRecordingsControl.ShowScheduleName = true;
