@@ -40,7 +40,7 @@ namespace ArgusTV.UI.Notifier
         private const int _maxTipTextLength = 256;
 
         private string _eventsServiceBaseUrl;
-        private readonly string _eventsClientId = Dns.GetHostName() + "-99b8cd44d1ab459cb16f199a48086588"; // Unique for the Notifier!
+        private string _eventsClientId;
         private SynchronizationContext _uiSyncContext;
 
         private ServerStatus _serverStatus = ServerStatus.NotConnected;
@@ -61,6 +61,8 @@ namespace ArgusTV.UI.Notifier
             _notifyIcon.MouseMove += new MouseEventHandler(_notifyIcon_MouseMove);
             _uiSyncContext = SynchronizationContext.Current;
 
+            _eventsClientId = String.Format("{0}-{1}-99b8cd44d1ab459cb16f199a48086588", // Unique for the Notifier!
+                Dns.GetHostName(), System.Environment.GetEnvironmentVariable("SESSIONNAME"));
             StartEventListenerTask();
         }
 

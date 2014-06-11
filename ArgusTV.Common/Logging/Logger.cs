@@ -27,29 +27,17 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-using log4net;
-using log4net.Appender;
-using log4net.Core;
-using log4net.Layout;
-using log4Hierarchy = log4net.Repository.Hierarchy;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace ArgusTV.Common.Logging
 {
     public static class Logger
     {
-        private static string _argusTV = "ArgusTV";
-        private static ILog _log;
+        private static NLog.Logger _log;
 
         private static SourceLevels _sourceLevels = SourceLevels.Off;
-
-        public static void ConfigureNHibernateLoggers()
-        {
-#if DEBUG
-            LogManager.GetRepository().Threshold = Level.Warn;
-#else
-            LogManager.GetRepository().Threshold = Level.Error;
-#endif
-        }
 
         #region Logging Enabled?
 
@@ -98,8 +86,10 @@ namespace ArgusTV.Common.Logging
 
         public static string ArgusTVLogFolder
         {
-            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\Logs"); }
+            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ARGUS TV", "Logs"); }
         }
+
+        public static string LogFilePath { get; private set; }
 
         #endregion
 
@@ -115,64 +105,68 @@ namespace ArgusTV.Common.Logging
             {
                 filePath = Path.Combine(ArgusTVLogFolder, filePath);
             }
+            LogFilePath = filePath;
 
-            Level level = Level.Debug;
-            if (_sourceLevels == SourceLevels.Information)
+            var config = LogManager.Configuration;
+            if (config == null)
             {
-                level = Level.Info;
+                config = new LoggingConfiguration();
             }
-            else if (_sourceLevels == SourceLevels.Warning)
+
+            var fileTarget = new FileTarget
             {
-                level = Level.Warn;
+                ConcurrentWrites = true,
+                FileName = filePath,
+                Layout = "${longdate} [${pad:padding=-5:fixedLength=true:inner=${level}}][${threadname:whenEmpty=${threadid}}]: ${message}",
+                BufferSize = 256 * 1024,
+                ArchiveFileName = filePath.Replace(".log", "_{#}.log"),
+                ArchiveAboveSize = 1000 * 1000, // 1MB
+                ArchiveNumbering = ArchiveNumberingMode.Rolling,
+                MaxArchiveFiles = 9
+            };
+            config.AddTarget("file", fileTarget);
+
+            LogLevel level = SetLogLevel(sourceLevels);
+            var rule = new LoggingRule("DiskLogger", level, fileTarget);
+            config.LoggingRules.Add(rule);
+
+            LogManager.Configuration = config;
+            _log = LogManager.GetLogger("DiskLogger");
+        }
+
+        public static void Shutdown()
+        {
+            LogManager.Shutdown();
+        }
+
+        private static LogLevel SetLogLevel(SourceLevels sourceLevels)
+        {
+            LogLevel level = LogLevel.Debug;
+            if (sourceLevels == SourceLevels.Information)
+            {
+                level = LogLevel.Info;
             }
-            else if (_sourceLevels == SourceLevels.Error)
+            else if (sourceLevels == SourceLevels.Warning)
             {
-                level = Level.Error;
+                level = LogLevel.Warn;
             }
-            else if (_sourceLevels == SourceLevels.Critical)
+            else if (sourceLevels == SourceLevels.Error)
             {
-                level = Level.Fatal;
+                level = LogLevel.Error;
+            }
+            else if (sourceLevels == SourceLevels.Critical)
+            {
+                level = LogLevel.Fatal;
             }
             _sourceLevels = sourceLevels;
-
-            log4Hierarchy.Hierarchy hierarchy =
-                (log4Hierarchy.Hierarchy)LogManager.GetAllRepositories().FirstOrDefault(r => r.Name == _argusTV);
-            if (hierarchy == null)
-            {
-                hierarchy = (log4Hierarchy.Hierarchy)LogManager.CreateRepository(_argusTV);
-            }
-            hierarchy.Root.RemoveAllAppenders();
-
-            RollingFileAppender roller = new RollingFileAppender();
-            PatternLayout patternLayout = new PatternLayout();
-            patternLayout.ConversionPattern = "%date [%-5level][%thread]: %message%newline";
-            patternLayout.ActivateOptions();
-            roller.Layout = patternLayout;
-            roller.AppendToFile = true;
-            roller.RollingStyle = RollingFileAppender.RollingMode.Size;
-            roller.MaxSizeRollBackups = 4;
-            roller.MaximumFileSize = "1000KB";
-            roller.StaticLogFileName = true;
-            roller.File = filePath;
-            roller.ActivateOptions();
-            roller.AddFilter(new log4net.Filter.LevelRangeFilter()
-            {
-                LevelMin = level,
-                LevelMax = Level.Fatal
-            });
-            log4net.Config.BasicConfigurator.Configure(hierarchy, roller);
-
-            log4Hierarchy.Logger coreLogger = hierarchy.GetLogger(_argusTV) as log4Hierarchy.Logger;
-            coreLogger.Level = level;
-
-            _log = LogManager.GetLogger(hierarchy.Name, _argusTV);
+            return level;
         }
 
         public static void Write(string message, params object[] args)
         {
             if (_log.IsInfoEnabled)
             {
-                _log.InfoFormat(message, args);
+                _log.Info(message, args);
             }
         }
 
@@ -180,7 +174,7 @@ namespace ArgusTV.Common.Logging
         {
             if (_log.IsInfoEnabled)
             {
-                _log.InfoFormat(message, args);
+                _log.Info(message, args);
             }
         }
 
@@ -188,7 +182,7 @@ namespace ArgusTV.Common.Logging
         {
             if (_log.IsWarnEnabled)
             {
-                _log.WarnFormat(message, args);
+                _log.Warn(message, args);
             }
         }
 
@@ -196,7 +190,7 @@ namespace ArgusTV.Common.Logging
         {
             if (_log.IsErrorEnabled)
             {
-                _log.ErrorFormat(message, args);
+                _log.Error(message, args);
             }
         }
 
@@ -204,7 +198,7 @@ namespace ArgusTV.Common.Logging
         {
             if (_log.IsFatalEnabled)
             {
-                _log.FatalFormat(message, args);
+                _log.Fatal(message, args);
             }
         }
 
@@ -212,7 +206,7 @@ namespace ArgusTV.Common.Logging
         {
             if (_log.IsDebugEnabled)
             {
-                _log.DebugFormat(message, args);
+                _log.Debug(message, args);
             }
         }
 

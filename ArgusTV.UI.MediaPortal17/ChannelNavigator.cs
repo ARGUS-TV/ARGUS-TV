@@ -944,17 +944,21 @@ namespace ArgusTV.UI.MediaPortal
 
         public void SendLiveStreamKeepAlive()
         {
-            if (_liveStream != null)
+            try
             {
-                if (!Proxies.ControlService.KeepLiveStreamAlive(_liveStream))
+                if (_liveStream != null)
                 {
-                    if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio))
+                    if (!Proxies.ControlService.KeepLiveStreamAlive(_liveStream))
                     {
-                        g_Player.Stop();
-                        Log.Warn("ChannelNavigator: stopped unknown live stream: {0}", _liveStream.RtspUrl);
+                        if (g_Player.Playing && (g_Player.IsTV || g_Player.IsRadio))
+                        {
+                            g_Player.Stop();
+                            Log.Warn("ChannelNavigator: stopped unknown live stream: {0}", _liveStream.RtspUrl);
+                        }
                     }
                 }
             }
+            catch { }
         }
 
         #endregion

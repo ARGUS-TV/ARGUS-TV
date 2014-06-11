@@ -24,12 +24,21 @@ using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Diagnostics;
+using System.Text;
+using System.IO;
 
 namespace ArgusTV.ServiceProxy
 {
     internal static class WakeOnLan
     {
         private const string _defaultSubnetMask = "255.255.255.0";
+
+		static WakeOnLan()
+		{
+			InitializeUnixPing();
+		}
 
         public static string GetIPAddress(string hostName)
         {
@@ -51,16 +60,17 @@ namespace ArgusTV.ServiceProxy
             IPAddress ipAddress;
             if (IPAddress.TryParse(ipString, out ipAddress))
             {
-                using (Ping ping = new Ping())
-                {
-                    return (ping.Send(ipAddress, 500).Status == IPStatus.Success);
-                }
+				return Ping(ipAddress);
             }
             return false;
         }
 
         public static bool Ping(IPAddress ipAddress)
         {
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				return UnixPing(ipAddress, 500, null, new PingOptions()) == IPStatus.Success;
+			}
             using (Ping ping = new Ping())
             {
                 return (ping.Send(ipAddress, 500).Status == IPStatus.Success);
@@ -181,31 +191,33 @@ namespace ArgusTV.ServiceProxy
 
         private static IPAddress FindSubnetMask(IPAddress serverIPAddress)
         {
-#if !MONO
-            using (ManagementObjectSearcher query = new ManagementObjectSearcher(
-                "Select IPAddress,IPSubnet from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
-            using (ManagementObjectCollection mgmntObjects = query.Get())
-            {
-                foreach (ManagementObject mo in mgmntObjects)
-                {
-                    string[] ipaddresses = (string[])mo["IPAddress"];
-                    string[] subnets = (string[])mo["IPSubnet"];
-                    for (int index = 0; index < Math.Min(ipaddresses.Length, subnets.Length); index++)
-                    {
-                        IPAddress localIP;
-                        IPAddress subnetIP;
-                        if (IPAddress.TryParse(ipaddresses[index], out localIP)
-                            && IPAddress.TryParse(subnets[index], out subnetIP))
-                        {
-                            if (ApplySubnetMask(localIP, subnetIP).Equals(ApplySubnetMask(serverIPAddress, subnetIP)))
-                            {
-                                return subnetIP;
-                            }
-                        }
-                    }
-                }
-            }
-#endif
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT
+			    || Environment.OSVersion.Platform == PlatformID.Win32Windows)
+			{
+	            using (ManagementObjectSearcher query = new ManagementObjectSearcher(
+	                "Select IPAddress,IPSubnet from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
+	            using (ManagementObjectCollection mgmntObjects = query.Get())
+	            {
+	                foreach (ManagementObject mo in mgmntObjects)
+	                {
+	                    string[] ipaddresses = (string[])mo["IPAddress"];
+	                    string[] subnets = (string[])mo["IPSubnet"];
+	                    for (int index = 0; index < Math.Min(ipaddresses.Length, subnets.Length); index++)
+	                    {
+	                        IPAddress localIP;
+	                        IPAddress subnetIP;
+	                        if (IPAddress.TryParse(ipaddresses[index], out localIP)
+	                            && IPAddress.TryParse(subnets[index], out subnetIP))
+	                        {
+	                            if (ApplySubnetMask(localIP, subnetIP).Equals(ApplySubnetMask(serverIPAddress, subnetIP)))
+	                            {
+	                                return subnetIP;
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			}
             return IPAddress.Parse(_defaultSubnetMask);
         }
 
@@ -219,5 +231,106 @@ namespace ArgusTV.ServiceProxy
             }
             return new IPAddress(ipBytes);
         }
+
+		#region Unix Ping
+
+		private static readonly string [] _pingBinPaths = new string [] {
+			"/bin/ping",
+			"/sbin/ping",
+			"/usr/sbin/ping",
+			"/system/bin/ping"
+		};
+
+		private static string _pingBinPath;
+
+		private static void InitializeUnixPing()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				// Since different Unix systems can have different path to bin, we try some
+				// of the known ones.
+				foreach (string ping_path in _pingBinPaths)
+				{
+					if (File.Exists(ping_path))
+					{
+						_pingBinPath = ping_path;
+						break;
+					}
+				}
+			}
+		}
+
+		private static IPStatus UnixPing(IPAddress address, int timeout, byte [] buffer, PingOptions options)
+		{
+			DateTime sentTime = DateTime.UtcNow;
+
+			Process ping = new Process();
+			string args = BuildPingArgs(address, timeout, options);
+			long trip_time = 0;
+
+			ping.StartInfo.FileName = _pingBinPath;
+			ping.StartInfo.Arguments = args;
+			ping.StartInfo.CreateNoWindow = true;
+			ping.StartInfo.UseShellExecute = false;
+			ping.StartInfo.RedirectStandardOutput = true;
+			ping.StartInfo.RedirectStandardError = true;
+
+			try
+			{
+				ping.Start();
+
+				#pragma warning disable 219
+				string stdout = ping.StandardOutput.ReadToEnd();
+				string stderr = ping.StandardError.ReadToEnd();
+				#pragma warning restore 219
+
+				trip_time = (long)(DateTime.UtcNow - sentTime).TotalMilliseconds;
+				if (!ping.WaitForExit(timeout) || (ping.HasExited && ping.ExitCode == 2))
+				{
+					return IPStatus.TimedOut;
+				}
+				if (ping.ExitCode == 1)
+				{
+					return IPStatus.TtlExpired;
+				}
+			}
+			catch (Exception)
+			{
+				return IPStatus.Unknown;
+			}
+			finally
+			{
+				if (ping != null)
+				{
+					if (!ping.HasExited)
+						ping.Kill();
+					ping.Dispose();
+				}
+			}
+
+			return IPStatus.Success;
+		}
+
+		private static string BuildPingArgs (IPAddress address, int timeout, PingOptions options)
+		{
+			CultureInfo culture = CultureInfo.InvariantCulture;
+			StringBuilder args = new StringBuilder ();
+			uint t = Convert.ToUInt32 (Math.Floor ((timeout + 1000) / 1000.0));
+			bool is_mac = ((int) Environment.OSVersion.Platform == 6);
+			if (!is_mac)
+				args.AppendFormat (culture, "-q -n -c {0} -w {1} -t {2} -M ", 1, t, options.Ttl);
+			else
+				args.AppendFormat (culture, "-q -n -c {0} -t {1} -o -m {2} ", 1, t, options.Ttl);
+			if (!is_mac)
+				args.Append (options.DontFragment ? "do " : "dont ");
+			else if (options.DontFragment)
+				args.Append ("-D ");
+
+			args.Append (address.ToString ());
+
+			return args.ToString ();
+		}
+
+		#endregion
     }
 }

@@ -51,7 +51,13 @@ namespace ArgusTV.ServiceProxy
             var url = (Proxies.ServerSettings.Transport == ServiceTransport.Https ? "https://" : "http://")
                 + Proxies.ServerSettings.ServerName + ":" + Proxies.ServerSettings.Port
                 + "/ArgusTV/" + _module + "/";
-            HttpClient client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true)
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                Proxy = WebRequest.DefaultWebProxy,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            handler.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            HttpClient client = new HttpClient(handler, true)
             {
                 BaseAddress = new Uri(url)
             };
@@ -245,6 +251,11 @@ namespace ArgusTV.ServiceProxy
         {
             try
             {
+                if (request.Method != HttpMethod.Get && request.Content == null)
+                {
+                    // Work around current Mono bug.
+                    request.Content = new ByteArrayContent (new byte[0]);
+                }
                 var task = _client.SendAsync(request);
                 task.ContinueWith(t =>
                 {
@@ -349,6 +360,11 @@ namespace ArgusTV.ServiceProxy
         {
             try
             {
+                if (request.Method != HttpMethod.Get && request.Content == null)
+                {
+                    // Work around current Mono bug.
+                    request.Content = new ByteArrayContent (new byte[0]);
+                }
                 var response = _client.SendAsync(request).Result;
                 if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {

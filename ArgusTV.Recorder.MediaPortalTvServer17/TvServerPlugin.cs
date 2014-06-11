@@ -191,9 +191,9 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             var name = new System.Reflection.AssemblyName(args.Name);
-            if (name.Name == "log4net")
+            if (name.Name == "NLog")
             {
-                return System.Reflection.Assembly.Load("log4net");
+                return System.Reflection.Assembly.Load("NLog");
             }
             else if (name.Name == "System.Net.Http")
             {

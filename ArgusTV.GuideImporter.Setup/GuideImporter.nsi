@@ -2,7 +2,7 @@
 
 ; Constants
 !define PRODUCT_NAME "ARGUS TV Guide Importer"
-!define PRODUCT_VERSION "2.3 BETA 12"
+!define PRODUCT_VERSION "2.3 BETA 13"
 !define PRODUCT_PUBLISHER "ARGUS TV"
 !define PRODUCT_WEB_SITE "http://www.argus-tv.com"
 !define PRODUCT_DIR_REGKEY "Software\ARGUS TV\Install"
@@ -82,7 +82,7 @@ Section "Plugin Hoster" GuideImporterSection
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.Interfaces.dll"  
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.exe"
   File "..\ArgusTV.GuideImporter\bin\${TARGET}\ArgusTV.GuideImporter.exe.config"
-  File "..\ArgusTV.GuideImporter\bin\${TARGET}\log4net.dll"
+  File "..\ArgusTV.GuideImporter\bin\${TARGET}\NLog.dll"
 
   CreateDirectory "$SMPROGRAMS\ARGUS TV"
   CreateShortCut "$SMPROGRAMS\ARGUS TV\Guide Importer.lnk" "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.exe"
@@ -164,7 +164,7 @@ Section Uninstall
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.Interfaces.dll"
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.exe"  
   Delete "$INSTDIR\Guide Importer\ArgusTV.GuideImporter.exe.config"
-  Delete "$INSTDIR\Guide Importer\log4net.dll"
+  Delete "$INSTDIR\Guide Importer\NLog.dll"
 
   ;remove Plugins
   Delete "$INSTDIR\Guide Importer\plugins\ClickFinder\ArgusTV.DataContracts.dll"

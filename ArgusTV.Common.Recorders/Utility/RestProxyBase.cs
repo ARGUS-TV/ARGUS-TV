@@ -41,7 +41,13 @@ namespace ArgusTV.Common.Recorders.Utility
             {
                 baseUrl = baseUrl + "/";
             }
-            _client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true)
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                Proxy = WebRequest.DefaultWebProxy,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            handler.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            _client = new HttpClient(handler, true)
             {
                 BaseAddress = new Uri(baseUrl)
             };
@@ -87,6 +93,11 @@ namespace ArgusTV.Common.Recorders.Utility
         {
             try
             {
+                if (request.Method != HttpMethod.Get && request.Content == null)
+                {
+                    // Work around current Mono bug.
+                    request.Content = new ByteArrayContent (new byte[0]);
+                }
                 var task = _client.SendAsync(request);
                 task.ContinueWith(t =>
                 {
@@ -197,6 +208,11 @@ namespace ArgusTV.Common.Recorders.Utility
         {
             try
             {
+                if (request.Method != HttpMethod.Get && request.Content == null)
+                {
+                    // Work around current Mono bug.
+                    request.Content = new ByteArrayContent (new byte[0]);
+                }
                 var response = _client.SendAsync(request).Result;
                 if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {

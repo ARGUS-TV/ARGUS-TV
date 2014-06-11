@@ -94,30 +94,60 @@ namespace ArgusTV.Common.Recorders
 
         public virtual void KeepAlive()
         {
+#if !MONO
             // Inform the local system we need it.
             SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+#endif
         }
 
         public virtual List<string> GetMacAddresses()
         {
             List<string> macAddresses = new List<string>();
 
-            using (ManagementObjectSearcher query = new ManagementObjectSearcher("Select MacAddress from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
-            using (ManagementObjectCollection mgmntObjects = query.Get())
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT
+                || Environment.OSVersion.Platform == PlatformID.Win32Windows)
             {
-                foreach (ManagementObject mo in mgmntObjects)
+                using (var query = new ManagementObjectSearcher("Select MacAddress from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE"))
+                    using (var mgmntObjects = query.Get())
                 {
-                    string mac = (string)mo["MacAddress"];
-                    if (!String.IsNullOrEmpty(mac)
-                        && mac != "00:00:00:00:00:00")
+                    foreach (ManagementObject mo in mgmntObjects)
                     {
-                        mac = mac.Replace(":", "");
-                        if (!macAddresses.Contains(mac))
+                        string mac = (string)mo["MacAddress"];
+                        if (!String.IsNullOrEmpty(mac)
+                            && mac != "00:00:00:00:00:00")
                         {
-                            macAddresses.Add(mac);
+                            mac = mac.Replace(":", "");
+                            if (!macAddresses.Contains(mac))
+                            {
+                                macAddresses.Add(mac);
+                            }
+                        }
+                        mo.Dispose();
+                    }
+                }
+            }
+            else
+            {
+                System.Net.NetworkInformation.NetworkInterfaceType Type = 0;
+                try
+                {
+                    System.Net.NetworkInformation.NetworkInterface[] theNetworkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                    foreach (System.Net.NetworkInformation.NetworkInterface currentInterface in theNetworkInterfaces)
+                    {
+                        Type = currentInterface.NetworkInterfaceType;
+                        if (Type == System.Net.NetworkInformation.NetworkInterfaceType.Ethernet || Type == System.Net.NetworkInformation.NetworkInterfaceType.GigabitEthernet || Type == System.Net.NetworkInformation.NetworkInterfaceType.FastEthernetFx)
+                        {
+                            string mac = currentInterface.GetPhysicalAddress().ToString();
+                            mac = mac.Replace(":", "");
+                            if (!macAddresses.Contains(mac))
+                            {
+                                macAddresses.Add(mac);
+                            }
                         }
                     }
-                    mo.Dispose();
+                }
+                catch (Exception)
+                {
                 }
             }
 

@@ -33,6 +33,12 @@ namespace ArgusTV.UI.Console
 {
     public class ContentPanel : UserControl
     {
+        public ContentPanel()
+        {
+            _eventsClientId = String.Format("{0}-{1}-d92663a4156c43b2ba5af09d38daf198", // Unique for the UI Console!
+                Dns.GetHostName(), System.Environment.GetEnvironmentVariable("SESSIONNAME"));
+        }
+
         private ContentPanel _ownerPanel;
 
         public ContentPanel OwnerPanel
@@ -136,7 +142,7 @@ namespace ArgusTV.UI.Console
 
         #region Event Listener
 
-        private readonly string _eventsClientId = Dns.GetHostName() + "-d92663a4156c43b2ba5af09d38daf198"; // Unique for the UI Console!
+        private string _eventsClientId;
 
         private SynchronizationContext _uiSyncContext;
         private bool _eventListenerSubscribed;

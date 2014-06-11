@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.UI.MediaPortal16", "ArgusTV.UI.MediaPortal16\ArgusTV.UI.MediaPortal16.csproj", "{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}"
 EndProject
@@ -36,6 +36,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.GuideImporter", "ArgusTV.GuideImporter\ArgusTV.GuideImporter.csproj", "{8035180C-679D-4091-8612-01A62963C2A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgusTV.GuideImporter.Setup", "ArgusTV.GuideImporter.Setup\ArgusTV.GuideImporter.Setup.csproj", "{D4DE4D15-77C9-4D93-9952-F016513A00F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8035180C-679D-4091-8612-01A62963C2A6} = {8035180C-679D-4091-8612-01A62963C2A6}
+		{AEA30886-C74A-46BF-B5B3-4DA77F287665} = {AEA30886-C74A-46BF-B5B3-4DA77F287665}
+		{69BDFF96-14EE-4B21-AD5A-A9FD29A4A3AA} = {69BDFF96-14EE-4B21-AD5A-A9FD29A4A3AA}
+		{C5BE23A3-2181-4891-BA9C-1B05E60A7528} = {C5BE23A3-2181-4891-BA9C-1B05E60A7528}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{9123D4B9-1851-4B51-9AB1-3D7CB31A2F47}"
 EndProject
