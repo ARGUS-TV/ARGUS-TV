@@ -39,7 +39,6 @@ namespace ArgusTV.UI.Notifier
     {
         private const int _maxTipTextLength = 256;
 
-        private string _eventsServiceBaseUrl;
         private string _eventsClientId;
         private SynchronizationContext _uiSyncContext;
 
