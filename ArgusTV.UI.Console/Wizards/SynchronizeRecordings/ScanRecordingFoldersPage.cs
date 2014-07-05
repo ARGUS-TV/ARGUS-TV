@@ -186,9 +186,13 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
                 recording.ChannelId = _unknownChannelGuid;
                 recording.ChannelDisplayName = _unknownChannelName;
                 recording.RecordingStartTime = File.GetCreationTime(recordingFileName);
+                recording.RecordingStartTimeUtc = recording.RecordingStartTime.ToUniversalTime();
                 recording.RecordingStopTime = recording.RecordingStartTime;
+                recording.RecordingStopTimeUtc = recording.RecordingStartTimeUtc;
                 recording.ProgramStartTime = recording.RecordingStartTime;
+                recording.ProgramStartTimeUtc = recording.RecordingStartTimeUtc;
                 recording.ProgramStopTime = recording.RecordingStartTime;
+                recording.ProgramStopTimeUtc = recording.RecordingStartTimeUtc;
                 recording.Title = Path.GetFileNameWithoutExtension(recordingFileName);
                 recording.RecordingFileName = recordingFileName;
 
