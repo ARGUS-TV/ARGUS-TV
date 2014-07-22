@@ -82,7 +82,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedChannels = new List<GuideChannel>();
-                _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(this.ChannelType));
+                _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(this.ChannelType).Result);
                 _channelsBindingSource.DataSource = _guideChannels;
                 _channelsBindingSource.ResetBindings(false);
             }

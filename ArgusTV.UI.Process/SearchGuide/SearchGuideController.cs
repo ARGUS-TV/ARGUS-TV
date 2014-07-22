@@ -63,7 +63,7 @@ namespace ArgusTV.UI.Process.SearchGuide
             }
             else
             {
-                _model.Titles = Proxies.SchedulerService.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText);
+                _model.Titles = Proxies.SchedulerService.GetTitlesByPartialTitle(_model.ChannelType, _model.SearchText).Result;
                 ClearCurrentTitle();
             }
         }
@@ -79,14 +79,14 @@ namespace ArgusTV.UI.Process.SearchGuide
         {
             _model.CurrentTitle = title;
             RefreshAllUpcomingPrograms();
-            _model.CurrentTitlePrograms = new ChannelProgramsList(Proxies.SchedulerService.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false));
+            _model.CurrentTitlePrograms = new ChannelProgramsList(Proxies.SchedulerService.SearchGuideByTitle(_model.ChannelType, _model.CurrentTitle, false).Result);
         }
 
         public void RefreshAllUpcomingPrograms()
         {
-            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result;
+            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true).Result;
+            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true).Result;
             _model.AllUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
         }
     }

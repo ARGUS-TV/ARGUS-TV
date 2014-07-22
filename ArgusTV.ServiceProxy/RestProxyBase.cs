@@ -24,6 +24,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 using ArgusTV.DataContracts;
@@ -247,46 +248,6 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude />
-        protected void ExecuteAsync(HttpRequestMessage request)
-        {
-            try
-            {
-                if (request.Method != HttpMethod.Get && request.Content == null)
-                {
-                    // Work around current Mono bug.
-                    request.Content = new ByteArrayContent (new byte[0]);
-                }
-                var task = _client.SendAsync(request);
-                task.ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        //Logger.Error(r.Exception.ToString());
-                    }
-                    else if (t.IsCompleted)
-                    {
-                        var r = t.Result;
-                        if (r.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                        {
-                            var error = SimpleJson.DeserializeObject<RestError>(r.Content.ReadAsStringAsync().Result);
-                            //Logger.Error(error.detail);
-                        }
-                        else if (r.StatusCode != System.Net.HttpStatusCode.OK)
-                        {
-                            //Logger.Error(r.ReasonPhrase);
-                        }
-                    }
-                });
-            }
-            catch
-            {
-                //Logger.Error(ex.ToString());
-                //EventLogger.WriteEntry(ex);
-                throw new ApplicationException("An unexpected error occured.");
-            }
-        }
-
-        /// <exclude />
         protected bool IsConnectionError(Exception ex)
         {
             var requestException = ex as HttpRequestException;
@@ -311,11 +272,11 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude />
-        protected void Execute(HttpRequestMessage request, bool logError = true)
+        protected async Task ExecuteAsync(HttpRequestMessage request, bool logError = true)
         {
             try
             {
-                using (var response = ExecuteRequest(request, logError))
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
                 {
                 }
             }
@@ -326,26 +287,25 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude />
-        protected T Execute<T>(HttpRequestMessage request, bool logError = true)
+        protected async Task<T> ExecuteAsync<T>(HttpRequestMessage request, bool logError = true)
             where T : new()
         {
             try
             {
-                using (var response = ExecuteRequest(request, logError))
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
                 {
-                    return DeserializeResponseContent<T>(response);
+                    return await DeserializeResponseContentAsync<T>(response).ConfigureAwait(false);
                 }
             }
             catch (ArgusTVException)
             {
                 throw;
             }
-            catch
+            catch (Exception ex)
             {
                 if (logError)
                 {
-                    //Logger.Error(ex.ToString());
-                    //EventLogger.WriteEntry(ex);
+                    Proxies.Logger.Error(ex.ToString());
                 }
                 throw new ArgusTVUnexpectedErrorException("An unexpected error occured.");
             }
@@ -356,19 +316,19 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <exclude/>
-        protected HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError = true)
+        protected async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequestMessage request, bool logError = true)
         {
             try
             {
                 if (request.Method != HttpMethod.Get && request.Content == null)
                 {
                     // Work around current Mono bug.
-                    request.Content = new ByteArrayContent (new byte[0]);
+                    request.Content = new ByteArrayContent(new byte[0]);
                 }
-                var response = _client.SendAsync(request).Result;
+                var response = await _client.SendAsync(request).ConfigureAwait(false);
                 if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
-                    var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
+                    var error = SimpleJson.DeserializeObject<RestError>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                     throw new ArgusTVException(error.detail);
                 }
                 if (response.StatusCode >= HttpStatusCode.BadRequest)
@@ -391,22 +351,21 @@ namespace ArgusTV.ServiceProxy
             {
                 throw;
             }
-            catch
+            catch (Exception ex)
             {
                 if (logError)
                 {
-                    //Logger.Error(ex.ToString());
-                    //EventLogger.WriteEntry(ex);
+                    Proxies.Logger.Error(ex.ToString());
                 }
                 throw new ArgusTVUnexpectedErrorException("An unexpected error occured.");
             }
         }
 
         /// <exclude />
-        protected static T DeserializeResponseContent<T>(HttpResponseMessage response)
+        protected async static Task<T> DeserializeResponseContentAsync<T>(HttpResponseMessage response)
             where T : new()
         {
-            string content = response.Content.ReadAsStringAsync().Result;
+            string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (String.IsNullOrEmpty(content))
             {
                 return default(T);

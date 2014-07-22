@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 using ArgusTV.DataContracts;
 
@@ -46,10 +47,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <returns>The integer setting value, or null if no setting was found.</returns>
-        public int? GetIntValue(string module, string key)
+        public async Task<int?> GetIntValue(string module, string key)
         {
             var request = NewRequest(HttpMethod.Get, "IntegerValue/{0}/{1}", module, key);
-            var result = Execute<GetValueResult<int?>>(request);
+            var result = await ExecuteAsync<GetValueResult<int?>>(request).ConfigureAwait(false);
             return result.Value;
         }
 
@@ -59,10 +60,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <returns>The string setting value, or null if no setting was found.</returns>
-        public string GetStringValue(string module, string key)
+        public async Task<string> GetStringValue(string module, string key)
         {
             var request = NewRequest(HttpMethod.Get, "Value/{0}/{1}", module, key);
-            var result = Execute<GetValueResult<string>>(request);
+            var result = await ExecuteAsync<GetValueResult<string>>(request).ConfigureAwait(false);
             return result.Value;
         }
 
@@ -72,10 +73,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <returns>The boolean setting value, or null if no setting was found.</returns>
-        public bool? GetBooleanValue(string module, string key)
+        public async Task<bool?> GetBooleanValue(string module, string key)
         {
             var request = NewRequest(HttpMethod.Get, "BooleanValue/{0}/{1}", module, key);
-            var result = Execute<GetValueResult<bool?>>(request);
+            var result = await ExecuteAsync<GetValueResult<bool?>>(request).ConfigureAwait(false);
             return result.Value;
         }
 
@@ -85,7 +86,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <param name="value">The new value of the setting.</param>
-        public void SetIntValue(string module, string key, int? value)
+        public async Task SetIntValue(string module, string key, int? value)
         {
             var request = NewRequest(HttpMethod.Post, "SetIntegerValue");
             request.AddBody(new
@@ -94,7 +95,7 @@ namespace ArgusTV.ServiceProxy
                 Key = key,
                 Value = value
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <param name="value">The new value of the setting.</param>
-        public void SetStringValue(string module, string key, string value)
+        public async Task SetStringValue(string module, string key, string value)
         {
             var request = NewRequest(HttpMethod.Post, "SetValue");
             request.AddBody(new
@@ -112,7 +113,7 @@ namespace ArgusTV.ServiceProxy
                 Key = key,
                 Value = value
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -121,7 +122,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The module of the setting.</param>
         /// <param name="key">The setting's unique key within the module.</param>
         /// <param name="value">The new value of the setting.</param>
-        public void SetBooleanValue(string module, string key, bool? value)
+        public async Task SetBooleanValue(string module, string key, bool? value)
         {
             var request = NewRequest(HttpMethod.Post, "SetBooleanValue");
             request.AddBody(new
@@ -130,7 +131,7 @@ namespace ArgusTV.ServiceProxy
                 Key = key,
                 Value = value
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         private class GetValueResult<T>

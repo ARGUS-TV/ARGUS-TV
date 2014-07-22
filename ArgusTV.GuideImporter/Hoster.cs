@@ -123,7 +123,7 @@ namespace ArgusTV.GuideImporter
                     {
                         plugin.PrepareImport(feedbackCallback, new KeepImportServiceAliveCallback(KeepImportServiceAlive));
 
-                        Proxies.GuideService.StartGuideImport();
+                        Proxies.GuideService.StartGuideImport().Wait();
                         try
                         {
                             PluginSetting pluginSetting = GetPluginSetting(pluginName);
@@ -131,7 +131,7 @@ namespace ArgusTV.GuideImporter
                         }
                         finally
                         {
-                            Proxies.GuideService.EndGuideImport();
+                            Proxies.GuideService.EndGuideImport().Wait();
                         }
                     }
                 }
@@ -161,7 +161,7 @@ namespace ArgusTV.GuideImporter
                     guideProgram.GuideChannelId = guideChannelId;
                     try
                     {
-                        Proxies.GuideService.ImportProgram(guideProgram, GuideSource.XmlTv);
+                        Proxies.GuideService.ImportProgram(guideProgram, GuideSource.XmlTv).Wait();
                     }
                     catch { }
                 }
@@ -170,7 +170,7 @@ namespace ArgusTV.GuideImporter
 
         public static void LogMessageInArgusTV(string message, LogSeverity severity)
         {
-            Proxies.LogService.LogMessage("GuideImporter", severity, message);
+            Proxies.LogService.LogMessage("GuideImporter", severity, message).Wait();
         }
         #endregion
 
@@ -178,10 +178,10 @@ namespace ArgusTV.GuideImporter
 
         private Guid EnsureDefaultChannel(ImportGuideChannel channel, ChannelType channelType, bool updateChannelName)
         {
-            Guid guideChannelId = Proxies.GuideService.EnsureChannelExists(channel.ExternalId, channel.ChannelName, channelType);
+            Guid guideChannelId = Proxies.GuideService.EnsureChannelExists(channel.ExternalId, channel.ChannelName, channelType).Result;
 
             // If we have exactly one channel, check LCN and DisplayName :
-            var channels = Proxies.SchedulerService.GetChannelsForGuideChannel(guideChannelId);
+            var channels = Proxies.SchedulerService.GetChannelsForGuideChannel(guideChannelId).Result;
             if (channels.Count == 1 && updateChannelName)
             {
                 bool needsToBeSaved = false;
@@ -198,26 +198,26 @@ namespace ArgusTV.GuideImporter
 
                 if (needsToBeSaved)
                 {
-                    Proxies.SchedulerService.SaveChannel(channels[0]);
+                    Proxies.SchedulerService.SaveChannel(channels[0]).Wait();
                 }
             }
             else if(channels.Count == 0)
             {
                 // No channels linked to the GuideChannel. If we have an existing channel with the same name, then link it.   
-                Channel existingChannel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channel.ChannelName);
+                Channel existingChannel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channel.ChannelName).Result;
                 if (existingChannel != null)
                 {
                     existingChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
-                    Proxies.SchedulerService.SaveChannel(existingChannel);
+                    Proxies.SchedulerService.SaveChannel(existingChannel).Wait();
                 }
                 else
                 {
-                    Proxies.SchedulerService.EnsureDefaultChannel(guideChannelId, channelType, channel.ChannelName, null);
-                    channels = Proxies.SchedulerService.GetChannelsForGuideChannel(guideChannelId);
+                    Proxies.SchedulerService.EnsureDefaultChannel(guideChannelId, channelType, channel.ChannelName, null).Wait();
+                    channels = Proxies.SchedulerService.GetChannelsForGuideChannel(guideChannelId).Result;
                     if (channels.Count == 1)
                     {
                         channels[0].LogicalChannelNumber = channel.LogicalChannelNumber;
-                        Proxies.SchedulerService.SaveChannel(channels[0]);
+                        Proxies.SchedulerService.SaveChannel(channels[0]).Wait();
                     }
                 }
             }

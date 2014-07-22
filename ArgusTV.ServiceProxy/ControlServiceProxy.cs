@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 using ArgusTV.DataContracts;
 using ArgusTV.DataContracts.Tuning;
@@ -48,14 +49,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="activeOnly">Set to true to only receive active plugins.</param>
         /// <returns>An array containing zero or more plugin services.</returns>
-        public List<PluginService> GetAllPluginServices(bool activeOnly = true)
+        public async Task<List<PluginService>> GetAllPluginServices(bool activeOnly = true)
         {
             var request = NewRequest(HttpMethod.Get, "PluginServices");
             if (!activeOnly)
             {
                 request.AddParameter("activeOnly", false);
             }
-            return Execute<List<PluginService>>(request);
+            return await ExecuteAsync<List<PluginService>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,32 +64,32 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="pluginService">The plugin service to save.</param>
         /// <returns>The saved plugin service.</returns>
-        public PluginService SavePluginService(PluginService pluginService)
+        public async Task<PluginService> SavePluginService(PluginService pluginService)
         {
             var request = NewRequest(HttpMethod.Post, "SavePluginService");
             request.AddBody(pluginService);
-            return Execute<PluginService>(request);
+            return await ExecuteAsync<PluginService>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Delete a plugin service.
         /// </summary>
         /// <param name="pluginServiceId">The ID of the plugin service to delete.</param>
-        public void DeletePluginService(Guid pluginServiceId)
+        public async Task DeletePluginService(Guid pluginServiceId)
         {
             var request = NewRequest(HttpMethod.Post, "DeletePluginService/{0}", pluginServiceId);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Ask ARGUS TV to test the connection to a recorder by pinging it.
         /// </summary>
         /// <param name="pluginService">The plugin service to ping.</param>
-        public void PingPluginService(PluginService pluginService)
+        public async Task PingPluginService(PluginService pluginService)
         {
             var request = NewRequest(HttpMethod.Post, "PingPluginService");
             request.AddBody(pluginService);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -96,31 +97,31 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="pluginService">The pluginService.</param>
         /// <returns>A list of RecordingShareAccessibilityInfos.</returns>
-        public List<RecordingShareAccessibilityInfo> AreRecordingSharesAccessible(PluginService pluginService)
+        public async Task<List<RecordingShareAccessibilityInfo>> AreRecordingSharesAccessible(PluginService pluginService)
         {
             var request = NewRequest(HttpMethod.Post, "AreRecordingSharesAccessible");
             request.AddBody(pluginService);
-            return Execute<List<RecordingShareAccessibilityInfo>>(request);
+            return await ExecuteAsync<List<RecordingShareAccessibilityInfo>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get information (free disk space) from all recording disks.
         /// </summary>
         /// <returns>A RecordingDisksInfo entity with all disk(s) information.</returns>
-        public RecordingDisksInfo GetRecordingDisksInfo()
+        public async Task<RecordingDisksInfo> GetRecordingDisksInfo()
         {
             var request = NewRequest(HttpMethod.Get, "RecordingDisksInfo");
-            return Execute<RecordingDisksInfo>(request);
+            return await ExecuteAsync<RecordingDisksInfo>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get all the recording shares configured for the current recorder(s).
         /// </summary>
         /// <returns>A list containing zero or more recording shares.</returns>
-        public List<string> GetRecordingShares()
+        public async Task<List<string>> GetRecordingShares()
         {
             var request = NewRequest(HttpMethod.Get, "RecordingShares");
-            return Execute<List<string>>(request);
+            return await ExecuteAsync<List<string>>(request).ConfigureAwait(false);
         }
 
         #endregion
@@ -137,7 +138,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelId">The channel ID of the recordings, or null.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>Returns a list of zero or more recordings.</returns>
-        public List<Recording> GetFullRecordings(ChannelType channelType, Guid? scheduleId, string programTitle, string category, Guid? channelId, bool includeNonExisting = false)
+        public async Task<List<Recording>> GetFullRecordings(ChannelType channelType, Guid? scheduleId, string programTitle, string category, Guid? channelId, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "GetFullRecordings/{0}", channelType);
             request.AddBody(new
@@ -147,7 +148,7 @@ namespace ArgusTV.ServiceProxy
                 Category = category,
                 ChannelId = channelId
             });
-            return Execute<List<Recording>>(request);
+            return await ExecuteAsync<List<Recording>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -156,10 +157,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelType">The channel-type of the recordings.</param>
         /// <param name="recordingGroupMode">The recording group-mode.</param>
         /// <returns>An array of zero or more recording schedule-groups.</returns>        
-        public List<RecordingGroup> GetAllRecordingGroups(ChannelType channelType, RecordingGroupMode recordingGroupMode)
+        public async Task<List<RecordingGroup>> GetAllRecordingGroups(ChannelType channelType, RecordingGroupMode recordingGroupMode)
         {
             var request = NewRequest(HttpMethod.Get, "RecordingGroups/{0}/{1}", channelType, recordingGroupMode);
-            return Execute<List<RecordingGroup>>(request);
+            return await ExecuteAsync<List<RecordingGroup>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -168,14 +169,14 @@ namespace ArgusTV.ServiceProxy
         /// <param name="scheduleId">The ID of the schedule.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>An array of zero or more recordings.</returns>
-        public List<RecordingSummary> GetRecordingsForSchedule(Guid scheduleId, bool includeNonExisting = false)
+        public async Task<List<RecordingSummary>> GetRecordingsForSchedule(Guid scheduleId, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Get, "RecordingsForSchedule/{0}", scheduleId);
             if (includeNonExisting)
             {
                 request.AddParameter("includeNonExisting", true);
             }
-            return Execute<List<RecordingSummary>>(request);
+            return await ExecuteAsync<List<RecordingSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -184,7 +185,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="scheduleIds">A list of schedule IDs.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given schedule ID.</returns>
-        public List<List<RecordingSummary>> GetRecordingsForSchedules(IEnumerable<Guid> scheduleIds, bool includeNonExisting = false)
+        public async Task<List<List<RecordingSummary>>> GetRecordingsForSchedules(IEnumerable<Guid> scheduleIds, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForSchedules");
             if (includeNonExisting)
@@ -195,7 +196,7 @@ namespace ArgusTV.ServiceProxy
             {
                 Ids = scheduleIds
             });
-            return Execute<List<List<RecordingSummary>>>(request);
+            return await ExecuteAsync<List<List<RecordingSummary>>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -205,7 +206,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="programTitle">The program title.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>An array of zero or more recordings.</returns>  
-        public List<RecordingSummary> GetRecordingsForProgramTitle(ChannelType channelType, string programTitle, bool includeNonExisting = false)
+        public async Task<List<RecordingSummary>> GetRecordingsForProgramTitle(ChannelType channelType, string programTitle, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForProgramTitle/{0}", channelType);
             if (includeNonExisting)
@@ -216,7 +217,7 @@ namespace ArgusTV.ServiceProxy
             {
                 ProgramTitle = programTitle
             });
-            return Execute<List<RecordingSummary>>(request);
+            return await ExecuteAsync<List<RecordingSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -226,7 +227,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="programTitles">A list of program titles.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given program title.</returns>  
-        public List<List<RecordingSummary>> GetRecordingsForProgramTitles(ChannelType channelType, IEnumerable<string> programTitles, bool includeNonExisting = false)
+        public async Task<List<List<RecordingSummary>>> GetRecordingsForProgramTitles(ChannelType channelType, IEnumerable<string> programTitles, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForProgramTitles/{0}", channelType);
             if (includeNonExisting)
@@ -237,7 +238,7 @@ namespace ArgusTV.ServiceProxy
             {
                 ProgramTitles = programTitles
             });
-            return Execute<List<List<RecordingSummary>>>(request);
+            return await ExecuteAsync<List<List<RecordingSummary>>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -247,7 +248,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="category">The program category.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>An array of zero or more recordings.</returns>  
-        public List<RecordingSummary> GetRecordingsForCategory(ChannelType channelType, string category, bool includeNonExisting = false)
+        public async Task<List<RecordingSummary>> GetRecordingsForCategory(ChannelType channelType, string category, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForCategory/{0}", channelType);
             if (includeNonExisting)
@@ -258,7 +259,7 @@ namespace ArgusTV.ServiceProxy
             {
                 Category = category
             });
-            return Execute<List<RecordingSummary>>(request);
+            return await ExecuteAsync<List<RecordingSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -268,7 +269,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="categories">A list of program categories.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given category.</returns>  
-        public List<List<RecordingSummary>> GetRecordingsForCategories(ChannelType channelType, IEnumerable<string> categories, bool includeNonExisting = false)
+        public async Task<List<List<RecordingSummary>>> GetRecordingsForCategories(ChannelType channelType, IEnumerable<string> categories, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsForCategories/{0}", channelType);
             if (includeNonExisting)
@@ -279,7 +280,7 @@ namespace ArgusTV.ServiceProxy
             {
                 Categories = categories
             });
-            return Execute<List<List<RecordingSummary>>>(request);
+            return await ExecuteAsync<List<List<RecordingSummary>>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -288,14 +289,14 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelId">The ID of the channel.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>An array of zero or more recordings.</returns>
-        public List<RecordingSummary> GetRecordingsOnChannel(Guid channelId, bool includeNonExisting = false)
+        public async Task<List<RecordingSummary>> GetRecordingsOnChannel(Guid channelId, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Get, "RecordingsOnChannel/{0}", channelId);
             if (includeNonExisting)
             {
                 request.AddParameter("includeNonExisting", true);
             }
-            return Execute<List<RecordingSummary>>(request);
+            return await ExecuteAsync<List<RecordingSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -304,7 +305,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channelIds">A list of channel IDs.</param>
         /// <param name="includeNonExisting">If true also return recording entries for which the recording file is missing.</param>
         /// <returns>A list of zero or more lists of zero or more recordings (summary), so a list per given channel.</returns>
-        public List<List<RecordingSummary>> GetRecordingsOnChannels(IEnumerable<Guid> channelIds, bool includeNonExisting = false)
+        public async Task<List<List<RecordingSummary>>> GetRecordingsOnChannels(IEnumerable<Guid> channelIds, bool includeNonExisting = false)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingsOnChannels");
             if (includeNonExisting)
@@ -315,7 +316,7 @@ namespace ArgusTV.ServiceProxy
             {
                 Ids = channelIds
             });
-            return Execute<List<List<RecordingSummary>>>(request);
+            return await ExecuteAsync<List<List<RecordingSummary>>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -323,14 +324,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The full path of the recording file.</param>
         /// <returns>The recording, or null if none is found.</returns>
-        public Recording GetRecordingByFileName(string recordingFileName)
+        public async Task<Recording> GetRecordingByFileName(string recordingFileName)
         {
             var request = NewRequest(HttpMethod.Post, "RecordingByFile");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
             });
-            return Execute<Recording>(request);
+            return await ExecuteAsync<Recording>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -338,7 +339,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
-        public void DeleteRecording(string recordingFileName, bool deleteRecordingFile = true)
+        public async Task DeleteRecording(string recordingFileName, bool deleteRecordingFile = true)
         {
             var request = NewRequest(HttpMethod.Delete, "RecordingByFile");
             if (!deleteRecordingFile)
@@ -349,7 +350,7 @@ namespace ArgusTV.ServiceProxy
             {
                 RecordingFileName = recordingFileName
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -357,10 +358,10 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingId">The ID of the recording.</param>
         /// <returns>The recording, or null if none is found.</returns>
-        public Recording GetRecordingById(Guid recordingId)
+        public async Task<Recording> GetRecordingById(Guid recordingId)
         {
             var request = NewRequest(HttpMethod.Get, "RecordingById/{0}", recordingId);
-            return Execute<Recording>(request);
+            return await ExecuteAsync<Recording>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -368,14 +369,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <returns>The position in seconds or null.</returns>
-        public int? GetRecordingLastWatchedPosition(string recordingFileName)
+        public async Task<int?> GetRecordingLastWatchedPosition(string recordingFileName)
         {
             var request = NewRequest(HttpMethod.Post, "GetRecordingLastWatchedPosition");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
             });
-            var result = Execute<GetRecordingLastWatchedPositionResult>(request);
+            var result = await ExecuteAsync<GetRecordingLastWatchedPositionResult>(request).ConfigureAwait(false);
             return result.LastWatchedPositionSeconds;
         }
 
@@ -389,7 +390,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <param name="lastWatchedPositionSeconds">The position in seconds or null.</param>
-        public void SetRecordingLastWatchedPosition(string recordingFileName, int? lastWatchedPositionSeconds)
+        public async Task SetRecordingLastWatchedPosition(string recordingFileName, int? lastWatchedPositionSeconds)
         {
             var request = NewRequest(HttpMethod.Post, "SetRecordingLastWatchedPosition");
             request.AddBody(new
@@ -397,7 +398,7 @@ namespace ArgusTV.ServiceProxy
                 RecordingFileName = recordingFileName,
                 LastWatchedPositionSeconds = lastWatchedPositionSeconds
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -405,7 +406,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <param name="fullyWatchedCount">The number of times the recording was fully watched.</param>
-        public void SetRecordingFullyWatchedCount(string recordingFileName, int fullyWatchedCount)
+        public async Task SetRecordingFullyWatchedCount(string recordingFileName, int fullyWatchedCount)
         {
             var request = NewRequest(HttpMethod.Post, "SetRecordingFullyWatchedCount");
             request.AddBody(new
@@ -413,21 +414,21 @@ namespace ArgusTV.ServiceProxy
                 RecordingFileName = recordingFileName,
                 FullyWatchedCount = fullyWatchedCount
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Mark a recording as last watched now (can be used by playback engines that don't support the last-watched position).
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
-        public void SetRecordingLastWatched(string recordingFileName)
+        public async Task SetRecordingLastWatched(string recordingFileName)
         {
             var request = NewRequest(HttpMethod.Post, "SetRecordingWatched");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -436,7 +437,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <param name="keepUntilMode">The keep until mode to use for this recording.</param>
         /// <param name="keepUntilValue">The keep until value to use for this recording, or null if the mode doesn't require a value.</param>
-        public void SetRecordingKeepUntil(string recordingFileName, KeepUntilMode keepUntilMode, int? keepUntilValue)
+        public async Task SetRecordingKeepUntil(string recordingFileName, KeepUntilMode keepUntilMode, int? keepUntilValue)
         {
             var request = NewRequest(HttpMethod.Post, "SetRecordingKeepUntil");
             request.AddBody(new
@@ -445,7 +446,7 @@ namespace ArgusTV.ServiceProxy
                 KeepUntilMode = keepUntilMode,
                 KeepUntilValue = keepUntilValue
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -454,10 +455,10 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="scheduleId">The ID of the schedule.</param>
         /// <returns>An array containing zero or more recorded programs.</returns>
-        public List<ScheduleRecordedProgram> GetPreviouslyRecordedHistory(Guid scheduleId)
+        public async Task<List<ScheduleRecordedProgram>> GetPreviouslyRecordedHistory(Guid scheduleId)
         {
             var request = NewRequest(HttpMethod.Get, "PreviouslyRecordedHistory/{0}", scheduleId);
-            return Execute<List<ScheduleRecordedProgram>>(request);
+            return await ExecuteAsync<List<ScheduleRecordedProgram>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -465,11 +466,11 @@ namespace ArgusTV.ServiceProxy
         /// to make the NewEpisodesOnly and NewTitlesOnly rules work.
         /// </summary>
         /// <param name="upcomingProgram">The upcoming program to add to the history.</param>
-        public void AddToPreviouslyRecordedHistory(UpcomingProgram upcomingProgram)
+        public async Task AddToPreviouslyRecordedHistory(UpcomingProgram upcomingProgram)
         {
             var request = NewRequest(HttpMethod.Post, "AddToPreviouslyRecordedHistory");
             request.AddBody(upcomingProgram);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -477,11 +478,11 @@ namespace ArgusTV.ServiceProxy
         /// to make the NewEpisodesOnly and NewTitlesOnly rules work.
         /// </summary>
         /// <param name="upcomingProgram">The upcoming program to remove from the history.</param>
-        public void RemoveFromPreviouslyRecordedHistory(UpcomingProgram upcomingProgram)
+        public async Task RemoveFromPreviouslyRecordedHistory(UpcomingProgram upcomingProgram)
         {
             var request = NewRequest(HttpMethod.Post, "RemoveFromPreviouslyRecordedHistory");
             request.AddBody(upcomingProgram);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -490,31 +491,31 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="scheduleId">The ID of the schedule.</param>
         /// <param name="history">An array containing zero or more recorded programs.</param>
-        public void ImportPreviouslyRecordedHistory(Guid scheduleId, IEnumerable<ScheduleRecordedProgram> history)
+        public async Task ImportPreviouslyRecordedHistory(Guid scheduleId, IEnumerable<ScheduleRecordedProgram> history)
         {
             var request = NewRequest(HttpMethod.Post, "ImportPreviouslyRecordedHistory/{0}", scheduleId);
             request.AddBody(history);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Delete a recorded program from the previously recorded history of its schedule.
         /// </summary>
         /// <param name="scheduleRecordedProgramId">The ID of the recorded program.</param>
-        public void DeleteFromPreviouslyRecordedHistory(int scheduleRecordedProgramId)
+        public async Task DeleteFromPreviouslyRecordedHistory(int scheduleRecordedProgramId)
         {
             var request = NewRequest(HttpMethod.Post, "DeleteFromPreviouslyRecordedHistory/{0}", scheduleRecordedProgramId);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Delete the previously recorded history of a schedule.
         /// </summary>
         /// <param name="scheduleId">The ID of the schedule.</param>
-        public void ClearPreviouslyRecordedHistory(Guid scheduleId)
+        public async Task ClearPreviouslyRecordedHistory(Guid scheduleId)
         {
             var request = NewRequest(HttpMethod.Post, "ClearPreviouslyRecordedHistory/{0}", scheduleId);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -524,11 +525,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recording">The recording to import.</param>
         /// <returns>True if the recording was imported succesfully, false if the recording filename was already imported.</returns>
-        public bool ImportRecording(Recording recording)
+        public async Task<bool> ImportRecording(Recording recording)
         {
             var request = NewRequest(HttpMethod.Post, "ImportNewRecording");
             request.AddBody(recording);
-            var result = Execute<BooleanResult>(request);
+            var result = await ExecuteAsync<BooleanResult>(request).ConfigureAwait(false);
             return result.Result;
         }
 
@@ -540,7 +541,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="newRecordingStartTime">The new recording start-time (in case of trimming), or null to keep the existing time.</param>
         /// <param name="newRecordingStopTime">The new recording stop-time (in case of trimming), or null to keep the existing time.</param>
         /// <returns>True if the recording was found and modified succesfully, false otherwise.</returns>
-        public bool ChangeRecordingFile(string recordingFileName, string newRecordingFileName, DateTime? newRecordingStartTime, DateTime? newRecordingStopTime)
+        public async Task<bool> ChangeRecordingFile(string recordingFileName, string newRecordingFileName, DateTime? newRecordingStartTime, DateTime? newRecordingStopTime)
         {
             var request = NewRequest(HttpMethod.Post, "ModifyRecordingFile");
             request.AddBody(new
@@ -550,7 +551,7 @@ namespace ArgusTV.ServiceProxy
                 NewRecordingStartTime = newRecordingStartTime,
                 NewRecordingStopTime = newRecordingStopTime
             });
-            var result = Execute<BooleanResult>(request);
+            var result = await ExecuteAsync<BooleanResult>(request).ConfigureAwait(false);
             return result.Result;
         }
 
@@ -565,10 +566,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="recordingId">The unique ID of the recording.</param>
         /// <param name="processingCommandId">The unique ID of the processing command.</param>
         /// <param name="runAtTime">The time and date at which to run the command.</param>
-        public void RunProcessingCommandOnRecording(Guid recordingId, Guid processingCommandId, DateTime runAtTime)
+        public async Task RunProcessingCommandOnRecording(Guid recordingId, Guid processingCommandId, DateTime runAtTime)
         {
             var request = NewRequest(HttpMethod.Post, "RunProcessingCommandOnRecording/{0}/{1}/{2}", recordingId, processingCommandId, runAtTime);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -583,14 +584,14 @@ namespace ArgusTV.ServiceProxy
         /// <param name="argbBackground">The optional RGB color of the background, null to return the scaled image as is.</param>
         /// <param name="modifiedAfterTime">Only return a thumbnail if it is newer than the given timestamp.</param>
         /// <returns>A byte array containing the bytes of a JPG of the resized thumbnail, an empty array if no newer thumbnail was found or null if no thumbnail was found.</returns>
-        public byte[] GetRecordingThumbnail(Guid recordingId, int width, int height, int? argbBackground, DateTime modifiedAfterTime)
+        public async Task<byte[]> GetRecordingThumbnail(Guid recordingId, int width, int height, int? argbBackground, DateTime modifiedAfterTime)
         {
             var request = NewRequest(HttpMethod.Get, "RecordingThumbnail/{0}/{1}/{2}/{3}", recordingId, width, height, modifiedAfterTime);
             if (argbBackground.HasValue)
             {
                 request.AddParameter("argbBackground", argbBackground.Value);
             }
-            using (var response = ExecuteRequest(request))
+            using (var response = await ExecuteRequestAsync(request).ConfigureAwait(false))
             {
                 switch (response.StatusCode)
                 {
@@ -612,14 +613,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
         /// <returns>The RTSP url of the recording stream.</returns>
-        public string StartRecordingStream(string recordingFileName)
+        public async Task<string> StartRecordingStream(string recordingFileName)
         {
             var request = NewRequest(HttpMethod.Post, "StartRecordingRtspStream");
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
             });
-            var result = Execute<StartRecordingStreamResult>(request);
+            var result = await ExecuteAsync<StartRecordingStreamResult>(request).ConfigureAwait(false);
             return result.RtspUrl;
         }
 
@@ -632,14 +633,14 @@ namespace ArgusTV.ServiceProxy
         /// Stop RTSP streaming of the given recording.
         /// </summary>
         /// <param name="rtspUrl">The RTSP url of the recording stream.</param>
-        public void StopRecordingStream(string rtspUrl)
+        public async Task StopRecordingStream(string rtspUrl)
         {
             var request = NewRequest(HttpMethod.Post, "StopRecordingRtspStream");
             request.AddBody(new
             {
                 RtspUrl = rtspUrl
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         #endregion
@@ -652,14 +653,14 @@ namespace ArgusTV.ServiceProxy
         /// <param name="filter">Set filter to retrieve recordings and/or cancelled recordings.</param>
         /// <param name="includeActive">Set to true to include upcoming recordings that are currently being recorded.</param>
         /// <returns>An array with zero or more upcoming recordings.</returns>
-        public List<UpcomingRecording> GetAllUpcomingRecordings(UpcomingRecordingsFilter filter, bool includeActive = false)
+        public async Task<List<UpcomingRecording>> GetAllUpcomingRecordings(UpcomingRecordingsFilter filter, bool includeActive = false)
         {
             var request = NewRequest(HttpMethod.Get, "UpcomingRecordings/{0}", (int)filter);
             if (includeActive)
             {
                 request.AddParameter("includeActive", true);
             }
-            return Execute<List<UpcomingRecording>>(request);
+            return await ExecuteAsync<List<UpcomingRecording>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -667,14 +668,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="includeActive">Set to true to include upcoming recordings that are currently being recorded.</param>
         /// <returns>Null or an upcoming (or active) recording.</returns>
-        public UpcomingRecording GetNextUpcomingRecording(bool includeActive)
+        public async Task<UpcomingRecording> GetNextUpcomingRecording(bool includeActive)
         {
             var request = NewRequest(HttpMethod.Get, "NextUpcomingRecording");
             if (includeActive)
             {
                 request.AddParameter("includeActive", true);
             }
-            return Execute<UpcomingRecording>(request);
+            return await ExecuteAsync<UpcomingRecording>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -683,24 +684,24 @@ namespace ArgusTV.ServiceProxy
         /// <param name="scheduleId">The ID of the schedule.</param>
         /// <param name="includeCancelled">Set to true to also retrieve cancelled programs.</param>
         /// <returns>An array with zero or more upcoming recordings.</returns>
-        public List<UpcomingRecording> GetUpcomingRecordings(Guid scheduleId, bool includeCancelled = false)
+        public async Task<List<UpcomingRecording>> GetUpcomingRecordings(Guid scheduleId, bool includeCancelled = false)
         {
             var request = NewRequest(HttpMethod.Get, "UpcomingRecordingsForSchedule/{0}", scheduleId);
             if (includeCancelled)
             {
                 request.AddParameter("includeCancelled", true);
             }
-            return Execute<List<UpcomingRecording>>(request);
+            return await ExecuteAsync<List<UpcomingRecording>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get the currently active recordings.
         /// </summary>
         /// <returns>An array with zero or more active recordings.</returns>
-        public List<ActiveRecording> GetActiveRecordings()
+        public async Task<List<ActiveRecording>> GetActiveRecordings()
         {
             var request = NewRequest(HttpMethod.Get, "ActiveRecordings");
-            return Execute<List<ActiveRecording>>(request);
+            return await ExecuteAsync<List<ActiveRecording>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -708,10 +709,10 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="upcomingProgramId">The ID of the recording's upcoming program.</param>
         /// <returns>True if the recording has started (or is pending), false if it has not.</returns>
-        public bool IsRecordingPendingOrActive(Guid upcomingProgramId)
+        public async Task<bool> IsRecordingPendingOrActive(Guid upcomingProgramId)
         {
             var request = NewRequest(HttpMethod.Get, "IsRecordingPendingOrActive/{0}", upcomingProgramId);
-            var result = Execute<IsRecordingPendingOrActiveResult>(request);
+            var result = await ExecuteAsync<IsRecordingPendingOrActiveResult>(request).ConfigureAwait(false);
             return result.IsPendingOrActive;
         }
 
@@ -724,11 +725,11 @@ namespace ArgusTV.ServiceProxy
         /// Abort an active recording.
         /// </summary>
         /// <param name="activeRecording">The active recording to abort.</param>
-        public void AbortActiveRecording(ActiveRecording activeRecording)
+        public async Task AbortActiveRecording(ActiveRecording activeRecording)
         {
             var request = NewRequest(HttpMethod.Post, "AbortActiveRecording");
             request.AddBody(activeRecording);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         #endregion
@@ -739,9 +740,9 @@ namespace ArgusTV.ServiceProxy
         /// Tune to a channel, and get a live RTSP stream to that channel.
         /// </summary>
         /// <param name="channel">The channel to tune to.</param>
-        /// <param name="liveStream">Reference to a live stream (RTSP) that is either existing or null for a new one.</param>
-        /// <returns>A LiveStreamResult value to indicate success or failure.</returns>
-        public LiveStreamResult TuneLiveStream(Channel channel, ref LiveStream liveStream)
+        /// <param name="liveStream">The live stream (RTSP) that is either existing or null for a new one.</param>
+        /// <returns>A LiveStreamResult value to indicate success or failure, and the new or updated live stream.</returns>
+        public async Task<TuneLiveStreamResult> TuneLiveStream(Channel channel, LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "TuneLiveStream");
             request.AddBody(new
@@ -749,36 +750,28 @@ namespace ArgusTV.ServiceProxy
                 Channel = channel,
                 LiveStream = liveStream
             });
-            var result = Execute<TuneLiveStreamResult>(request);
-            liveStream = result.LiveStream;
-            return result.LiveStreamResult;
-        }
-
-        private class TuneLiveStreamResult
-        {
-            public LiveStreamResult LiveStreamResult { get; set; }
-            public LiveStream LiveStream { get; set; }
+            return await ExecuteAsync<TuneLiveStreamResult>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Stop the live stream.
         /// </summary>
         /// <param name="liveStream">The live stream (RTSP) of the stream to stop.</param>
-        public void StopLiveStream(LiveStream liveStream)
+        public async Task StopLiveStream(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "StopLiveStream");
             request.AddBody(liveStream);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get all live streams.
         /// </summary>
         /// <returns>An array of zero or more live streams.</returns>
-        public List<LiveStream> GetLiveStreams()
+        public async Task<List<LiveStream>> GetLiveStreams()
         {
             var request = NewRequest(HttpMethod.Get, "GetLiveStreams");
-            return Execute<List<LiveStream>>(request);
+            return await ExecuteAsync<List<LiveStream>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -786,11 +779,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="liveStream">The live stream (RTSP) that is stil in use.</param>
         /// <returns>True if the live stream is still running, false otherwise.</returns>
-        public bool KeepLiveStreamAlive(LiveStream liveStream)
+        public async Task<bool> KeepLiveStreamAlive(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "KeepStreamAlive");
             request.AddBody(liveStream);
-            var result = Execute<KeepStreamAliveResult>(request);
+            var result = await ExecuteAsync<KeepStreamAliveResult>(request).ConfigureAwait(false);
             return result.IsAlive;
         }
 
@@ -804,11 +797,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="liveStream">The active live stream.</param>
         /// <returns>The service tuning details, or null if none are available.</returns>
-        public ServiceTuning GetLiveStreamTuningDetails(LiveStream liveStream)
+        public async Task<ServiceTuning> GetLiveStreamTuningDetails(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "GetLiveStreamTuningDetails");
             request.AddBody(liveStream);
-            return Execute<ServiceTuning>(request);
+            return await ExecuteAsync<ServiceTuning>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -816,14 +809,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="rtspUrl">The RTSP url for which to find the live stream.</param>
         /// <returns>The corresponding live stream.</returns>
-        public LiveStream GetLiveStreamByRtspUrl(string rtspUrl)
+        public async Task<LiveStream> GetLiveStreamByRtspUrl(string rtspUrl)
         {
             var request = NewRequest(HttpMethod.Post, "GetLiveStream");
             request.AddBody(new
             {
                 RtspUrl = rtspUrl
             });
-            return Execute<LiveStream>(request);
+            return await ExecuteAsync<LiveStream>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -832,7 +825,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="channels">The channels to get the current state from.</param>
         /// <param name="liveStream">The live stream you want to be ignored (since it's yours), or null.</param>
         /// <returns>Null, or an array with the respective live state for each of the given channels.</returns>
-        public List<ChannelLiveState> GetChannelsLiveState(IEnumerable<Channel> channels, LiveStream liveStream)
+        public async Task<List<ChannelLiveState>> GetChannelsLiveState(IEnumerable<Channel> channels, LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "ChannelsLiveState");
             request.AddBody(new
@@ -840,7 +833,7 @@ namespace ArgusTV.ServiceProxy
                 Channels = channels,
                 LiveStream = liveStream
             });
-            return Execute<List<ChannelLiveState>>(request);
+            return await ExecuteAsync<List<ChannelLiveState>>(request).ConfigureAwait(false);
         }
 
         #endregion
@@ -852,11 +845,12 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="liveStream">The live stream.</param>
         /// <returns>True if teletext is present.</returns>
-        public bool HasTeletext(LiveStream liveStream)
+        public async Task<bool> HasTeletext(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "CanGrabTeletext");
             request.AddBody(liveStream);
-            return Execute<CanGrabTeletextResult>(request).HasTeletext;
+            var result = await ExecuteAsync<CanGrabTeletextResult>(request).ConfigureAwait(false);
+            return result.HasTeletext;
         }
 
         private class CanGrabTeletextResult
@@ -868,22 +862,22 @@ namespace ArgusTV.ServiceProxy
         /// Tell the recorder to start grabbing teletext for the given live stream.
         /// </summary>
         /// <param name="liveStream">The live stream.</param>
-        public void StartGrabbingTeletext(LiveStream liveStream)
+        public async Task StartGrabbingTeletext(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "StartGrabbingTeletext");
             request.AddBody(liveStream);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Tell the recorder to stop grabbing teletext for the given live stream.
         /// </summary>
         /// <param name="liveStream">The live stream.</param>
-        public void StopGrabbingTeletext(LiveStream liveStream)
+        public async Task StopGrabbingTeletext(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "StopGrabbingTeletext");
             request.AddBody(liveStream);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -891,11 +885,12 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="liveStream">The live stream.</param>
         /// <returns>True if the recorder is grabbing teletext.</returns>
-        public bool IsGrabbingTeletext(LiveStream liveStream)
+        public async Task<bool> IsGrabbingTeletext(LiveStream liveStream)
         {
             var request = NewRequest(HttpMethod.Post, "GrabbingTeletext");
             request.AddBody(liveStream);
-            return Execute<GrabbingTeletextResult>(request).IsGrabbingTeletext;
+            var result = await ExecuteAsync<GrabbingTeletextResult>(request).ConfigureAwait(false);
+            return result.IsGrabbingTeletext;
         }
 
         private class GrabbingTeletextResult
@@ -910,7 +905,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="pageNumber">The teletext page number</param>
         /// <param name="subPageNumber">The teletext subpage number</param>
         /// <returns>The requested teletext page, or null if the page was not ready yet.</returns>
-        public TeletextPage GetTeletextPage(LiveStream liveStream, int pageNumber, int subPageNumber)
+        public async Task<TeletextPage> GetTeletextPage(LiveStream liveStream, int pageNumber, int subPageNumber)
         {
             var request = NewRequest(HttpMethod.Post, "TeletextPage");
             request.AddBody(new
@@ -919,7 +914,7 @@ namespace ArgusTV.ServiceProxy
                 PageNumber = pageNumber,
                 SubPageNumber = subPageNumber
             });
-            return Execute<TeletextPage>(request);
+            return await ExecuteAsync<TeletextPage>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -934,7 +929,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="useTransparentBackground">Use a transparent background instead of black.</param>
         /// <param name="showHidden">Show the hidden teletext information.</param>
         /// <returns>The requested teletext page in form of an image, or null if the page was not ready yet.</returns>
-        public byte[] GetTeletextPageImage(LiveStream liveStream, int pageNumber, int subPageNumber, int imageWidth, int imageHeight, bool useTransparentBackground = false, bool showHidden = false)
+        public async Task<byte[]> GetTeletextPageImage(LiveStream liveStream, int pageNumber, int subPageNumber, int imageWidth, int imageHeight, bool useTransparentBackground = false, bool showHidden = false)
         {
             var request = NewRequest(HttpMethod.Post, "TeletextPageImage/{0}/{1}", imageWidth, imageHeight);
             if (useTransparentBackground)
@@ -951,7 +946,7 @@ namespace ArgusTV.ServiceProxy
                 PageNumber = pageNumber,
                 SubPageNumber = subPageNumber
             });
-            using (var response = ExecuteRequest(request))
+            using (var response = await ExecuteRequestAsync(request).ConfigureAwait(false))
             {
                 switch (response.StatusCode)
                 {
@@ -969,5 +964,21 @@ namespace ArgusTV.ServiceProxy
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Result from tuning a live stream.
+    /// </summary>
+    public class TuneLiveStreamResult
+    {
+        /// <summary>
+        /// A LiveStreamResult value to indicate success or failure.
+        /// </summary>
+        public LiveStreamResult LiveStreamResult { get; set; }
+
+        /// <summary>
+        /// The new or updated live stream.
+        /// </summary>
+        public LiveStream LiveStream { get; set; }
     }
 }

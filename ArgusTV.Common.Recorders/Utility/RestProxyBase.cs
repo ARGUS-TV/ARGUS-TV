@@ -26,6 +26,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using ArgusTV.Common.Logging;
 using System.Web;
+using System.Threading.Tasks;
 
 namespace ArgusTV.Common.Recorders.Utility
 {
@@ -89,46 +90,6 @@ namespace ArgusTV.Common.Recorders.Utility
         }
 
         /// <exclude />
-        protected void ExecuteAsync(HttpRequestMessage request)
-        {
-            try
-            {
-                if (request.Method != HttpMethod.Get && request.Content == null)
-                {
-                    // Work around current Mono bug.
-                    request.Content = new ByteArrayContent (new byte[0]);
-                }
-                var task = _client.SendAsync(request);
-                task.ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        Logger.Error(t.Exception.ToString());
-                    }
-                    else if (t.IsCompleted)
-                    {
-                        var r = t.Result;
-                        if (r.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                        {
-                            var error = SimpleJson.DeserializeObject<RestError>(r.Content.ReadAsStringAsync().Result);
-                            Logger.Error(error.detail);
-                        }
-                        else if (r.StatusCode != System.Net.HttpStatusCode.OK)
-                        {
-                            Logger.Error(r.ReasonPhrase);
-                        }
-                    }
-                });
-            }
-            catch(Exception ex)
-            {
-                Logger.Error(ex.ToString());
-                EventLogger.WriteEntry(ex);
-                throw new ApplicationException("An unexpected error occured.");
-            }
-        }
-
-        /// <exclude />
         protected bool IsConnectionError(Exception ex)
         {
             var requestException = ex as HttpRequestException;
@@ -153,11 +114,11 @@ namespace ArgusTV.Common.Recorders.Utility
         }
 
         /// <exclude />
-        protected void Execute(HttpRequestMessage request, bool logError = true)
+        protected async Task ExecuteAsync(HttpRequestMessage request, bool logError = true)
         {
             try
             {
-                using (var response = ExecuteRequest(request, logError))
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
                 {
                 }
             }
@@ -168,21 +129,21 @@ namespace ArgusTV.Common.Recorders.Utility
         }
 
         /// <exclude />
-        protected T Execute<T>(HttpRequestMessage request, bool logError = true)
+        protected async Task<T> ExecuteAsync<T>(HttpRequestMessage request, bool logError = true)
             where T : new()
         {
             try
             {
-                using (var response = ExecuteRequest(request, logError))
+                using (var response = await ExecuteRequestAsync(request, logError).ConfigureAwait(false))
                 {
-                    return DeserializeResponseContent<T>(response);
+                    return await DeserializeResponseContentAsync<T>(response).ConfigureAwait(false);
                 }
             }
             catch (ApplicationException)
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (logError)
                 {
@@ -197,26 +158,20 @@ namespace ArgusTV.Common.Recorders.Utility
             }
         }
 
-        /// <exclude />
-        protected T ExecuteResult<T>(HttpRequestMessage request)
-        {
-            var data = Execute<SimpleResult<T>>(request);
-            return data.result;
-        }
-
-        protected HttpResponseMessage ExecuteRequest(HttpRequestMessage request, bool logError)
+        /// <exclude/>
+        protected async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequestMessage request, bool logError = true)
         {
             try
             {
                 if (request.Method != HttpMethod.Get && request.Content == null)
                 {
                     // Work around current Mono bug.
-                    request.Content = new ByteArrayContent (new byte[0]);
+                    request.Content = new ByteArrayContent(new byte[0]);
                 }
-                var response = _client.SendAsync(request).Result;
+                var response = await _client.SendAsync(request).ConfigureAwait(false);
                 if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                 {
-                    var error = SimpleJson.DeserializeObject<RestError>(response.Content.ReadAsStringAsync().Result);
+                    var error = SimpleJson.DeserializeObject<RestError>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                     throw new ApplicationException(error.detail);
                 }
                 if (response.StatusCode >= HttpStatusCode.BadRequest)
@@ -237,7 +192,7 @@ namespace ArgusTV.Common.Recorders.Utility
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (logError)
                 {
@@ -249,15 +204,22 @@ namespace ArgusTV.Common.Recorders.Utility
         }
 
         /// <exclude />
-        protected static T DeserializeResponseContent<T>(HttpResponseMessage response)
+        protected async static Task<T> DeserializeResponseContentAsync<T>(HttpResponseMessage response)
             where T : new()
         {
-            string content = response.Content.ReadAsStringAsync().Result;
+            string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (String.IsNullOrEmpty(content))
             {
                 return default(T);
             }
             return SimpleJson.DeserializeObject<T>(content, new RecorderJsonSerializerStrategy());
+        }
+
+        /// <exclude />
+        protected async Task<T> ExecuteResult<T>(HttpRequestMessage request)
+        {
+            var data = await ExecuteAsync<SimpleResult<T>>(request);
+            return data.result;
         }
 
         protected class SimpleResult<T>

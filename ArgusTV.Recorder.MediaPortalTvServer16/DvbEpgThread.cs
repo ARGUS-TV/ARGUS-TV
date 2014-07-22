@@ -105,7 +105,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
                             foreach (GuideProgram guideProgram in guidePrograms)
                             {
-                                Proxies.GuideService.ImportProgram(guideProgram, GuideSource.DvbEpg);
+                                Proxies.GuideService.ImportProgram(guideProgram, GuideSource.DvbEpg).Wait();
                                 aborted = this.StopThreadEvent.WaitOne(0, false);
                                 if (aborted)
                                 {

@@ -103,11 +103,11 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
 
         private void GetAndProcessRecordings(SynchronizeRecordingsContext context, ChannelType channelType)
         {
-            var groups = Proxies.ControlService.GetAllRecordingGroups(channelType, RecordingGroupMode.GroupBySchedule);
+            var groups = Proxies.ControlService.GetAllRecordingGroups(channelType, RecordingGroupMode.GroupBySchedule).Result;
 
             foreach (RecordingGroup group in groups)
             {
-                var recordings = Proxies.ControlService.GetRecordingsForSchedule(group.ScheduleId, includeNonExisting: true);
+                var recordings = Proxies.ControlService.GetRecordingsForSchedule(group.ScheduleId, includeNonExisting: true).Result;
                 foreach (RecordingSummary recording in recordings)
                 {
                     if (!context.ContainsRecording(recording))

@@ -50,10 +50,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="requestedApiVersion">The API version the client needs, pass in Constants.CurrentApiVersion.</param>
         /// <returns>0 if client and server are compatible, -1 if the client is too old and +1 if the client is newer than the server.</returns>
-        public int Ping(int requestedApiVersion)
+        public async Task<int> Ping(int requestedApiVersion)
         {
             var request = NewRequest(HttpMethod.Get, "Ping/{0}", requestedApiVersion);
-            return Execute<PingResult>(request).Result;
+            var result = await ExecuteAsync<PingResult>(request, logError: false).ConfigureAwait(false);
+            return result.Result;
         }
 
         private class PingResult
@@ -66,30 +67,31 @@ namespace ArgusTV.ServiceProxy
         /// connect and later used to re-connect with wake-on-lan.
         /// </summary>
         /// <returns>An array containing one or more MAC addresses in HEX string format (e.g. "A1B2C3D4E5F6").</returns>
-        public IEnumerable<string> GetMacAddresses()
+        public async Task<IEnumerable<string>> GetMacAddresses()
         {
             var request = NewRequest(HttpMethod.Get, "GetMacAddresses");
-            return Execute<List<string>>(request);
+            return await ExecuteAsync<List<string>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Check to see if there is a newer version of ARGUS TV available online.
         /// </summary>
         /// <returns>A NewVersionInfo object if there is a newer version available, null if the current installation is up-to-date.</returns>
-        public NewVersionInfo IsNewerVersionAvailable()
+        public async Task<NewVersionInfo> IsNewerVersionAvailable()
         {
             var request = NewRequest(HttpMethod.Get, "IsNewerVersionAvailable");
-            return Execute<NewVersionInfo>(request);
+            return await ExecuteAsync<NewVersionInfo>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get the server's version as a string.
         /// </summary>
         /// <returns>Returns the ARGUS TV product version, for display purposes. Don't use this to do version checking!</returns>
-        public string GetServerVersion()
+        public async Task<string> GetServerVersion()
         {
             var request = NewRequest(HttpMethod.Get, "Version");
-            return Execute<GetVersionResult>(request).Version;
+            var result = await ExecuteAsync<GetVersionResult>(request).ConfigureAwait(false);
+            return result.Version;
         }
 
         private class GetVersionResult
@@ -108,20 +110,20 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="uniqueClientId">The unique ID (e.g. your DNS hostname combined with a constant GUID) to identify your client.</param>
         /// <param name="eventGroups">The event group(s) to subscribe to (flags can be OR'd).</param>
-        public void SubscribeServiceEvents(string uniqueClientId, EventGroup eventGroups)
+        public async Task SubscribeServiceEvents(string uniqueClientId, EventGroup eventGroups)
         {
             var request = NewRequest(HttpMethod.Post, "ServiceEvents/{0}/Subscribe/{1}", uniqueClientId, eventGroups);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Unsubscribe your client from all ARGUS TV events.
         /// </summary>
         /// <param name="uniqueClientId">The unique ID (e.g. your DNS hostname combined with a constant GUID) to identify your client.</param>
-        public void UnsubscribeServiceEvents(string uniqueClientId)
+        public async Task UnsubscribeServiceEvents(string uniqueClientId)
         {
             var request = NewRequest(HttpMethod.Post, "ServiceEvents/{0}/Unsubscribe", uniqueClientId);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="cancellationToken">The cancellation token to potentially abort the request (or CancellationToken.None).</param>
         /// <param name="timeoutSeconds">The maximum timeout of the request (default is 5 minutes).</param>
         /// <returns>Zero or more service events, or null in case your subscription has expired.</returns>
-        public List<ServiceEvent> GetServiceEvents(string uniqueClientId, CancellationToken cancellationToken, int timeoutSeconds = 300)
+        public async Task<List<ServiceEvent>> GetServiceEvents(string uniqueClientId, CancellationToken cancellationToken, int timeoutSeconds = 300)
         {
             var request = NewRequest(HttpMethod.Get, "ServiceEvents/{0}/{1}", uniqueClientId, timeoutSeconds);
 
@@ -153,14 +155,14 @@ namespace ArgusTV.ServiceProxy
                 {
                     cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(Math.Max(timeoutSeconds, 30)));
                     timeoutCancellationSource.Cancel();
-                });
+                }).ConfigureAwait(false);
 #endif
 
                 try
                 {
-                    using (var response = _listenerClient.SendAsync(request, linkedCancellationSource.Token).Result)
+                    using (var response = await _listenerClient.SendAsync(request, linkedCancellationSource.Token))
                     {
-                        result = DeserializeResponseContent<GetServiceEventsResult>(response);
+                        result = await DeserializeResponseContentAsync<GetServiceEventsResult>(response);
                     }
                 }
                 catch (AggregateException ex)
@@ -203,7 +205,7 @@ namespace ArgusTV.ServiceProxy
         public void KeepServerAlive()
         {
             var request = NewRequest(HttpMethod.Post, "KeepServerAlive");
-            ExecuteAsync(request);
+            ExecuteAsync(request).ConfigureAwait(false); // no need to await this, we send the keep-alive fully async
         }
 
         #endregion

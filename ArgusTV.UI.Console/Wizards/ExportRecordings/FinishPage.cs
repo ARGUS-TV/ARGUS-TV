@@ -205,7 +205,7 @@ namespace ArgusTV.UI.Console.Wizards.ExportRecordings
                 metadata = Utility.GetRecordingMetadata(recording.RecordingFileName);
                 if (metadata == null)
                 {
-                    metadata = Proxies.ControlService.GetRecordingById(recording.RecordingId);
+                    metadata = Proxies.ControlService.GetRecordingById(recording.RecordingId).Result;
                 }
                 if (metadata != null)
                 {

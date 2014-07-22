@@ -38,7 +38,7 @@ namespace ArgusTV.UI.Console
         {
         }
 
-        public ExportSchedule(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy, Schedule schedule)
+        public ExportSchedule(Schedule schedule)
         {
             _isActive = schedule.IsActive;
             _name = schedule.Name;
@@ -57,7 +57,7 @@ namespace ArgusTV.UI.Console
                     List<string> channelNames = new List<string>();
                     foreach (Guid channelId in rule.Arguments)
                     {
-                        Channel channel = schedulerProxy.GetChannelById(channelId);
+                        Channel channel = Proxies.SchedulerService.GetChannelById(channelId).Result;
                         if (channel != null)
                         {
                             channelNames.Add(channel.DisplayName);
@@ -78,7 +78,7 @@ namespace ArgusTV.UI.Console
                     _rules.Add(rule);
                 }
             }
-            _history = new List<ScheduleRecordedProgram>(controlProxy.GetPreviouslyRecordedHistory(schedule.ScheduleId));
+            _history = new List<ScheduleRecordedProgram>(Proxies.ControlService.GetPreviouslyRecordedHistory(schedule.ScheduleId).Result);
         }
 
         #region Properties
@@ -182,7 +182,7 @@ namespace ArgusTV.UI.Console
 
         #endregion
 
-        public ImportSchedule Convert(SchedulerServiceProxy schedulerProxy, List<string> errors)
+        public ImportSchedule Convert(List<string> errors)
         {
             Schedule schedule = new Schedule();
             schedule.IsActive = this.IsActive;
@@ -206,7 +206,7 @@ namespace ArgusTV.UI.Console
                     List<Guid> tvChannelIds = new List<Guid>();
                     foreach (string channelName in rule.Arguments)
                     {
-                        Channel tvChannel = schedulerProxy.GetChannelByDisplayName(schedule.ChannelType, channelName);
+                        Channel tvChannel = Proxies.SchedulerService.GetChannelByDisplayName(schedule.ChannelType, channelName).Result;
                         if (tvChannel == null)
                         {
                             errors.Add(String.Format(CultureInfo.CurrentCulture, "Channel '{0}' not found.", channelName));

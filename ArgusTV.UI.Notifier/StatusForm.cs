@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using ArgusTV.DataContracts;
 using ArgusTV.ServiceProxy;
 using ArgusTV.UI.Process;
+using ArgusTV.Common.Logging;
 
 namespace ArgusTV.UI.Notifier
 {
@@ -107,6 +108,7 @@ namespace ArgusTV.UI.Notifier
             }
             catch
             {
+                // Swallow
             }
             finally
             {
@@ -121,6 +123,12 @@ namespace ArgusTV.UI.Notifier
                     _listenerCancellationTokenSource = null;
                 }
             }
+        }
+
+        private void RestartEventListenerTask()
+        {
+            CancelEventListenerTask();
+            StartEventListenerTask();
         }
 
         #region Tooltip / TrayIcon / Balloon
@@ -234,6 +242,7 @@ namespace ArgusTV.UI.Notifier
             {
                 _notifyIcon.Icon = Properties.Resources.InError;
                 this.IsConnected = false;
+                RestartEventListenerTask();
             }
             this.Icon = _notifyIcon.Icon;
         }
@@ -330,7 +339,7 @@ namespace ArgusTV.UI.Notifier
                     && !String.IsNullOrEmpty(Config.Current.MmcPath)
                     && File.Exists(Config.Current.MmcPath);
                 _wakeupServerToolStripMenuItem.Enabled = Config.Current != null
-                    && !IsConnected
+                    && !this.IsConnected
                     && !String.IsNullOrEmpty(Config.Current.ServerName)
                     && !String.IsNullOrEmpty(Config.Current.MacAddresses)
                     && !String.IsNullOrEmpty(Config.Current.IpAddress);
@@ -396,8 +405,7 @@ namespace ArgusTV.UI.Notifier
                     if (_settingsForm.ShowDialog(this) == DialogResult.OK)
                     {
                         this.IsConnected = false;
-                        CancelEventListenerTask();
-                        StartEventListenerTask();
+                        RestartEventListenerTask();
                     }
                 }
                 _settingsForm = null;
@@ -533,12 +541,17 @@ namespace ArgusTV.UI.Notifier
         #region Connection
 
         private bool _eventListenerSubscribed;
-        private int _eventsErrorCount = 0;
+        private int _eventsErrorCount;
 
         public bool IsConnected { get; set; }
 
         private void ConnectAndHandleEvents(CancellationToken cancellationToken)
         {
+            Logger.Info("Connection and event listener task started...");
+
+            _eventListenerSubscribed = false;
+            _eventsErrorCount = 0;
+
             for (; ; )
             {
                 if (Proxies.IsInitialized)
@@ -548,22 +561,28 @@ namespace ArgusTV.UI.Notifier
                     {
                         try
                         {
-                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents);
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents).Wait();
                             _eventListenerSubscribed = true;
                             _eventsErrorCount = 0;
+
+                            Logger.Info("SubscribeServiceEvents() succeeded");
 
                             this.IsConnected = true;
                             _uiSyncContext.Post(s => RefreshStatus(), null);
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            Logger.Warn("SubscribeServiceEvents() failed: " + ex.ToString());
                         }
                     }
                     if (_eventListenerSubscribed)
                     {
                         try
                         {
-                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
+                            this.IsConnected = true;
+                            _uiSyncContext.Post(s => RefreshStatus(), null);
+
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken).Result;
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
@@ -585,7 +604,6 @@ namespace ArgusTV.UI.Notifier
                                 || ++_eventsErrorCount > 5)
                             {
                                 _eventListenerSubscribed = false;
-                                this.IsConnected = false;
                                 _uiSyncContext.Post(s => SetStatusIcon(ServerStatus.NotConnected), null);
                             }
                         }
@@ -606,7 +624,7 @@ namespace ArgusTV.UI.Notifier
             {
                 try
                 {
-                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId).Wait();
                 }
                 catch
                 {
@@ -650,7 +668,7 @@ namespace ArgusTV.UI.Notifier
 
         #endregion
 
-        private void InitializeConnectionToArgusTV()
+        private async void InitializeConnectionToArgusTV()
         {
             if (!String.IsNullOrEmpty(Config.Current.ServerName))
             {
@@ -660,9 +678,9 @@ namespace ArgusTV.UI.Notifier
                 serverSettings.UserName = Config.Current.UserName;
                 serverSettings.Password = Config.Current.Password;
                 serverSettings.Transport = ServiceTransport.Https;
-                this.IsConnected = Proxies.Initialize(serverSettings, false);
+                this.IsConnected = await Proxies.InitializeAsync(serverSettings, false, new ProxyLogger());
                 if (this.IsConnected)
-                { 
+                {
                     SetStatusIcon(ServerStatus.Idle);
                 }
                 else
@@ -697,7 +715,7 @@ namespace ArgusTV.UI.Notifier
                 serverSettings.WakeOnLan.IPAddress = args.IpAddress;
                 serverSettings.WakeOnLan.MacAddresses = args.MacAddresses;
                 serverSettings.WakeOnLan.Enabled = true;
-                Proxies.Initialize(serverSettings, false);
+                Proxies.Initialize(serverSettings, false, new ProxyLogger());
             }
         }
 
@@ -719,23 +737,19 @@ namespace ArgusTV.UI.Notifier
             RefreshStatusResult result = null;
             if (Proxies.IsInitialized)
             {
-                await Task.Run(() =>
+                try
                 {
-                    var proxy = Proxies.ControlService;
-                    try
+                    result = new RefreshStatusResult()
                     {
-                        result = new RefreshStatusResult()
-                        {
-                            ActiveRecordings = proxy.GetActiveRecordings(),
-                            LiveStreams = proxy.GetLiveStreams(),
-                            UpcomingRecording = proxy.GetNextUpcomingRecording(false)
-                        };
-                    }
-                    catch
-                    {
-                        result = null;
-                    }
-                });
+                        ActiveRecordings = await Proxies.ControlService.GetActiveRecordings(),
+                        LiveStreams = await Proxies.ControlService.GetLiveStreams(),
+                        UpcomingRecording = await Proxies.ControlService.GetNextUpcomingRecording(false)
+                    };
+                }
+                catch
+                {
+                    result = null;
+                }
             }
             if (result == null)
             {
@@ -783,25 +797,21 @@ namespace ArgusTV.UI.Notifier
             RefreshProgramsResult result = null;
             if (Proxies.IsInitialized)
             {
-                await Task.Run(() =>
+                try
                 {
-                    var proxy = Proxies.ControlService;
-                    try
+                    result = new RefreshProgramsResult()
                     {
-                        result = new RefreshProgramsResult()
-                        {
-                            AllUpcomingRecordings = proxy.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, true),
-                            ActiveRecordings = proxy.GetActiveRecordings(),
-                            LiveStreams = proxy.GetLiveStreams()
-                        };
-                        result.UpcomingRecordings = new UpcomingOrActiveProgramsList(result.AllUpcomingRecordings);
-                        result.UpcomingRecordings.RemoveActiveRecordings(result.ActiveRecordings);
-                    }
-                    catch
-                    {
-                        result = null;
-                    }
-                });
+                        AllUpcomingRecordings = await Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings, true),
+                        ActiveRecordings = await Proxies.ControlService.GetActiveRecordings(),
+                        LiveStreams = await Proxies.ControlService.GetLiveStreams()
+                    };
+                    result.UpcomingRecordings = new UpcomingOrActiveProgramsList(result.AllUpcomingRecordings);
+                    result.UpcomingRecordings.RemoveActiveRecordings(result.ActiveRecordings);
+                }
+                catch
+                {
+                    result = null;
+                }
             }
 
             if (result == null)
@@ -820,5 +830,13 @@ namespace ArgusTV.UI.Notifier
         }
 
         #endregion
+
+        private class ProxyLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { Logger.Verbose(message, args); }
+            public void Info(string message, params object[] args) { Logger.Info(message, args); }
+            public void Warn(string message, params object[] args) { Logger.Warn(message, args); }
+            public void Error(string message, params object[] args) { Logger.Error(message, args); }
+        }
     }
 }

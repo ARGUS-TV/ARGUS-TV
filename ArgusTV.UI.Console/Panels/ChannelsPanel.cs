@@ -91,7 +91,7 @@ namespace ArgusTV.UI.Console.Panels
                 if (group != null)
                 {
                     _channels = new List<Channel>(
-                        Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, false));
+                        Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, false).Result);
                     _isAllChannels = (group.ChannelGroupId == ChannelGroup.AllTvChannelsGroupId
                         || group.ChannelGroupId == ChannelGroup.AllRadioChannelsGroupId);
                 }
@@ -111,7 +111,7 @@ namespace ArgusTV.UI.Console.Panels
 
         private void RefreshGuideChannels()
         {
-            _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(_channelGroupControl.ChannelType));
+            _guideChannels = new SortableBindingList<GuideChannel>(Proxies.GuideService.GetAllChannels(_channelGroupControl.ChannelType).Result);
             _guideChannels.Insert(0, new GuideChannel()
             {
                 Name = String.Empty,

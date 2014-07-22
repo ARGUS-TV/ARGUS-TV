@@ -323,7 +323,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         {
             try
             {
-                Proxies.Initialize(_serverSettings, true);
+                Proxies.Initialize(_serverSettings, logger: new ProxyLogger());
             }
             catch (Exception ex)
             {
@@ -504,8 +504,8 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 {
                     externalId = mpChannel.DisplayName;
                 }
-                channel.GuideChannelId = Proxies.GuideService.EnsureChannelExists(externalId, mpChannel.DisplayName, channel.ChannelType);
-                Proxies.SchedulerService.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value);
+                channel.GuideChannelId = Proxies.GuideService.EnsureChannelExists(externalId, mpChannel.DisplayName, channel.ChannelType).Result;
+                Proxies.SchedulerService.AttachChannelToGuide(channel.ChannelId, channel.GuideChannelId.Value).Wait();
             }
         }
 
@@ -516,15 +516,15 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             Channel channel = null;
             if (channelLink != null)
             {
-                channel = Proxies.SchedulerService.GetChannelById(channelLink.ChannelId);
+                channel = Proxies.SchedulerService.GetChannelById(channelLink.ChannelId).Result;
                 if (channel == null)
                 {
-                    channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channelLink.ChannelName);
+                    channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, channelLink.ChannelName).Result;
                 }
             }
             if (channel == null)
             {
-                channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, mpChannel.DisplayName);
+                channel = Proxies.SchedulerService.GetChannelByDisplayName(channelType, mpChannel.DisplayName).Result;
             }
             if (channel == null
                 && (epgSyncAutoCreateChannels || epgSyncAutoCreateChannelsWithGroup))
@@ -544,14 +544,14 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                     }
                 }
 
-                Guid channelId = Proxies.SchedulerService.EnsureChannel(channelType, mpChannel.DisplayName, groupName);
-                channel = Proxies.SchedulerService.GetChannelById(channelId);
+                Guid channelId = Proxies.SchedulerService.EnsureChannel(channelType, mpChannel.DisplayName, groupName).Result;
+                channel = Proxies.SchedulerService.GetChannelById(channelId).Result;
 
                 if (!channel.LogicalChannelNumber.HasValue
                     && mpChannel.ChannelNumber > 0)
                 {
                     channel.LogicalChannelNumber = mpChannel.ChannelNumber;
-                    Proxies.SchedulerService.SaveChannel(channel);
+                    Proxies.SchedulerService.SaveChannel(channel).Wait();
                 }
             }
             return channel;
@@ -829,5 +829,13 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
         }
 
         #endregion
+
+        internal class ProxyLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { Log.Debug(message, args); }
+            public void Info(string message, params object[] args) { Log.Write(message, args); }
+            public void Warn(string message, params object[] args) { Log.Write(message, args); }
+            public void Error(string message, params object[] args) { Log.Error(message, args); }
+        }
     }
 }

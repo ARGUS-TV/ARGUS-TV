@@ -70,8 +70,7 @@ namespace ArgusTV.Client.Common
                 modifiedDateTime = File.GetLastWriteTime(logoImagePath);
             }
 
-            var schedulerProxy = Proxies.SchedulerService;
-            byte[] imageBytes = schedulerProxy.GetChannelLogo(channelId, width, height, modifiedDateTime);
+            byte[] imageBytes = Proxies.SchedulerService.GetChannelLogo(channelId, width, height, modifiedDateTime).Result;
             if (imageBytes == null)
             {
                 if (File.Exists(logoImagePath))

@@ -85,8 +85,8 @@ namespace ArgusTV.UI.Console.Panels
         private void RefreshActiveRecordings()
         {
             _upcomingProgramsControl.UnfilteredUpcomingRecordings =
-                new UpcomingOrActiveProgramsList(Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true));
-            _upcomingProgramsControl.UpcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.ControlService.GetActiveRecordings());
+                new UpcomingOrActiveProgramsList(Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result);
+            _upcomingProgramsControl.UpcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.ControlService.GetActiveRecordings().Result);
         }
 
         private void _upcomingProgramsControl_MouseUp(object sender, MouseEventArgs e)

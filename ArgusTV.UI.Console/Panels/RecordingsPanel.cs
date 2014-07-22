@@ -99,7 +99,7 @@ namespace ArgusTV.UI.Console.Panels
 
             try
             {
-                var processingCommands = Proxies.SchedulerService.GetAllProcessingCommands();
+                var processingCommands = Proxies.SchedulerService.GetAllProcessingCommands().Result;
                 if (processingCommands.Count == 0)
                 {
                     _manuallyRunPostProcessingToolStripMenuItem.Visible = false;
@@ -191,24 +191,22 @@ namespace ArgusTV.UI.Console.Panels
             List<RecordingSummary> recordings = null;
             bool addChannelName = false;
 
-            var controlProxy = Proxies.ControlService;
-
             RecordingGroup recordingGroup = groupObject as RecordingGroup;
             switch (recordingGroup.RecordingGroupMode)
             {
                 case RecordingGroupMode.GroupBySchedule:
-                    recordings = controlProxy.GetRecordingsForSchedule(recordingGroup.ScheduleId, includeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForSchedule(recordingGroup.ScheduleId, includeNonExisting).Result;
                     addChannelName = true;
                     break;
                 case RecordingGroupMode.GroupByChannel:
-                    recordings = controlProxy.GetRecordingsOnChannel(recordingGroup.ChannelId, includeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsOnChannel(recordingGroup.ChannelId, includeNonExisting).Result;
                     break;
                 case RecordingGroupMode.GroupByProgramTitle:
-                    recordings = controlProxy.GetRecordingsForProgramTitle(recordingGroup.ChannelType, recordingGroup.ProgramTitle, includeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForProgramTitle(recordingGroup.ChannelType, recordingGroup.ProgramTitle, includeNonExisting).Result;
                     addChannelName = true;
                     break;
                 case RecordingGroupMode.GroupByCategory:
-                    recordings = controlProxy.GetRecordingsForCategory(recordingGroup.ChannelType, recordingGroup.Category, includeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForCategory(recordingGroup.ChannelType, recordingGroup.Category, includeNonExisting).Result;
                     addChannelName = true;
                     break;
             }
@@ -346,7 +344,7 @@ namespace ArgusTV.UI.Console.Panels
             List<RecordingSummary> recordings = GetSelectedRecordings();
             try
             {
-                _selectedRecording = (recordings.Count == 1) ? Proxies.ControlService.GetRecordingById(recordings[0].RecordingId) : null;
+                _selectedRecording = (recordings.Count == 1) ? Proxies.ControlService.GetRecordingById(recordings[0].RecordingId).Result : null;
             }
             catch (Exception ex)
             {
@@ -427,7 +425,7 @@ namespace ArgusTV.UI.Console.Panels
                         string rtspUrl = null;
                         if (WinFormsUtility.IsVlcInstalled())
                         {
-                            rtspUrl = Proxies.ControlService.StartRecordingStream(recording.RecordingFileName);
+                            rtspUrl = Proxies.ControlService.StartRecordingStream(recording.RecordingFileName).Result;
                         }
                         if (String.IsNullOrEmpty(rtspUrl)
                             || !WinFormsUtility.RunStreamPlayer(rtspUrl, false))
@@ -435,7 +433,7 @@ namespace ArgusTV.UI.Console.Panels
                             MessageBox.Show(this, "Failed to start VLC player.", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             if (!String.IsNullOrEmpty(rtspUrl))
                             {
-                                Proxies.ControlService.StopRecordingStream(rtspUrl);
+                                Proxies.ControlService.StopRecordingStream(rtspUrl).Wait();
                             }
                         }
                     }
@@ -446,7 +444,7 @@ namespace ArgusTV.UI.Console.Panels
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
 
-                        Proxies.ControlService.SetRecordingLastWatched(recording.RecordingFileName);
+                        Proxies.ControlService.SetRecordingLastWatched(recording.RecordingFileName).Wait();
                         recording.LastWatchedTime = DateTime.Now;
                         SetRecordingNodeIcon(_recordingsTreeView.SelectedNode);
                     }
@@ -492,7 +490,7 @@ namespace ArgusTV.UI.Console.Panels
                     {
                         Cursor.Current = Cursors.WaitCursor;
                         int width = MainForm.IsHttpConnection ? 0 : 480;
-                        byte[] thumbnailBytes = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, width, 0, null, DateTime.MinValue);
+                        byte[] thumbnailBytes = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, width, 0, null, DateTime.MinValue).Result;
                         Cursor.Current = Cursors.Default;
 
                         if (thumbnailBytes != null
@@ -543,12 +541,12 @@ namespace ArgusTV.UI.Console.Panels
 					Cursor.Current = Cursors.WaitCursor;
                     foreach (RecordingSummary recording in recordings)
                     {
-                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
+                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
                         RemoveRecordingNode(_recordingsTreeView.Nodes, recording);
                     }
                     ClearDetails();
 
-                    RefreshDiskUsage(Proxies.ControlService.GetRecordingDisksInfo());
+                    RefreshDiskUsage(Proxies.ControlService.GetRecordingDisksInfo().Result);
 				}
 			}
 			catch (Exception ex)
@@ -607,7 +605,7 @@ namespace ArgusTV.UI.Console.Panels
                     RecordingSummary recording = node.Tag as RecordingSummary;
                     if (recording != null)
                     {
-                        Proxies.ControlService.SetRecordingLastWatchedPosition(recording.RecordingFileName, null);
+                        Proxies.ControlService.SetRecordingLastWatchedPosition(recording.RecordingFileName, null).Wait();
                         recording.LastWatchedTime = null;
                         recording.LastWatchedPosition = null;
                         SetRecordingNodeIcon(node);
@@ -642,7 +640,7 @@ namespace ArgusTV.UI.Console.Panels
                 foreach(RecordingSummary recording in recordings)
                 {
                     Proxies.ControlService.SetRecordingKeepUntil(
-                        recording.RecordingFileName, _keepUntilControl.KeepUntilMode, _keepUntilControl.KeepUntilValue);
+                        recording.RecordingFileName, _keepUntilControl.KeepUntilMode, _keepUntilControl.KeepUntilValue).Wait();
                     recording.KeepUntilMode = _keepUntilControl.KeepUntilMode;
                     recording.KeepUntilValue = _keepUntilControl.KeepUntilValue;
                     if (_selectedRecording != null
@@ -729,7 +727,7 @@ namespace ArgusTV.UI.Console.Panels
 
             try
             {
-                result.RecordingDisksInfo = Proxies.ControlService.GetRecordingDisksInfo();
+                result.RecordingDisksInfo = Proxies.ControlService.GetRecordingDisksInfo().Result;
             }
             catch (Exception ex)
             {
@@ -737,7 +735,7 @@ namespace ArgusTV.UI.Console.Panels
                 result.RecordingDisksInfoException = ex;
             }
 
-            IList<RecordingGroup> groups = Proxies.ControlService.GetAllRecordingGroups(args.ChannelType, args.RecordingGroupMode);
+            IList<RecordingGroup> groups = Proxies.ControlService.GetAllRecordingGroups(args.ChannelType, args.RecordingGroupMode).Result;
 
             foreach (RecordingGroup group in groups)
             {
@@ -805,16 +803,16 @@ namespace ArgusTV.UI.Console.Panels
             else switch (group.RecordingGroupMode)
             {
                 case RecordingGroupMode.GroupBySchedule:
-                    recordings = Proxies.ControlService.GetRecordingsForSchedule(group.ScheduleId, args.IncludeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForSchedule(group.ScheduleId, args.IncludeNonExisting).Result;
                     break;
                 case RecordingGroupMode.GroupByChannel:
-                    recordings = Proxies.ControlService.GetRecordingsOnChannel(group.ChannelId, args.IncludeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsOnChannel(group.ChannelId, args.IncludeNonExisting).Result;
                     break;
                 case RecordingGroupMode.GroupByProgramTitle:
-                    recordings = Proxies.ControlService.GetRecordingsForProgramTitle(args.ChannelType, group.ProgramTitle, args.IncludeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForProgramTitle(args.ChannelType, group.ProgramTitle, args.IncludeNonExisting).Result;
                     break;
                 case RecordingGroupMode.GroupByCategory:
-                    recordings = Proxies.ControlService.GetRecordingsForCategory(args.ChannelType, group.Category, args.IncludeNonExisting);
+                    recordings = Proxies.ControlService.GetRecordingsForCategory(args.ChannelType, group.Category, args.IncludeNonExisting).Result;
                     break;
             }
             return recordings;
@@ -973,7 +971,7 @@ namespace ArgusTV.UI.Console.Panels
                         foreach (RecordingSummary recording in recordings)
                         {
                             Proxies.ControlService.RunProcessingCommandOnRecording(recording.RecordingId,
-                                processingCommand.ProcessingCommandId, selectTimeForm.RunAtTime);
+                                processingCommand.ProcessingCommandId, selectTimeForm.RunAtTime).Wait();
                         }
                     }
                     catch (Exception ex)

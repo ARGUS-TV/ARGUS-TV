@@ -308,7 +308,7 @@ namespace ArgusTV.Common.Recorders.Utility
             WriteLog("RecordingThread [{0}]: Calling AddNewRecording()", _recordingProgram.CreateProgramTitle());
             try
             {
-                callbackProxy.AddNewRecording(_recordingProgram, actualStartTimeUtc, this.RecordingFileName);
+                callbackProxy.AddNewRecording(_recordingProgram, actualStartTimeUtc, this.RecordingFileName).Wait();
             }
             catch (Exception ex)
             {
@@ -321,7 +321,7 @@ namespace ArgusTV.Common.Recorders.Utility
             WriteLog("RecordingThread [{0}]: Calling StartRecordingFailed(Reason=\"{1}\")", _recordingProgram.CreateProgramTitle(), reason);
             try
             {
-                callbackProxy.StartRecordingFailed(_channelAllocation, _recordingProgram, reason);
+                callbackProxy.StartRecordingFailed(_channelAllocation, _recordingProgram, reason).Wait();
             }
             catch (Exception ex)
             {
@@ -336,7 +336,7 @@ namespace ArgusTV.Common.Recorders.Utility
             WriteLog("RecordingThread [{0}]: Calling EndRecording(IsPartial={1})", _recordingProgram.CreateProgramTitle(), isPartial);
             try
             {
-                callbackProxy.EndRecording(this.RecordingFileName, actualStopTimeUtc, isPartial, !_usedSuggestedBaseFileName);
+                callbackProxy.EndRecording(this.RecordingFileName, actualStopTimeUtc, isPartial, !_usedSuggestedBaseFileName).Wait();
             }
             catch (Exception ex)
             {

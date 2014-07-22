@@ -104,7 +104,7 @@ namespace ArgusTV.UI.Console
                 {
                     if (DateTime.Now >= Properties.Settings.Default.NextVersionCheck)
                     {
-                        NewVersionInfo versionInfo = Proxies.CoreService.IsNewerVersionAvailable();
+                        NewVersionInfo versionInfo = Proxies.CoreService.IsNewerVersionAvailable().Result;
                         if (versionInfo != null)
                         {
                             Program.App.HideSplash();

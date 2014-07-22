@@ -81,7 +81,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedCommands = new List<ProcessingCommand>();
-                _processingCommands = new SortableBindingList<ProcessingCommand>(Proxies.SchedulerService.GetAllProcessingCommands());
+                _processingCommands = new SortableBindingList<ProcessingCommand>(Proxies.SchedulerService.GetAllProcessingCommands().Result);
                 _commandsBindingSource.DataSource = _processingCommands;
                 _commandsBindingSource.ResetBindings(false);
                 UpdateSelectedCommand();

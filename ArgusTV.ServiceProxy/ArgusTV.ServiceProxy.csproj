@@ -47,10 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncLock.cs" />
     <Compile Include="ConfigurationServiceProxy.cs" />
     <Compile Include="ControlServiceProxy.cs" />
     <Compile Include="CoreServiceProxy.cs" />
     <Compile Include="GuideServiceProxy.cs" />
+    <Compile Include="IServiceProxyLogger.cs" />
     <Compile Include="LogServiceProxy.cs">
       <SubType>Code</SubType>
     </Compile>

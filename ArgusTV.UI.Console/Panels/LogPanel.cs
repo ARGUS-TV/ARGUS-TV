@@ -54,7 +54,7 @@ namespace ArgusTV.UI.Console.Panels
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\Logs");
                 _openLogsButton.Visible = Directory.Exists(_logsFolderPath);
 
-                FillModulesComboBox(Proxies.LogService.GetAllModules());
+                FillModulesComboBox(Proxies.LogService.GetAllModules().Result);
                 FillSeverityComboBox();
                 SetDefaultSearchCriteria();
             }
@@ -114,17 +114,15 @@ namespace ArgusTV.UI.Console.Panels
                     logSeverity = (LogSeverity)Enum.Parse(typeof(LogSeverity), _severityComboBox.Text, true);
                 }
 
-                bool maxEntriesReached;
-                var logEntries = Proxies.LogService.GetLogEntries(_startDatePicker.Value.Date, _endDatePicker.Value.Date.AddDays(1), _maxLogEntries,
-                    module, logSeverity, out maxEntriesReached);
+                var result = Proxies.LogService.GetLogEntries(_startDatePicker.Value.Date, _endDatePicker.Value.Date.AddDays(1), _maxLogEntries, module, logSeverity).Result;
 
-                _maxEntriesReachedLabel.Visible = maxEntriesReached;
-                if (maxEntriesReached)
+                _maxEntriesReachedLabel.Visible = result.MaxEntriesReached;
+                if (result.MaxEntriesReached)
                 {
-                    _maxEntriesReachedLabel.Text = String.Format(CultureInfo.CurrentCulture, "Warning: only the first {0} log messages are displayed, more are available.", logEntries.Count);
+                    _maxEntriesReachedLabel.Text = String.Format(CultureInfo.CurrentCulture, "Warning: only the first {0} log messages are displayed, more are available.", result.LogEntries.Count);
                 }
 
-                _logListControl.LogEntries = new SortableBindingList<LogEntry>(logEntries);
+                _logListControl.LogEntries = new SortableBindingList<LogEntry>(result.LogEntries);
             }
             catch (Exception ex)
             {

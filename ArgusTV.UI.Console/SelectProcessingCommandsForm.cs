@@ -83,7 +83,7 @@ namespace ArgusTV.UI.Console
             {
                 List<CommandConfig> commandConfigs = new List<CommandConfig>();
 
-                var allCommands = Proxies.SchedulerService.GetAllProcessingCommands();
+                var allCommands = Proxies.SchedulerService.GetAllProcessingCommands().Result;
                 foreach (ProcessingCommand command in allCommands)
                 {
                     CommandConfig commandConfig = new CommandConfig();

@@ -102,7 +102,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 List<ScheduleSummary> schedules = new List<ScheduleSummary>();
-                var allSchedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, _scheduleType, false);
+                var allSchedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, _scheduleType, false).Result;
                 foreach (ScheduleSummary schedule in allSchedules)
                 {
                     if (schedule.IsActive)
@@ -138,15 +138,15 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     UpcomingRecordingsFilter filter = _showSkippedRecordings.Checked ?
                         UpcomingRecordingsFilter.All : UpcomingRecordingsFilter.Recordings|UpcomingRecordingsFilter.CancelledByUser;
-                    var allUpcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(filter, true);
+                    var allUpcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(filter, true).Result;
                     _upcomingProgramsControl.UnfilteredUpcomingRecordings = new UpcomingOrActiveProgramsList(allUpcomingRecordings);
                     upcomingPrograms = new UpcomingOrActiveProgramsList(allUpcomingRecordings);
-                    upcomingPrograms.RemoveActiveRecordings(Proxies.ControlService.GetActiveRecordings());
+                    upcomingPrograms.RemoveActiveRecordings(Proxies.ControlService.GetActiveRecordings().Result);
                 }
                 else
                 {
                     _upcomingProgramsControl.UnfilteredUpcomingRecordings = null;
-                    upcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.SchedulerService.GetAllUpcomingPrograms(_scheduleType, true));
+                    upcomingPrograms = new UpcomingOrActiveProgramsList(Proxies.SchedulerService.GetAllUpcomingPrograms(_scheduleType, true).Result);
                 }
 
                 ScheduleSummary schedule = _schedulesComboBox.SelectedItem as ScheduleSummary;

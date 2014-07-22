@@ -30,6 +30,8 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 
 using ArgusTV.DataContracts;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ArgusTV.ServiceProxy
 {
@@ -38,7 +40,11 @@ namespace ArgusTV.ServiceProxy
     /// </summary>
     public sealed class Proxies
     {
-        private object _syncLock = new object();
+#if DOTNET4
+        private readonly object _syncLock = new object();
+#else
+        private readonly AsyncLock _asyncLock = new AsyncLock();
+#endif
 
         private Proxies()
         {
@@ -84,7 +90,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_configurationServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_configurationServiceProxy == null)
                         {
@@ -107,7 +117,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_controlServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_controlServiceProxy == null)
                         {
@@ -130,7 +144,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_coreServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_coreServiceProxy == null)
                         {
@@ -153,7 +171,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_guideServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_guideServiceProxy == null)
                         {
@@ -176,7 +198,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_logServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_logServiceProxy == null)
                         {
@@ -199,7 +225,11 @@ namespace ArgusTV.ServiceProxy
             {
                 if (_schedulerServiceProxy == null)
                 {
+#if DOTNET4
                     lock (Instance._syncLock)
+#else
+                    using (Instance._asyncLock.LockAsync().Result)
+#endif
                     {
                         if (_schedulerServiceProxy == null)
                         {
@@ -226,15 +256,36 @@ namespace ArgusTV.ServiceProxy
         #region Initialization
 
         /// <summary>
-        /// Initialize the factories for the given server settings.
+        /// Initialize the proxies for the given server settings.
         /// </summary>
         /// <param name="serverSettings">Where to locate the ARGUS TV Scheduler service.</param>
         /// <param name="throwError">If set to true an exception may be thrown, if false any errors will be swallowed.</param>
+        /// <param name="logger">An optional logger that should be thread-safe and that will be used to log any errors that occur in the proxy.</param>
+        /// <param name="logLevel">The optional logging level, currently ignored and always set to the default of Error.</param>
         /// <returns>If throwError was false, a boolean indicating success or failure.</returns>
-        public static bool Initialize(ServerSettings serverSettings, bool throwError)
+        public static bool Initialize(ServerSettings serverSettings, bool throwError = true, IServiceProxyLogger logger = null, SourceLevels logLevel = SourceLevels.Error)
         {
-            return Proxies.Instance.InternalInitialize(serverSettings, throwError);
+#if DOTNET4
+            return Proxies.Instance.InternalInitialize(serverSettings, throwError, logger, logLevel);
+#else
+            return Proxies.Instance.InternalInitialize(serverSettings, throwError, logger, logLevel).Result;
+#endif
         }
+
+#if !DOTNET4
+        /// <summary>
+        /// Initialize the proxies for the given server settings.
+        /// </summary>
+        /// <param name="serverSettings">Where to locate the ARGUS TV Scheduler service.</param>
+        /// <param name="throwError">If set to true an exception may be thrown, if false any errors will be swallowed.</param>
+        /// <param name="logger">An optional logger that should be thread-safe and that will be used to log any errors that occur in the proxy.</param>
+        /// <param name="logLevel">The optional logging level, currently ignored and always set to the default of Error.</param>
+        /// <returns>If throwError was false, a boolean indicating success or failure.</returns>
+        public static async Task<bool> InitializeAsync(ServerSettings serverSettings, bool throwError = true, IServiceProxyLogger logger = null, SourceLevels logLevel = SourceLevels.Error)
+        {
+            return await Proxies.Instance.InternalInitialize(serverSettings, throwError, logger, logLevel).ConfigureAwait(false);
+        }
+#endif
 
         private bool _isInitialized;
 
@@ -256,17 +307,37 @@ namespace ArgusTV.ServiceProxy
             get { return Proxies.Instance._serverSettings; }
         }
 
-        private bool InternalInitialize(ServerSettings serverSettings, bool throwError)
+        private IServiceProxyLogger _logger = new DefaultLogger();
+
+        /// <summary>
+        /// The configured logger (or null).
+        /// </summary>
+        internal static IServiceProxyLogger Logger
         {
-            lock (_syncLock)
+            get { return Proxies.Instance._logger; }
+        }
+
+#if DOTNET4
+        private bool InternalInitialize(ServerSettings serverSettings, bool throwError, IServiceProxyLogger logger, SourceLevels logLevel = SourceLevels.Error)
+#else
+        private async Task<bool> InternalInitialize(ServerSettings serverSettings, bool throwError, IServiceProxyLogger logger, SourceLevels logLevel = SourceLevels.Error)
+#endif
+        {
+#if DOTNET4
+            lock (Instance._syncLock)
+#else
+            using (await _asyncLock.LockAsync().ConfigureAwait(false))
+#endif
             {
                 ServerSettings previousServerSettings = _serverSettings;
                 bool previousIsInitialized = _isInitialized;
+                IServiceProxyLogger previousLogger = _logger;
 
                 try
                 {
                     _isInitialized = false;
                     _serverSettings = serverSettings;
+                    _logger = logger ?? new DefaultLogger();
 
                     WakeOnLan.EnsureServerAwake(serverSettings);
 
@@ -275,7 +346,11 @@ namespace ArgusTV.ServiceProxy
                     {
                         try
                         {
-                            PingAndCheckServer(serverSettings);
+#if DOTNET4
+                            PingAndCheckServer(serverSettings).Wait();
+#else
+                            await PingAndCheckServer(serverSettings).ConfigureAwait(false);
+#endif
                             break;
                         }
                         catch
@@ -293,6 +368,7 @@ namespace ArgusTV.ServiceProxy
                 catch
                 {
                     _serverSettings = previousServerSettings;
+                    _logger = previousLogger;
                     _isInitialized = previousIsInitialized;
                     if (!throwError)
                     {
@@ -307,14 +383,14 @@ namespace ArgusTV.ServiceProxy
             }
         }
 
-        private void PingAndCheckServer(ServerSettings serverSettings)
+        private async Task PingAndCheckServer(ServerSettings serverSettings)
         {
             var proxy = new CoreServiceProxy();
 
             int apiComparison;
             try
             {
-                apiComparison = proxy.Ping(Constants.RestApiVersion);
+                apiComparison = await proxy.Ping(Constants.RestApiVersion).ConfigureAwait(false);
             }
             catch (ArgusTVException ex)
             {
@@ -328,8 +404,20 @@ namespace ArgusTV.ServiceProxy
             {
                 throw new ArgusTVException("ARGUS TV Recorder on server is too old, upgrade server");
             }
-            serverSettings.WakeOnLan.MacAddresses = String.Join(";", proxy.GetMacAddresses());
+            serverSettings.WakeOnLan.MacAddresses = String.Join(";", await proxy.GetMacAddresses().ConfigureAwait(false));
             serverSettings.WakeOnLan.IPAddress = WakeOnLan.GetIPAddress(serverSettings.ServerName);
+        }
+
+        #endregion
+
+        #region No-op logger
+
+        private class DefaultLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { }
+            public void Info(string message, params object[] args) { }
+            public void Warn(string message, params object[] args) { }
+            public void Error(string message, params object[] args) { }
         }
 
         #endregion

@@ -172,7 +172,7 @@ namespace ArgusTV.UI.MediaPortal
             Schedule sched = null;
             if (_upcomingProgram != null)
             {
-                sched = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                sched = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
             }
 
             if (_upcomingProgram != null
@@ -354,7 +354,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 if (_schedule.ScheduleType == ScheduleType.Recording)
                 {
-                    var recordings = Proxies.ControlService.GetUpcomingRecordings(_schedule.ScheduleId, true);
+                    var recordings = Proxies.ControlService.GetUpcomingRecordings(_schedule.ScheduleId, true).Result;
                     foreach (UpcomingRecording recording in recordings)
                     {
                         GUIListItem item = new GUIListItem();
@@ -385,7 +385,7 @@ namespace ArgusTV.UI.MediaPortal
                 }
                 else
                 {
-                    var _progs = Proxies.SchedulerService.GetUpcomingPrograms(_schedule, true);
+                    var _progs = Proxies.SchedulerService.GetUpcomingPrograms(_schedule, true).Result;
                     foreach (UpcomingProgram program in _progs)
                     {
                         GUIListItem item = new GUIListItem();
@@ -430,7 +430,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_upcomingProgram != null)
             {
-                schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
                 if (schedule != null)
                 {
                     _channelType = _upcomingProgram.Channel.ChannelType;
@@ -455,7 +455,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 if (group.GroupName == groupName || (channelFound == false && schedule != null))
                 {
-                    foreach (Channel chan in Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, true))
+                    foreach (Channel chan in Proxies.SchedulerService.GetChannelsInGroup(group.ChannelGroupId, true).Result)
                     {
                         _spinChannel.AddLabel(chan.DisplayName, 0);
                         if (!channelFound && schedule != null)
@@ -500,7 +500,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_upcomingProgram != null)
             {
-                sched = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                sched = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
                 if (sched != null)
                 {
                     yearFound = false;
@@ -628,18 +628,18 @@ namespace ArgusTV.UI.MediaPortal
             Schedule schedule = null;
             if (_upcomingProgram != null)
             {
-                schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
             }
             if (_upcomingProgram != null && schedule != null
                 && schedule.ScheduleType == scheduleType)//delete schedule
             {
                 if (_upcomingProgram.IsCancelled)
                 {
-                    Proxies.SchedulerService.UncancelUpcomingProgram(_upcomingProgram.ScheduleId, _upcomingProgram.GuideProgramId, _upcomingProgram.Channel.ChannelId, _upcomingProgram.StartTime);
+                    Proxies.SchedulerService.UncancelUpcomingProgram(_upcomingProgram.ScheduleId, _upcomingProgram.GuideProgramId, _upcomingProgram.Channel.ChannelId, _upcomingProgram.StartTime).Wait();
                     try
                     {
                         //refresh _upcomingProgram
-                        _upcomingProgram = Proxies.SchedulerService.GetUpcomingPrograms(schedule, true)[0];
+                        _upcomingProgram = Proxies.SchedulerService.GetUpcomingPrograms(schedule, true).Result[0];
                     }
                     catch { }
                 }
@@ -658,14 +658,14 @@ namespace ArgusTV.UI.MediaPortal
                             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
                             if (dlgYesNo.IsConfirmed)
                             {
-                                Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId);
+                                Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId).Wait();
                                 _upcomingProgram = null;
                             }
                         }
                     }
                     else
                     {
-                        Proxies.SchedulerService.DeleteSchedule(_upcomingProgram.ScheduleId);
+                        Proxies.SchedulerService.DeleteSchedule(_upcomingProgram.ScheduleId).Wait();
                         _upcomingProgram = null;
                     }
                 }
@@ -677,10 +677,10 @@ namespace ArgusTV.UI.MediaPortal
                 ScheduleDaysOfWeek daysOfWeek = new ScheduleDaysOfWeek();
 
                 //TODO: What if we have multiple channels with the same name
-                Channel channel = Proxies.SchedulerService.GetChannelByDisplayName(_channelType, _spinChannel.GetLabel());
+                Channel channel = Proxies.SchedulerService.GetChannelByDisplayName(_channelType, _spinChannel.GetLabel()).Result;
 
                 Schedule newSchedule = null;
-                newSchedule = Proxies.SchedulerService.CreateNewSchedule(_channelType, scheduleType);
+                newSchedule = Proxies.SchedulerService.CreateNewSchedule(_channelType, scheduleType).Result;
                 newSchedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);
                 newSchedule.Rules.Add(ScheduleRuleType.ManualSchedule, startTime, new ScheduleTime(duration));
                 if (!_recordOnce)
@@ -735,17 +735,17 @@ namespace ArgusTV.UI.MediaPortal
                 if (newSchedule != null)
                 {
                     newSchedule.ScheduleType = scheduleType;
-                    Proxies.SchedulerService.SaveSchedule(newSchedule);
+                    Proxies.SchedulerService.SaveSchedule(newSchedule).Wait();
 
                     bool found = false;
-                    var _programs = Proxies.SchedulerService.GetAllUpcomingPrograms(scheduleType, true);
+                    var _programs = Proxies.SchedulerService.GetAllUpcomingPrograms(scheduleType, true).Result;
                     foreach (UpcomingProgram _prog in _programs)
                     {
                         if (_prog.Channel.ChannelId == channel.ChannelId
                         && _prog.Duration == duration
                         && !found)
                         {
-                            Schedule _schedule = Proxies.SchedulerService.GetScheduleById(_prog.ScheduleId);
+                            Schedule _schedule = Proxies.SchedulerService.GetScheduleById(_prog.ScheduleId).Result;
                             if (_schedule.Rules.FindRuleByType(ScheduleRuleType.ManualSchedule) != null)
                             {
                                 if (_schedule.Name == newSchedule.Name)
@@ -782,7 +782,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_upcomingProgram != null)
             {
-                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
                 if (schedule == null) return;
 
                 GUIDialogMenu dialog = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -867,7 +867,7 @@ namespace ArgusTV.UI.MediaPortal
 
                 if (schedule != null)
                 {
-                    Proxies.SchedulerService.SaveSchedule(schedule);
+                    Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                 }
             }
         }
@@ -912,7 +912,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_upcomingProgram != null)
             {
-                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
                 if (schedule == null) return;
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                 if (dlg != null)
@@ -929,7 +929,7 @@ namespace ArgusTV.UI.MediaPortal
                     if (dlg.SelectedLabel >= 0)
                     {
                         schedule.SchedulePriority = (SchedulePriority)(dlg.SelectedLabel - 2);
-                        Proxies.SchedulerService.SaveSchedule(schedule);
+                        Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                     }
                 }
             }
@@ -939,7 +939,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (_upcomingProgram != null)
             {
-                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId);
+                Schedule schedule = Proxies.SchedulerService.GetScheduleById(_upcomingProgram.ScheduleId).Result;
                 if (schedule == null) return;
                 string schedname = schedule.Name;
                 VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -952,7 +952,7 @@ namespace ArgusTV.UI.MediaPortal
                     if (keyboard.IsConfirmed)
                     {
                         schedule.Name = keyboard.Text;
-                        Proxies.SchedulerService.SaveSchedule(schedule);
+                        Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                     }
                 }
             }

@@ -77,7 +77,7 @@ namespace ArgusTV.WinForms.UserControls
             {
                 try
                 {
-                    List<ChannelGroup> channelGroups = new List<ChannelGroup>(Proxies.SchedulerService.GetAllChannelGroups(channelType, true));
+                    List<ChannelGroup> channelGroups = new List<ChannelGroup>(Proxies.SchedulerService.GetAllChannelGroups(channelType, true).Result);
                     ChannelGroup allChannelsGroup = new ChannelGroup()
                     {
                         ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,

@@ -157,7 +157,7 @@ namespace ArgusTV.Common.Recorders
         public virtual void Initialize(Guid recorderId, string schedulerBaseUrl)
         {
             RecorderId = recorderId;
-            new RecorderCallbackProxy(schedulerBaseUrl).RegisterRecorder(RecorderId, this.Name, Assembly.GetCallingAssembly().GetName().Version.ToString());
+            new RecorderCallbackProxy(schedulerBaseUrl).RegisterRecorder(RecorderId, this.Name, Assembly.GetCallingAssembly().GetName().Version.ToString()).Wait();
         }
 
         public abstract string AllocateCard(Channel channel, IList<CardChannelAllocation> alreadyAllocated, bool useReversePriority);

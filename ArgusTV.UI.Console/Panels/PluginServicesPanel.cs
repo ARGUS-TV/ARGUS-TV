@@ -80,7 +80,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 _deletedServices = new List<PluginService>();
-                _pluginServices = new SortableBindingList<PluginService>(Proxies.ControlService.GetAllPluginServices(false));
+                _pluginServices = new SortableBindingList<PluginService>(Proxies.ControlService.GetAllPluginServices(false).Result);
                 _servicesBindingSource.DataSource = _pluginServices;
                 _servicesBindingSource.Sort = priorityDataGridViewTextBoxColumn.DataPropertyName +  " DESC";
                 _servicesBindingSource.ResetBindings(false);
@@ -235,7 +235,7 @@ namespace ArgusTV.UI.Console.Panels
                 try
                 {
                     string message;
-                    var recordingShareAccessibilityInfo = Proxies.ControlService.AreRecordingSharesAccessible(pluginService);
+                    var recordingShareAccessibilityInfo = Proxies.ControlService.AreRecordingSharesAccessible(pluginService).Result;
                     if (recordingShareAccessibilityInfo.Count == 0)
                     {
                         message = String.Format("No shares defined on recorder {0}.", pluginService.Name);

@@ -101,12 +101,12 @@ namespace ArgusTV.UI.Process
 
         private void GetScheduleNames(ScheduleType type)
         {
-            var schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, type, false);
+            var schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Television, type, false).Result;
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);
             }
-            schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Radio, type, false);
+            schedules = Proxies.SchedulerService.GetAllSchedules(ChannelType.Radio, type, false).Result;
             foreach (ScheduleSummary schedule in schedules)
             {
                 _scheduleNames.Add(schedule.ScheduleId, schedule.Name);

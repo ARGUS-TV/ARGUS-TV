@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 using ArgusTV.DataContracts;
 
@@ -47,7 +48,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="name">The name of the channel.</param>
         /// <param name="channelType">The channel type of the channel to add.</param>
         /// <returns>The ID of the new channel.</returns>
-        public Guid AddChannel(string xmltvId, string name, ChannelType channelType)
+        public async Task<Guid> AddChannel(string xmltvId, string name, ChannelType channelType)
         {
             var request = NewRequest(HttpMethod.Post, "NewChannel");
             request.AddBody(new
@@ -56,7 +57,7 @@ namespace ArgusTV.ServiceProxy
                 Name = name,
                 ChannelType = channelType
             });
-            var result = Execute<ChannelIdResult>(request);
+            var result = await ExecuteAsync<ChannelIdResult>(request).ConfigureAwait(false);
             return result.GuideChannelId;
         }
 
@@ -65,10 +66,10 @@ namespace ArgusTV.ServiceProxy
         /// link broken.  All guide programs in the channel will also be deleted.
         /// </summary>
         /// <param name="guideChannelId">The ID of the guide channel to delete.</param>
-        public void DeleteChannel(Guid guideChannelId)
+        public async Task DeleteChannel(Guid guideChannelId)
         {
             var request = NewRequest(HttpMethod.Post, "DeleteChannel/{0}", guideChannelId);
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,11 +77,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="channel">The guide channel to save.</param>
         /// <returns>The saved guide channel.</returns>
-        public GuideChannel SaveChannel(GuideChannel channel)
+        public async Task<GuideChannel> SaveChannel(GuideChannel channel)
         {
             var request = NewRequest(HttpMethod.Post, "SaveChannel");
             request.AddBody(channel);
-            return Execute<GuideChannel>(request);
+            return await ExecuteAsync<GuideChannel>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="name">The name of the channel.</param>
         /// <param name="channelType">The channel type of the channel to ensure.</param>
         /// <returns>The ID of the guide channel.</returns>
-        public Guid EnsureChannelExists(string xmltvId, string name, ChannelType channelType)
+        public async Task<Guid> EnsureChannelExists(string xmltvId, string name, ChannelType channelType)
         {
             var request = NewRequest(HttpMethod.Post, "EnsureChannelExists");
             request.AddBody(new
@@ -99,7 +100,7 @@ namespace ArgusTV.ServiceProxy
                 Name = name,
                 ChannelType = channelType
             });
-            var result = Execute<ChannelIdResult>(request);
+            var result = await ExecuteAsync<ChannelIdResult>(request).ConfigureAwait(false);
             return result.GuideChannelId;
         }
 
@@ -108,10 +109,10 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="channelType">The channel type of the channels to retrieve.</param>
         /// <returns>An array containing zero or more guide channels.</returns>
-        public List<GuideChannel> GetAllChannels(ChannelType channelType)
+        public async Task<List<GuideChannel>> GetAllChannels(ChannelType channelType)
         {
             var request = NewRequest(HttpMethod.Post, "Channels/{0}", channelType);
-            return Execute<List<GuideChannel>>(request);
+            return await ExecuteAsync<List<GuideChannel>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,14 +120,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="xmlTvId">The XMLTV ID.</param>
         /// <returns>The guide channel, or null if not found.</returns>
-        public GuideChannel GetChannelByXmlTvId(string xmlTvId)
+        public async Task<GuideChannel> GetChannelByXmlTvId(string xmlTvId)
         {
             var request = NewRequest(HttpMethod.Post, "Channel/ByXmlTvId");
             request.AddBody(new
             {
                 XmltvId = xmlTvId
             });
-            return Execute<GuideChannel>(request);
+            return await ExecuteAsync<GuideChannel>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,14 +135,14 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="name">The name of the channel.</param>
         /// <returns>The guide channel, or null if not found.</returns>
-        public GuideChannel GetChannelByName(string name)
+        public async Task<GuideChannel> GetChannelByName(string name)
         {
             var request = NewRequest(HttpMethod.Post, "Channel/ChannelByName");
             request.AddBody(new
             {
                 Name = name
             });
-            return Execute<GuideChannel>(request);
+            return await ExecuteAsync<GuideChannel>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="guideProgram">The program to import.</param>
         /// <param name="source">The source of the program.</param>
         /// <returns>The ID of the imported program.</returns>
-        public Guid ImportProgram(GuideProgram guideProgram, GuideSource source)
+        public async Task<Guid> ImportProgram(GuideProgram guideProgram, GuideSource source)
         {
             var request = NewRequest(HttpMethod.Post, "ImportNewProgram");
             request.AddBody(new
@@ -158,7 +159,7 @@ namespace ArgusTV.ServiceProxy
                 Program = guideProgram,
                 Source = source
             });
-            var result = Execute<GuideProgramIdResult>(request);
+            var result = await ExecuteAsync<GuideProgramIdResult>(request).ConfigureAwait(false);
             return result.GuideProgramId;
         }
 
@@ -167,7 +168,7 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="guidePrograms">An array containing all programs to import.</param>
         /// <param name="source">The source of the programs.</param>
-        public void ImportPrograms(IEnumerable<GuideProgram> guidePrograms, GuideSource source)
+        public async Task ImportPrograms(IEnumerable<GuideProgram> guidePrograms, GuideSource source)
         {
             var request = NewRequest(HttpMethod.Post, "ImportPrograms");
             request.AddBody(new
@@ -175,7 +176,7 @@ namespace ArgusTV.ServiceProxy
                 Programs = guidePrograms,
                 Source = source
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -183,10 +184,10 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="guideProgramId">The ID of the guide program.</param>
         /// <returns>The requested guide program, or null if it wasn't found.</returns>
-        public GuideProgram GetProgramById(Guid guideProgramId)
+        public async Task<GuideProgram> GetProgramById(Guid guideProgramId)
         {
             var request = NewRequest(HttpMethod.Get, "Program/{0}", guideProgramId);
-            return Execute<GuideProgram>(request);
+            return await ExecuteAsync<GuideProgram>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -196,10 +197,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="lowerTime">Return programs that end after this time.</param>
         /// <param name="upperTime">Return programs that start before this time.</param>
         /// <returns>An array containing zero or more guide programs (summaries).</returns>
-        public List<GuideProgramSummary> GetChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime)
+        public async Task<List<GuideProgramSummary>> GetChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime)
         {
             var request = NewRequest(HttpMethod.Get, "Programs/{0}/{1}/{2}", guideChannelId, lowerTime, upperTime);
-            return Execute<List<GuideProgramSummary>>(request);
+            return await ExecuteAsync<List<GuideProgramSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -210,10 +211,10 @@ namespace ArgusTV.ServiceProxy
         /// <param name="upperTime">Return programs that start before this time.</param>
         /// <param name="includeCredits">Set to true to also receive all program credits.</param>
         /// <returns>An array containing zero or more guide programs.</returns>
-        public List<GuideProgram> GetFullChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
+        public async Task<List<GuideProgram>> GetFullChannelProgramsBetween(Guid guideChannelId, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
         {
             var request = NewRequest(HttpMethod.Get, "FullPrograms/{0}/{1}/{2}/{3}", guideChannelId, lowerTime, upperTime, includeCredits);
-            return Execute<List<GuideProgram>>(request);
+            return await ExecuteAsync<List<GuideProgram>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -223,7 +224,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="lowerTime">Return programs that end after this time.</param>
         /// <param name="upperTime">Return programs that start before this time.</param>
         /// <returns>A list of zero or more guide programs (summaries).</returns>
-        public List<GuideProgramSummary> GetChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime)
+        public async Task<List<GuideProgramSummary>> GetChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime)
         {
             var request = NewRequest(HttpMethod.Post, "ChannelsPrograms");
             request.AddBody(new
@@ -232,7 +233,7 @@ namespace ArgusTV.ServiceProxy
                 LowerTime = lowerTime,
                 UpperTime = upperTime
             });
-            return Execute<List<GuideProgramSummary>>(request);
+            return await ExecuteAsync<List<GuideProgramSummary>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -243,7 +244,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="upperTime">Return programs that start before this time.</param>
         /// <param name="includeCredits">Set to true to also receive all program credits.</param>
         /// <returns>A list of zero or more guide programs.</returns>
-        public List<GuideProgram> GetFullChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
+        public async Task<List<GuideProgram>> GetFullChannelsProgramsBetween(IEnumerable<Guid> guideChannelIds, DateTime lowerTime, DateTime upperTime, bool includeCredits = false)
         {
             var request = NewRequest(HttpMethod.Post, "FullChannelsPrograms/{0}", includeCredits);
             request.AddBody(new
@@ -252,53 +253,53 @@ namespace ArgusTV.ServiceProxy
                 LowerTime = lowerTime,
                 UpperTime = upperTime
             });
-            return Execute<List<GuideProgram>>(request);
+            return await ExecuteAsync<List<GuideProgram>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get all available categories currently in the guide.
         /// </summary>
         /// <returns>An array containing zero or more categories.</returns>
-        public List<string> GetAllCategories()
+        public async Task<List<string>> GetAllCategories()
         {
             var request = NewRequest(HttpMethod.Get, "Categories");
-            return Execute<List<string>>(request);
+            return await ExecuteAsync<List<string>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Delete old guide programs (everything before yesterday).
         /// </summary>
-        public void DeleteOldPrograms()
+        public async Task DeleteOldPrograms()
         {
             var request = NewRequest(HttpMethod.Post, "DeleteOldPrograms");
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Delete all guide programs.
         /// </summary>
-        public void DeleteAllPrograms()
+        public async Task DeleteAllPrograms()
         {
             var request = NewRequest(HttpMethod.Post, "DeleteAllPrograms");
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Notify ARGUS TV that a guide import has started. Call this before doing one or more ImportPrograms() calls.
         /// </summary>
-        public void StartGuideImport()
+        public async Task StartGuideImport()
         {
             var request = NewRequest(HttpMethod.Post, "StartGuideImport");
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Notify ARGUS TV that the guide import has ended.  The NewGuideData event will be sent to all listeners.
         /// </summary>
-        public void EndGuideImport()
+        public async Task EndGuideImport()
         {
             var request = NewRequest(HttpMethod.Post, "EndGuideImport");
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         private class ChannelIdResult

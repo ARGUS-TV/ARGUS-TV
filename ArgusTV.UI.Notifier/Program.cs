@@ -25,6 +25,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Security;
 using System.Threading;
+using ArgusTV.Common.Logging;
 
 namespace ArgusTV.UI.Notifier
 {
@@ -38,6 +39,8 @@ namespace ArgusTV.UI.Notifier
         [STAThread]
         static void Main()
         {
+            Logger.SetLogFilePath("Notifier.log", System.Diagnostics.SourceLevels.Verbose);
+
             try
             {
                 bool firstInstance;

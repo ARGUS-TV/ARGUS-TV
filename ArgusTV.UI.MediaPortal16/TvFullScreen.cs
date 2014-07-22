@@ -906,18 +906,18 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (_dlgYesNo.IsConfirmed)
                         {
-                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(activeRecording.Program.ScheduleId);
+                            Schedule schedule = Proxies.SchedulerService.GetScheduleById(activeRecording.Program.ScheduleId).Result;
                             if (schedule != null)
                             {
                                 if (activeRecording.Program.IsPartOfSeries)
                                 {
                                     Proxies.SchedulerService.CancelUpcomingProgram(schedule.ScheduleId,
                                         currentProgram == null ? null : (Guid?)currentProgram.GuideProgramId,
-                                        currentChannel.ChannelId, activeRecording.Program.StartTime);
+                                        currentChannel.ChannelId, activeRecording.Program.StartTime).Wait();
                                 }
                                 else
                                 {
-                                    Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId);
+                                    Proxies.SchedulerService.DeleteSchedule(schedule.ScheduleId).Wait();
                                 }
                                 string text = String.Format("{0} {1}-{2}",
                                         activeRecording.Program.Title,
@@ -992,7 +992,7 @@ namespace ArgusTV.UI.MediaPortal
 
                             if (schedule != null)
                             {
-                                Proxies.SchedulerService.SaveSchedule(schedule);
+                                Proxies.SchedulerService.SaveSchedule(schedule).Wait();
                                 ShowRecordingNotifyDialog(currentChannel, notifyText, TextId.RecordingStarted);
                             }
                         }
@@ -1326,7 +1326,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private Schedule CreateManualSchedule(Channel channel, int durationMinutes, out string notifyText)
         {
-            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(ChannelType.Television, ScheduleType.Recording).Result;
             DateTime startTime = DateTime.Now;
             TimeSpan duration = new TimeSpan(0, durationMinutes, 0);
             schedule.Rules.Add(ScheduleRuleType.Channels, channel.ChannelId);

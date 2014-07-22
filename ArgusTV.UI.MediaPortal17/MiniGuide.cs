@@ -338,7 +338,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (_currentGroup != null)
             {
-                _currentAndNextPrograms = Proxies.SchedulerService.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, PluginMain.Navigator.LiveStream);
+                _currentAndNextPrograms = Proxies.SchedulerService.GetCurrentAndNextForGroup(_currentGroup.ChannelGroupId, true, PluginMain.Navigator.LiveStream).Result;
             }
             else
             {

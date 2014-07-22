@@ -243,7 +243,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             try
             {
-                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(e.GuideProgram.GuideProgramId);
+                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(e.GuideProgram.GuideProgramId).Result;
                 using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                 {
                     popup.Channel = e.Channel;

@@ -384,7 +384,7 @@ namespace ArgusTV.UI.MediaPortal
                         break;
 
                     case 830: // Reset watched status
-                        Proxies.ControlService.SetRecordingLastWatchedPosition(rec.RecordingFileName, null);
+                        Proxies.ControlService.SetRecordingLastWatchedPosition(rec.RecordingFileName, null).Wait();
                         rec.LastWatchedPosition = null;
                         rec.LastWatchedTime = null;
                         item.IsPlayed = false;
@@ -432,7 +432,7 @@ namespace ArgusTV.UI.MediaPortal
         internal static bool PlayFromLivePoint(ActiveRecording rec)
         {
             if (rec == null) return false;
-            return PlayRecording(Proxies.ControlService.GetRecordingById(rec.RecordingId), false, true, null);
+            return PlayRecording(Proxies.ControlService.GetRecordingById(rec.RecordingId).Result, false, true, null);
         }
 
         internal static bool PlayFromPreRecPoint(Recording rec)
@@ -530,7 +530,7 @@ namespace ArgusTV.UI.MediaPortal
 
             if (StartPlayingRec(rec, jumpToTime))
             {
-                Proxies.ControlService.SetRecordingLastWatched(rec.RecordingFileName);
+                Proxies.ControlService.SetRecordingLastWatched(rec.RecordingFileName).Wait();
                 rec.LastWatchedTime = DateTime.Now;
                 return true;
             }
@@ -542,7 +542,7 @@ namespace ArgusTV.UI.MediaPortal
             string fileName = rec.RecordingFileName;
             if (PluginMain.PlayRecordingsOverRtsp)
             {
-                fileName = Proxies.ControlService.StartRecordingStream(fileName);
+                fileName = Proxies.ControlService.StartRecordingStream(fileName).Result;
             }
 
             PluginMain.Navigator.LastChannelChangeFailed = false;
@@ -980,7 +980,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 pItem.IsPlayed = true;
                 GUIControl.RefreshControl(GetID, facadeLayout.GetID);
-                return PlayRecording(Proxies.ControlService.GetRecordingById(rec.RecordingId), null);
+                return PlayRecording(Proxies.ControlService.GetRecordingById(rec.RecordingId).Result, null);
             }
             return false;
         }
@@ -1009,7 +1009,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     if (dlgYesNo.IsConfirmed)
                     {
-                        Proxies.ControlService.DeleteRecording(rec.RecordingFileName, true);
+                        Proxies.ControlService.DeleteRecording(rec.RecordingFileName, true).Wait();
                         LoadDirectory(true);
                         SelectItemByIndex(ref _selectedItemIndex);
                         SetRecordingDiskInfo(false);
@@ -1056,7 +1056,7 @@ namespace ArgusTV.UI.MediaPortal
             switch (dialog.SelectedLabel)
             {
                 case 0:
-                    Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.UntilSpaceIsNeeded, null);
+                    Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.UntilSpaceIsNeeded, null).Wait();
                     break;
 
                 case 1:
@@ -1065,7 +1065,7 @@ namespace ArgusTV.UI.MediaPortal
                             rec.KeepUntilMode == KeepUntilMode.NumberOfDays ? rec.KeepUntilValue : 7);
                         if (value.HasValue)
                         {
-                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfDays, value);
+                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfDays, value).Wait();
                         }
                     }
                     break;
@@ -1076,7 +1076,7 @@ namespace ArgusTV.UI.MediaPortal
                             rec.KeepUntilMode == KeepUntilMode.NumberOfEpisodes ? rec.KeepUntilValue : 3);
                         if (value.HasValue)
                         {
-                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfEpisodes, value);
+                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfEpisodes, value).Wait();
                         }
                     }
                     break;
@@ -1087,13 +1087,13 @@ namespace ArgusTV.UI.MediaPortal
                             rec.KeepUntilMode == KeepUntilMode.NumberOfWatchedEpisodes ? rec.KeepUntilValue : 3);
                         if (value.HasValue)
                         {
-                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfWatchedEpisodes, value);
+                            Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.NumberOfWatchedEpisodes, value).Wait();
                         }
                     }
                     break;
 
                 case 4:
-                    Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.Forever, null);
+                    Proxies.ControlService.SetRecordingKeepUntil(rec.RecordingFileName, KeepUntilMode.Forever, null).Wait();
                     break;
             }
 
@@ -1183,7 +1183,7 @@ namespace ArgusTV.UI.MediaPortal
             }
             else
             {
-                Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId);
+                Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId).Result;
 
                 string strTime = string.Format("{0} {1} - {2}",
                   Utility.GetShortDayDateString(rec.ProgramStartTime),
@@ -1223,7 +1223,7 @@ namespace ArgusTV.UI.MediaPortal
         private void SetRecordingDiskInfo(bool CheckFreeSize)
         {
             //Log.Debug("RecordedBase: SetRecordingDiskInfo");
-            RecordingDisksInfo _recordingDisksInfo = Proxies.ControlService.GetRecordingDisksInfo();
+            RecordingDisksInfo _recordingDisksInfo = Proxies.ControlService.GetRecordingDisksInfo().Result;
 
             //Byte to GB conversion
             double TotalSizeGBytes = _recordingDisksInfo.TotalSizeBytes;
@@ -1361,7 +1361,7 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 if (recording.LastWatchedTime.HasValue)
                                 {
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
                                 }
                             }
                         }
@@ -1369,10 +1369,10 @@ namespace ArgusTV.UI.MediaPortal
                 }
                 else
                 {
-                    var groups = Proxies.ControlService.GetAllRecordingGroups(this._channelType, RecordingGroupMode.GroupByProgramTitle);
+                    var groups = Proxies.ControlService.GetAllRecordingGroups(this._channelType, RecordingGroupMode.GroupByProgramTitle).Result;
                     foreach (RecordingGroup group in groups)
                     {
-                        var recordings = Proxies.ControlService.GetRecordingsForProgramTitle(this._channelType, group.ProgramTitle, true);
+                        var recordings = Proxies.ControlService.GetRecordingsForProgramTitle(this._channelType, group.ProgramTitle, true).Result;
                         foreach (RecordingSummary recording in recordings)
                         {
                             if (_cleanUpMethod == cleanupMethod.AllInvalidAndWatched
@@ -1382,7 +1382,7 @@ namespace ArgusTV.UI.MediaPortal
                                     (recording.RecordingStopTimeUtc.HasValue && (recording.RecordingStartTimeUtc.AddSeconds(15) > recording.RecordingStopTimeUtc)))
                                 {
                                     Log.Debug("RecordedBase: remove invalid recording: {0}", recording.RecordingFileName);
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
                                     continue;
                                 }
                             }
@@ -1392,7 +1392,7 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 if (recording.LastWatchedTime.HasValue)
                                 {
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
                                     continue;
                                 }
                             }
@@ -1647,11 +1647,11 @@ namespace ArgusTV.UI.MediaPortal
                 {
                     //we need the real filename for saving the position, not the RTSP one.
                     if (_playingRecording != null ) filename = _playingRecording.RecordingFileName;
-                    Proxies.ControlService.StopRecordingStream(filename);
+                    Proxies.ControlService.StopRecordingStream(filename).Wait();
                 }
                 if (stoptime >= 0)
                 {
-                    Proxies.ControlService.SetRecordingLastWatchedPosition(filename, stoptime);
+                    Proxies.ControlService.SetRecordingLastWatchedPosition(filename, stoptime).Wait();
                 }
             }
             if (!onPlayBackChanged)

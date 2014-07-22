@@ -397,7 +397,7 @@ namespace ArgusTV.UI.MediaPortal
                     List<Channel> channels = new List<Channel>();
                     if (_channelArguments.Count > 0)
                     {
-                        List<Channel> channels2 = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(_selectedGroup.ChannelGroupId, true));
+                        List<Channel> channels2 = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(_selectedGroup.ChannelGroupId, true).Result);
                         foreach (Channel channel in channels2)
                         {
                             if (!_channelArguments.Contains(channel.ChannelId))
@@ -408,7 +408,7 @@ namespace ArgusTV.UI.MediaPortal
                     }
                     else
                     {
-                        channels = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(_selectedGroup.ChannelGroupId, true));
+                        channels = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(_selectedGroup.ChannelGroupId, true).Result);
                     }
 
                     if (channels.Count > 0)
@@ -450,7 +450,7 @@ namespace ArgusTV.UI.MediaPortal
             else if (control == _selectCategoriesButton)
             {
                 List<string> categories = new List<string>();
-                var _categories = Proxies.GuideService.GetAllCategories();
+                var _categories = Proxies.GuideService.GetAllCategories().Result;
                 foreach (string categorie in _categories)
                 {
                     if (!_categorieArguments.Contains(categorie))
@@ -617,9 +617,9 @@ namespace ArgusTV.UI.MediaPortal
                 rules.Add(ScheduleRuleType.Channels, _channelArguments.ToArray());
             }
 
-            Schedule _schedule = Proxies.SchedulerService.CreateNewSchedule(this._channelType, ScheduleType.Recording);
+            Schedule _schedule = Proxies.SchedulerService.CreateNewSchedule(this._channelType, ScheduleType.Recording).Result;
             _schedule.Rules = rules;
-            var _searchResults = Proxies.SchedulerService.GetUpcomingPrograms(_schedule, true);
+            var _searchResults = Proxies.SchedulerService.GetUpcomingPrograms(_schedule, true).Result;
 
             if (_searchResults.Count < 1)
             {
@@ -751,7 +751,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 foreach (object argument in _channelArguments)
                 {
-                    Channel chan = Proxies.SchedulerService.GetChannelById(new Guid(argument.ToString()));
+                    Channel chan = Proxies.SchedulerService.GetChannelById(new Guid(argument.ToString())).Result;
                     text += chan.DisplayName + ",";
                 }
                 text = text.Remove(text.Length - 1);
@@ -821,9 +821,9 @@ namespace ArgusTV.UI.MediaPortal
 
         private void SetLabels()
         {
-            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result;
+            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true).Result;
+            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true).Result;
             UpcomingGuideProgramsDictionary AllUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
 
             foreach (GUIListItem item in _viewsList.ListItems)
@@ -911,7 +911,7 @@ namespace ArgusTV.UI.MediaPortal
         {
             if (program != null)
             {
-                TvProgramInfo.CurrentProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value);
+                TvProgramInfo.CurrentProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value).Result;
                 TvProgramInfo.Channel = program.Channel;
                 GUIWindowManager.ActivateWindow((int)WindowId.ProgramInfo);
                 return true;
@@ -965,7 +965,7 @@ namespace ArgusTV.UI.MediaPortal
                     GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Search.thumb", "defaultVideoBig.png");
                 }
 
-                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value);
+                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId.Value).Result;
                 GUIPropertyManager.SetProperty(guiPropertyPrefix + ".Search.Description", guideProgram.CreateCombinedDescription(true));
             }
         }

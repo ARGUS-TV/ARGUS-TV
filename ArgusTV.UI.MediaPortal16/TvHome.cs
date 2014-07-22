@@ -315,13 +315,13 @@ namespace ArgusTV.UI.MediaPortal
                     ChannelGroup currgroup = PluginMain.Navigator.CurrentGroup;
                     if (currgroup != null)
                     {
-                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, null));
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(PluginMain.Navigator.CurrentGroup.ChannelGroupId, true, null).Result);
                     }
 
                     List<ChannelGroup> groups = PluginMain.Navigator.GetGroups(ChannelType.Television);
                     foreach (ChannelGroup group in groups)
                     {
-                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(group.ChannelGroupId, true, null));
+                        _currentAndNextPrograms = new List<CurrentAndNextProgram>(Proxies.SchedulerService.GetCurrentAndNextForGroup(group.ChannelGroupId, true, null).Result);
                     }
                 }
                 catch { Log.Error("CacheChannelsThread: error"); }
@@ -707,7 +707,7 @@ namespace ArgusTV.UI.MediaPortal
                             else
                                 head = GUILocalizeStrings.Get(1447);
 
-                            Channel chan = Proxies.SchedulerService.GetChannelById(recording.ChannelId);
+                            Channel chan = Proxies.SchedulerService.GetChannelById(recording.ChannelId).Result;
                             logo = Utility.GetLogoImage(chan);
 
                             string _text = String.Format("{0} {1}-{2}",
@@ -771,7 +771,7 @@ namespace ArgusTV.UI.MediaPortal
                         {
                             if (prog.GuideProgramId.HasValue)
                             {
-                                GuideProgram Program = Proxies.GuideService.GetProgramById(prog.GuideProgramId.Value);
+                                GuideProgram Program = Proxies.GuideService.GetProgramById(prog.GuideProgramId.Value).Result;
                                 description = Program.CreateCombinedDescription(false);
                             }
                         }
@@ -1105,7 +1105,7 @@ namespace ArgusTV.UI.MediaPortal
                     {
                         try
                         {
-                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents | EventGroup.ScheduleEvents);
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents | EventGroup.ScheduleEvents).Wait();
                             _eventListenerSubscribed = true;
                             _eventsErrorCount = 0;
                         }
@@ -1117,7 +1117,7 @@ namespace ArgusTV.UI.MediaPortal
                     {
                         try
                         {
-                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken).Result;
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
@@ -1147,7 +1147,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 try
                 {
-                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId).Wait();
                 }
                 catch
                 {

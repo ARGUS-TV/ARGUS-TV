@@ -21,7 +21,7 @@ IF NOT EXIST %pluginDir% goto reallyEnd
 :mergePlugin
   CD "%~1"
   IF NOT EXIST merged MKDIR merged
-  ..\..\..\packages\ilmerge.2.13.0307\ILMerge.exe /internalize /out:merged\ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Common.dll ArgusTV.Common.Recorders.dll Newtonsoft.Json.dll System.Net.Http.dll System.Net.Http.Extensions.dll System.Net.Http.Primitives.dll System.Net.Http.WebRequest.dll System.Runtime.dll System.IO.dll System.Threading.Tasks.dll
+  ..\..\..\packages\ilmerge.2.13.0307\ILMerge.exe /internalize /out:merged\ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Recorder.MediaPortalTvServer.dll ArgusTV.Common.dll ArgusTV.Common.Recorders.dll Newtonsoft.Json.dll
 
 :reallyEnd
   exit 0

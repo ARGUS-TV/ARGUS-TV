@@ -52,7 +52,7 @@ namespace ArgusTV.Batch.ProcessCommand
                     {
                         string recordedFileName = args[1];
 
-                        Recording recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
                         if (recording != null)
                         {
                             Tags tags = new Tags();
@@ -102,7 +102,7 @@ namespace ArgusTV.Batch.ProcessCommand
                     {
                         string recordedFileName = args[1];
                         Boolean keepGile = (args[2] == "1" ? true : false);
-                        Proxies.ControlService.DeleteRecording(recordedFileName, keepGile);
+                        Proxies.ControlService.DeleteRecording(recordedFileName, keepGile).Wait();
                     }
                 }
                 else if (args.Length == 4 && String.Equals(args[0], "description", StringComparison.InvariantCultureIgnoreCase))
@@ -114,7 +114,7 @@ namespace ArgusTV.Batch.ProcessCommand
                     Log(LogSeverity.Information, string.Format("Creating description file for {0} called {1}", args[1], outputFileName));
                     if (Proxies.IsInitialized)
                     {
-                        Recording tvRecording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
+                        Recording tvRecording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
                         fileString = fileString.Replace("{description}", tvRecording.Description);
                         fileString = fileString.Replace("{starttime}", tvRecording.StartTime.ToString());
                         fileString = fileString.Replace("{stoptime}", tvRecording.StopTime.ToString());
@@ -135,7 +135,7 @@ namespace ArgusTV.Batch.ProcessCommand
                     {
                         string recordedFileName = args[1];
                         string newFileName = args[2];
-                        Recording recording = Proxies.ControlService.GetRecordingByFileName(newFileName);
+                        Recording recording = Proxies.ControlService.GetRecordingByFileName(newFileName).Result;
 
                         if (recording == null)
                         {
@@ -156,7 +156,7 @@ namespace ArgusTV.Batch.ProcessCommand
                                     return -2;
                                 }
                             }
-                            Proxies.ControlService.ChangeRecordingFile(recordedFileName, lUncPath, null, null);
+                            Proxies.ControlService.ChangeRecordingFile(recordedFileName, lUncPath, null, null).Wait();
                         }
                         else
                         {
@@ -175,7 +175,7 @@ namespace ArgusTV.Batch.ProcessCommand
                         string recordedFileName = args[1];
                         Recording recording;
 
-                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
 
                         if (recording != null)
                         {
@@ -202,7 +202,7 @@ namespace ArgusTV.Batch.ProcessCommand
                         string recordedFileName = args[1];
                         Recording recording;
 
-                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName);
+                        recording = Proxies.ControlService.GetRecordingByFileName(recordedFileName).Result;
 
                         if (recording != null)
                             return 0;

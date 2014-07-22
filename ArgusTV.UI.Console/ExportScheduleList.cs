@@ -19,21 +19,21 @@ namespace ArgusTV.UI.Console
         {
         }
 
-        public ExportScheduleList(SchedulerServiceProxy schedulerProxy, ControlServiceProxy controlProxy, List<Schedule> schedules)
+        public ExportScheduleList(List<Schedule> schedules)
         {
             foreach (Schedule schedule in schedules)
             {
-                this.Add(new ExportSchedule(schedulerProxy, controlProxy, schedule));
+                this.Add(new ExportSchedule(schedule));
             }
         }
 
-        public List<ImportSchedule> Convert(SchedulerServiceProxy schedulerProxy, out List<string> errors)
+        public List<ImportSchedule> Convert(out List<string> errors)
         {
             errors = new List<string>();
             List<ImportSchedule> schedules = new List<ImportSchedule>();
             foreach (ExportSchedule schedule in this)
             {
-                schedules.Add(schedule.Convert(schedulerProxy, errors));
+                schedules.Add(schedule.Convert(errors));
             }
             return schedules;
         }

@@ -50,7 +50,7 @@ namespace ArgusTV.UI.Process.Recordings
 
         public void ReloadRecordingGroups(RecordingGroupMode groupMode)
         {
-            _model.RecordingGroups = new List<RecordingGroup>(Proxies.ControlService.GetAllRecordingGroups(_model.ChannelType, groupMode));
+            _model.RecordingGroups = new List<RecordingGroup>(Proxies.ControlService.GetAllRecordingGroups(_model.ChannelType, groupMode).Result);
             _model.RecordingsByGroup.Clear();
 
             int index = 0;
@@ -89,16 +89,16 @@ namespace ArgusTV.UI.Process.Recordings
                 switch (_model.RecordingGroups[groupIndex].RecordingGroupMode)
                 {
                     case RecordingGroupMode.GroupBySchedule:
-                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForSchedule(_model.RecordingGroups[groupIndex].ScheduleId, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForSchedule(_model.RecordingGroups[groupIndex].ScheduleId, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByChannel:
-                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsOnChannel(_model.RecordingGroups[groupIndex].ChannelId, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsOnChannel(_model.RecordingGroups[groupIndex].ChannelId, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByProgramTitle:
-                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForProgramTitle(_model.ChannelType, _model.RecordingGroups[groupIndex].ProgramTitle, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForProgramTitle(_model.ChannelType, _model.RecordingGroups[groupIndex].ProgramTitle, includeNonExisting).Result;
                         break;
                     case RecordingGroupMode.GroupByCategory:
-                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForCategory(_model.ChannelType, _model.RecordingGroups[groupIndex].Category, includeNonExisting);
+                        _model.RecordingsByGroup[groupIndex] = Proxies.ControlService.GetRecordingsForCategory(_model.ChannelType, _model.RecordingGroups[groupIndex].Category, includeNonExisting).Result;
                         break;
                 }
             }

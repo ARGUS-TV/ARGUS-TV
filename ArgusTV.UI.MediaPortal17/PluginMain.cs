@@ -73,7 +73,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (DateTime.Now >= _activeRecordingsUpdateTime || ActiveRecordingsChanged)
                         {
                             ActiveRecordingsChanged = false;
-                            _activeRecordings = Proxies.ControlService.GetActiveRecordings();
+                            _activeRecordings = Proxies.ControlService.GetActiveRecordings().Result;
                             _activeRecordingsUpdateTime = DateTime.Now.AddSeconds(15);
                         }
                     }
@@ -271,12 +271,12 @@ namespace ArgusTV.UI.MediaPortal
 
             lock (_refreshCurrAndNextLock)
             {
-                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, false, null);
+                CurrentAndNextProgram currentAndNext = Proxies.SchedulerService.GetCurrentAndNextForChannel(channel.ChannelId, false, null).Result;
                 if (currentAndNext != null)
                 {
                     if (currentAndNext.Current != null)
                     {
-                        _currentProgram = Proxies.GuideService.GetProgramById(currentAndNext.Current.GuideProgramId);
+                        _currentProgram = Proxies.GuideService.GetProgramById(currentAndNext.Current.GuideProgramId).Result;
                     }
                     else
                     {
@@ -284,7 +284,7 @@ namespace ArgusTV.UI.MediaPortal
                     }
                     if (currentAndNext.Next != null)
                     {
-                        _nextProgram = Proxies.GuideService.GetProgramById(currentAndNext.Next.GuideProgramId);
+                        _nextProgram = Proxies.GuideService.GetProgramById(currentAndNext.Next.GuideProgramId).Result;
                     }
                     else
                     {
@@ -304,10 +304,10 @@ namespace ArgusTV.UI.MediaPortal
             if (channel != null
                 && channel.GuideChannelId.HasValue)
             {
-                var programs = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time);
+                var programs = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, time, time).Result;
                 if (programs.Count > 0)
                 {
-                    return Proxies.GuideService.GetProgramById(programs[0].GuideProgramId);
+                    return Proxies.GuideService.GetProgramById(programs[0].GuideProgramId).Result;
                 }
             }
             return null;

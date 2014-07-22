@@ -187,7 +187,7 @@ namespace ArgusTV.UI.MediaPortal
                     size = 0;
                 }
 
-                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime);
+                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime).Result;
                 if (jpegData != null)
                 {
                     try

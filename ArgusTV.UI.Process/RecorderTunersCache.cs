@@ -72,7 +72,7 @@ namespace ArgusTV.UI.Process
                     try
                     {
                         _pluginServices.Clear();
-                        foreach (PluginService pluginService in Proxies.ControlService.GetAllPluginServices(false))
+                        foreach (PluginService pluginService in Proxies.ControlService.GetAllPluginServices(false).Result)
                         {
                             _pluginServices.Add(pluginService.PluginServiceId, pluginService);
                         }

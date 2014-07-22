@@ -24,6 +24,7 @@ using System.Net;
 using System.Net.Http;
 
 using ArgusTV.DataContracts;
+using System.Threading.Tasks;
 
 namespace ArgusTV.ServiceProxy
 {
@@ -46,7 +47,7 @@ namespace ArgusTV.ServiceProxy
         /// <param name="module">The name of the module that is logging the message.</param>
         /// <param name="logSeverity">The severity of the message.</param>
         /// <param name="message">The message text.</param>
-        public void LogMessage(string module, LogSeverity logSeverity, string message)
+        public async Task LogMessage(string module, LogSeverity logSeverity, string message)
         {
             var request = NewRequest(HttpMethod.Post, "Message");
             request.AddBody(new
@@ -55,7 +56,7 @@ namespace ArgusTV.ServiceProxy
                 Severity = logSeverity,
                 Message = message
             });
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,9 +67,8 @@ namespace ArgusTV.ServiceProxy
         /// <param name="maxEntries">The maximum number of messages to return.</param>
         /// <param name="module">The name of the module, or null.</param>
         /// <param name="severity">The severity of the messages, or null.</param>
-        /// <param name="maxEntriesReached">Will be set to true if more than 'maxEntries' messages where available.</param>
-        /// <returns>An array containing zero or more log message.</returns>
-        public List<LogEntry> GetLogEntries(DateTime lowerDate, DateTime upperDate, int maxEntries, string module, LogSeverity? severity, out bool maxEntriesReached)
+        /// <returns>An array containing zero or more log message and 'maxEntriesReached' (set to true if more than 'maxEntries' messages where available).</returns>
+        public async Task<LogEntriesResult> GetLogEntries(DateTime lowerDate, DateTime upperDate, int maxEntries, string module, LogSeverity? severity)
         {
             var request = NewRequest(HttpMethod.Get, "Entries/{0}/{1}/{2}", lowerDate, upperDate, maxEntries);
             if (module != null)
@@ -79,34 +79,42 @@ namespace ArgusTV.ServiceProxy
             {
                 request.AddParameter("severity", severity.Value);
             }
-            var result = Execute<LogEntriesResult>(request);
-            maxEntriesReached = result.MaxEntriesReached;
-            return result.LogEntries;
-        }
-
-        private class LogEntriesResult
-        {
-            public List<LogEntry> LogEntries { get; set; }
-            public bool MaxEntriesReached { get; set; }
+            return await ExecuteAsync<LogEntriesResult>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get all available modules currently in the log.
         /// </summary>
         /// <returns>An array containing zero or more module names.</returns>
-        public List<string> GetAllModules()
+        public async Task<List<string>> GetAllModules()
         {
             var request = NewRequest(HttpMethod.Get, "Modules");
-            return Execute<List<string>>(request);
+            return await ExecuteAsync<List<string>>(request).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Send a test-mail using the current SMTP settings.
         /// </summary>
-        public void SendTestMail()
+        public async Task SendTestMail()
         {
             var request = NewRequest(HttpMethod.Post, "TestMail");
-            Execute(request);
+            await ExecuteAsync(request).ConfigureAwait(false);
         }
+    }
+
+    /// <summary>
+    /// Result from getting log entries.
+    /// </summary>
+    public class LogEntriesResult
+    {
+        /// <summary>
+        /// An array containing zero or more log messages.
+        /// </summary>
+        public List<LogEntry> LogEntries { get; set; }
+
+        /// <summary>
+        /// Set to true if more than 'maxEntries' messages where available.
+        /// </summary>
+        public bool MaxEntriesReached { get; set; }
     }
 }

@@ -142,7 +142,7 @@ namespace ArgusTV.UI.Console.UserControls
                 && e.RowIndex < _programsDataGridView.Rows.Count)
             {
                 ChannelProgramView programView = _programsDataGridView.Rows[e.RowIndex].DataBoundItem as ChannelProgramView;
-                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programView.Program.GuideProgramId);
+                GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programView.Program.GuideProgramId).Result;
                 using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                 {
                     popup.Channel = programView.Program.Channel;

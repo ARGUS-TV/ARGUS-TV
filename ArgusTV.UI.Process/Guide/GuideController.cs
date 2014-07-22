@@ -54,7 +54,7 @@ namespace ArgusTV.UI.Process.Guide
         {
             _model.ChannelType = channelType;
             _model.ChannelGroups.Clear();
-            _model.ChannelGroups.AddRange(Proxies.SchedulerService.GetAllChannelGroups(channelType, true));
+            _model.ChannelGroups.AddRange(Proxies.SchedulerService.GetAllChannelGroups(channelType, true).Result);
             _model.ChannelGroups.Add(new ChannelGroup()
             {
                 ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
@@ -125,7 +125,7 @@ namespace ArgusTV.UI.Process.Guide
             {
                 SetChannelGroup(currentChannelGroupId);
                 _model.GuideDateTime = guideDateTime;
-                _model.Channels = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(currentChannelGroupId, true));
+                _model.Channels = new List<Channel>(Proxies.SchedulerService.GetChannelsInGroup(currentChannelGroupId, true).Result);
                 if (cancellationPending != null
                     && cancellationPending())
                 {
@@ -197,7 +197,7 @@ namespace ArgusTV.UI.Process.Guide
                     if (!_model.ProgramsByChannel.ContainsKey(channel.ChannelId))
                     {
                         _model.ProgramsByChannel[channel.ChannelId] = new ChannelPrograms(fromDateTime, toDateTime,
-                            Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, fromDateTime, toDateTime));
+                            Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, fromDateTime, toDateTime).Result);
                     }
                 }
                 else
@@ -217,7 +217,7 @@ namespace ArgusTV.UI.Process.Guide
         {
             if (toDateTime > fromDateTime)
             {
-                var guidePrograms = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, fromDateTime, toDateTime);
+                var guidePrograms = Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, fromDateTime, toDateTime).Result;
                 foreach (GuideProgramSummary guideProgram in guidePrograms)
                 {
                     channelPrograms.InsertProgram(guideProgram);
@@ -250,7 +250,7 @@ namespace ArgusTV.UI.Process.Guide
 
         private void RefreshGuideUpcomingRecordings()
         {
-            _model.UpcomingRecordings = new UpcomingOrActiveProgramsList(Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true));
+            _model.UpcomingRecordings = new UpcomingOrActiveProgramsList(Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result);
             List<GuideUpcomingProgram> result = new List<GuideUpcomingProgram>();
             foreach (UpcomingOrActiveProgramView upcoming in _model.UpcomingRecordings)
             {
@@ -264,7 +264,7 @@ namespace ArgusTV.UI.Process.Guide
 
         private List<GuideUpcomingProgram> GetGuideUpcomingPrograms(ScheduleType type)
         {
-            var upcomingPrograms = Proxies.SchedulerService.GetUpcomingGuidePrograms(type, true);
+            var upcomingPrograms = Proxies.SchedulerService.GetUpcomingGuidePrograms(type, true).Result;
             List<GuideUpcomingProgram> result = new List<GuideUpcomingProgram>();
             foreach (UpcomingGuideProgram upcomingProgram in upcomingPrograms)
             {
@@ -298,16 +298,16 @@ namespace ArgusTV.UI.Process.Guide
 
         public void CancelOrUncancelUpcomingProgram(Guid scheduleId, Guid channelId, Guid guideProgramId, bool cancel)
         {
-            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId);
+            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId).Result;
             if (guideProgram != null)
             {
                 if (cancel)
                 {
-                    Proxies.SchedulerService.CancelUpcomingProgram(scheduleId, guideProgramId, channelId, guideProgram.StartTime);
+                    Proxies.SchedulerService.CancelUpcomingProgram(scheduleId, guideProgramId, channelId, guideProgram.StartTime).Wait();
                 }
                 else
                 {
-                    Proxies.SchedulerService.UncancelUpcomingProgram(scheduleId, guideProgramId, channelId, guideProgram.StartTime);
+                    Proxies.SchedulerService.UncancelUpcomingProgram(scheduleId, guideProgramId, channelId, guideProgram.StartTime).Wait();
                 }
                 RefreshUpcomingPrograms();
             }
@@ -317,18 +317,18 @@ namespace ArgusTV.UI.Process.Guide
         {
             if (addToHistory)
             {
-                Proxies.ControlService.AddToPreviouslyRecordedHistory(upcomingProgram);
+                Proxies.ControlService.AddToPreviouslyRecordedHistory(upcomingProgram).Wait();
             }
             else
             {
-                Proxies.ControlService.RemoveFromPreviouslyRecordedHistory(upcomingProgram);
+                Proxies.ControlService.RemoveFromPreviouslyRecordedHistory(upcomingProgram).Wait();
             }
             RefreshUpcomingPrograms();
         }
 
         public Schedule CreateRecordOnceSchedule(Guid channelId, Guid guideProgramId)
         {
-            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId);
+            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId).Result;
             if (guideProgram != null)
             {
                 return GuideController.CreateRecordOnceSchedule(_model.ChannelType, channelId, guideProgram.Title, guideProgram.SubTitle, guideProgram.EpisodeNumberDisplay, guideProgram.StartTime);
@@ -338,7 +338,7 @@ namespace ArgusTV.UI.Process.Guide
 
         public static Schedule CreateRecordOnceSchedule(ChannelType channelType, Guid channelId, string title, string subTitle, string episodeNumber, DateTime startTime)
         {
-            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording).Result;
             schedule.Name = GuideProgram.CreateProgramTitle(title, subTitle, episodeNumber);
             schedule.Rules.Add(ScheduleRuleType.Channels, channelId);
             schedule.Rules.Add(ScheduleRuleType.OnDate, startTime.Date);
@@ -367,7 +367,7 @@ namespace ArgusTV.UI.Process.Guide
 
         public Schedule CreateRecordRepeatingSchedule(RepeatingType repeatingType, Guid? channelId, Guid guideProgramId)
         {
-            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId);
+            GuideProgram guideProgram = Proxies.GuideService.GetProgramById(guideProgramId).Result;
             if (guideProgram != null)
             {
                 return GuideController.CreateRecordRepeatingSchedule(repeatingType, _model.ChannelType, channelId, guideProgram.Title, guideProgram.StartTime,string.Empty);
@@ -384,7 +384,7 @@ namespace ArgusTV.UI.Process.Guide
         public static Schedule CreateRecordRepeatingSchedule(RepeatingType repeatingType, ChannelType channelType,
             Guid? channelId, string title, DateTime startTime, string repeatingTime)
         {
-            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording);
+            Schedule schedule = Proxies.SchedulerService.CreateNewSchedule(channelType, ScheduleType.Recording).Result;
 
             if (repeatingType == RepeatingType.AnyTime || 
                 repeatingType == RepeatingType.AnyTimeThisChannel)

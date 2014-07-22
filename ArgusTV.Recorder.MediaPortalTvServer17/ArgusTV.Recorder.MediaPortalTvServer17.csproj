@@ -19,7 +19,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,6 +43,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <OutputPath>bin\Test\</OutputPath>
@@ -58,6 +60,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Utils, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -97,31 +100,9 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO">
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http, Version=2.2.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.2.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime">
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Net" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Threading.Tasks">
-      <HintPath>..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TvBusinessLayer, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
@@ -243,7 +224,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="PostBuild.cmd" />
   </ItemGroup>
@@ -251,21 +231,21 @@
     <None Include="Resources\WizardHeader.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\_NET40\ArgusTV.Common.Recorders\ArgusTV.Common.Recorders.NET40.csproj">
-      <Project>{f6dd8172-e02f-4b38-bdf1-c2ec9f0d86f0}</Project>
-      <Name>ArgusTV.Common.Recorders.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.Common.Recorders\ArgusTV.Common.Recorders.csproj">
+      <Project>{f6dd8172-e02f-4b38-bdf1-c2ec9f0d6f86}</Project>
+      <Name>ArgusTV.Common.Recorders</Name>
     </ProjectReference>
-    <ProjectReference Include="..\_NET40\ArgusTV.Common\ArgusTV.Common.NET40.csproj">
-      <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f543567}</Project>
-      <Name>ArgusTV.Common.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.Common\ArgusTV.Common.csproj">
+      <Project>{d0fd6fec-f7b8-406a-9b87-16ff3f5472be}</Project>
+      <Name>ArgusTV.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\_NET40\ArgusTV.DataContracts\ArgusTV.DataContracts.NET40.csproj">
-      <Project>{cdb911a5-a3e1-46b3-98f3-dd1ee63f64b1}</Project>
-      <Name>ArgusTV.DataContracts.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.DataContracts\ArgusTV.DataContracts.csproj">
+      <Project>{2d3b808e-4e79-40df-b2fa-8c87fb50d7aa}</Project>
+      <Name>ArgusTV.DataContracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\_NET40\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.NET40.csproj">
-      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538643a}</Project>
-      <Name>ArgusTV.ServiceProxy.NET40</Name>
+    <ProjectReference Include="..\ArgusTV.ServiceProxy\ArgusTV.ServiceProxy.csproj">
+      <Project>{7c5f1d5b-aa36-48bd-b20f-47e62538d5da}</Project>
+      <Name>ArgusTV.ServiceProxy</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -280,9 +260,4 @@
     <PostBuildEvent>$(ProjectDir)PostBuild.cmd $(TargetDir) $(TargetPath) $(ConfigurationName)
 </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
 </Project>

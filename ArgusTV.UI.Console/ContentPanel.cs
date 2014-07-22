@@ -198,7 +198,7 @@ namespace ArgusTV.UI.Console
                     {
                         try
                         {
-                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents);
+                            Proxies.CoreService.SubscribeServiceEvents(_eventsClientId, EventGroup.RecordingEvents).Wait();
                             _eventListenerSubscribed = true;
                         }
                         catch
@@ -209,7 +209,7 @@ namespace ArgusTV.UI.Console
                     {
                         try
                         {
-                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken);
+                            events = Proxies.CoreService.GetServiceEvents(_eventsClientId, cancellationToken).Result;
                             if (events == null)
                             {
                                 _eventListenerSubscribed = false;
@@ -236,7 +236,7 @@ namespace ArgusTV.UI.Console
             {
                 try
                 {
-                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId);
+                    Proxies.CoreService.UnsubscribeServiceEvents(_eventsClientId).Wait();
                 }
                 catch
                 {

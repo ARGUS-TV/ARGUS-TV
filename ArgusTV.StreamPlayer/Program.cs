@@ -94,7 +94,7 @@ namespace ArgusTV.StreamPlayer
 
         private static void PlayLiveStream(string rtspUrl, Process liveStreamPlayerProcess)
         {
-            LiveStream liveStream = Proxies.ControlService.GetLiveStreamByRtspUrl(rtspUrl);
+            LiveStream liveStream = Proxies.ControlService.GetLiveStreamByRtspUrl(rtspUrl).Result;
             if (liveStream != null)
             {
                 if (liveStreamPlayerProcess == null)
@@ -115,7 +115,7 @@ namespace ArgusTV.StreamPlayer
                     bool exited = false;
                     while (!exited)
                     {
-                        if (!Proxies.ControlService.KeepLiveStreamAlive(liveStream))
+                        if (!Proxies.ControlService.KeepLiveStreamAlive(liveStream).Result)
                         {
                             break;
                         }
@@ -123,7 +123,7 @@ namespace ArgusTV.StreamPlayer
                     }
                 }
 
-                Proxies.ControlService.StopLiveStream(liveStream);
+                Proxies.ControlService.StopLiveStream(liveStream).Wait();
             }
             else
             {

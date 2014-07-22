@@ -946,7 +946,7 @@ namespace ArgusTV.UI.MediaPortal
 
         private void OnActiveRecordings(List<Guid> ignoreActiveRecordings)
         {
-            List<ActiveRecording> activeRecordings = Proxies.ControlService.GetActiveRecordings();
+            List<ActiveRecording> activeRecordings = Proxies.ControlService.GetActiveRecordings().Result;
 
             if (activeRecordings != null && activeRecordings.Count > 0)
             {
@@ -1034,7 +1034,7 @@ namespace ArgusTV.UI.MediaPortal
             dlg.AddLocalizedString(979);  //Play recorded from beginning
             dlg.AddLocalizedString(980);  //Play recorded from live point
 
-            Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId);
+            Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId).Result;
             if (recording != null && recording.LastWatchedPosition.HasValue)
             {
                 dlg.AddLocalizedString(900);//play from last point
@@ -1075,7 +1075,7 @@ namespace ArgusTV.UI.MediaPortal
 
                         if (dlgYesNo.IsConfirmed)
                         {
-                            Proxies.ControlService.AbortActiveRecording(rec);
+                            Proxies.ControlService.AbortActiveRecording(rec).Wait();
                             aborted = true;
                         }
                     }

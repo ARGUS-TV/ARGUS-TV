@@ -296,7 +296,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
                 Cursor.Current = Cursors.WaitCursor;
 
                 ChannelType channelType = (ChannelType)_channelTypeComboBox.SelectedIndex;
-                List<Channel> channels = new List<Channel>(Proxies.SchedulerService.GetAllChannels(channelType, false));
+                List<Channel> channels = new List<Channel>(Proxies.SchedulerService.GetAllChannels(channelType, false).Result);
 
                 ChannelLinks.RemoveObsoleteLinks(channelType, channels);
 

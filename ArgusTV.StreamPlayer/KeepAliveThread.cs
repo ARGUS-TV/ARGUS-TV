@@ -25,7 +25,7 @@ namespace ArgusTV.StreamPlayer
             bool exited = false;
             while (!exited)
             {
-                if (!Proxies.ControlService.KeepLiveStreamAlive(this.LiveStream))
+                if (!Proxies.ControlService.KeepLiveStreamAlive(this.LiveStream).Result)
                 {
                     break;
                 }

@@ -24,7 +24,7 @@ IF NOT EXIST %mpDir% goto reallyEnd
 :mergePlugin
   CD "%~1"
   IF NOT EXIST merged MKDIR merged
-  ..\..\..\packages\ILRepack.1.25.0\tools\ILRepack.exe /verbose /internalize /out:merged\ArgusTV.UI.MediaPortal.dll ArgusTV.UI.MediaPortal.dll ArgusTV.Client.Common.dll ArgusTV.UI.Process.dll
+  ..\..\..\packages\ilmerge.2.13.0307\ILMerge.exe /internalize /out:merged\ArgusTV.UI.MediaPortal.dll ArgusTV.UI.MediaPortal.dll ArgusTV.Client.Common.dll ArgusTV.UI.Process.dll
 
 :reallyEnd
   REM IF EXIST "C:\ProgramData\Team MediaPortal\MediaPortal\Cache" DEL /S /Q "C:\ProgramData\Team MediaPortal\MediaPortal\Cache"

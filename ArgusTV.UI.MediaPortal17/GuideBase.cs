@@ -1641,7 +1641,7 @@ namespace ArgusTV.UI.MediaPortal
             if (channel.GuideChannelId.HasValue)
             {
                 programs = new List<GuideProgramSummary>(
-                    Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)));
+                    Proxies.GuideService.GetChannelProgramsBetween(channel.GuideChannelId.Value, Utils.longtodate(iStart), Utils.longtodate(iEnd)).Result);
             }
 
             _totalProgramCount = programs.Count;
@@ -2627,7 +2627,7 @@ namespace ArgusTV.UI.MediaPortal
                         if (selectCurrentShow && iChannel == _cursorX)
                         {
                             _cursorY = iProgram + 1;
-                            _currentProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId);
+                            _currentProgram = Proxies.GuideService.GetProgramById(program.GuideProgramId).Result;
                             m_dtStartTime = program.StartTime;
                             SetProperties();
                         }
@@ -3166,7 +3166,7 @@ namespace ArgusTV.UI.MediaPortal
             if (null != img)
             {
                 SetFocus();
-                _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
+                _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId).Result;
                 if (updateIcon)
                 {
                     bool isRecording;
@@ -3325,7 +3325,7 @@ namespace ArgusTV.UI.MediaPortal
                 if (null != img && img.IsVisible)
                 {
                     img.ColourDiffuse = 0xffffffff;
-                    _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId);
+                    _currentProgram = Proxies.GuideService.GetProgramById(((GuideProgramSummary)img.Data).GuideProgramId).Result;
                     SetProperties();
                 }
                 GUIControl.FocusControl(GetID, iControlId);
@@ -3508,7 +3508,7 @@ namespace ArgusTV.UI.MediaPortal
 
                             if (dlgYesNo.IsConfirmed && activeRecording != null)
                             {
-                                Proxies.ControlService.AbortActiveRecording(activeRecording);
+                                Proxies.ControlService.AbortActiveRecording(activeRecording).Wait();
                             }
                         }
                         break;
@@ -3659,7 +3659,7 @@ namespace ArgusTV.UI.MediaPortal
                     switch (dlg.SelectedId)
                     {
                         case 979: // Play recording from beginning 
-                            Recording recording = Proxies.ControlService.GetRecordingById(activeRecording.RecordingId);
+                            Recording recording = Proxies.ControlService.GetRecordingById(activeRecording.RecordingId).Result;
                             if (recording != null)
                             {
                                 RecordedBase.PlayFromPreRecPoint(recording);
@@ -4007,7 +4007,7 @@ namespace ArgusTV.UI.MediaPortal
             {
                 try
                 {
-                    foreach (Channel chan in Proxies.SchedulerService.GetChannelsInGroup(_model.CurrentChannelGroupId, true))
+                    foreach (Channel chan in Proxies.SchedulerService.GetChannelsInGroup(_model.CurrentChannelGroupId, true).Result)
                     {
                         GuideBaseChannel tvGuidChannel = new GuideBaseChannel();
                         tvGuidChannel.channel = chan;

@@ -81,16 +81,16 @@ namespace ArgusTV.UI.Console.Panels
             _postRecordSeconds = Utility.SetDateTimePickerValue(MainForm, _postRecDateTimePicker, ConfigurationKey.Scheduler.PostRecordsSeconds);
 
             _keepUntilMode = KeepUntilMode.UntilSpaceIsNeeded;
-            string keepUntilMode = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode);
+            string keepUntilMode = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode).Result;
             if (!String.IsNullOrEmpty(keepUntilMode))
             {
                 _keepUntilMode = (KeepUntilMode)Enum.Parse(typeof(KeepUntilMode), keepUntilMode);
             }
-            _keepUntilValue = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue);
+            _keepUntilValue = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue).Result;
             _keepUntilControl.SetKeepUntil(_keepUntilMode, _keepUntilValue);
 
             // TV-Guide
-            string preferredSourceString = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource);
+            string preferredSourceString = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource).Result;
             _preferredSource = GuideSource.Other;
             if (!String.IsNullOrEmpty(preferredSourceString))
             {
@@ -110,38 +110,38 @@ namespace ArgusTV.UI.Console.Panels
 
             // eMail server
             _smtpServerTextBox.Text = Proxies.ConfigurationService.GetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpServer);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpServer).Result;
             _smtpPortNumericUpDown.Value = Proxies.ConfigurationService.GetIntValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPort).Value;
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPort).Result.Value;
             _smtpUserNameTextBox.Text = Proxies.ConfigurationService.GetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpUserName);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpUserName).Result;
             _smtpPasswordTextBox.Text = Proxies.ConfigurationService.GetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPassword);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPassword).Result;
             _smtpUseSslCheckBox.Checked = GetBooleanSetting(ConfigurationKey.Scheduler.SmtpEnableSsl);
             _adminEmailsTextBox.Text = Proxies.ConfigurationService.GetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AdministratorEmail);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AdministratorEmail).Result;
             _fromEmailTextBox.Text = Proxies.ConfigurationService.GetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.EmailSender);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.EmailSender).Result;
 
             // IMBot settings            
-            _msnUserNameTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnAccount);
-            _msnPasswordTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnPassword);
-            int? minutesBeforeAlert = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MinutesBeforeAlert);
+            _msnUserNameTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnAccount).Result;
+            _msnPasswordTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnPassword).Result;
+            int? minutesBeforeAlert = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MinutesBeforeAlert).Result;
             if (minutesBeforeAlert.HasValue)
             {
                 _msnMinutesBeforeAlert.Value = minutesBeforeAlert.Value;
             }
-            _msnAddressesTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnContactList);
+            _msnAddressesTextBox.Text = Proxies.ConfigurationService.GetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnContactList).Result;
 
             // ARGUS TV Scheduler
             _serverTextBox.Text = Proxies.ServerSettings.ServiceUrlPrefix;
             bool? includeBetaVersionsInUpdateCheck =
-                Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.IncludeBetaVersionsInUpdateCheck);
+                Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.IncludeBetaVersionsInUpdateCheck).Result;
             _includeBetaVersionsInUpdateCheck = includeBetaVersionsInUpdateCheck.HasValue && includeBetaVersionsInUpdateCheck.Value;
             _checkBetaVersionsCheckBox.Checked = _includeBetaVersionsInUpdateCheck;
 
             // Disk space settings
-            int minimumFreeDiskSpaceInMB = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB).Value;
+            int minimumFreeDiskSpaceInMB = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB).Result.Value;
             if (minimumFreeDiskSpaceInMB >= _minFreeDiskSpaceNumericUpDown.Minimum && minimumFreeDiskSpaceInMB <= _minFreeDiskSpaceNumericUpDown.Maximum)
             {
                 _minFreeDiskSpaceNumericUpDown.Value = minimumFreeDiskSpaceInMB;
@@ -153,7 +153,7 @@ namespace ArgusTV.UI.Console.Panels
             }
             _freeDiskSpaceNumericUpDown.Minimum = _minFreeDiskSpaceNumericUpDown.Value;
 
-            int freeDiskSpaceInMB = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB).Value;
+            int freeDiskSpaceInMB = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB).Result.Value;
             if (freeDiskSpaceInMB >= _freeDiskSpaceNumericUpDown.Minimum && freeDiskSpaceInMB <= _freeDiskSpaceNumericUpDown.Maximum)
             {
                 _freeDiskSpaceNumericUpDown.Value = freeDiskSpaceInMB;
@@ -165,7 +165,7 @@ namespace ArgusTV.UI.Console.Panels
 
             this._minFreeDiskSpaceNumericUpDown.ValueChanged += new System.EventHandler(this._minFreeDiskSpaceNumericUpDown_ValueChanged);
 
-            int wakeupMinutes = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.WakeupBeforeEventMinutes).Value;
+            int wakeupMinutes = Proxies.ConfigurationService.GetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.WakeupBeforeEventMinutes).Result.Value;
             _wakeupMinutesNumericUpDown.Value = Math.Max(wakeupMinutes, _wakeupMinutesNumericUpDown.Minimum);
 
             _createThumbnails = GetBooleanSetting(ConfigurationKey.Scheduler.CreateVideoThumbnails);
@@ -179,7 +179,7 @@ namespace ArgusTV.UI.Console.Panels
         private bool GetBooleanSetting(string key)
         {
             bool result = false;
-            bool? value = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, key);
+            bool? value = Proxies.ConfigurationService.GetBooleanValue(ConfigurationModule.Scheduler, key).Result;
             if (value.HasValue)
             {
                 result = value.Value;
@@ -209,66 +209,66 @@ namespace ArgusTV.UI.Console.Panels
                 int preRecordSeconds = (int)_preRecDateTimePicker.Value.TimeOfDay.TotalSeconds;
                 if (preRecordSeconds != _preRecordSeconds)
                 {
-                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, preRecordSeconds);
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreRecordsSeconds, preRecordSeconds).Wait();
                 }
                 int postRecordSeconds = (int)_postRecDateTimePicker.Value.TimeOfDay.TotalSeconds;
                 if (postRecordSeconds != _postRecordSeconds)
                 {
-                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, postRecordSeconds);
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PostRecordsSeconds, postRecordSeconds).Wait();
                 }
                 if (_keepUntilControl.KeepUntilMode != _keepUntilMode)
                 {
-                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, _keepUntilControl.KeepUntilMode.ToString());                
+                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilMode, _keepUntilControl.KeepUntilMode.ToString()).Wait();
                 }
                 if (_keepUntilControl.KeepUntilValue != _keepUntilValue)
                 {
-                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, _keepUntilControl.KeepUntilValue);
+                    Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.DefaultKeepUntilValue, _keepUntilControl.KeepUntilValue).Wait();
                 }
 
                 // TV-Guide
                 GuideSource preferredSource = (_sourceComboBox.SelectedIndex == 0) ? GuideSource.XmlTv : GuideSource.DvbEpg;
                 if (preferredSource != _preferredSource)
                 {
-                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, preferredSource.ToString());
+                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.PreferredGuideSource, preferredSource.ToString()).Wait();
                 }
 
                 // Recording conflicts
                 if (_combineConsecutiveRecordingsCheckBox.Checked != _combineConsecutiveRecordings)
                 {
-                    Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineConsecutiveRecordings, _combineConsecutiveRecordingsCheckBox.Checked);
+                    Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.CombineConsecutiveRecordings, _combineConsecutiveRecordingsCheckBox.Checked).Wait();
                 }
                 if (_autoCombineConsecutiveRecordingsCheckBox.Checked != _autoCombineConsecutiveRecordings)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                        ConfigurationKey.Scheduler.AutoCombineConsecutiveRecordings, _autoCombineConsecutiveRecordingsCheckBox.Checked);
+                        ConfigurationKey.Scheduler.AutoCombineConsecutiveRecordings, _autoCombineConsecutiveRecordingsCheckBox.Checked).Wait();
                 }
                 if (_combineRecordingsOnlyOnSameChannelCheckBox.Checked != _combineRecordingsOnlyOnSameChannel)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                        ConfigurationKey.Scheduler.CombineRecordingsOnlyOnSameChannel, _combineRecordingsOnlyOnSameChannelCheckBox.Checked);
+                        ConfigurationKey.Scheduler.CombineRecordingsOnlyOnSameChannel, _combineRecordingsOnlyOnSameChannelCheckBox.Checked).Wait();
                 }
                 if (_swapRecorderdTunerPriorityCheckBox.Checked != _swapRecorderdTunerPriority)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                        ConfigurationKey.Scheduler.SwapRecorderTunerPriorityForRecordings, _swapRecorderdTunerPriorityCheckBox.Checked);
+                        ConfigurationKey.Scheduler.SwapRecorderTunerPriorityForRecordings, _swapRecorderdTunerPriorityCheckBox.Checked).Wait();
                 }
 
                 if (_createThumbnailsCheckBox.Checked != _createThumbnails)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                        ConfigurationKey.Scheduler.CreateVideoThumbnails, _createThumbnailsCheckBox.Checked);
+                        ConfigurationKey.Scheduler.CreateVideoThumbnails, _createThumbnailsCheckBox.Checked).Wait();
                 }
                 if (_alwaysCreate4trFilesCheckBox.Checked != _alwaysCreate4trFiles)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                        ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, _alwaysCreate4trFilesCheckBox.Checked);
+                        ConfigurationKey.Scheduler.AlwaysCreateMetadataFiles, _alwaysCreate4trFilesCheckBox.Checked).Wait();
                 }
 
                 if (_checkBetaVersionsCheckBox.Checked != _includeBetaVersionsInUpdateCheck)
                 {
                     Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.IncludeBetaVersionsInUpdateCheck,
-                        _checkBetaVersionsCheckBox.Checked);
-                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.NextUpdateCheck, null);
+                        _checkBetaVersionsCheckBox.Checked).Wait();
+                    Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.NextUpdateCheck, null).Wait();
                 }
 
                 // eMail server
@@ -279,12 +279,12 @@ namespace ArgusTV.UI.Console.Panels
 
                 // Disk space settings
                 Proxies.ConfigurationService.SetIntValue(
-                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, (int)_minFreeDiskSpaceNumericUpDown.Value);
+                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.MinimumFreeDiskSpaceInMB, (int)_minFreeDiskSpaceNumericUpDown.Value).Wait();
                 Proxies.ConfigurationService.SetIntValue(
-                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, (int)_freeDiskSpaceNumericUpDown.Value);
+                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.FreeDiskSpaceInMB, (int)_freeDiskSpaceNumericUpDown.Value).Wait();
 
                 Proxies.ConfigurationService.SetIntValue(
-                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.WakeupBeforeEventMinutes, (int)_wakeupMinutesNumericUpDown.Value);
+                    ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.WakeupBeforeEventMinutes, (int)_wakeupMinutesNumericUpDown.Value).Wait();
 
                 ClosePanel();
             }
@@ -301,27 +301,27 @@ namespace ArgusTV.UI.Console.Panels
         private void SaveSmtpSettings()
         {
             Proxies.ConfigurationService.SetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpServer, _smtpServerTextBox.Text.Trim());
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpServer, _smtpServerTextBox.Text.Trim()).Wait();
             Proxies.ConfigurationService.SetIntValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPort, (int)_smtpPortNumericUpDown.Value);
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPort, (int)_smtpPortNumericUpDown.Value).Wait();
             Proxies.ConfigurationService.SetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpUserName, _smtpUserNameTextBox.Text.Trim());
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpUserName, _smtpUserNameTextBox.Text.Trim()).Wait();
             Proxies.ConfigurationService.SetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPassword, _smtpPasswordTextBox.Text.Trim());
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.SmtpPassword, _smtpPasswordTextBox.Text.Trim()).Wait();
             Proxies.ConfigurationService.SetBooleanValue(ConfigurationModule.Scheduler,
-                ConfigurationKey.Scheduler.SmtpEnableSsl, _smtpUseSslCheckBox.Checked);
+                ConfigurationKey.Scheduler.SmtpEnableSsl, _smtpUseSslCheckBox.Checked).Wait();
             Proxies.ConfigurationService.SetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AdministratorEmail, _adminEmailsTextBox.Text.Trim());
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.AdministratorEmail, _adminEmailsTextBox.Text.Trim()).Wait();
             Proxies.ConfigurationService.SetStringValue(
-                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.EmailSender, _fromEmailTextBox.Text.Trim());
+                ConfigurationModule.Scheduler, ConfigurationKey.Scheduler.EmailSender, _fromEmailTextBox.Text.Trim()).Wait();
         }
 
         private void SaveIMBotSettings()
         {
-            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnAccount, _msnUserNameTextBox.Text.Trim());
-            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnPassword, _msnPasswordTextBox.Text.Trim());
-            Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MinutesBeforeAlert, (int)_msnMinutesBeforeAlert.Value);
-            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnContactList, _msnAddressesTextBox.Text.Trim());
+            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnAccount, _msnUserNameTextBox.Text.Trim()).Wait();
+            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnPassword, _msnPasswordTextBox.Text.Trim()).Wait();
+            Proxies.ConfigurationService.SetIntValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MinutesBeforeAlert, (int)_msnMinutesBeforeAlert.Value).Wait();
+            Proxies.ConfigurationService.SetStringValue(ConfigurationModule.Messenger, ConfigurationKey.Messenger.MsnContactList, _msnAddressesTextBox.Text.Trim()).Wait();
         }
 
         private void _deleteGuideDataButton_Click(object sender, EventArgs e)
@@ -329,7 +329,7 @@ namespace ArgusTV.UI.Console.Panels
             if (MessageBox.Show(this, "Are you sure you want to" + Environment.NewLine
                     + "delete all guide programs?", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Proxies.GuideService.DeleteAllPrograms();
+                Proxies.GuideService.DeleteAllPrograms().Wait();
             }
         }
 
@@ -365,7 +365,7 @@ namespace ArgusTV.UI.Console.Panels
                 try
                 {
                     SaveSmtpSettings();
-                    Proxies.LogService.SendTestMail();
+                    Proxies.LogService.SendTestMail().Wait();
                 }
                 catch (Exception ex)
                 {

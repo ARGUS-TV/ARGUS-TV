@@ -31,12 +31,22 @@
     <DocumentationFile>bin\Release\ArgusTV.ServiceProxy.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Threading.Tasks">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop">
+      <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO">
       <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.2.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\ArgusTV.Suite.Solution\packages\Microsoft.Net.Http.2.2.22\lib\net40\System.Net.Http.dll</HintPath>
@@ -79,6 +89,9 @@
     </Compile>
     <Compile Include="..\..\ArgusTV.ServiceProxy\GuideServiceProxy.cs">
       <Link>GuideServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\ArgusTV.ServiceProxy\IServiceProxyLogger.cs">
+      <Link>IServiceProxyLogger.cs</Link>
     </Compile>
     <Compile Include="..\..\ArgusTV.ServiceProxy\LogServiceProxy.cs">
       <Link>LogServiceProxy.cs</Link>

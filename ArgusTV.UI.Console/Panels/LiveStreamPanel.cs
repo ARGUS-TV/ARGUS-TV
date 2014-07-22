@@ -108,7 +108,7 @@ namespace ArgusTV.UI.Console.Panels
             try
             {
                 ChannelType channelType = (ChannelType)_channelTypeComboBox.SelectedIndex;
-                List<ChannelGroup> channelGroups = new List<ChannelGroup>(Proxies.SchedulerService.GetAllChannelGroups(channelType, true));
+                List<ChannelGroup> channelGroups = new List<ChannelGroup>(Proxies.SchedulerService.GetAllChannelGroups(channelType, true).Result);
                 channelGroups.Add(new ChannelGroup()
                 {
                     ChannelGroupId = channelType == ChannelType.Television ? ChannelGroup.AllTvChannelsGroupId : ChannelGroup.AllRadioChannelsGroupId,
@@ -130,7 +130,7 @@ namespace ArgusTV.UI.Console.Panels
         {
             try
             {
-                _streamsBindingSource.DataSource = new LiveStreamsList(Proxies.ControlService.GetLiveStreams());
+                _streamsBindingSource.DataSource = new LiveStreamsList(Proxies.ControlService.GetLiveStreams().Result);
                 RefreshSelectedGroupChannels();
             }
             catch (Exception ex)
@@ -198,7 +198,7 @@ namespace ArgusTV.UI.Console.Panels
                 RefreshAllUpcomingPrograms();
                 ChannelGroup channelGroup = _channelGroupsComboBox.SelectedItem as ChannelGroup;
                 _channelsBindingSource.DataSource = new CurrentAndNextProgramsList(
-                    Proxies.SchedulerService.GetCurrentAndNextForGroup(channelGroup.ChannelGroupId, true, null));
+                    Proxies.SchedulerService.GetCurrentAndNextForGroup(channelGroup.ChannelGroupId, true, null).Result);
             }
             catch (Exception ex)
             {
@@ -232,8 +232,9 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     _channelsGridView.ClearSelection();
                     string lastRtspUrl = liveStream.RtspUrl;
-                    LiveStreamResult result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
-                    if (result == LiveStreamResult.Succeeded)
+                    var result = Proxies.ControlService.TuneLiveStream(channel, liveStream).Result;
+                    liveStream = result.LiveStream;
+                    if (result.LiveStreamResult == LiveStreamResult.Succeeded)
                     {
                         LoadAllActiveStreams();
                         if (liveStream.RtspUrl != lastRtspUrl)
@@ -243,7 +244,7 @@ namespace ArgusTV.UI.Console.Panels
                     }
                     else
                     {
-                        ShowLiveStreamResultMessageBox(result);
+                        ShowLiveStreamResultMessageBox(result.LiveStreamResult);
                     }
                 }
             }
@@ -266,7 +267,7 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     Cursor.Current = Cursors.WaitCursor;
 
-                    Proxies.ControlService.StopLiveStream(stream);
+                    Proxies.ControlService.StopLiveStream(stream).Wait();
                     LoadAllActiveStreams();
                     _streamsDataGridView.ClearSelection();
                 }
@@ -329,15 +330,16 @@ namespace ArgusTV.UI.Console.Panels
                 {
                     _channelsGridView.ClearSelection();
                     LiveStream liveStream = null;
-                    LiveStreamResult result = Proxies.ControlService.TuneLiveStream(channel, ref liveStream);
-                    if (result == LiveStreamResult.Succeeded)
+                    var result = Proxies.ControlService.TuneLiveStream(channel, liveStream).Result;
+                    liveStream = result.LiveStream;
+                    if (result.LiveStreamResult == LiveStreamResult.Succeeded)
                     {
                         LoadAllActiveStreams();
                         WinFormsUtility.RunStreamPlayer(liveStream.RtspUrl, true);
                     }
                     else
                     {
-                        ShowLiveStreamResultMessageBox(result);
+                        ShowLiveStreamResultMessageBox(result.LiveStreamResult);
                     }
                 }
             }
@@ -373,9 +375,9 @@ namespace ArgusTV.UI.Console.Panels
 
         private void RefreshAllUpcomingPrograms()
         {
-            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true);
-            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true);
-            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true);
+            var upcomingRecordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.All, true).Result;
+            var upcomingAlerts = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Alert, true).Result;
+            var upcomingSuggestions = Proxies.SchedulerService.GetUpcomingGuidePrograms(ScheduleType.Suggestion, true).Result;
             _allUpcomingGuidePrograms = new UpcomingGuideProgramsDictionary(upcomingRecordings, upcomingAlerts, upcomingSuggestions);
         }
 
@@ -512,7 +514,7 @@ namespace ArgusTV.UI.Console.Panels
                     ? programView.CurrentAndNextProgram.Current : programView.CurrentAndNextProgram.Next;
                 if (programSummary != null)
                 {
-                    GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programSummary.GuideProgramId);
+                    GuideProgram guideProgram = Proxies.GuideService.GetProgramById(programSummary.GuideProgramId).Result;
                     using (ProgramDetailsPopup popup = new ProgramDetailsPopup())
                     {
                         popup.Channel = programView.CurrentAndNextProgram.Channel;

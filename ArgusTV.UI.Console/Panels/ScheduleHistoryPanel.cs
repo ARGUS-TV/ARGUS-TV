@@ -129,7 +129,7 @@ namespace ArgusTV.UI.Console.Panels
                 _deletedPrograms = new List<ScheduleRecordedProgram>();
                 _clearHistory = false;
                 _recordedPrograms = new SortableBindingList<ScheduleRecordedProgram>(
-                    Proxies.ControlService.GetPreviouslyRecordedHistory(_schedule.ScheduleId));
+                    Proxies.ControlService.GetPreviouslyRecordedHistory(_schedule.ScheduleId).Result);
                 _historyBindingSource.DataSource = _recordedPrograms;
                 _historyBindingSource.ResetBindings(false);
             }

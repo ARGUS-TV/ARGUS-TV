@@ -187,7 +187,7 @@ namespace ArgusTV.UI.MediaPortal
                     size = 0;
                 }
 
-                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime);
+                byte[] jpegData = Proxies.ControlService.GetRecordingThumbnail(recording.RecordingId, size, size, null, recording.RecordingStartTime).Result;
                 if (jpegData != null)
                 {
                     try
@@ -312,7 +312,7 @@ namespace ArgusTV.UI.MediaPortal
 
             try
             {
-                Proxies.Initialize(serverSettings, true);
+                Proxies.Initialize(serverSettings, logger: new ProxyLogger());
                 using (Settings xmlwriter = new MPSettings())
                 {
                     xmlwriter.SetValue(_settingSection, TvHome.SettingName.MacAddresses, serverSettings.WakeOnLan.MacAddresses);
@@ -420,5 +420,13 @@ namespace ArgusTV.UI.MediaPortal
         }
 
         #endregion
+
+        internal class ProxyLogger : IServiceProxyLogger
+        {
+            public void Verbose(string message, params object[] args) { Log.Debug(message, args); }
+            public void Info(string message, params object[] args) { Log.Info(message, args); }
+            public void Warn(string message, params object[] args) { Log.Warn(message, args); }
+            public void Error(string message, params object[] args) { Log.Error(message, args); }
+        }
     }
 }
