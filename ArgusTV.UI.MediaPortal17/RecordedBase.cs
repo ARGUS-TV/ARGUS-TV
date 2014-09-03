@@ -1009,7 +1009,7 @@ namespace ArgusTV.UI.MediaPortal
 
                     if (dlgYesNo.IsConfirmed)
                     {
-                        Proxies.ControlService.DeleteRecording(rec.RecordingFileName, true).Wait();
+                        Proxies.ControlService.DeleteRecording(rec.RecordingFileName).Wait();
                         LoadDirectory(true);
                         SelectItemByIndex(ref _selectedItemIndex);
                         SetRecordingDiskInfo(false);
@@ -1361,7 +1361,7 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 if (recording.LastWatchedTime.HasValue)
                                 {
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName).Wait();
                                 }
                             }
                         }
@@ -1382,7 +1382,7 @@ namespace ArgusTV.UI.MediaPortal
                                     (recording.RecordingStopTimeUtc.HasValue && (recording.RecordingStartTimeUtc.AddSeconds(15) > recording.RecordingStopTimeUtc)))
                                 {
                                     Log.Debug("RecordedBase: remove invalid recording: {0}", recording.RecordingFileName);
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName).Wait();
                                     continue;
                                 }
                             }
@@ -1392,7 +1392,7 @@ namespace ArgusTV.UI.MediaPortal
                             {
                                 if (recording.LastWatchedTime.HasValue)
                                 {
-                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
+                                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName).Wait();
                                     continue;
                                 }
                             }

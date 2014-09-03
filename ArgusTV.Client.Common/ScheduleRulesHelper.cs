@@ -135,20 +135,20 @@ namespace ArgusTV.Client.Common
 
         #region Set "When" Rules
 
-        public static void AppendOnDateAndDaysOfWeekRule(List<ScheduleRule> rules, ScheduleDaysOfWeek daysOfWeek, DateTime? onDateTime)
+        public static void AppendOnDateAndDaysOfWeekRule(List<ScheduleRule> rules, ScheduleDaysOfWeek daysOfWeek, DateTime? fromDateTime)
         {
             if (daysOfWeek == ScheduleDaysOfWeek.None)
             {
-                if (onDateTime.HasValue)
+                if (fromDateTime.HasValue)
                 {
-                    rules.Add(ScheduleRuleType.OnDate, onDateTime.Value.Date);
+                    rules.Add(ScheduleRuleType.OnDate, fromDateTime.Value.Date);
                 }
             }
             else
             {
-                if (onDateTime.HasValue)
+                if (fromDateTime.HasValue)
                 {
-                    rules.Add(ScheduleRuleType.DaysOfWeek, daysOfWeek, onDateTime.Value.Date);
+                    rules.Add(ScheduleRuleType.DaysOfWeek, daysOfWeek, fromDateTime.Value.Date);
                 }
                 else
                 {

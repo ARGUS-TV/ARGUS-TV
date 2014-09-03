@@ -30,19 +30,9 @@ namespace ArgusTV.DataContracts
     public static class Constants
     {
         /// <summary>
-        /// The API version of the main services.
-        /// </summary>
-        public const int CurrentApiVersion = 6;
-
-        /// <summary>
-        /// The minimal API version of the main services still supported for older clients.
-        /// </summary>
-        public const int MinimalSupportedApiVersion = 6;
-
-        /// <summary>
         /// The API version of the main REST services.
         /// </summary>
-        public const int RestApiVersion = 66;
+        public const int RestApiVersion = 67;
 
         /// <summary>
         /// The minimal API version of the main services still supported for older REST clients.

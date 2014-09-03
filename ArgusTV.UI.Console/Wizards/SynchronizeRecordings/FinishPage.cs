@@ -86,15 +86,15 @@ namespace ArgusTV.UI.Console.Wizards.SynchronizeRecordings
 
                 foreach (RecordingSummary recording in this.Context.DeleteRecordings)
                 {
-                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, false);
+                    Proxies.ControlService.DeleteRecording(recording.RecordingFileName, false).Wait();
                 }
                 foreach (MoveRecording moveRecording in this.Context.MoveRecordings)
                 {
-                    Proxies.ControlService.ChangeRecordingFile(moveRecording.PreviousRecordingFileName, moveRecording.Recording.RecordingFileName, null, null);
+                    Proxies.ControlService.ChangeRecordingFile(moveRecording.PreviousRecordingFileName, moveRecording.Recording.RecordingFileName, null, null).Wait();
                 }
                 foreach (Recording recording in this.Context.ImportRecordings)
                 {
-                    Proxies.ControlService.ImportRecording(recording);
+                    Proxies.ControlService.ImportRecording(recording).Wait();
                 }
             }
             catch (Exception ex)

@@ -112,7 +112,7 @@ namespace ArgusTV.UI.Console.Wizards.ExportRecordings
                     ExportRecording(recording);
                     if (_deleteRecordingsCheckBox.Checked)
                     {
-                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true);
+                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName).Wait();
                     }
                     _exportProgressBar.Value = ++count;
                 }

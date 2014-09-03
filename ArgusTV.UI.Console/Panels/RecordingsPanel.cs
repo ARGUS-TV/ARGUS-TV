@@ -541,7 +541,7 @@ namespace ArgusTV.UI.Console.Panels
 					Cursor.Current = Cursors.WaitCursor;
                     foreach (RecordingSummary recording in recordings)
                     {
-                        Proxies.ControlService.DeleteRecording(recording.RecordingFileName, true).Wait();
+                        Proxies.ControlService.DeleteRecordingById(recording.RecordingId).Wait();
                         RemoveRecordingNode(_recordingsTreeView.Nodes, recording);
                     }
                     ClearDetails();

@@ -365,6 +365,21 @@ namespace ArgusTV.ServiceProxy
         }
 
         /// <summary>
+        /// Delete a recording by ID.
+        /// </summary>
+        /// <param name="recordingId">The ID of the recording.</param>
+        /// <param name="deleteRecordingFile">Set to true to also delete the recording file.</param>
+        public async Task DeleteRecordingById(Guid recordingId, bool deleteRecordingFile = true)
+        {
+            var request = NewRequest(HttpMethod.Delete, "RecordingById/{0}", recordingId);
+            if (!deleteRecordingFile)
+            {
+                request.AddParameter("deleteRecordingFile", false);
+            }
+            await ExecuteAsync(request).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Get the position (in seconds) to where the recording was last watched.  Or null if it was never watched.
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
