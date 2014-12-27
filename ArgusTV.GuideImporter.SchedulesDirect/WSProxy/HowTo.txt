@@ -26,3 +26,12 @@ a. Start a VS command prompt
 b. Navigate to the project directory and run the wsdl.exe tool : 
 
 wsdl /namespace:SchedulesDirect /out:D:\steph\Workspace\SD\TestApplication SchedulesDirect.wsdl /proxyusername:U95639 /proxypassword:surfen /username:ronlemire61 /password:direct
+
+
+Updated steps:
+
+I didn't change the WSDL as mentioned above.  However, I had to change the schema to include DD5.1 in the dolby enum.
+
+With VisualStudio Express 2013, I was able to run the wsdl.exe command like this:
+
+C:\Users\geoff\Documents\git\ARGUS-TV\ArgusTV.GuideImporter.SchedulesDirect\WSProxy>"\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\wsdl.exe" /namespace:SchedulesDirect /out:c:\temp SchedulesDirect.wsdl

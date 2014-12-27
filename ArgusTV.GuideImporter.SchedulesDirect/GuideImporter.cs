@@ -279,7 +279,7 @@ namespace ArgusTV.GuideImporter.SchedulesDirect
             }
             catch (Exception ex)
             {
-                Logger.Write(FormatForLogger(String.Format("Exception calling scheduleDirect webservice, message : {0} .", ex.Message)));
+                Logger.Write(FormatForLogger(String.Format("Exception calling scheduleDirect webservice: {0} .", ex.ToString())));
             }
             return null;
         }

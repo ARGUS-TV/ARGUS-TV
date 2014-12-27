@@ -5,18 +5,18 @@
 <wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tms="urn:TMSWebServices" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:TMSWebServices" name="xtvdWebService">
 	<wsdl:types>
 		<xsd:schema targetNamespace="urn:TMSWebServices">
-			<xsd:include schemaLocation="C:\Users\geoff\Documents\git\ARGUS-TV\ArgusTV.GuideImporter.SchedulesDirect\WSProxy\tmsxtvdv1.xsd"/>
+			<xsd:include schemaLocation="http://dd.schedulesdirect.org/tech/tmsdatadirect/schedulesdirect/tmsxtvdv1.xsd"/>
 			<xsd:complexType name="xtvdResponse">
 				<xsd:sequence>
 					<xsd:element name="messages">
 						<xsd:annotation>
-							<xsd:documentation>A collection of messages that may be sent back by the server to the client.  Messages are usually used by the server to notify the user of changes to their subscription caused by automatic changes in station's that are part of their subscription.  For instance, messages are passed back if a lineup selected by the user is no-longer valid, if all the stations selected by the user has been removed as they are no longer valid ... </xsd:documentation>
+							<xsd:documentation xml:lang="en">A collection of messages that may be sent back by the server to the client.  Messages are usually used by the server to notify the user of changes to their subscription caused by automatic changes in station's that are part of their subscription.  For instance, messages are passed back if a lineup selected by the user is no-longer valid, if all the stations selected by the user has been removed as they are no longer valid ... </xsd:documentation>
 						</xsd:annotation>
 						<xsd:complexType>
 							<xsd:sequence>
 								<xsd:element name="message" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
 									<xsd:annotation>
-										<xsd:documentation>An individual message that is passed back by the server.</xsd:documentation>
+										<xsd:documentation xml:lang="en">An individual message that is passed back by the server.</xsd:documentation>
 									</xsd:annotation>
 								</xsd:element>
 							</xsd:sequence>
@@ -45,14 +45,14 @@
 		<wsdl:part name="xtvdResponse" type="tms:xtvdResponse"/>
 	</wsdl:message>
 	<wsdl:message name="downloadRequest">
-		<wsdl:part name="startTime" type="xsd:string"/>
-		<wsdl:part name="endTime" type="xsd:string"/>
+		<wsdl:part name="startTime" type="tms:dateTime"/>
+		<wsdl:part name="endTime" type="tms:dateTime"/>
 	</wsdl:message>
 	<wsdl:message name="acknowledgeResponse">
 		<wsdl:part name="downloadTimes" type="tms:downloadTimes"/>
 	</wsdl:message>
 	<message name="voidMessage">
-		<documentation>A general success message to indicate a successful transaction.  In general failures will result in SOAP Faults.</documentation>
+		<documentation xml:lang="en">A general success message to indicate a successful transaction.  In general failures will result in SOAP Faults.</documentation>
 	</message>
 	<wsdl:message name="webserviceFault"/>
 	<wsdl:portType name="xtvdPortType">
@@ -72,17 +72,17 @@
 		<wsdl:operation name="download">
 			<soap:operation soapAction="urn:TMSWebServices:xtvdWebService#download" style="rpc"/>
 			<wsdl:input>
-				<soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices"/>
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices"/>
 			</wsdl:output>
 			<wsdl:fault name="webserviceFault">
-				<soap:fault name="webserviceFault" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+				<soap:fault name="tms:webserviceFault" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:TMSWebServices"/>
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="acknowledge">
-			<soap:operation soapAction="urn:#acknowledge" style="rpc"/>
+			<soap:operation soapAction="urn:#acknowledge"/>
 			<input>
 				<soap:body use="literal"/>
 			</input>
