@@ -125,12 +125,12 @@ namespace ArgusTV.UI.Console.Panels
             _guideChannelColumn.DataSource = _guideChannels;
         }
 
-        private Channel GetSelectedChannel()
+        private Channel GetChannelAtIndex(int index)
         {
             Channel channel = null;
-            if (_channelsDataGridView.SelectedRows.Count > 0)
+            if (index > -1)
             {
-                channel = _channelsDataGridView.SelectedRows[0].DataBoundItem as Channel;
+                channel = _channelsDataGridView.Rows[index].DataBoundItem as Channel;
             }
             return channel;
         }
@@ -139,10 +139,29 @@ namespace ArgusTV.UI.Console.Panels
         {
             if (!_inChannelMoving)
             {
-                _moveTopButton.Enabled = _isAllChannels && (_channelsDataGridView.SelectedRows.Count == 1);
-                _moveUpButton.Enabled = _isAllChannels && (_channelsDataGridView.SelectedRows.Count == 1);
-                _moveDownButton.Enabled = _isAllChannels && (_channelsDataGridView.SelectedRows.Count == 1);
-                _moveBottomButton.Enabled = _isAllChannels && (_channelsDataGridView.SelectedRows.Count == 1);
+                bool _canMoveSelection = _channelsDataGridView.SelectedRows.Count == 1;
+
+                if (_isAllChannels && !_canMoveSelection)
+                {
+                    List<int> selectedIndexes = new List<int>();
+                    foreach (DataGridViewRow row in _channelsDataGridView.SelectedRows)
+                    {
+                        selectedIndexes.Add(row.Index);
+                    }
+
+                    if (selectedIndexes.Count > 0)
+                    {
+                        selectedIndexes.Sort();
+                        IEnumerable<int> fullRange = Enumerable.Range(selectedIndexes[0], selectedIndexes.Count);
+                        _canMoveSelection = selectedIndexes.SequenceEqual(fullRange);
+                    }
+                }
+
+                _moveTopButton.Enabled = _canMoveSelection;
+                _moveUpButton.Enabled = _canMoveSelection;
+                _moveDownButton.Enabled = _canMoveSelection;
+                _moveBottomButton.Enabled = _canMoveSelection;
+
                 _visibleOnButton.Enabled = (_channelsDataGridView.SelectedRows.Count > 0);
                 _visibleOffButton.Enabled = (_channelsDataGridView.SelectedRows.Count > 0);
                 _deleteButton.Enabled = (_channelsDataGridView.SelectedRows.Count > 0);
@@ -159,7 +178,8 @@ namespace ArgusTV.UI.Console.Panels
 
         private void _channelsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex > -1){
+            if (e.RowIndex > -1)
+            {
                 foreach (DataGridViewRow row in _channelsDataGridView.SelectedRows)
                 {
                     if (row != _channelsDataGridView.Rows[e.RowIndex])
@@ -180,7 +200,7 @@ namespace ArgusTV.UI.Console.Panels
                 DataGridViewRow row = _channelsDataGridView.SelectedRows[0];
                 row.ReadOnly = false;
                 foreach (DataGridViewCell cell in row.Cells)
-                {   
+                {
                     cell.Style.SelectionBackColor = Color.DodgerBlue;
                 }
                 _editSelectedRowsButton.Font = new Font(_editSelectedRowsButton.Font.Name, _editSelectedRowsButton.Font.Size, FontStyle.Bold);
@@ -332,22 +352,22 @@ namespace ArgusTV.UI.Console.Panels
 
         private void _moveTopButton_Click(object sender, EventArgs e)
         {
-            MoveSelectedChannelTo(MoveTo.Top);
+            MoveSelectedChannelsTo(MoveTo.Top);
         }
 
         private void _moveUpButton_Click(object sender, EventArgs e)
         {
-            MoveSelectedChannelTo(MoveTo.Up);
+            MoveSelectedChannelsTo(MoveTo.Up);
         }
 
         private void _moveDownButton_Click(object sender, EventArgs e)
         {
-            MoveSelectedChannelTo(MoveTo.Down);
+            MoveSelectedChannelsTo(MoveTo.Down);
         }
 
         private void _moveBottomButton_Click(object sender, EventArgs e)
         {
-            MoveSelectedChannelTo(MoveTo.Bottom);
+            MoveSelectedChannelsTo(MoveTo.Bottom);
         }
 
         private enum MoveTo
@@ -360,52 +380,82 @@ namespace ArgusTV.UI.Console.Panels
 
         private bool _inChannelMoving;
 
-        private void MoveSelectedChannelTo(MoveTo moveTo)
+        private void MoveSelectedChannelsTo(MoveTo moveTo)
         {
-            Channel channel = GetSelectedChannel();
-            if (channel != null)
+            List<int> selectedIndexes = new List<int>();
+            foreach (DataGridViewRow row in _channelsDataGridView.SelectedRows)
             {
-                int index = _channels.IndexOf(channel);
-                int newIndex = index;
-                switch (moveTo)
+                selectedIndexes.Add(row.Index);
+            }
+
+            selectedIndexes.Sort();
+            if (moveTo == MoveTo.Down)
+            {
+                selectedIndexes.Reverse();
+            }  
+
+            List<Channel> selectedChannels = new List<Channel>();
+            foreach (int index in selectedIndexes)
+            {
+                selectedChannels.Add(GetChannelAtIndex(index));
+            }
+
+            int movedChannelCounter = 0;
+
+            foreach (Channel channel in selectedChannels)
+            {
+                if (channel != null)
                 {
-                    case MoveTo.Top:
-                        newIndex = 0;
-                        break;
+                    int index = _channels.IndexOf(channel);
+                    int newIndex = index;
+                    switch (moveTo)
+                    {
+                        case MoveTo.Top:
+                            newIndex = 0 + movedChannelCounter;
+                            break;
 
-                    case MoveTo.Bottom:
-                        newIndex = _channels.Count - 1;
-                        break;
+                        case MoveTo.Bottom:
+                            newIndex = _channels.Count - 1;
+                            break;
 
-                    case MoveTo.Up:
-                        if (newIndex > 0)
+                        case MoveTo.Up:
+                            if (newIndex > 0)
+                            {
+                                newIndex--;
+                            }
+                            break;
+
+                        case MoveTo.Down:
+                            if (newIndex < _channels.Count - 1)
+                            {
+                                newIndex++;
+                            }
+                            break;
+                    }
+                    if (index != newIndex)
+                    {
+                        _inChannelMoving = true;
+                        try
                         {
-                            newIndex--;
+                            _channels.RemoveAt(index);
+                            _channels.Insert(newIndex, channel);
+                            _channelsBindingSource.ResetBindings(false);
+                            _channelsDataGridView.CurrentCell = _channelsDataGridView.Rows[newIndex].Cells[0];
                         }
-                        break;
-
-                    case MoveTo.Down:
-                        if (newIndex < _channels.Count - 1)
+                        finally
                         {
-                            newIndex++;
+                            _inChannelMoving = false;
+                            movedChannelCounter++;
                         }
-                        break;
+                    }
                 }
-                if (index != newIndex)
+            }
+
+            foreach (Channel channel in selectedChannels)
+            {
+                if (channel != null)
                 {
-                    _inChannelMoving = true;
-                    try
-                    {
-                        _channels.RemoveAt(index);
-                        _channels.Insert(newIndex, channel);
-                        _channelsBindingSource.ResetBindings(false);
-                        _channelsDataGridView.Rows[newIndex].Selected = true;
-                        _channelsDataGridView.CurrentCell = _channelsDataGridView.Rows[newIndex].Cells[0];
-                    }
-                    finally
-                    {
-                        _inChannelMoving = false;
-                    }
+                    _channelsDataGridView.Rows[_channels.IndexOf(channel)].Selected = true;
                 }
             }
         }
