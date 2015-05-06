@@ -29,8 +29,8 @@ namespace ArgusTV.UI.Console.Panels
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this._channelsDataGridView = new System.Windows.Forms.DataGridView();
             this._visibleColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this._lcnColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,6 +52,7 @@ namespace ArgusTV.UI.Console.Panels
             this._visibleOnButton = new System.Windows.Forms.Button();
             this._channelGroupControl = new ArgusTV.WinForms.UserControls.ChannelGroupControl();
             this._editSelectedRowsButton = new System.Windows.Forms.Button();
+            this._autoAssignLCNButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this._channelsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._channelsBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -61,11 +62,11 @@ namespace ArgusTV.UI.Console.Panels
             this._channelsDataGridView.AllowUserToAddRows = false;
             this._channelsDataGridView.AllowUserToDeleteRows = false;
             this._channelsDataGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.WhiteSmoke;
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Silver;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this._channelsDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.WhiteSmoke;
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Silver;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            this._channelsDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this._channelsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -87,11 +88,11 @@ namespace ArgusTV.UI.Console.Panels
             this._channelsDataGridView.Location = new System.Drawing.Point(0, 27);
             this._channelsDataGridView.Name = "_channelsDataGridView";
             this._channelsDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Silver;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this._channelsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Silver;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
+            this._channelsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this._channelsDataGridView.RowTemplate.ReadOnly = true;
             this._channelsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this._channelsDataGridView.Size = new System.Drawing.Size(702, 490);
@@ -291,16 +292,28 @@ namespace ArgusTV.UI.Console.Panels
             this._editSelectedRowsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._editSelectedRowsButton.Location = new System.Drawing.Point(708, 283);
             this._editSelectedRowsButton.Name = "_editSelectedRowsButton";
-            this._editSelectedRowsButton.Size = new System.Drawing.Size(87, 23);
+            this._editSelectedRowsButton.Size = new System.Drawing.Size(90, 23);
             this._editSelectedRowsButton.TabIndex = 105;
             this._editSelectedRowsButton.Text = "Edit";
             this._editSelectedRowsButton.UseVisualStyleBackColor = true;
             this._editSelectedRowsButton.Click += new System.EventHandler(this.editSelectedRowsButton_Click);
             // 
+            // _autoAssignLCNButton
+            // 
+            this._autoAssignLCNButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._autoAssignLCNButton.Location = new System.Drawing.Point(709, 399);
+            this._autoAssignLCNButton.Name = "_autoAssignLCNButton";
+            this._autoAssignLCNButton.Size = new System.Drawing.Size(89, 44);
+            this._autoAssignLCNButton.TabIndex = 106;
+            this._autoAssignLCNButton.Text = "Automatically Assign LCN\'s";
+            this._autoAssignLCNButton.UseVisualStyleBackColor = true;
+            this._autoAssignLCNButton.Click += new System.EventHandler(this.autoAssignLCNButton_Click);
+            // 
             // ChannelsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._autoAssignLCNButton);
             this.Controls.Add(this._editSelectedRowsButton);
             this.Controls.Add(this._channelGroupControl);
             this.Controls.Add(this._visibleOnButton);
@@ -346,5 +359,6 @@ namespace ArgusTV.UI.Console.Panels
         private System.Windows.Forms.DataGridViewTextBoxColumn _startColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn _stopColumn;
         private System.Windows.Forms.Button _editSelectedRowsButton;
+        private System.Windows.Forms.Button _autoAssignLCNButton;
     }
 }

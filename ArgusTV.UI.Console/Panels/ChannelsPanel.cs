@@ -168,6 +168,7 @@ namespace ArgusTV.UI.Console.Panels
                 _sortByLcnButton.Enabled = _isAllChannels && (_channels.Count > 0);
                 _createNewButton.Enabled = _isAllChannels;
                 _editSelectedRowsButton.Enabled = _channelsDataGridView.SelectedRows.Count == 1;
+                _autoAssignLCNButton.Enabled = _isAllChannels && _channelsDataGridView.SelectedRows.Count == 1;
             }
         }
 
@@ -543,6 +544,17 @@ namespace ArgusTV.UI.Console.Panels
         private void _channelsDataGridView_RowLeave(object sender, DataGridViewCellEventArgs e)
         {
             DisableEditMode();
+        }
+
+        private void autoAssignLCNButton_Click(object sender, EventArgs e)
+        {
+            int lcn = 1;
+            foreach (DataGridViewRow row in _channelsDataGridView.Rows){
+                if (row.Index >= _channelsDataGridView.SelectedRows[0].Index) {
+                    row.Cells[1].Value = lcn;
+                    lcn++;
+                }
+            }
         }
     }
 }
