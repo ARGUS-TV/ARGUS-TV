@@ -51,6 +51,7 @@ namespace ArgusTV.UI.Console.Panels
             this._visibleOffButton = new System.Windows.Forms.Button();
             this._visibleOnButton = new System.Windows.Forms.Button();
             this._channelGroupControl = new ArgusTV.WinForms.UserControls.ChannelGroupControl();
+            this._editSelectedRowsButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this._channelsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._channelsBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -83,8 +84,7 @@ namespace ArgusTV.UI.Console.Panels
             this._stopColumn});
             this._channelsDataGridView.DataSource = this._channelsBindingSource;
             this._channelsDataGridView.GridColor = System.Drawing.Color.White;
-            this._channelsDataGridView.Location = new System.Drawing.Point(0, 42);
-            this._channelsDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._channelsDataGridView.Location = new System.Drawing.Point(0, 27);
             this._channelsDataGridView.Name = "_channelsDataGridView";
             this._channelsDataGridView.RowHeadersVisible = false;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
@@ -92,10 +92,13 @@ namespace ArgusTV.UI.Console.Panels
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Silver;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             this._channelsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this._channelsDataGridView.RowTemplate.ReadOnly = true;
             this._channelsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this._channelsDataGridView.Size = new System.Drawing.Size(1053, 754);
+            this._channelsDataGridView.Size = new System.Drawing.Size(702, 490);
             this._channelsDataGridView.TabIndex = 2;
+            this._channelsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._channelsDataGridView_CellDoubleClick);
             this._channelsDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this._channelsDataGridView_CellValueChanged);
+            this._channelsDataGridView.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this._channelsDataGridView_RowLeave);
             this._channelsDataGridView.SelectionChanged += new System.EventHandler(this._channelsDataGridView_SelectionChanged);
             // 
             // _visibleColumn
@@ -173,10 +176,9 @@ namespace ArgusTV.UI.Console.Panels
             // 
             this._moveUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._moveUpButton.Enabled = false;
-            this._moveUpButton.Location = new System.Drawing.Point(1062, 123);
-            this._moveUpButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._moveUpButton.Location = new System.Drawing.Point(708, 80);
             this._moveUpButton.Name = "_moveUpButton";
-            this._moveUpButton.Size = new System.Drawing.Size(135, 35);
+            this._moveUpButton.Size = new System.Drawing.Size(90, 23);
             this._moveUpButton.TabIndex = 94;
             this._moveUpButton.Text = "Move Up";
             this._moveUpButton.UseVisualStyleBackColor = true;
@@ -186,10 +188,9 @@ namespace ArgusTV.UI.Console.Panels
             // 
             this._moveDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._moveDownButton.Enabled = false;
-            this._moveDownButton.Location = new System.Drawing.Point(1062, 168);
-            this._moveDownButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._moveDownButton.Location = new System.Drawing.Point(708, 109);
             this._moveDownButton.Name = "_moveDownButton";
-            this._moveDownButton.Size = new System.Drawing.Size(135, 35);
+            this._moveDownButton.Size = new System.Drawing.Size(90, 23);
             this._moveDownButton.TabIndex = 95;
             this._moveDownButton.Text = "Move Down";
             this._moveDownButton.UseVisualStyleBackColor = true;
@@ -199,10 +200,9 @@ namespace ArgusTV.UI.Console.Panels
             // 
             this._moveBottomButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._moveBottomButton.Enabled = false;
-            this._moveBottomButton.Location = new System.Drawing.Point(1062, 212);
-            this._moveBottomButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._moveBottomButton.Location = new System.Drawing.Point(708, 138);
             this._moveBottomButton.Name = "_moveBottomButton";
-            this._moveBottomButton.Size = new System.Drawing.Size(135, 35);
+            this._moveBottomButton.Size = new System.Drawing.Size(90, 23);
             this._moveBottomButton.TabIndex = 96;
             this._moveBottomButton.Text = "To Bottom";
             this._moveBottomButton.UseVisualStyleBackColor = true;
@@ -212,10 +212,9 @@ namespace ArgusTV.UI.Console.Panels
             // 
             this._moveTopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._moveTopButton.Enabled = false;
-            this._moveTopButton.Location = new System.Drawing.Point(1062, 78);
-            this._moveTopButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._moveTopButton.Location = new System.Drawing.Point(708, 51);
             this._moveTopButton.Name = "_moveTopButton";
-            this._moveTopButton.Size = new System.Drawing.Size(135, 35);
+            this._moveTopButton.Size = new System.Drawing.Size(90, 23);
             this._moveTopButton.TabIndex = 97;
             this._moveTopButton.Text = "To Top";
             this._moveTopButton.UseVisualStyleBackColor = true;
@@ -225,10 +224,9 @@ namespace ArgusTV.UI.Console.Panels
             // 
             this._deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._deleteButton.Enabled = false;
-            this._deleteButton.Location = new System.Drawing.Point(1062, 435);
-            this._deleteButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._deleteButton.Location = new System.Drawing.Point(708, 312);
             this._deleteButton.Name = "_deleteButton";
-            this._deleteButton.Size = new System.Drawing.Size(135, 35);
+            this._deleteButton.Size = new System.Drawing.Size(90, 23);
             this._deleteButton.TabIndex = 101;
             this._deleteButton.Text = "Delete";
             this._deleteButton.UseVisualStyleBackColor = true;
@@ -237,10 +235,9 @@ namespace ArgusTV.UI.Console.Panels
             // _createNewButton
             // 
             this._createNewButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._createNewButton.Location = new System.Drawing.Point(1062, 302);
-            this._createNewButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._createNewButton.Location = new System.Drawing.Point(708, 196);
             this._createNewButton.Name = "_createNewButton";
-            this._createNewButton.Size = new System.Drawing.Size(135, 35);
+            this._createNewButton.Size = new System.Drawing.Size(90, 23);
             this._createNewButton.TabIndex = 98;
             this._createNewButton.Text = "Create New";
             this._createNewButton.UseVisualStyleBackColor = true;
@@ -249,10 +246,9 @@ namespace ArgusTV.UI.Console.Panels
             // _sortByLcnButton
             // 
             this._sortByLcnButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._sortByLcnButton.Location = new System.Drawing.Point(1062, 525);
-            this._sortByLcnButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._sortByLcnButton.Location = new System.Drawing.Point(708, 369);
             this._sortByLcnButton.Name = "_sortByLcnButton";
-            this._sortByLcnButton.Size = new System.Drawing.Size(135, 35);
+            this._sortByLcnButton.Size = new System.Drawing.Size(90, 23);
             this._sortByLcnButton.TabIndex = 102;
             this._sortByLcnButton.Text = "Sort By LCN";
             this._sortByLcnButton.UseVisualStyleBackColor = true;
@@ -261,10 +257,9 @@ namespace ArgusTV.UI.Console.Panels
             // _visibleOffButton
             // 
             this._visibleOffButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._visibleOffButton.Location = new System.Drawing.Point(1062, 391);
-            this._visibleOffButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._visibleOffButton.Location = new System.Drawing.Point(708, 254);
             this._visibleOffButton.Name = "_visibleOffButton";
-            this._visibleOffButton.Size = new System.Drawing.Size(135, 35);
+            this._visibleOffButton.Size = new System.Drawing.Size(90, 23);
             this._visibleOffButton.TabIndex = 100;
             this._visibleOffButton.Text = "Visible Off";
             this._visibleOffButton.UseVisualStyleBackColor = true;
@@ -273,10 +268,9 @@ namespace ArgusTV.UI.Console.Panels
             // _visibleOnButton
             // 
             this._visibleOnButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._visibleOnButton.Location = new System.Drawing.Point(1062, 346);
-            this._visibleOnButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._visibleOnButton.Location = new System.Drawing.Point(708, 225);
             this._visibleOnButton.Name = "_visibleOnButton";
-            this._visibleOnButton.Size = new System.Drawing.Size(135, 35);
+            this._visibleOnButton.Size = new System.Drawing.Size(90, 23);
             this._visibleOnButton.TabIndex = 99;
             this._visibleOnButton.Text = "Visible On";
             this._visibleOnButton.UseVisualStyleBackColor = true;
@@ -285,17 +279,29 @@ namespace ArgusTV.UI.Console.Panels
             // _channelGroupControl
             // 
             this._channelGroupControl.Location = new System.Drawing.Point(0, 0);
-            this._channelGroupControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this._channelGroupControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._channelGroupControl.Name = "_channelGroupControl";
             this._channelGroupControl.ShowAllChannelsOnTop = false;
-            this._channelGroupControl.Size = new System.Drawing.Size(414, 32);
+            this._channelGroupControl.Size = new System.Drawing.Size(276, 21);
             this._channelGroupControl.TabIndex = 104;
             this._channelGroupControl.SelectedGroupChanged += new System.EventHandler(this._channelGroupControl_SelectedGroupChanged);
             // 
+            // _editSelectedRowsButton
+            // 
+            this._editSelectedRowsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._editSelectedRowsButton.Location = new System.Drawing.Point(708, 283);
+            this._editSelectedRowsButton.Name = "_editSelectedRowsButton";
+            this._editSelectedRowsButton.Size = new System.Drawing.Size(87, 23);
+            this._editSelectedRowsButton.TabIndex = 105;
+            this._editSelectedRowsButton.Text = "Edit";
+            this._editSelectedRowsButton.UseVisualStyleBackColor = true;
+            this._editSelectedRowsButton.Click += new System.EventHandler(this.editSelectedRowsButton_Click);
+            // 
             // ChannelsPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._editSelectedRowsButton);
             this.Controls.Add(this._channelGroupControl);
             this.Controls.Add(this._visibleOnButton);
             this.Controls.Add(this._visibleOffButton);
@@ -307,10 +313,9 @@ namespace ArgusTV.UI.Console.Panels
             this.Controls.Add(this._moveDownButton);
             this.Controls.Add(this._moveUpButton);
             this.Controls.Add(this._channelsDataGridView);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MinimumSize = new System.Drawing.Size(894, 0);
+            this.MinimumSize = new System.Drawing.Size(596, 0);
             this.Name = "ChannelsPanel";
-            this.Size = new System.Drawing.Size(1197, 795);
+            this.Size = new System.Drawing.Size(798, 517);
             this.Load += new System.EventHandler(this.ChannelsPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this._channelsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._channelsBindingSource)).EndInit();
@@ -340,5 +345,6 @@ namespace ArgusTV.UI.Console.Panels
         private System.Windows.Forms.DataGridViewTextBoxColumn _postRecColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn _startColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn _stopColumn;
+        private System.Windows.Forms.Button _editSelectedRowsButton;
     }
 }

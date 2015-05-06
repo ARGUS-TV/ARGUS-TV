@@ -43,6 +43,7 @@ namespace ArgusTV.UI.Console.Panels
         private HashSet<Guid> _changedChannelIds = new HashSet<Guid>();
         private List<Channel> _deletedChannels;
         private bool _isAllChannels;
+        private bool _isEditEnabled;
 
         public ChannelsPanel()
         {
@@ -147,12 +148,62 @@ namespace ArgusTV.UI.Console.Panels
                 _deleteButton.Enabled = (_channelsDataGridView.SelectedRows.Count > 0);
                 _sortByLcnButton.Enabled = _isAllChannels && (_channels.Count > 0);
                 _createNewButton.Enabled = _isAllChannels;
+                _editSelectedRowsButton.Enabled = _channelsDataGridView.SelectedRows.Count == 1;
             }
         }
 
         private void _channelsDataGridView_SelectionChanged(object sender, EventArgs e)
         {
             EnableButtons();
+        }
+
+        private void _channelsDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > -1){
+                foreach (DataGridViewRow row in _channelsDataGridView.SelectedRows)
+                {
+                    if (row != _channelsDataGridView.Rows[e.RowIndex])
+                    {
+                        row.Selected = false;
+                    }
+                }
+                EnableEditModeOnSelectedRow();
+                _editSelectedRowsButton.Enabled = false;
+            }
+        }
+
+        private void EnableEditModeOnSelectedRow()
+        {
+            if (!_isEditEnabled)
+            {
+                _isEditEnabled = true;
+                DataGridViewRow row = _channelsDataGridView.SelectedRows[0];
+                row.ReadOnly = false;
+                foreach (DataGridViewCell cell in row.Cells)
+                {   
+                    cell.Style.SelectionBackColor = Color.DodgerBlue;
+                }
+                _editSelectedRowsButton.Font = new Font(_editSelectedRowsButton.Font.Name, _editSelectedRowsButton.Font.Size, FontStyle.Bold);
+            }
+        }
+
+        private void DisableEditMode()
+        {
+            if (_isEditEnabled)
+            {
+                _isEditEnabled = false;
+                if (_channelsDataGridView.SelectedRows.Count == 1)
+                {
+                    DataGridViewRow row = _channelsDataGridView.SelectedRows[0];
+                    row.ReadOnly = true;
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        cell.Style.SelectionBackColor = Color.Silver;
+                    }
+                }
+                _editSelectedRowsButton.Font = new Font(_editSelectedRowsButton.Font.Name, _editSelectedRowsButton.Font.Size, FontStyle.Regular);
+                _editSelectedRowsButton.Enabled = true;
+            }
         }
 
         public override void OnSave()
@@ -431,6 +482,17 @@ namespace ArgusTV.UI.Console.Panels
                 var channel = _channelsDataGridView.Rows[e.RowIndex].DataBoundItem as Channel;
                 _changedChannelIds.Add(channel.ChannelId);
             }
+        }
+
+        private void editSelectedRowsButton_Click(object sender, EventArgs e)
+        {
+            EnableEditModeOnSelectedRow();
+            _editSelectedRowsButton.Enabled = false;
+        }
+
+        private void _channelsDataGridView_RowLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            DisableEditMode();
         }
     }
 }
