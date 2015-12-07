@@ -34,8 +34,8 @@ namespace ArgusTV.StreamPlayer
                     string rtspUrl = args[7];
 
                     Process liveStreamPlayerProcess = null;
-                    
-                    if (rtspUrl.StartsWith("rtsp://"))
+
+                    if (rtspUrl.Contains("://"))
                     {
                         liveStreamPlayerProcess = new Process();
                         liveStreamPlayerProcess.StartInfo.FileName = playerExe;

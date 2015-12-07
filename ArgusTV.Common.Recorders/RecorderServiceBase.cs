@@ -174,7 +174,7 @@ namespace ArgusTV.Common.Recorders
 
         #region Live TV/Radio
 
-        public virtual LiveStreamResult TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, ref LiveStream liveStream)
+        public virtual LiveStreamResult TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, ref LiveStream liveStream, StreamingMode mode)
         {
             liveStream = null;
             return LiveStreamResult.NotSupported;

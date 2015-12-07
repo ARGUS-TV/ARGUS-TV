@@ -627,33 +627,34 @@ namespace ArgusTV.ServiceProxy
         /// Start RTSP streaming of the given recording.
         /// </summary>
         /// <param name="recordingFileName">The filename of the recording.</param>
+        /// <param name="mode">The streaming mode (default is RTSP).</param>
         /// <returns>The RTSP url of the recording stream.</returns>
-        public async Task<string> StartRecordingStream(string recordingFileName)
+        public async Task<string> StartRecordingStream(string recordingFileName, StreamingMode mode = StreamingMode.Rtsp)
         {
-            var request = NewRequest(HttpMethod.Post, "StartRecordingRtspStream");
+            var request = NewRequest(HttpMethod.Post, "Recording/StartStream/{0}", (int)mode);
             request.AddBody(new
             {
                 RecordingFileName = recordingFileName
             });
             var result = await ExecuteAsync<StartRecordingStreamResult>(request).ConfigureAwait(false);
-            return result.RtspUrl;
+            return result.StreamUrl;
         }
 
         private class StartRecordingStreamResult
         {
-            public string RtspUrl { get; set; }
+            public string StreamUrl { get; set; }
         }
 
         /// <summary>
         /// Stop RTSP streaming of the given recording.
         /// </summary>
-        /// <param name="rtspUrl">The RTSP url of the recording stream.</param>
-        public async Task StopRecordingStream(string rtspUrl)
+        /// <param name="streamUrl">The RTSP url of the recording stream.</param>
+        public async Task StopRecordingStream(string streamUrl)
         {
-            var request = NewRequest(HttpMethod.Post, "StopRecordingRtspStream");
+            var request = NewRequest(HttpMethod.Post, "Recording/StopStream");
             request.AddBody(new
             {
-                RtspUrl = rtspUrl
+                StreamUrl = streamUrl
             });
             await ExecuteAsync(request).ConfigureAwait(false);
         }
@@ -756,10 +757,11 @@ namespace ArgusTV.ServiceProxy
         /// </summary>
         /// <param name="channel">The channel to tune to.</param>
         /// <param name="liveStream">The live stream (RTSP) that is either existing or null for a new one.</param>
+        /// <param name="mode">The streaming mode (default is RTSP).</param>
         /// <returns>A LiveStreamResult value to indicate success or failure, and the new or updated live stream.</returns>
-        public async Task<TuneLiveStreamResult> TuneLiveStream(Channel channel, LiveStream liveStream)
+        public async Task<TuneLiveStreamResult> TuneLiveStream(Channel channel, LiveStream liveStream, StreamingMode mode = StreamingMode.Rtsp)
         {
-            var request = NewRequest(HttpMethod.Post, "TuneLiveStream");
+            var request = NewRequest(HttpMethod.Post, "TuneLiveStream?mode={0}", (int)mode);
             request.AddBody(new
             {
                 Channel = channel,

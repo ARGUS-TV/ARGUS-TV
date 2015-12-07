@@ -237,6 +237,9 @@
     <Compile Include="..\..\ArgusTV.DataContracts\ServiceEventNames.cs">
       <Link>ServiceEventNames.cs</Link>
     </Compile>
+    <Compile Include="..\..\ArgusTV.DataContracts\StreamingMode.cs">
+      <Link>StreamingMode.cs</Link>
+    </Compile>
     <Compile Include="..\..\ArgusTV.DataContracts\TeletextPage.cs">
       <Link>TeletextPage.cs</Link>
     </Compile>

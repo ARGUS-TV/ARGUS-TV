@@ -107,6 +107,7 @@
     <Compile Include="Extensions\ChannelExtensions.cs" />
     <Compile Include="GuideProgramFlags.cs" />
     <Compile Include="LiveStreamAbortReason.cs" />
+    <Compile Include="StreamingMode.cs" />
     <Compile Include="ServiceEventNames.cs" />
     <Compile Include="ServiceEvent.cs" />
     <Compile Include="TeletextPage.cs" />

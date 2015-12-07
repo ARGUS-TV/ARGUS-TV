@@ -235,7 +235,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
 
         #region Live TV/Radio
 
-        public override LiveStreamResult TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, ref LiveStream liveStream)
+        public override LiveStreamResult TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, ref LiveStream liveStream, StreamingMode mode)
         {
             try
             {

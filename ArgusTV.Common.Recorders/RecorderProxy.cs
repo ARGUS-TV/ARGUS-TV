@@ -198,10 +198,11 @@ namespace ArgusTV.Common.Recorders
         /// <param name="channel">The channel to tune to.</param>
         /// <param name="upcomingRecordingAllocation">The allocation if the next upcoming recording, or null if there isn't one.</param>
         /// <param name="liveStream">A live stream that is either existing or null for a new one.</param>
+        /// <param name="mode">The streaming mode (default is RTSP).</param>
         /// <returns>A LiveStreamResult value to indicate success or failure, and a new or updated live stream.</returns>
-        public async Task<TuneLiveStreamResult> TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, LiveStream liveStream)
+        public async Task<TuneLiveStreamResult> TuneLiveStream(Channel channel, CardChannelAllocation upcomingRecordingAllocation, LiveStream liveStream, StreamingMode mode)
         {
-            var request = NewRequest(HttpMethod.Post, "Live/Tune");
+            var request = NewRequest(HttpMethod.Post, "Live/Tune?mode={0}", (int)mode);
             request.AddBody(new
             {
                 channel = channel,

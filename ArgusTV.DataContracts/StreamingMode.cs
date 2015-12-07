@@ -1,4 +1,4 @@
-/*
+﻿/*
  *	Copyright (C) 2007-2014 ARGUS TV
  *	http://www.argus-tv.com
  *
@@ -18,40 +18,21 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ArgusTV.DataContracts
 {
     /// <summary>
-    /// Global constants for ARGUS TV.
+    /// The streaming mode.
     /// </summary>
-    public static class Constants
+    public enum StreamingMode
     {
         /// <summary>
-        /// The API version of the main REST services.
+        /// RTSP streaming (default).
         /// </summary>
-        public const int RestApiVersion = 68;
-
+        Rtsp = 0,
         /// <summary>
-        /// The minimal API version of the main services still supported for older REST clients.
+        /// HTTP Live Streaming
         /// </summary>
-        public const int MinimalSupportedRestApiVersion = 45;
-
-        /// <summary>
-        /// The API version of the recorders.
-        /// </summary>
-        public const int RecorderApiVersion = 1;
-
-        /// <summary>
-        /// The assembly version of all main assemblies.
-        /// </summary>
-        public const string AssemblyVersion = "2.4.0.0";
-
-        /// <summary>
-        /// The version of ARGUS TV.
-        /// </summary>
-        public const string ProductVersion = "2.4 Alpha 1";
+        Hls = 1
     }
 }

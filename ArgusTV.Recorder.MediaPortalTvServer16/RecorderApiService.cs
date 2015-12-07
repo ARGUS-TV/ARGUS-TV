@@ -227,7 +227,7 @@ namespace ArgusTV.Recorder.MediaPortalTvServer
             var args = Bind<TuneLiveStreamArguments>(body);
             var stream = args.stream;
 
-            LiveStreamResult result = Service.TuneLiveStream(args.channel, args.upcomingRecordingAllocation, ref stream);
+            LiveStreamResult result = Service.TuneLiveStream(args.channel, args.upcomingRecordingAllocation, ref stream, StreamingMode.Rtsp);
             return AsJson(new
             {
                 result = result,
