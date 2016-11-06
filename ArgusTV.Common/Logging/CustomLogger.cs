@@ -60,7 +60,7 @@ namespace ArgusTV.Common.Logging
         {
             if (IsDebugEnabled)
             {
-                _log.Debug(message, exception);
+                _log.Debug(exception, message);
             }
         }
 
@@ -84,7 +84,7 @@ namespace ArgusTV.Common.Logging
         {
             if (IsErrorEnabled)
             {
-                _log.Error(message, exception);
+                _log.Error(exception, message);
             }
         }
 
@@ -108,7 +108,7 @@ namespace ArgusTV.Common.Logging
         {
             if (IsFatalEnabled)
             {
-                _log.Fatal(message, exception);
+                _log.Fatal(exception, message);
             }
         }
 
@@ -124,7 +124,7 @@ namespace ArgusTV.Common.Logging
         {
             if (IsInfoEnabled)
             {
-                _log.Info(message, exception);
+                _log.Info(exception, message);
             }
         }
 
@@ -148,7 +148,7 @@ namespace ArgusTV.Common.Logging
         {
             if (IsWarnEnabled)
             {
-                _log.Warn(message, exception);
+                _log.Warn(exception, message);
             }
         }
 
