@@ -100,9 +100,9 @@ namespace ArgusTV.WinForms.UserControls
                     MessageBox.Show(this, ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            _channelGroupsComboBox.DataSource = _channelGroups[channelType];
             _channelGroupsComboBox.DisplayMember = "GroupName";
             _channelGroupsComboBox.ValueMember = "ChannelGroupId";
+            _channelGroupsComboBox.DataSource = _channelGroups[channelType];            
         }
 
         private void _channelTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
